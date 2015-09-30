@@ -1,0 +1,30 @@
+package edu.illinois.cs.cogcomp.lfs.classifier
+
+import edu.illinois.cs.cogcomp.lbjava.learn.{LinearThresholdUnit, SparseNetworkLearner}
+
+/**
+ * Created by Parisa on 5/24/15.
+ */
+class SparseNetworkLBP extends SparseNetworkLearner {
+  var net=network
+  var iConjuctiveLables=conjunctiveLabels
+  def getLTU( i:Int):LinearThresholdUnit={
+    var a:LinearThresholdUnit=net.get(i).asInstanceOf[LinearThresholdUnit]
+   // a.setParameters(baseLTU.getParameters)
+    a
+  }
+  def getnumExamples:Int= {
+    numExamples
+  }
+  def getnumFeatures:Int={
+    numFeatures
+  }
+  def getbaseLTU: LinearThresholdUnit={
+    baseLTU
+  }
+  def set(): Unit ={
+
+  }
+
+
+}
