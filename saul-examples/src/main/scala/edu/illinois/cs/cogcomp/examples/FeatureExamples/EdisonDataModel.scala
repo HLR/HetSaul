@@ -5,6 +5,7 @@ import java.io.Serializable
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation._
 import edu.illinois.cs.cogcomp.core.utilities.ResourceManager
 import edu.illinois.cs.cogcomp.curator.CuratorFactory
+import edu.illinois.cs.cogcomp.examples.FeatureExamples._
 import edu.illinois.cs.cogcomp.lfs.data_model.DataModel
 import edu.illinois.cs.cogcomp.lfs.data_model.DataModel._
 import edu.illinois.cs.cogcomp.lfs.data_model.edge.Edge

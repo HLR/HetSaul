@@ -1,4 +1,4 @@
-package test.FeatureExamples
+package edu.illinois.cs.cogcomp.examples.FeatureExamples
 
 import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{Constituent, Sentence, TextAnnotation}

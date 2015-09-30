@@ -20,18 +20,7 @@ lazy val saulCore = (project in file("saul-core")).
   settings(
     name := "saul",
     libraryDependencies ++= Seq(
-      "edu.illinois.cs.cogcomp" % "illinois-caching-curator" % "2.1.1",
-      "edu.illinois.cs.cogcomp" % "illinois-nlp-pipeline" % "0.1.6",
-      "edu.illinois.cs.cogcomp" % "illinois-core-utilities" % "1.2.12-SNAPSHOT",
-
-      // external
-      //"com.typesafe.play" %% "anorm" % "2.3.6",
-      "com.h2database" % "h2" % "1.3.162",
-      // Change this to another test framework if you prefer
-      "org.scalatest" %% "scalatest" % "2.1.6" % "test",
-      "nz.ac.waikato.cms.weka" % "weka-stable" % "3.6.10",
-      "de.bwaldvogel" % "liblinear" % "1.94",
-      "org.apache.commons" % "commons-math3"  % "3.5"
+      "de.bwaldvogel" % "liblinear" % "1.94"
     )
   )
 
@@ -41,6 +30,8 @@ lazy val saulExamples = (project in file("saul-examples")).
     name := "saulexamplespackage",
     libraryDependencies ++= Seq(
       "org.apache.commons" % "commons-math3" % "3.0",
-      "edu.illinois.cs.cogcomp" % "illinois-ner" % "2.6"
+      "edu.illinois.cs.cogcomp" % "illinois-caching-curator" % "2.1.1",
+      "edu.illinois.cs.cogcomp" % "illinois-nlp-pipeline" % "0.1.6",
+      "edu.illinois.cs.cogcomp" % "illinois-core-utilities" % "1.2.12-SNAPSHOT"
     )
   ).dependsOn(saulCore).aggregate(saulCore)
