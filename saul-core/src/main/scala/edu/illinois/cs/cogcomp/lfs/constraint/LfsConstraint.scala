@@ -31,7 +31,6 @@ abstract class LfsConstraint[T <: AnyRef](implicit val tag: ClassTag[T]) {
           evalDiscreteValue(t)
           //Todo type check error catch
         }
-
     }
   }
 
@@ -41,7 +40,5 @@ abstract class LfsConstraint[T <: AnyRef](implicit val tag: ClassTag[T]) {
     new InferenceCondition[C, T](dm) {
       override def subjectTo: LfsConstraint[T] = lc
     }
-
   }
-
 }

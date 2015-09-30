@@ -3,8 +3,6 @@ import scala.collection.mutable.{ Map => MutableMap }
 import edu.illinois.cs.cogcomp.ilp.{ City, ContainsStation, Neighborhood }
 import edu.illinois.cs.cogcomp.lfs.classifier.ConstraintClassifier
 import edu.illinois.cs.cogcomp.lfs.data_model.DataModel
-//import example.Conll04_RelationReaderNew
-//import ilp.{DumbLearner, ContainsStation, Neighborhood, City}
 import edu.illinois.cs.cogcomp.lfs.constraint.ConstraintTypeConversion._
 import edu.illinois.cs.cogcomp.lfs.data_model.DataModel._
 
@@ -28,14 +26,13 @@ class SetCoverSolverDataModel extends DataModel {
     SecondaryKeyMap = MutableMap('cityID -> ((t: Neighborhood) => String.valueOf(t.getParentCity.hashCode())))
   )
 
-  val cityContainsNeighborhoods = edge[City, Neighborhood]('cityID) //('contains)((PID, 'cityID))
-
+  val cityContainsNeighborhoods = edge[City, Neighborhood]('cityID)
   val NODES = ~~(cities, neighborhoods)
   val EDGES = cityContainsNeighborhoods
   val PROPERTIES = Nil
 }
 
-object containsStationCons extends ConstraintClassifier[Neighborhood, City](Data.trainingData, new ContainsStation()) {
+object ContainsStationConstraint extends ConstraintClassifier[Neighborhood, City](Data.trainingData, new ContainsStation()) {
 
   override def subjectTo = Data.containsStationConstrint
 
@@ -92,9 +89,9 @@ object Data {
     cities.getNeighborhoods.foreach {
       n =>
         {
-          println(n.getNumber + ": " + containsStationCons.classifier.discreteValue(n))
+          println(n.getNumber + ": " + ContainsStationConstraint.classifier.discreteValue(n))
         }
     }
-    println(containsStationCons.getCandidates(cities))
+    println(ContainsStationConstraint.getCandidates(cities))
   }
 }

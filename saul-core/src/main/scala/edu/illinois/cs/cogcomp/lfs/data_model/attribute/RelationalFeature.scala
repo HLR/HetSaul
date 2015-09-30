@@ -48,11 +48,11 @@ class RelationalFeature[HEAD <: AnyRef, CHILD <: AnyRef](
       val fv: FeatureVector = new FeatureVector()
       val children = dataModel.getFromRelation[HEAD, CHILD](t)
 
-      fts foreach (x => println(x + " FOund!!"))
+      fts.foreach(x => println(x + " Found!!"))
 
-      children.zipWithIndex.map {
+      children.zipWithIndex.foreach {
         case (c, idx) => {
-          def getName(clsName: String) = s"RelationalFeature ${clsName} at position ${idx} of ${tag.toString()} to ${cTag.toString()}"
+          def getName(clsName: String) = s"RelationalFeature $clsName at position $idx of ${tag.toString()} to ${cTag.toString()}"
           fts.foreach {
             f =>
               {
@@ -61,11 +61,8 @@ class RelationalFeature[HEAD <: AnyRef, CHILD <: AnyRef](
               }
           }
         }
-
       }
-
       fv
-
     }
   }
 
@@ -76,7 +73,7 @@ class RelationalFeature[HEAD <: AnyRef, CHILD <: AnyRef](
     //		children foreach print
     children.zipWithIndex.foreach {
       case (c, idx) => {
-        def getName(clsName: String) = s" ${name}:RelationalFeature ${clsName} at position ${idx} of ${tag.toString()} to ${cTag.toString()}"
+        def getName(clsName: String) = s" $name:RelationalFeature $clsName at position $idx of ${tag.toString()} to ${cTag.toString()}"
         fts.foreach {
           f =>
             {
@@ -87,37 +84,15 @@ class RelationalFeature[HEAD <: AnyRef, CHILD <: AnyRef](
         }
       }
     }
-
-    //		println( "Found "  + fv.size())
-    //
-    for (i <- 0 until fv.size()) {
-
-      //			println(fv.getFeature(i).getGeneratingClassifier)
-      //
-      //				println(fv.getFeature(i).getPackage)
-
-    }
-
-    //	if(fv.size()== 0 ){
-    //			println(t.asInstanceOf[ConllRelation])
-    //	}
-
-    // if(fv.size()== 0 ){
-    // 	println(t.asInstanceOf[ConllRelation])
-    // }
     fv
-
-    //		addToFeatureVector(t,fv,name)
   }
 
   override def addToFeatureVector(t: HEAD, fv: FeatureVector, nameOfClassifier: String): FeatureVector = {
-    //		println("add to feature vector")
     val TAG_NAME = nameOfClassifier
     val children = dataModel.getFromRelation[HEAD, CHILD](t)
-    //		println(newName)
     children.zipWithIndex.foreach {
       case (c, idx) => {
-        def getName(clsName: String) = s" ${clsName} ${TAG_NAME}:RelationalFeature  at position ${idx} of ${tag.toString()} to ${cTag.toString()}"
+        def getName(clsName: String) = s" $clsName $TAG_NAME:RelationalFeature at position $idx of ${tag.toString()} to ${cTag.toString()}"
         fts.foreach {
           f =>
             {

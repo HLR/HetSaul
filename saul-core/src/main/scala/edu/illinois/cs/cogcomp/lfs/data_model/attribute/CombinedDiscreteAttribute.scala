@@ -64,7 +64,4 @@ case class CombinedDiscreteAttribute[T <: AnyRef](
     fv.addFeatures(makeClassifierWithName(nameOfClassifier).classify(t))
     fv
   }
-
-  //  def setDMforAll (dm : DataModel) = {\
-
 }

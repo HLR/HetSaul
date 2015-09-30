@@ -9,5 +9,3 @@ class BooleanAttribute[T <: AnyRef](
   p: T => Boolean
 )(implicit val t: ClassTag[T]) extends DiscreteAttribute[T](name, { t: T => p(t).toString }, Some("true" :: "false" :: Nil))
 
-//                                     )(implicit val t : ClassTag[T]) extends DiscreteAttribute[T](name, {t : T=> p(t).toString}, Some("true" :: "false" :: Nil))
-

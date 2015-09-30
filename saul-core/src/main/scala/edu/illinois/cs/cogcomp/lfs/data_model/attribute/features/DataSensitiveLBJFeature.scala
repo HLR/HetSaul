@@ -8,5 +8,4 @@ abstract class DataSensitiveLBJFeature extends ClassifierContainsInLBP {
   var datamodel: DataModel
 
   def setDM(dm: DataModel) = this.datamodel = dm
-
 }

@@ -7,9 +7,6 @@ import scala.reflect.ClassTag
 
 /** Created by haowu on 1/27/15.
   */
-
-/** TODO: This should be a trait, so we can allow different type of attributes.
-  */
 trait Attribute[T] extends LBJClassifierEquivalent {
 
   val name: String

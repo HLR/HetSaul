@@ -13,6 +13,4 @@ trait DataModelSensitiveAttribute[T <: AnyRef] extends Attribute[T] {
     println(s"Setting dm ${dm} for ${this.name}")
     this.dataModel = dm
   }
-  //	def getDM() = this.dataModel
-
 }
