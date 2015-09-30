@@ -9,6 +9,9 @@ lazy val commonSettings = Seq(
   resolvers ++= Seq(
     Resolver.mavenLocal,
     "CogcompSoftware" at "http://cogcomp.cs.illinois.edu/m2repo/"
+  ),
+  libraryDependencies ++= Seq(
+    "com.gurobi" % "gurobi" % "6.0"
   )
 )
 
