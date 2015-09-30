@@ -1,20 +1,20 @@
 package edu.illinois.cs.cogcomp.lfs.data_model
 
-import edu.illinois.cs.cogcomp.lfs.data_model.attribute.features.discrete.{BooleanAttribute, DiscreteArrayAttribute, DiscreteAttribute, DiscreteGenAttribute}
-import edu.illinois.cs.cogcomp.lfs.data_model.attribute.features.real.{RealArrayAttribute, RealAttribute, RealGenAttribute}
-import edu.illinois.cs.cogcomp.lfs.data_model.attribute.{Attribute, EvaluatedAttribute}
+import edu.illinois.cs.cogcomp.lfs.data_model.attribute.features.discrete.{ BooleanAttribute, DiscreteArrayAttribute, DiscreteAttribute, DiscreteGenAttribute }
+import edu.illinois.cs.cogcomp.lfs.data_model.attribute.features.real.{ RealArrayAttribute, RealAttribute, RealGenAttribute }
+import edu.illinois.cs.cogcomp.lfs.data_model.attribute.{ Attribute, EvaluatedAttribute }
 import edu.illinois.cs.cogcomp.lfs.data_model.node.Node
 import edu.illinois.cs.cogcomp.lfs.data_model.edge.Edge
 
-import scala.collection.mutable.{Map => MutableMap}
+import scala.collection.mutable.{ Map => MutableMap }
 import scala.reflect.ClassTag
 
 trait DataModel {
   val PID = 'PID
 
-  val NODES : List[Node[_]]
-  val PROPERTIES : List[Attribute[_]]
-  val EDGES : List[Edge[_,_]]
+  val NODES: List[Node[_]]
+  val PROPERTIES: List[Attribute[_]]
+  val EDGES: List[Edge[_, _]]
 
   // TODO: comment this function
   def getType[T <: AnyRef](implicit tag: ClassTag[T]): ClassTag[T] = tag
@@ -29,9 +29,10 @@ trait DataModel {
   def select[T <: AnyRef](conditions: EvaluatedAttribute[T, _]*)(implicit tag: ClassTag[T]): List[T] = {
     val conds = conditions.toList
     this.getNodeWithType[T].getAllInstances.filter({
-      t => conds.exists({
-        cond => cond.att.mapping(t).equals(cond.value)
-      })
+      t =>
+        conds.exists({
+          cond => cond.att.mapping(t).equals(cond.value)
+        })
     }).toList
   }
 
@@ -50,9 +51,8 @@ trait DataModel {
     this.getAllFeatures[T]
   }
 
-  /**
-   * Functions for internal usages.
-   */
+  /** Functions for internal usages.
+    */
   def getAllAttributeOf[T <: AnyRef](implicit tag: ClassTag[T]): List[Attribute[T]] = {
     this.PROPERTIES.filter(a => a.tag.equals(tag)).map(_.asInstanceOf[Attribute[T]]).toList
   }
@@ -94,17 +94,19 @@ trait DataModel {
 
   def getNodeWithType[T <: AnyRef](implicit tag: ClassTag[T]): Node[T] = {
     this.NODES.filter {
-      e: Node[_] => {
-        tag.equals(e.tag)
-      }
+      e: Node[_] =>
+        {
+          tag.equals(e.tag)
+        }
     }.head.asInstanceOf[Node[T]]
   }
 
   def getNodesWithTypeTag(tag: ClassTag[_]): Node[_] = {
     this.NODES.filter {
-      e: Node[_] => {
-        tag.equals(e.tag)
-      }
+      e: Node[_] =>
+        {
+          tag.equals(e.tag)
+        }
     }.head
   }
 
@@ -141,11 +143,12 @@ trait DataModel {
       List(t.asInstanceOf[HEAD])
     } else {
       val r = this.EDGES.filter {
-        r => r.tagT.equals(tag) && r.tagU.equals(headTag) && (if (r.nameOfRelation.isDefined) {
-          name.equals(r.nameOfRelation.get)
-        } else {
-          false
-        })
+        r =>
+          r.tagT.equals(tag) && r.tagU.equals(headTag) && (if (r.nameOfRelation.isDefined) {
+            name.equals(r.nameOfRelation.get)
+          } else {
+            false
+          })
       }
 
       // there must be only one such relation
@@ -179,12 +182,12 @@ trait DataModel {
   }
 
   /** edges */
-  def edge[ONE <: AnyRef,MANY <: AnyRef] (name : Symbol)(implicit ptag : ClassTag[ONE], ctag : ClassTag[MANY]) : List[Edge[_,_]] = {
-    val ss = List(('PID,name)) //when the edge is created the list of matching symbols for the identifiers also is created.
+  def edge[ONE <: AnyRef, MANY <: AnyRef](name: Symbol)(implicit ptag: ClassTag[ONE], ctag: ClassTag[MANY]): List[Edge[_, _]] = {
+    val ss = List(('PID, name)) //when the edge is created the list of matching symbols for the identifiers also is created.
     //now this should be added to the definition of the entities that are related by this edge.
-    val ptoc = new Edge[ONE,MANY]( ss.toList, Some(name))
-    val reverted = ss.toList.map( v => (v._2,v._1)).toList
-    val ctop = new Edge[MANY,ONE](reverted, Some(name))
+    val ptoc = new Edge[ONE, MANY](ss.toList, Some(name))
+    val reverted = ss.toList.map(v => (v._2, v._1)).toList
+    val ctop = new Edge[MANY, ONE](reverted, Some(name))
     ptoc :: ctop :: Nil
   }
 }

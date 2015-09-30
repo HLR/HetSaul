@@ -1,8 +1,6 @@
 package edu.illinois.cs.cogcomp.lfs.data_model.attribute.features.discrete
 
-
-
-import edu.illinois.cs.cogcomp.lbjava.classify.{Classifier, DiscreteArrayStringFeature, FeatureVector}
+import edu.illinois.cs.cogcomp.lbjava.classify.{ Classifier, DiscreteArrayStringFeature, FeatureVector }
 import edu.illinois.cs.cogcomp.lfs.data_model.attribute.TypedAttribute
 import edu.illinois.cs.cogcomp.lfs.data_model.attribute.features.ClassifierContainsInLBP
 
@@ -10,14 +8,13 @@ import edu.illinois.cs.cogcomp.lfs.data_model.attribute.features.ClassifierConta
 
 import scala.reflect.ClassTag
 
-/**
-  * Created by haowu on 2/5/15.
+/** Created by haowu on 2/5/15.
   */
 case class DiscreteArrayAttribute[T <: AnyRef](
-                                 val name : String,
-                                 val mapping: T => List[String],
-                                 val range : Option[List[String]]
-                              )(implicit val tag : ClassTag[T]) extends TypedAttribute[T,List[String]]{
+  val name: String,
+  val mapping: T => List[String],
+  val range: Option[List[String]]
+)(implicit val tag: ClassTag[T]) extends TypedAttribute[T, List[String]] {
 
   override def addToFeatureVector(t: T, fv: FeatureVector): FeatureVector = {
     fv.addFeatures(this.classifier.classify(t))
@@ -36,11 +33,11 @@ case class DiscreteArrayAttribute[T <: AnyRef](
         var __result: FeatureVector = null
         __result = new FeatureVector
 
-        values.zipWithIndex.map{
-          case (__value,__featureIndex) => __result.addFeature(new DiscreteArrayStringFeature(this.containingPackage, this.name, "", __value, valueIndexOf(__value), 0.toShort,__featureIndex, 0))
+        values.zipWithIndex.map {
+          case (__value, __featureIndex) => __result.addFeature(new DiscreteArrayStringFeature(this.containingPackage, this.name, "", __value, valueIndexOf(__value), 0.toShort, __featureIndex, 0))
         }
 
-        (0 to values.size) foreach {x => __result.getFeature(x).setArrayLength(values.size)}
+        (0 to values.size) foreach { x => __result.getFeature(x).setArrayLength(values.size) }
         __result
 
       }
@@ -49,17 +46,12 @@ case class DiscreteArrayAttribute[T <: AnyRef](
         return classify(__example).discreteValueArray
       }
 
-
-
     }
   }
 
-
-  def addToFeatureVector(t: T, fv: FeatureVector, nameOfClassifier : String): FeatureVector = {
+  def addToFeatureVector(t: T, fv: FeatureVector, nameOfClassifier: String): FeatureVector = {
     fv.addFeatures(makeClassifierWithName(nameOfClassifier).classify(t))
     fv
   }
-
-
 
 }

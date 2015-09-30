@@ -5,9 +5,9 @@ import edu.illinois.cs.cogcomp.lfs.data_model.DataModel
 import scala.reflect.ClassTag
 
 class Edge[FROM <: AnyRef, TO <: AnyRef](
-                                          val matchesList: List[(Symbol, Symbol)],
-                                          val nameOfRelation: Option[Symbol]
-                                          )(implicit val tagT: ClassTag[FROM], implicit val tagU: ClassTag[TO]) {
+  val matchesList: List[(Symbol, Symbol)],
+  val nameOfRelation: Option[Symbol]
+)(implicit val tagT: ClassTag[FROM], implicit val tagU: ClassTag[TO]) {
   def retrieveFromDataModel(dm: DataModel, t: FROM): List[TO] = {
 
     val nodeOfFrom = dm.getNodeWithType[FROM]

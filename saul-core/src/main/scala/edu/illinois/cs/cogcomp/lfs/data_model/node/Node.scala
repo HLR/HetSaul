@@ -2,19 +2,18 @@ package edu.illinois.cs.cogcomp.lfs.data_model.node
 
 import edu.illinois.cs.cogcomp.lfs.data_model.attribute.features.discrete.DiscreteAttribute
 
-import scala.collection.mutable.{Map => MutableMap}
+import scala.collection.mutable.{ Map => MutableMap }
 import scala.reflect.ClassTag
 
-/**
- * A Node E is an instances of base types T.
- * @tparam T
- */
+/** A Node E is an instances of base types T.
+  * @tparam T
+  */
 class Node[T <: AnyRef](
-                         val primaryKeyFunction: T => String,
-                         var secondaryKeyMap : MutableMap[Symbol, T => String],
-                         val tag: ClassTag[T],
-                         val address: T => AnyRef
-                         ) {
+  val primaryKeyFunction: T => String,
+  var secondaryKeyMap: MutableMap[Symbol, T => String],
+  val tag: ClassTag[T],
+  val address: T => AnyRef
+) {
 
   var secondaryKeyFunction = (t: T) => secondaryKeyMap.mapValues(f => f(t))
 
@@ -37,14 +36,12 @@ class Node[T <: AnyRef](
   private val orderingMap: scala.collection.mutable.Map[Int, T] = scala.collection.mutable.Map[Int, T]()
   private val reverseOrderingMap: scala.collection.mutable.Map[T, Int] = scala.collection.mutable.Map[T, Int]()
 
-  /**
-   * Maps from (Primary Idx => T)
-   */
+  /** Maps from (Primary Idx => T)
+    */
   private val collections = scala.collection.mutable.Map[String, T]()
 
-  /**
-   * Maps of (NameOfSecondaryID => ValueOfSecondary => PrimaryID)
-   */
+  /** Maps of (NameOfSecondaryID => ValueOfSecondary => PrimaryID)
+    */
   private val indices = scala.collection.mutable.Map[Symbol, scala.collection.mutable.Map[String, scala.collection.mutable.MutableList[String]]]()
 
   def getInstanceWithPrimaryKey(s: String): T = this.collections.get(s) match {
@@ -52,12 +49,11 @@ class Node[T <: AnyRef](
     case _ => throw new Exception("Element not found")
   }
 
-  /**
-   * Auther Parisa
-   * This is supposed to be the physical address with a flexible type depending on the
-   * applcation domain.
-   * TODO: explain more why/where this might be helpful.
-   */
+  /** Auther Parisa
+    * This is supposed to be the physical address with a flexible type depending on the
+    * applcation domain.
+    * TODO: explain more why/where this might be helpful.
+    */
   def getAddresswithPrimaryKey(x: T): AnyRef = this.collections.get(primaryKeyFunction(x)) match {
     case Some(t) => this.address
     case _ => throw new Exception("Element not found")
@@ -102,94 +98,93 @@ class Node[T <: AnyRef](
     ret
   }
 
-  /**
-   * Operator for adding a sequence of T into my table.
-   */
+  /** Operator for adding a sequence of T into my table.
+    */
   def ++(ts: Seq[T]) = {
     ts foreach {
-      t => {
-        val order = incrementCount()
-        val primaryKey = primaryKeyFunction(t)
+      t =>
+        {
+          val order = incrementCount()
+          val primaryKey = primaryKeyFunction(t)
 
-        this.trainingSet += primaryKey
-        this.collections += (primaryKey -> t)
-        secondaryKeyFunction(t) foreach {
-          case (secondaryKey, value) => {
-            val secondaries = this.indices.getOrElseUpdate(secondaryKey, scala.collection.mutable.Map[String, scala.collection.mutable.MutableList[String]]())
-            secondaries.getOrElseUpdate(value, new scala.collection.mutable.MutableList[String]()) += primaryKey
+          this.trainingSet += primaryKey
+          this.collections += (primaryKey -> t)
+          secondaryKeyFunction(t) foreach {
+            case (secondaryKey, value) => {
+              val secondaries = this.indices.getOrElseUpdate(secondaryKey, scala.collection.mutable.Map[String, scala.collection.mutable.MutableList[String]]())
+              secondaries.getOrElseUpdate(value, new scala.collection.mutable.MutableList[String]()) += primaryKey
+            }
           }
+          this.orderingMap += (order -> t)
+          this.reverseOrderingMap += (t -> order)
         }
-        this.orderingMap += (order -> t)
-        this.reverseOrderingMap += (t -> order)
-      }
     }
   }
 
   def addToTest(ts: Seq[T]) = {
-    ts foreach{
-      t => {
-        val order = incrementCount()
-        val primaryKey = primaryKeyFunction(t)
+    ts foreach {
+      t =>
+        {
+          val order = incrementCount()
+          val primaryKey = primaryKeyFunction(t)
 
-        this.testingSet += primaryKey
-        this.collections += (primaryKey -> t)
+          this.testingSet += primaryKey
+          this.collections += (primaryKey -> t)
 
-          secondaryKeyFunction(t) foreach{
-          case (secondaryKey,value) => {
-            val secondaries = this.indices.getOrElseUpdate(secondaryKey,scala.collection.mutable.Map[String,scala.collection.mutable.MutableList[String]]())
-            secondaries.getOrElseUpdate(value,new scala.collection.mutable.MutableList[String]()) += primaryKey
+          secondaryKeyFunction(t) foreach {
+            case (secondaryKey, value) => {
+              val secondaries = this.indices.getOrElseUpdate(secondaryKey, scala.collection.mutable.Map[String, scala.collection.mutable.MutableList[String]]())
+              secondaries.getOrElseUpdate(value, new scala.collection.mutable.MutableList[String]()) += primaryKey
+            }
           }
+          this.orderingMap += (order -> t)
+          this.reverseOrderingMap += (t -> order)
         }
-        this.orderingMap += (order -> t)
-        this.reverseOrderingMap += (t -> order)
-      }
     }
   }
 
-  /**
-   * Relational operators
-   */
+  /** Relational operators
+    */
   val nodeOfTypeT = this
 
-  def join[U <: AnyRef] (nodeOfTypeU : Node[U]) = new{
-    def on( matchesList : (Symbol,Symbol)* ) : List[(T,U)]= // new LBPList[(T,U)]()
-    {
-      collections.flatMap {
-        case (primaryKey, t) => {
-          val listOfCandidates = matchesList.toList.map {
-            case (secondaryKeyOfT, secondaryKeyOfU) => {
-              val v = nodeOfTypeT.secondaryKeyFunction(t).get(secondaryKeyOfT) match {
-                case Some(v) => v
-                case _ => throw new Exception("Secondary Key not found for " + secondaryKeyOfT)
+  def join[U <: AnyRef](nodeOfTypeU: Node[U]) = new {
+    def on(matchesList: (Symbol, Symbol)*): List[(T, U)] = // new LBPList[(T,U)]()
+      {
+        collections.flatMap {
+          case (primaryKey, t) => {
+            val listOfCandidates = matchesList.toList.map {
+              case (secondaryKeyOfT, secondaryKeyOfU) => {
+                val v = nodeOfTypeT.secondaryKeyFunction(t).get(secondaryKeyOfT) match {
+                  case Some(v) => v
+                  case _ => throw new Exception("Secondary Key not found for " + secondaryKeyOfT)
+                }
+                nodeOfTypeU.getPrimaryKeyGivenSecondaryKey(secondaryKeyOfU, v).toSet
               }
-              nodeOfTypeU.getPrimaryKeyGivenSecondaryKey(secondaryKeyOfU, v).toSet
             }
+            listOfCandidates.reduce(_ intersect _).map(primaryKey => (t, nodeOfTypeU.getInstanceWithPrimaryKey(primaryKey)))
           }
-          listOfCandidates.reduce (_ intersect _).map(primaryKey => (t, nodeOfTypeU.getInstanceWithPrimaryKey(primaryKey)))
-        }
-      }.toList
-    }
+        }.toList
+      }
   }
 
   def getWithRelativePosition(t: T, relativePos: Int): Option[T] = {
     getWithRelativePosition(t, relativePos, Nil)
   }
 
-
-  def getWithRelativePosition(t : T, relativePos : Int,filters : List[Symbol] ) : Option[T] = {
-    if(relativePos == 0) {
-     Some(t)
-    }else{
-        // relative <> 0
+  def getWithRelativePosition(t: T, relativePos: Int, filters: List[Symbol]): Option[T] = {
+    if (relativePos == 0) {
+      Some(t)
+    } else {
+      // relative <> 0
 
       this.reverseOrderingMap.get(t) match {
         case Some(ord) => {
           val targetOrd = ord + relativePos
-          this.orderingMap.get(targetOrd) match{
+          this.orderingMap.get(targetOrd) match {
             case Some(x) => {
-              if(underSameParent(t,x,filters)){
+              if (underSameParent(t, x, filters)) {
                 Some(x)
-              }else{
+              } else {
                 None
               }
             }
@@ -199,7 +194,7 @@ class Node[T <: AnyRef](
         }
         case _ => None
       }
-      }
+    }
   }
 
   def nextOf(t: T, filters: List[Symbol]): Option[T] = {
@@ -232,11 +227,12 @@ class Node[T <: AnyRef](
     val existNotMatch = filters.exists({
       // exist key k, s.t
       // the value of k on t and x are different
-      key => {
-        val keyOnT = indexMapOfT(key)
-        val keyOnX = indexMapOfX(key)
-        keyOnT != keyOnX
-      }
+      key =>
+        {
+          val keyOnT = indexMapOfT(key)
+          val keyOnX = indexMapOfX(key)
+          keyOnT != keyOnX
+        }
     })
     !existNotMatch
   }
@@ -247,44 +243,47 @@ class Node[T <: AnyRef](
     (this.reverseOrderingMap.get(t1), this.reverseOrderingMap.get(t2)) match {
       case (Some(start), Some(end)) => {
         (start to end) map {
-          position => this.orderingMap.get(position) match {
-            case Some(v) => if (wildCard || underSameParent(t1, v, filter)) {
-              Some(v)
-            } else {
-              None
+          position =>
+            this.orderingMap.get(position) match {
+              case Some(v) => if (wildCard || underSameParent(t1, v, filter)) {
+                Some(v)
+              } else {
+                None
+              }
+              case None => None
             }
-            case None => None
-          }
         }
       } toList
       case _ => throw new Exception("Can't find element.")
     }
   }
 
-  def getWithWindow(t: T, before : Int, after : Int, filters : List[Symbol]) : List[Option[T]] = {
+  def getWithWindow(t: T, before: Int, after: Int, filters: List[Symbol]): List[Option[T]] = {
     this.reverseOrderingMap.get(t) match {
       case Some(myOrder) => {
         val start = myOrder + before
         val end = myOrder + after
         val indexMapOfT = this.secondaryKeyFunction(t).filterKeys(filters.contains)
-        val result = (start to end).flatMap(this.orderingMap.get).filter{
-          x => {
-            val indexMapOfX = this.secondaryKeyFunction(x).filterKeys(filters.contains)
-            // All secondary keys in filters list mush agree with t.
-            val existNotMatch = filters.exists({
-                  // exist key k, s.t
-                      // the value of k on t and x are different
-              key =>{
-                val keyOnT = indexMapOfT(key)
-                val keyOnX = indexMapOfX(key)
-                keyOnT != keyOnX
-              }
-            })
-            // if it exist such a value,
-            // then we should discard it.
-            // So since this function passed to a filter. we put a not! in front.
-            ! existNotMatch
-          }
+        val result = (start to end).flatMap(this.orderingMap.get).filter {
+          x =>
+            {
+              val indexMapOfX = this.secondaryKeyFunction(x).filterKeys(filters.contains)
+              // All secondary keys in filters list mush agree with t.
+              val existNotMatch = filters.exists({
+                // exist key k, s.t
+                // the value of k on t and x are different
+                key =>
+                  {
+                    val keyOnT = indexMapOfT(key)
+                    val keyOnX = indexMapOfX(key)
+                    keyOnT != keyOnX
+                  }
+              })
+              // if it exist such a value,
+              // then we should discard it.
+              // So since this function passed to a filter. we put a not! in front.
+              !existNotMatch
+            }
         }.toList
 
         val pos = result.indexOf(t)
