@@ -25,7 +25,7 @@ lazy val saulCore = (project in file("saul-core")).
       "edu.illinois.cs.cogcomp" % "illinois-core-utilities" % "1.2.12-SNAPSHOT",
 
       // external
-      "com.typesafe.play" %% "anorm" % "2.3.6",
+      //"com.typesafe.play" %% "anorm" % "2.3.6",
       "com.h2database" % "h2" % "1.3.162",
       // Change this to another test framework if you prefer
       "org.scalatest" %% "scalatest" % "2.1.6" % "test",
