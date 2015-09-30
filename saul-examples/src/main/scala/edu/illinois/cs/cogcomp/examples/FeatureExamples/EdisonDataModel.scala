@@ -1,4 +1,4 @@
-package test.FeatureExamples
+package edu.illinois.cs.cogcomp.examples.FeatureExamples
 
 import java.io.Serializable
 
@@ -114,10 +114,10 @@ object myapp {
     // val annotatorService = IllinoisPipelineFactory.buildPipeline(rm)
     val dat:List[Document]=new DocumentReader("data/20news/train").docs.toList.slice(1,3)
 
-    val a=util.textCollection(dat) zip dat.map(x=>x.getGUID) // this generates a list of strings each member is a textual content of a document
-    var parserViewEnt:List[Constituent]=List()
-    var posViewEnt:List[Serializable]=List()
-    val taList=a.map(x=> CogcompGiantSensor.processDocumentWith(annotatorService,corpus,x._2, x._1))
+//    val a=util.textCollection(dat) zip dat.map(x=>x.getGUID) // this generates a list of strings each member is a textual content of a document
+//    var parserViewEnt:List[Constituent]=List()
+//    var posViewEnt:List[Serializable]=List()
+//    val taList=a.map(x=> CogcompGiantSensor.processDocumentWith(annotatorService,corpus,x._2, x._1))
    // val sentenceList=taList.map(x=>x.sentences()).flatten
    // val ch:TokenLabelView=taList(0).getView(ViewNames.POS).asInstanceOf[TokenLabelView]
 //    taList(0).getConstituents()
@@ -135,12 +135,12 @@ object myapp {
     // val parse2: SpanLabelView= ta.getView(ViewNames.NER).asInstanceOf[SpanLabelView]
     //val Pos1: TokenLabelView =ta.getView(ViewNames.POS).asInstanceOf[TokenLabelView]
 
-    EdisonDataModel.++(taList)
-   // EdisonDataModel.++(sentenceList)
-   //The below line uses a generator sensor
-    EdisonDataModel.populateWith(util.f,'dTos)
-    EdisonDataModel.populateWith(util.f2,'tToc)
- //   EdisonDataModel.populateWith(util.f2,'sToc)
+//    EdisonDataModel.++(taList)
+//   // EdisonDataModel.++(sentenceList)
+//   //The below line uses a generator sensor
+//    EdisonDataModel.populateWith(util.f,'dTos)
+//    EdisonDataModel.populateWith(util.f2,'tToc)
+// //   EdisonDataModel.populateWith(util.f2,'sToc)
 
     //The below line uses a matching sensor
     //EdisonDataModel.populateWith(sentenceList,util.alignment,'dTos)
