@@ -4,16 +4,14 @@ import edu.illinois.cs.cogcomp.annotation.AnnotatorService
 import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.TextAnnotation
 
-/**
- * Created by Parisa on 9/17/15.
- */
+/** Created by Parisa on 9/17/15.
+  */
 object CogcompGiantSensor {
 
-
-  def processDocumentWith(annotatorService: AnnotatorService,cid:String, did: String , text : String ,services :String*) : TextAnnotation = {
+  def processDocumentWith(annotatorService: AnnotatorService, cid: String, did: String, text: String, services: String*): TextAnnotation = {
 
     val ta = annotatorService.createBasicTextAnnotation(cid, did, text)
-   // annotatorService.addView(ta, ViewNames.POS)
+    // annotatorService.addView(ta, ViewNames.POS)
     println(ta.getAvailableViews)
 
     annotatorService.addView(ta, ViewNames.SHALLOW_PARSE)

@@ -2,27 +2,25 @@ package edu.illinois.cs.cogcomp.lfs.parser
 
 import edu.illinois.cs.cogcomp.lbjava.parse.Parser
 
-/**
- * Created by haowu on 12/14/14.
- * Email : haowu@haowu.me
- */
-class LBJIteratorParserScala[T <: AnyRef](val data : Iterable[T]) extends Parser{
-
+/** Created by haowu on 12/14/14.
+  * Email : haowu@haowu.me
+  */
+class LBJIteratorParserScala[T <: AnyRef](val data: Iterable[T]) extends Parser {
 
   private var it: Option[Iterator[T]] = None
 
   override def next(): AnyRef = {
     it match {
       case Some(i) => {
-        if(i.hasNext){
+        if (i.hasNext) {
           i.next().asInstanceOf[AnyRef]
-        }else{
+        } else {
           null
         }
 
       }
 
-      case None => {null}
+      case None => { null }
     }
   }
 
@@ -31,7 +29,7 @@ class LBJIteratorParserScala[T <: AnyRef](val data : Iterable[T]) extends Parser
   }
 
   override def reset(): Unit = {
-    if(data != null){
+    if (data != null) {
       this.it = Some(data.iterator)
     }
   }

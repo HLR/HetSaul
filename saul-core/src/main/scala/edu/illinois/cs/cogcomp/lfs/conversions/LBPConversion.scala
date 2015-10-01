@@ -8,13 +8,13 @@ import edu.illinois.cs.cogcomp.lfs.util.ListNodeInterface
 import scala.reflect.ClassTag
 
 object LBPConversion {
-  
-  implicit def listToNodeBuilder[T <: AnyRef](l : List[T])(implicit tag : ClassTag[T]) : ListNodeInterface[T] = {
+
+  implicit def listToNodeBuilder[T <: AnyRef](l: List[T])(implicit tag: ClassTag[T]): ListNodeInterface[T] = {
     new ListNodeInterface[T](l)
   }
 
-  implicit def symbolWithEqualToMakePair(s : Symbol) : SymbolWithEqualToMakePair = {
-      new SymbolWithEqualToMakePair(s)
+  implicit def symbolWithEqualToMakePair(s: Symbol): SymbolWithEqualToMakePair = {
+    new SymbolWithEqualToMakePair(s)
   }
 }
 // TODO: remove this

@@ -1,12 +1,11 @@
 package edu.illinois.cs.cogcomp.lfs.data_model.attribute
 
-import edu.illinois.cs.cogcomp.lbjava.classify.{DiscretePrimitiveStringFeature, Feature, FeatureVector, Classifier}
+import edu.illinois.cs.cogcomp.lbjava.classify.{ DiscretePrimitiveStringFeature, Feature, FeatureVector, Classifier }
 
 import scala.reflect.ClassTag
 
-/**
- * Created by haowu on 1/27/15.
- */
+/** Created by haowu on 1/27/15.
+  */
 //case class DiscreteAttribute[T](
 //                    val mapping: T => String,
 //                    val range : Option[List[String]]

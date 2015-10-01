@@ -2,15 +2,14 @@ package edu.illinois.cs.cogcomp.lfs.data_model.attribute
 
 import java.util
 
-import edu.illinois.cs.cogcomp.lbjava.classify.{FeatureVector, Classifier}
+import edu.illinois.cs.cogcomp.lbjava.classify.{ FeatureVector, Classifier }
 import edu.illinois.cs.cogcomp.lfs.data_model.DataModel
 import edu.illinois.cs.cogcomp.lfs.data_model.attribute.features.ClassifierContainsInLBP
 
 import scala.reflect.ClassTag
 
-/**
- * Created by haowu on 2/10/15.
- */
+/** Created by haowu on 2/10/15.
+  */
 //class MixedAttribute[T <: AnyRef,CHILD <: AnyRef](
 //	                                 val dm: DataModel,
 //	                                 val before: Int,
