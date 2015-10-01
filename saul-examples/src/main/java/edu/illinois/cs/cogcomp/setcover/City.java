@@ -1,4 +1,4 @@
-package edu.illinois.cs.cogcomp.ilp;
+package edu.illinois.cs.cogcomp.setcover;
 
 import edu.illinois.cs.cogcomp.lbjava.parse.LineByLine;
 
