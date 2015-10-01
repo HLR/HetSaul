@@ -7,7 +7,7 @@ linear inequalities shown in [this web page](http://mat.gsia.cmu.edu/orclass/int
 
 
 ## Relevant files 
-The data is in: `data/setcover.txt`
+The data is in: `src/test/resources/setcover.txt`
 
 The reader and the relevant data structures are written in java: 
 ```
@@ -35,5 +35,29 @@ code then operates on `ContainsStation` and respects the constraints.
 The `SetCoverSolver.scala` takes raw data representing a `City` as input
 and produces the constrained predictions.
 
-* Note: The LBjava version left here for comparison to Saul:  
-`main/scala/edu/illinois/cs/cogcomp/examples/set_cover/SetCover.lbj` 
+* Note: Here is the LBJava way of solving the same task: 
+
+```
+constraint noEmptyNeighborhoods(City c) {
+  forall (Neighborhood n in c.getNeighborhoods())
+    ContainsStation(n) :: true
+    \/ (exists (Neighborhood n2 in n.getNeighbors())
+          ContainsStation(n2) :: true);
+}
+
+constraint noEmptyNeighborhoods(City c) {
+  forall (Neighborhood n in c.getNeighborhoods())
+    ContainsStation(n) :: true
+    \/ (exists (Neighborhood n2 in n.getNeighbors())
+          ContainsStation(n2) :: true);
+}
+
+inference SetCover head City c {
+  Neighborhood n  { return n.getParentCity(); }
+  subjectto { @noEmptyNeighborhoods(c); } 
+  with new ILPInference(new GLPKHook())
+}
+
+discrete{false, true} containsStationConstrained(Neighborhood n) <-
+  SetCover(ContainsStation)
+```
