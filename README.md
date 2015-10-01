@@ -5,3 +5,5 @@ See the readme files for each module:
 
 - [The core of the Saul project](saul-core/README.md)  
 - [The examples package](saul-examples/README.md)
+
+The project's [official chat group is at Slack](https://cogcomp.slack.com/messages/saul/)
