@@ -57,7 +57,7 @@ object ContainsStationConstraint extends ConstraintClassifier[Neighborhood, City
 object Data {
 
   val trainingData = new SetCoverSolverDataModel
-  val cities = new City("data/example.txt")
+  val cities = new City("./saul-examples/src/test/resources/set_cover/example.txt")
   val ns = cities.getNeighborhoods.toList
 
   val containsStationConstrint = ConstraintClassifier.constraintOf[City]({
