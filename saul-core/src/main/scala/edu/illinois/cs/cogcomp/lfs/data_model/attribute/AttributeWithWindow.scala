@@ -21,8 +21,7 @@ class AttributeWithWindow[T <: AnyRef](
   val before: Int,
   val after: Int,
   val filters: List[Symbol],
-  val atts: List[Attribute[T]] // T => (String | Double | List[String] |
-// List[Double])
+  val atts: List[Attribute[T]]
 )(implicit val tag: ClassTag[T]) extends TypedAttribute[T, List[_]] with DataModelSensitiveAttribute[T] {
 
   // TODO: need to work on the mapping such that.
@@ -36,12 +35,12 @@ class AttributeWithWindow[T <: AnyRef](
           val winds = ent.getWithWindow(t, before, after)
           // Now we have a windows of option items.
 
-          atts.map(att => {
+          atts.flatMap(att => {
             winds map {
               case Some(x) => Some(att.mapping(x))
               case _ => None
             }
-          }).flatten
+          })
 
         }
       }
@@ -56,12 +55,9 @@ class AttributeWithWindow[T <: AnyRef](
 
   def rebuildHiddenAttribute(dm: DataModel): List[Attribute[T]] = {
     {
-      //		println(dataModel.myName)
       val ent = dm.getNodeWithType[T]
 
-      //				println("Count :" + ent.count)
-
-      atts.toList map {
+      atts.toList.flatMap {
         knowAtt: Attribute[T] =>
           {
             {
@@ -82,9 +78,6 @@ class AttributeWithWindow[T <: AnyRef](
                               t: T =>
                                 {
                                   {
-                                    //								ent.Nil
-
-                                    //															println("Learning with" + t)
                                     ent.getWithRelativePosition(t, idx, filters) match {
                                       case Some(target) => {
                                         {
@@ -111,7 +104,6 @@ class AttributeWithWindow[T <: AnyRef](
 
                                   ent.getWithRelativePosition(t, idx, filters) match {
                                     case Some(target) =>
-                                      //																println("Learning with" + t + " ===> " + target)
                                       dga.mapping(target)
                                     case _ => Nil
                                   }
@@ -149,7 +141,6 @@ class AttributeWithWindow[T <: AnyRef](
                           val newMappingFunction: T => List[Double] = {
                             t: T =>
                               {
-                                //								ent.Nil
                                 ent.getWithRelativePosition(t, idx, filters) match {
                                   case Some(target) => {
                                     rga.mapping(target)
@@ -170,13 +161,10 @@ class AttributeWithWindow[T <: AnyRef](
                     }
                   }
               }.toList
-
             }
           }
-      } flatten
-
+      }
     }
-
   }
 
   override def addToFeatureVector(t: T, fv: FeatureVector): FeatureVector = {
@@ -192,7 +180,7 @@ class AttributeWithWindow[T <: AnyRef](
   }
 
   override val name: String = {
-    s"WindowAtt(${before},${after}}_Of${this.atts.map(_.name).mkString("|")}})"
+    s"WindowAtt($before,$after}_Of${this.atts.map(_.name).mkString("|")}})"
   }
 
   val o = this
@@ -208,7 +196,7 @@ class AttributeWithWindow[T <: AnyRef](
     this.name = n
 
     override def getOutputType: String = {
-      return "mixed%"
+      "mixed%"
     }
 
     def classify(__example: AnyRef): FeatureVector = {

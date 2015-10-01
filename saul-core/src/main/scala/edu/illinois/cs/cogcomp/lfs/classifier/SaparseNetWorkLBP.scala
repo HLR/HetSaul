@@ -9,7 +9,6 @@ class SparseNetworkLBP extends SparseNetworkLearner {
   var iConjuctiveLables = conjunctiveLabels
   def getLTU(i: Int): LinearThresholdUnit = {
     var a: LinearThresholdUnit = net.get(i).asInstanceOf[LinearThresholdUnit]
-    // a.setParameters(baseLTU.getParameters)
     a
   }
   def getnumExamples: Int = {
@@ -21,8 +20,4 @@ class SparseNetworkLBP extends SparseNetworkLearner {
   def getbaseLTU: LinearThresholdUnit = {
     baseLTU
   }
-  def set(): Unit = {
-
-  }
-
 }

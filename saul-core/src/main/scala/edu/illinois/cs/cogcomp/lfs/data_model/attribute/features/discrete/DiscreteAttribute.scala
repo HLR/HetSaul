@@ -10,9 +10,9 @@ import scala.reflect.ClassTag
   */
 
 case class DiscreteAttribute[T <: AnyRef](
-  val name: String,
-  val mapping: T => String,
-  val range: Option[List[String]]
+  name: String,
+  mapping: T => String,
+  range: Option[List[String]]
 )(implicit val tag: ClassTag[T]) extends TypedAttribute[T, String] {
   override def makeClassifierWithName(n: String): Classifier = range match {
     case Some(r) => {
@@ -23,25 +23,25 @@ case class DiscreteAttribute[T <: AnyRef](
         this.name = n
 
         def getAllowableValues: Array[String] = {
-          return __allowableValues
+          __allowableValues
         }
 
         override def allowableValues: Array[String] = {
-          return __allowableValues
+          __allowableValues
         }
 
         def classify(__example: AnyRef): FeatureVector = {
-          return new FeatureVector(featureValue(__example))
+          new FeatureVector(featureValue(__example))
         }
 
         override def featureValue(__example: AnyRef): Feature = {
           val result: String = discreteValue(__example)
-          return new DiscretePrimitiveStringFeature(containingPackage, this.name, "", result, valueIndexOf(result), allowableValues.length.asInstanceOf[Short])
+          new DiscretePrimitiveStringFeature(containingPackage, this.name, "", result, valueIndexOf(result), allowableValues.length.asInstanceOf[Short])
         }
 
         override def discreteValue(__example: AnyRef): String = {
           // TODO: catching errors (type checking)
-          return _discreteValue(__example)
+          _discreteValue(__example)
         }
 
         private def _discreteValue(__example: AnyRef): String = {
@@ -49,7 +49,6 @@ case class DiscreteAttribute[T <: AnyRef](
           fdt.mapping(t).mkString("")
         }
       }
-
     }
     case _ => new ClassifierContainsInLBP {
 
@@ -57,25 +56,23 @@ case class DiscreteAttribute[T <: AnyRef](
       this.name = n
 
       def classify(__example: AnyRef): FeatureVector = {
-        return new FeatureVector(featureValue(__example))
+        new FeatureVector(featureValue(__example))
       }
 
       override def featureValue(__example: AnyRef): Feature = {
         val result: String = discreteValue(__example)
-        return new DiscretePrimitiveStringFeature(containingPackage, this.name, "", result, valueIndexOf(result), allowableValues.length.toShort)
+        new DiscretePrimitiveStringFeature(containingPackage, this.name, "", result, valueIndexOf(result), allowableValues.length.toShort)
       }
 
       override def discreteValue(__example: AnyRef): String = {
         val d: T = __example.asInstanceOf[T]
-        return "" + mapping(d)
+        "" + mapping(d)
       }
 
       override def classify(examples: Array[AnyRef]): Array[FeatureVector] = {
-        return super.classify(examples)
+        super.classify(examples)
       }
-
     }
-
   }
 
   override def addToFeatureVector(t: T, fv: FeatureVector): FeatureVector = {

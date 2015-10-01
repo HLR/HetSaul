@@ -11,9 +11,9 @@ import scala.reflect.ClassTag
 /** Created by haowu on 2/5/15.
   */
 case class DiscreteArrayAttribute[T <: AnyRef](
-  val name: String,
-  val mapping: T => List[String],
-  val range: Option[List[String]]
+  name: String,
+  mapping: T => List[String],
+  range: Option[List[String]]
 )(implicit val tag: ClassTag[T]) extends TypedAttribute[T, List[String]] {
 
   override def addToFeatureVector(t: T, fv: FeatureVector): FeatureVector = {
@@ -33,7 +33,7 @@ case class DiscreteArrayAttribute[T <: AnyRef](
         var __result: FeatureVector = null
         __result = new FeatureVector
 
-        values.zipWithIndex.map {
+        values.zipWithIndex.foreach {
           case (__value, __featureIndex) => __result.addFeature(new DiscreteArrayStringFeature(this.containingPackage, this.name, "", __value, valueIndexOf(__value), 0.toShort, __featureIndex, 0))
         }
 
@@ -43,7 +43,7 @@ case class DiscreteArrayAttribute[T <: AnyRef](
       }
 
       override def discreteValueArray(__example: AnyRef): Array[String] = {
-        return classify(__example).discreteValueArray
+        classify(__example).discreteValueArray
       }
 
     }
@@ -53,5 +53,4 @@ case class DiscreteArrayAttribute[T <: AnyRef](
     fv.addFeatures(makeClassifierWithName(nameOfClassifier).classify(t))
     fv
   }
-
 }

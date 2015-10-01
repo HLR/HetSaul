@@ -46,9 +46,7 @@ class NamedDiscreteAttribute[T <: AnyRef](
           function(t)
         }
       }
-
     }
-
   }
 
   val classifier = new ClassifierContainsInLBP {
@@ -73,7 +71,6 @@ class NamedDiscreteAttribute[T <: AnyRef](
     override def classify(examples: Array[AnyRef]): Array[FeatureVector] = {
       super.classify(examples)
     }
-
   }
 
 }

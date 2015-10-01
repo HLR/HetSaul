@@ -17,7 +17,5 @@ trait TypedAttribute[T <: AnyRef, U] extends Attribute[T] {
   def is(u: U) = {
     val newName = name + "_is_" + u
     new BooleanAttribute[T](newName, mapping andThen (uu => u.equals(uu)))
-
   }
-
 }

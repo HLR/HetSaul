@@ -37,11 +37,11 @@ class DiscreteGenAttribute[T <: AnyRef](
         }
       )
 
-      return __result
+      __result
     }
 
     override def classify(examples: Array[AnyRef]): Array[FeatureVector] = {
-      return super.classify(examples)
+      super.classify(examples)
     }
   }
   override def addToFeatureVector(t: T, fv: FeatureVector): FeatureVector = {

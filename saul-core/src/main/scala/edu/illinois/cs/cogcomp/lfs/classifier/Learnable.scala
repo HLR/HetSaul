@@ -22,8 +22,6 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel)(implicit tag: Cl
 
   def feature: List[Attribute[T]] = datamodel.getFeaturesOf[T]
   def algorithm: String = "SparseNetwork"
-  //def algorithm(name:String): Learner
-  // var net:OVector
   val featureExtractor = new CombinedDiscreteAttribute[T](this.feature)
 
   val lbpFeatures: Classifier = {
@@ -201,7 +199,7 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel)(implicit tag: Cl
       label => (label, (tester.getF1(label), tester.getPrecision(label), tester.getRecall(label)))
     })
 
-    ret toList
+    ret.toList
   }
 
   def testContinuos(): Unit = {
@@ -263,14 +261,14 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel)(implicit tag: Cl
     def printTestResult(result: (String, (Double, Double, Double))): Unit = {
       result match {
         case (label, (f1, precision, recall)) => {
-          println(s"  ${label}    ${f1}    ${precision}     ${recall}   ")
+          println(s"  $label    $f1    $precision     $recall   ")
         }
       }
     }
 
     val results = loops.zipWithIndex map {
       case ((trainingSet, testingSet), idx) => {
-        println(s"Running fold ${idx}")
+        println(s"Running fold $idx")
         println(s"Learn with ${trainingSet.size}")
         println(s"Test with ${testingSet.size}")
 
