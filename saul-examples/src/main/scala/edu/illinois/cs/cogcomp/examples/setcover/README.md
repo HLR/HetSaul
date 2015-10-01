@@ -34,3 +34,6 @@ code then operates on `ContainsStation` and respects the constraints.
 
 The `SetCoverSolver.scala` takes raw data representing a `City` as input
 and produces the constrained predictions.
+
+* Note: The LBjava version left here for comparison to Saul:  
+`main/scala/edu/illinois/cs/cogcomp/examples/set_cover/SetCover.lbj` 

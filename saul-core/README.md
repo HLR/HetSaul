@@ -1,8 +1,5 @@
 # Saul: Declarative Learning  Based Programming
 
-
-## Description
-
 Saul is a modeling language implemented as s domain specific language (DSL) in Scala. The main goal of Saul is to facilitate designing machine learning models with arbitrary configurations for the application programmer, including: 
 
 * designing local models i.e. single classifiers. (Learning only models (LO)). 
@@ -38,7 +35,6 @@ If you are developing an sbt project on your machine, you can add the following 
 Saul package from ivy repository: 
   
      $ libraryDependencies += "edu.illinois.cs.cogcomp" %% "saul" % "2.0"
-
 
 ## Installing Gurobi 
 Saul uses the Gurobi solver for inference and therefore the Gurobi library needs to be installed 
