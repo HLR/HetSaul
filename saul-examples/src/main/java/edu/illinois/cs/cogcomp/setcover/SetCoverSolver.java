@@ -1,4 +1,4 @@
-package edu.illinois.cs.cogcomp.ilp;
+package edu.illinois.cs.cogcomp.setcover;
 
 
 public class SetCoverSolver {
