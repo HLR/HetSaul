@@ -46,10 +46,11 @@ This is done using the `node` function,
 
 
 ```scala
-val tokens = node[ConllRawToken](
-    PrimaryKey = {
-      t : ConllRawToken => String.valueOf(t.sentId) + ":" +String.valueOf(t.wordId)
-    }
+   val tokens = node[ConllRawToken](
+      PrimaryKey = {
+         t : ConllRawToken => String.valueOf(t.sentId) + ":" +String.valueOf(t.wordId)
+      }
+   )
 ```
 
 this line of code defines an entity of type `ConllRawToken` and names it as 'tokens' and defines a 'primary key' for it based on the original variables in the original ConllRawToken class.
@@ -58,10 +59,8 @@ this line of code defines an entity of type `ConllRawToken` and names it as 'tok
 This is done via several constructs depending on the type of the feature for discrete features for example the "discreteAttributesGeneratorOf" is used,
 
 ```scala
-val pos  = discreteAttributesGeneratorOf[ConllRawToken]('pos) {
-    t : ConllRawToken => {
-      t.POS :: Nil
-    }
+  val pos = discreteAttributesGeneratorOf[ConllRawToken]('pos) {
+     (t: ConllRawToken) => t.POS :: Nil
   }
   ```
 this line of code defines a feature vector that is generated using the pos-tag of the original class of the entitiy that this property is assigned to (that is ConllRawToken class). The type of the feature is discrete. 
@@ -87,18 +86,12 @@ Here are the basic types essential for using classifiers.
 A classifier can be defined in the following way: 
 
 ```scala
-object orgClassifier extends Learnable[ConllRawToken](ErDataModelExample) {
-
-
-   override def label: Attribute[ConllRawToken] = entityType is "Org"
-    override def feature = using(
-     word,phrase,containsSubPhraseMent,containsSubPhraseIng,
-      containsInPersonList,wordLen,containsInCityList
-    )
+  object orgClassifier extends Learnable[ConllRawToken](ErDataModelExample) {
+     override def label: Attribute[ConllRawToken] = entityType is "Org"
+        override def feature = using(word, phrase, containsSubPhraseMent, containsSubPhraseIng, 
+                                        containsInPersonList, wordLen, containsInCityList )
   }
-
 ```
-
 
 ### Constraints 
 A "constraint" is a logical restriction over possible values that can be assigned to a number of variables; 
@@ -109,20 +102,17 @@ A constraint classifiers is a classifier that predicts the class labels with reg
 This is done with the following construct
 
 ```scala
-
- val PersonWorkFor=ConstraintClassifier.constraintOf[ConllRelation] {
-   x:ConllRelation => {
-     ((workForClassifier on x) isTrue) ==>
-       ((PersonClassifier on x.e1) isTrue)
+   val PersonWorkFor=ConstraintClassifier.constraintOf[ConllRelation] {
+     x:ConllRelation => {
+       ((workForClassifier on x) isTrue) ==> ((PersonClassifier on x.e1) isTrue)
      }
    }
 ```
-### Constraint Classifiers
-
-This is done with the following construct
+### Constrained Classifiers
+A constrained classifier can be defined in the following form: 
 
 ```scala
-object LocConstraintClassifier extends ConstraintClassifier[ConllRawToken,ConllRelation](ErDataModelExample, LocClassifier){
+  object LocConstraintClassifier extends ConstraintClassifier[ConllRawToken,ConllRelation](ErDataModelExample, LocClassifier){
 
     def subjectTo = Per_Org
     override val pathToHead=Some('containE2)
@@ -137,17 +127,15 @@ object LocConstraintClassifier extends ConstraintClassifier[ConllRawToken,ConllR
 The following is the usual construct in the application program:
 
 ```scala
-object EXAMPLEapp {
+  object EXAMPLEapp {
+     def main(args: Array[String]): Unit = {
+        val TrainData:List[Post]=new ExampleDataReader("PathToTrainData").VariableOfdata.toList
+        val TestData:List[Post]=new ExampleDataReader("data/20news/20news.test.shuffled").VariableOfDate.toList
 
-  def main(args: Array[String]): Unit = {
-    val TrainData:List[Post]=new ExampleDataReader("PathToTrainData").VariableOfdata.toList
-    val TestData:List[Post]=new ExampleDataReader("data/20news/20news.test.shuffled").VariableOfDate.toList
-
-
-    newsGroupDataModel++ TrainData    //Add Training data to the data model
-    newsClassifer.learn(40)           //Number of Training iterations
-    newsGroupDataModel.testWith(dat2) //Added Testing data
-    newsClassifer.test()              //Run test
+        newsGroupDataModel++ TrainData    //Add Training data to the data model
+        newsClassifer.learn(40)           //Number of Training iterations
+        newsGroupDataModel.testWith(dat2) //Added Testing data
+        newsClassifer.test()              //Run test
+     }
   }
-}
 ```
