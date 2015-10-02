@@ -9,14 +9,13 @@ import scala.collection.mutable.{Map => MutableMap}
 /**
  * Created by Parisa on 10/1/15.
  */
-object modelWithSensoryEdges extends DataModel {
+object modelWithSensors extends DataModel {
 
     /** Node Types
       */
     val document = node[TextAnnotation]
 
     val sentence = node[Sentence]
-
 
     /** Property Types
       */
@@ -27,7 +26,6 @@ object modelWithSensoryEdges extends DataModel {
         x.getLabel
       }
     }
-
 
     val DocFeatureExample = discreteAttributeOf[TextAnnotation]('doc) {
       x: TextAnnotation =>
@@ -41,7 +39,6 @@ object modelWithSensoryEdges extends DataModel {
         x.getText
       }
     }
-
 
     /** Edge Types
       */

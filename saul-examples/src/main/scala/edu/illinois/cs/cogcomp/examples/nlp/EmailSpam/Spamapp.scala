@@ -1,6 +1,6 @@
-package edu.illinois.cs.cogcomp.examples.nlp.spam
+package edu.illinois.cs.cogcomp.examples.nlp.EmailSpam
 
-import edu.illinois.cs.cogcomp.examples.nlp.spam.Classifers.spamClassifier
+import edu.illinois.cs.cogcomp.examples.nlp.EmailSpam.Classifers.spamClassifier
 import edu.illinois.cs.cogcomp.tutorial_related.{Document, DocumentReader}
 
 import scala.collection.JavaConversions._

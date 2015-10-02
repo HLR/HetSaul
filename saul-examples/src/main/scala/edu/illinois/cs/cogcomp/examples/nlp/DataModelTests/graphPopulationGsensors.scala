@@ -1,23 +1,23 @@
 package edu.illinois.cs.cogcomp.examples.nlp.FeatureExamples.DataModelSpecificExamples
 
-import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{TextAnnotation, Sentence, Constituent}
+import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{Sentence, TextAnnotation}
 import edu.illinois.cs.cogcomp.core.utilities.ResourceManager
 import edu.illinois.cs.cogcomp.curator.CuratorFactory
-import edu.illinois.cs.cogcomp.examples.nlp.FeatureExamples.{EdisonDataModel, CogcompGiantSensor}
-import edu.illinois.cs.cogcomp.tutorial_related.{DocumentReader, Document}
-import scala.collection.JavaConversions._
+import edu.illinois.cs.cogcomp.examples.nlp.FeatureExamples.{CogcompGiantSensor, EdisonDataModel}
 import edu.illinois.cs.cogcomp.examples.util
+import edu.illinois.cs.cogcomp.tutorial_related.{Document, DocumentReader}
+
+import scala.collection.JavaConversions._
 
 
-object myapp {
+object graphPopulationGsensors {
 
   def main(args: Array[String]): Unit = {
     val corpus: String = "20-NewsGroup"
-    val x: Constituent = null
     val config = "./saul-examples/config/caching-curator.properties"
     val rm = new ResourceManager(config)
     val annotatorService = CuratorFactory.buildCuratorClient(rm)
-    val dat: List[Document] = new DocumentReader("./saul-examples/src/test/resources/20newsToy/train").docs.toList.slice(1, 3)
+    val dat: List[Document] = new DocumentReader("./data/20newsToy/train").docs.toList.slice(1, 3)
 
     val a = util.textCollection(dat) zip dat.map(x => x.getGUID) // this generates a list of strings each member is a textual content of a document
     val taList = a.map(x => CogcompGiantSensor.processDocumentWith(annotatorService, corpus, x._2, x._1))

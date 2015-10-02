@@ -1,4 +1,4 @@
-package edu.illinois.cs.cogcomp.examples.nlp.spam
+package edu.illinois.cs.cogcomp.examples.nlp.EmailSpam
 
 import edu.illinois.cs.cogcomp.lfs.data_model.DataModel
 import edu.illinois.cs.cogcomp.lfs.data_model.DataModel._

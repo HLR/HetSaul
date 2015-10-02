@@ -1,23 +1,18 @@
-package edu.illinois.cs.cogcomp.examples.nlp.ER
-
-//import com.example.{MyConfiguration, RunnableExample}
+package edu.illinois.cs.cogcomp.examples.nlp.EntityMentionRelation
 
 import edu.illinois.cs.cogcomp.er_task.datastruct.{ConllRawSentence, ConllRawToken, ConllRelation}
-import edu.illinois.cs.cogcomp.examples.nlp.ER.Constrains._
+import edu.illinois.cs.cogcomp.examples.nlp.EntityMentionRelation.Constrains._
 import edu.illinois.cs.cogcomp.lfs.classifier.{ConstraintClassifier, Learnable}
 import edu.illinois.cs.cogcomp.lfs.constraint.ConstraintTypeConversion._
 import edu.illinois.cs.cogcomp.lfs.data_model.DataModel
 import edu.illinois.cs.cogcomp.lfs.data_model.attribute.Attribute
-
-//import example.er_task.datastruct._
-
 
 /**
  * Created by haowu on 1/27/15.
  */
 object Classifiers {
 
-  import edu.illinois.cs.cogcomp.examples.nlp.ER.ErDataModelExample._
+  import edu.illinois.cs.cogcomp.examples.nlp.EntityMentionRelation.ErDataModelExample._
 // TODO : Write the type conversion
 //  val orgFeature = List(pos,entityType)
 

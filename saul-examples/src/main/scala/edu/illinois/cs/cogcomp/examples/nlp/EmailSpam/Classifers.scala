@@ -1,6 +1,6 @@
-package edu.illinois.cs.cogcomp.examples.nlp.spam
+package edu.illinois.cs.cogcomp.examples.nlp.EmailSpam
 
-import edu.illinois.cs.cogcomp.examples.nlp.spam.spamDataModel._
+import edu.illinois.cs.cogcomp.examples.nlp.EmailSpam.spamDataModel._
 import edu.illinois.cs.cogcomp.lfs.classifier.Learnable
 import edu.illinois.cs.cogcomp.lfs.data_model.attribute.Attribute
 import edu.illinois.cs.cogcomp.tutorial_related.Document
