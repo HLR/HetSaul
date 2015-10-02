@@ -1,6 +1,6 @@
-package edu.illinois.cs.cogcomp.examples.set_cover
+package edu.illinois.cs.cogcomp.examples.setcover
 import scala.collection.mutable.{ Map => MutableMap }
-import edu.illinois.cs.cogcomp.ilp.{ City, ContainsStation, Neighborhood }
+import edu.illinois.cs.cogcomp.setcover.{ City, ContainsStation, Neighborhood }
 import edu.illinois.cs.cogcomp.lfs.classifier.ConstraintClassifier
 import edu.illinois.cs.cogcomp.lfs.data_model.DataModel
 import edu.illinois.cs.cogcomp.lfs.constraint.ConstraintTypeConversion._

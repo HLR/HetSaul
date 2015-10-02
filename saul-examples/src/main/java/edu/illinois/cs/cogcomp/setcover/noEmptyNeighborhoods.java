@@ -1,7 +1,7 @@
 // Modifying this comment will cause the next execution of LBJava to overwrite this file.
 // F1B88000000000000000D6CC1BA02C0401541DF5975EE63A0923691C6D6C6D66D57D4602EC8CEC31214CF775C242A85F5EE9C6AECA944905BDE5EAC97754AF1E865703B3978E4833274CD176BA96C11BCC0588224E55F58FDB5C88EC49F27D7FC4413D0A11D6B06DB51C16D823983DF74B6EDC9E29BFF453F1B6387C315FDB2C7A3C000000
 
-package edu.illinois.cs.cogcomp.ilp;
+package edu.illinois.cs.cogcomp.setcover;
 
 import edu.illinois.cs.cogcomp.lbjava.classify.FeatureVector;
 import edu.illinois.cs.cogcomp.lbjava.infer.*;
