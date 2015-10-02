@@ -1,7 +1,7 @@
-package edu.illinois.cs.cogcomp.examples.FeatureExamples
+package edu.illinois.cs.cogcomp.examples
 
 import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
-import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{ Constituent, Sentence, TextAnnotation }
+import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{Constituent, Sentence, TextAnnotation}
 import edu.illinois.cs.cogcomp.tutorial_related.Document
 
 import scala.collection.JavaConversions._
