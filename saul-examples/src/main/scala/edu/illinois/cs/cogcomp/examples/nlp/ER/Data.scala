@@ -1,9 +1,9 @@
 package edu.illinois.cs.cogcomp.examples.nlp.ER
 
-import edu.illinois.cs.cogcomp.example.Conll04_RelationReaderNew
-import edu.illinois.cs.cogcomp.example.er_task.datastruct.{ConllRawSentence, ConllRawToken, ConllRelation}
-import edu.illinois.cs.cogcomp.example.er_task.reader.GazeteerReader
-import edu.illinois.cs.cogcomp.examples.firstexamples.Classifiers.PersonClassifier
+import edu.illinois.cs.cogcomp.er_task.reader.Conll04_RelationReaderNew
+import edu.illinois.cs.cogcomp.er_task.datastruct.{ConllRawSentence, ConllRawToken, ConllRelation}
+import edu.illinois.cs.cogcomp.er_task.reader.GazeteerReader
+import edu.illinois.cs.cogcomp.examples.nlp.ER.Classifiers.PersonClassifier
 import edu.illinois.cs.cogcomp.lfs.data_model.DataModel
 
 import scala.collection.mutable.{Map => MutableMap}

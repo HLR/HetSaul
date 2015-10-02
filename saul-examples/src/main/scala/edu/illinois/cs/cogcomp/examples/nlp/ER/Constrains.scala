@@ -1,9 +1,9 @@
 package edu.illinois.cs.cogcomp.examples.nlp.ER
 
-import edu.illinois.cs.cogcomp.example.er_task.datastruct.ConllRelation
+import edu.illinois.cs.cogcomp.er_task.datastruct.ConllRelation
 import edu.illinois.cs.cogcomp.lfs.classifier.ConstraintClassifier
 import edu.illinois.cs.cogcomp.lfs.constraint.ConstraintTypeConversion._
-import edu.illinois.cs.cogcomp.examples.firstexamples.Classifiers._
+import edu.illinois.cs.cogcomp.examples.nlp.ER.Classifiers._
 //import example.er_task.datastruct._
 
 
