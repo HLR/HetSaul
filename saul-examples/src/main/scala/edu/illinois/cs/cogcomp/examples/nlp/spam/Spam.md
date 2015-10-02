@@ -17,8 +17,8 @@ The spam classifier simply has documents as one type of entity, so only a collec
 object spamDataModel extends DataModel{
   import edu.illinois.cs.cogcomp.lfs.data_model.DataModel._
 
-  val docs=collectionOf[Document]             //Collection of documents
-  val ENTITIES: List[Entity[_]] = ~~(docs)    // is the entity for this data model
+  val docs=node[Document]             //Collection of documents
+  val NODES: List[Entity[_]] = ~~(docs)    // is the entity for this data model
 ```
 
 ##Features  and Properties
@@ -72,8 +72,8 @@ A list of the features and relationships is defined here.
 The two features are Bag of Words and Bigram, and there is no relationship between the entities
 
 ```scala
-    val ATTRIBUTES: List[Attribute[_]] = List(wordFeature,bigramFeature) //bag of words and Bigram features
-    val ACCESS_RELATIONS: List[AccessRelation[_, _]] = Nil               //No relationship between the entities
+    val PROPERTIES: List[Attribute[_]] = List(wordFeature,bigramFeature) //bag of words and Bigram features
+    val EDGES: List[Edge[_, _]] = Nil               //No relationship between the entities
 ```
 
 
