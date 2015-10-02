@@ -1,4 +1,4 @@
-package edu.illinois.cs.cogcomp.examples.FeatureExamples
+package edu.illinois.cs.cogcomp.examples.nlp.FeatureExamples
 
 import edu.illinois.cs.cogcomp.annotation.AnnotatorService
 import edu.illinois.cs.cogcomp.core.datastructures.ViewNames

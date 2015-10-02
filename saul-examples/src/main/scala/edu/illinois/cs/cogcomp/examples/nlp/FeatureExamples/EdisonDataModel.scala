@@ -1,18 +1,16 @@
-package edu.illinois.cs.cogcomp.examples.FeatureExamples
-
-import java.io.Serializable
+package edu.illinois.cs.cogcomp.examples.nlp.FeatureExamples
 
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation._
 import edu.illinois.cs.cogcomp.core.utilities.ResourceManager
 import edu.illinois.cs.cogcomp.curator.CuratorFactory
-import edu.illinois.cs.cogcomp.examples.FeatureExamples._
+import edu.illinois.cs.cogcomp.examples.util
 import edu.illinois.cs.cogcomp.lfs.data_model.DataModel
 import edu.illinois.cs.cogcomp.lfs.data_model.DataModel._
 import edu.illinois.cs.cogcomp.lfs.data_model.edge.Edge
-import edu.illinois.cs.cogcomp.tutorial_related.{ Document, DocumentReader }
+import edu.illinois.cs.cogcomp.tutorial_related.{Document, DocumentReader}
 
 import scala.collection.JavaConversions._
-import scala.collection.mutable.{ Map => MutableMap }
+import scala.collection.mutable.{Map => MutableMap}
 
 object EdisonDataModel extends DataModel {
 
@@ -108,14 +106,14 @@ object myapp {
   def main(args: Array[String]): Unit = {
     val corpus: String = "20-NewsGroup"
     val x: Constituent = null
-    val config = "config/caching-curator.properties"
+    val config = "./saul-examples/config/caching-curator.properties"
     val rm = new ResourceManager(config)
     val annotatorService = CuratorFactory.buildCuratorClient(rm)
     //
     // val annotatorService = IllinoisPipelineFactory.buildPipeline(rm)
-    val dat: List[Document] = new DocumentReader("data/20news/train").docs.toList.slice(1, 3)
+    val dat: List[Document] = new DocumentReader("./saul-examples/src/test/resources/20newsToy/train").docs.toList.slice(1, 3)
 
-    //    val a=util.textCollection(dat) zip dat.map(x=>x.getGUID) // this generates a list of strings each member is a textual content of a document
+        val a=util.textCollection(dat) zip dat.map(x=>x.getGUID) // this generates a list of strings each member is a textual content of a document
     //    var parserViewEnt:List[Constituent]=List()
     //    var posViewEnt:List[Serializable]=List()
     //    val taList=a.map(x=> CogcompGiantSensor.processDocumentWith(annotatorService,corpus,x._2, x._1))
