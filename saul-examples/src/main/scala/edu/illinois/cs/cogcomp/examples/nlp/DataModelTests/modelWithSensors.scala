@@ -6,50 +6,47 @@ import edu.illinois.cs.cogcomp.lfs.data_model.edge.Edge
 
 import scala.collection.mutable.{Map => MutableMap}
 
-/**
- * Created by Parisa on 10/1/15.
- */
+/** Created by Parisa on 10/1/15.
+  */
 object modelWithSensors extends DataModel {
 
-    /** Node Types
-      */
-    val document = node[TextAnnotation]
+  /** Node Types
+    */
+  val document = node[TextAnnotation]
 
-    val sentence = node[Sentence]
+  val sentence = node[Sentence]
 
-    /** Property Types
-      */
+  /** Property Types
+    */
 
-    val label = discreteAttributeOf[Constituent]('label) {
-      x =>
+  val label = discreteAttributeOf[Constituent]('label) {
+    x =>
       {
         x.getLabel
       }
-    }
+  }
 
-    val DocFeatureExample = discreteAttributeOf[TextAnnotation]('doc) {
-      x: TextAnnotation =>
+  val DocFeatureExample = discreteAttributeOf[TextAnnotation]('doc) {
+    x: TextAnnotation =>
       {
         x.getNumberOfSentences.toString
       }
-    }
-    val sentenceFeatureExample = discreteAttributeOf[Sentence]('sentnce) {
-      x: Sentence =>
+  }
+  val sentenceFeatureExample = discreteAttributeOf[Sentence]('sentnce) {
+    x: Sentence =>
       {
         x.getText
       }
-    }
-
-    /** Edge Types
-      */
-
-    val DocTosen = edge[TextAnnotation, Sentence]('dTos)
-    val SenToCons = edge[TextAnnotation, Constituent]('tToc)
-
-    val NODES = List(document, sentence)
-    val PROPERTIES = List(DocFeatureExample, sentenceFeatureExample)
-    val EDGES: List[Edge[_, _]] = DocTosen
   }
 
+  /** Edge Types
+    */
 
+  val DocTosen = edge[TextAnnotation, Sentence]('dTos)
+  val SenToCons = edge[TextAnnotation, Constituent]('tToc)
+
+  val NODES = List(document, sentence)
+  val PROPERTIES = List(DocFeatureExample, sentenceFeatureExample)
+  val EDGES: List[Edge[_, _]] = DocTosen
+}
 

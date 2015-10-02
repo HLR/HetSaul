@@ -1,14 +1,13 @@
-package edu.illinois.cs.cogcomp.examples.nlp.FeatureExamples.DataModelSpecificExamples
+package edu.illinois.cs.cogcomp.examples.nlp.DataModelTests
 
-import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{Sentence, TextAnnotation}
+import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{ Sentence, TextAnnotation }
 import edu.illinois.cs.cogcomp.core.utilities.ResourceManager
 import edu.illinois.cs.cogcomp.curator.CuratorFactory
-import edu.illinois.cs.cogcomp.examples.nlp.FeatureExamples.{CogcompGiantSensor, EdisonDataModel}
+import edu.illinois.cs.cogcomp.examples.nlp.FeatureExamples.{ CogcompGiantSensor, EdisonDataModel }
 import edu.illinois.cs.cogcomp.examples.util
-import edu.illinois.cs.cogcomp.tutorial_related.{Document, DocumentReader}
+import edu.illinois.cs.cogcomp.tutorial_related.{ Document, DocumentReader }
 
 import scala.collection.JavaConversions._
-
 
 object graphPopulationGsensors {
 

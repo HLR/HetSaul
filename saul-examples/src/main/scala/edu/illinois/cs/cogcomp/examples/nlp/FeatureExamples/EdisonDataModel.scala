@@ -111,9 +111,9 @@ object myapp {
     val annotatorService = CuratorFactory.buildCuratorClient(rm)
     //
     // val annotatorService = IllinoisPipelineFactory.buildPipeline(rm)
-    val dat: List[Document] = new DocumentReader("./saul-examples/src/test/resources/20newsToy/train").docs.toList.slice(1, 3)
+    val dat: List[Document] = new DocumentReader("./data/20newsToy/train").docs.toList.slice(1, 3)
 
-        val a=util.textCollection(dat) zip dat.map(x=>x.getGUID) // this generates a list of strings each member is a textual content of a document
+    val a = util.textCollection(dat) zip dat.map(x => x.getGUID) // this generates a list of strings each member is a textual content of a document
     //    var parserViewEnt:List[Constituent]=List()
     //    var posViewEnt:List[Serializable]=List()
     //    val taList=a.map(x=> CogcompGiantSensor.processDocumentWith(annotatorService,corpus,x._2, x._1))

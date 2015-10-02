@@ -4,9 +4,8 @@ import edu.illinois.cs.cogcomp.examples.nlp.EmailSpam.spamDataModel._
 import edu.illinois.cs.cogcomp.lfs.classifier.Learnable
 import edu.illinois.cs.cogcomp.lfs.data_model.attribute.Attribute
 import edu.illinois.cs.cogcomp.tutorial_related.Document
-/**
- * Created by Parisa on 6/8/15.
- */
+/** Created by Parisa on 6/8/15.
+  */
 object Classifers {
   object spamClassifier extends Learnable[Document](spamDataModel) {
 
