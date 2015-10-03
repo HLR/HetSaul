@@ -3,6 +3,7 @@ import edu.illinois.cs.cogcomp.core.datastructures.textannotation._
 import edu.illinois.cs.cogcomp.lfs.data_model.DataModel
 import edu.illinois.cs.cogcomp.lfs.data_model.DataModel._
 import edu.illinois.cs.cogcomp.lfs.data_model.edge.Edge
+import edu.illinois.cs.cogcomp.tutorial_related.Document
 
 import scala.collection.mutable.{Map => MutableMap}
 
@@ -12,8 +13,8 @@ object modelWithSensors extends DataModel {
 
   /** Node Types
     */
+  val rawDocument = node[Document]
   val document = node[TextAnnotation]
-
   val sentence = node[Sentence]
 
   /** Property Types
@@ -26,7 +27,7 @@ object modelWithSensors extends DataModel {
       }
   }
 
-  val DocFeatureExample = discreteAttributeOf[TextAnnotation]('doc) {
+  val docFeatureExample = discreteAttributeOf[TextAnnotation]('doc) {
     x: TextAnnotation =>
       {
         x.getNumberOfSentences.toString
@@ -46,7 +47,7 @@ object modelWithSensors extends DataModel {
   val SenToCons = edge[TextAnnotation, Constituent]('tToc)
 
   val NODES = List(document, sentence)
-  val PROPERTIES = List(DocFeatureExample, sentenceFeatureExample)
+  val PROPERTIES = List(docFeatureExample, sentenceFeatureExample)
   val EDGES: List[Edge[_, _]] = DocTosen
 }
 

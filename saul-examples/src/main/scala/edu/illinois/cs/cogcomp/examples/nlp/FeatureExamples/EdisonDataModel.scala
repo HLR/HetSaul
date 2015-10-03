@@ -3,7 +3,7 @@ package edu.illinois.cs.cogcomp.examples.nlp.FeatureExamples
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation._
 import edu.illinois.cs.cogcomp.core.utilities.ResourceManager
 import edu.illinois.cs.cogcomp.curator.CuratorFactory
-import edu.illinois.cs.cogcomp.examples.util
+import edu.illinois.cs.cogcomp.examples.sensors
 import edu.illinois.cs.cogcomp.lfs.data_model.DataModel
 import edu.illinois.cs.cogcomp.lfs.data_model.DataModel._
 import edu.illinois.cs.cogcomp.lfs.data_model.edge.Edge
@@ -113,7 +113,7 @@ object myapp {
     // val annotatorService = IllinoisPipelineFactory.buildPipeline(rm)
     val dat: List[Document] = new DocumentReader("./data/20newsToy/train").docs.toList.slice(1, 3)
 
-    val a = util.textCollection(dat) zip dat.map(x => x.getGUID) // this generates a list of strings each member is a textual content of a document
+    val a = sensors.textCollection(dat) zip dat.map(x => x.getGUID) // this generates a list of strings each member is a textual content of a document
     //    var parserViewEnt:List[Constituent]=List()
     //    var posViewEnt:List[Serializable]=List()
     //    val taList=a.map(x=> CogcompGiantSensor.processDocumentWith(annotatorService,corpus,x._2, x._1))

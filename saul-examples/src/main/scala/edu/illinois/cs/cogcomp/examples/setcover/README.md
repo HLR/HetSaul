@@ -7,7 +7,7 @@ linear inequalities shown in [this web page](http://mat.gsia.cmu.edu/orclass/int
 
 
 ## Relevant files 
-The data is in: `src/test/resources/setcover.txt`
+The data is in: `./data/SetCover/example.txt`
 
 The reader and the relevant data structures are written in java: 
 ```
@@ -19,7 +19,8 @@ main/java/edu/illinois/cs/cogcomp/setcover/DumbLearner.java
 ```
 
 The main file containing the declarations of the constraints is here:
-`main/scala/edu/illinois/cs/cogcomp/examples/setcover/SetCoverSolver.scala` 
+
+`/saul-examples/src/main/scala/edu/illinois/cs/cogcomp/examples/setcover/SetCoverSolver.scala`
 
 The classes `City` and `Neighborhood` are used as the internal representation of our
 problem.  An instance of the class `City` will become the "head" object of an

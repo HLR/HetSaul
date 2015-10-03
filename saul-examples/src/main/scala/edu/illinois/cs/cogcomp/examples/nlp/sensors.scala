@@ -7,7 +7,7 @@ import edu.illinois.cs.cogcomp.tutorial_related.Document
 import scala.collection.JavaConversions._
 /** Created by Parisa on 9/10/15.
   */
-object util {
+object sensors {
 
   def textCollection(x: List[Document]): List[String] = {
     var l1: List[String] = List[String]()

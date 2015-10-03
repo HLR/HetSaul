@@ -18,9 +18,9 @@ object ErDataModelExample extends DataModel {
 
   /** Entity Definitions
     */
-  val citygazet: GazeteerReader = new GazeteerReader("./saul-examples/src/test/resources/ER/known_city.lst", "Gaz:City", true)
-  val persongazet: GazeteerReader = new GazeteerReader("./saul-examples/src/test/resources/ER/known_maleFirst.lst", "Gaz:Person", true)
-  persongazet.addFile("./saul-examples/src/test/resources/ER/known_femaleFirst.lst", true)
+  val citygazet: GazeteerReader = new GazeteerReader("./data/EntityMentionRelation/known_city.lst", "Gaz:City", true)
+  val persongazet: GazeteerReader = new GazeteerReader("./data/EntityMentionRelation/known_maleFirst.lst", "Gaz:Person", true)
+  persongazet.addFile("./data/EntityMentionRelation/known_femaleFirst.lst", true)
   val tokens = node[ConllRawToken](
     PrimaryKey = {
     t: ConllRawToken => String.valueOf(t.sentId) + ":" + String.valueOf(t.wordId)
@@ -162,7 +162,7 @@ object ErDataModelExample extends DataModel {
   //  this ++
 
   def readAll() = {
-    val reader = new Conll04_RelationReaderNew("./saul-examples/src/test/resources/ER/conll04.corp", "Token")
+    val reader = new Conll04_RelationReaderNew("./data/EntityMentionRelation/conll04.corp", "Token")
     //  val testReader = new Conll04_RelationReaderNew("./data/conll04_test.corp", "Token",reader.sentences.size()+1)
     val trainSentences = reader.sentences.toList
     val trainTokens = trainSentences.map(_.sentTokens).flatten.toList
@@ -186,7 +186,7 @@ object ErDataModelExample extends DataModel {
 
     println(s"testing with [$lower $upper]")
 
-    val reader = new Conll04_RelationReaderNew("./saul-examples/src/test/resources/ER/conll04.corp", "Token")
+    val reader = new Conll04_RelationReaderNew("./data/EntityMentionRelation/conll04.corp", "Token")
     //  val testReader = new Conll04_RelationReaderNew("./data/conll04_test.corp", "Token",reader.sentences.size()+1)
 
     val trainSentences = reader.sentences.toList.filter(s => s.sentId < lower || s.sentId > upper)
