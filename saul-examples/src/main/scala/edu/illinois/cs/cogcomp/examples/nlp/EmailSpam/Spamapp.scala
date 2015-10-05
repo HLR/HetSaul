@@ -11,7 +11,7 @@ object Spamapp {
   def main(args: Array[String]): Unit = {
     val dat: List[Document] = new DocumentReader("./data/EmailSpam/train").docs.toList
     val dat2: List[Document] = new DocumentReader("./data/EmailSpam/test").docs.toList
-    spamDataModel ++ dat
+    spamDataModel populate dat
     spamClassifier.learn(1)
     spamDataModel.testWith(dat2)
     spamClassifier.test()

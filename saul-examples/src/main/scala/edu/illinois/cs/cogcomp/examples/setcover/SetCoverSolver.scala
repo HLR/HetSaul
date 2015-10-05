@@ -80,8 +80,8 @@ object Data {
   println(containsStationConstrint.createInferenceCondition[Neighborhood](trainingData).subjectTo.evalDiscreteValue(cities))
 
   def main(args: Array[String]) {
-    trainingData ++ List(cities)
-    trainingData ++ ns
+    trainingData populate List(cities)
+    trainingData populate ns
 
     println(trainingData.getFromRelation[City, Neighborhood](cities))
     println(trainingData.getFromRelation[Neighborhood, City](ns.head))

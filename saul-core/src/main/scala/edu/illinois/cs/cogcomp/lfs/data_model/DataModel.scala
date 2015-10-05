@@ -60,7 +60,7 @@ trait DataModel {
   // TODO: remove this/or make it more understandable
   def ~~(es: Node[_]*): List[Node[_]] = es.toList
 
-  def ++[T <: AnyRef](coll: Seq[T])(implicit tag: ClassTag[T]) = {
+  def populate[T <: AnyRef](coll: Seq[T])(implicit tag: ClassTag[T]) = {
     this.getNodeWithType[T] ++ coll
   }
 
@@ -72,7 +72,7 @@ trait DataModel {
       val manyInstances = sensor(instance)
       val newSecondaryKeyMappingsList = manyInstances.map(x => edgeKeyName -> ((x: TO) => instance.hashCode().toString))
       newSecondaryKeyMappingsList.foreach(secondaryKeyMapping => toNode.secondaryKeyMap += secondaryKeyMapping)
-      this ++ manyInstances
+      this populate manyInstances
     }
   }
 
@@ -87,7 +87,7 @@ trait DataModel {
 
       val newSecondaryKeyMappingsList = matching.map(x => edgeKeyName -> ((x: TO) => instance.hashCode().toString))
       newSecondaryKeyMappingsList.foreach { secondaryKeyMapping => toNode.secondaryKeyMap += secondaryKeyMapping }
-      this ++ matching
+      this populate matching
       temp = unmatching
     }
   }

@@ -1,5 +1,6 @@
 package edu.illinois.cs.cogcomp.examples
 
+import edu.illinois.cs.cogcomp.annotation.AnnotatorService
 import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{ Constituent, Sentence, TextAnnotation }
 import edu.illinois.cs.cogcomp.tutorial_related.Document
@@ -19,6 +20,23 @@ object sensors {
     }
     l1
   }
+
+
+  def processDocumentWith(annotatorService: AnnotatorService, cid: String, did: String, text: String, services: String*): TextAnnotation = {
+
+    val ta = annotatorService.createBasicTextAnnotation(cid, did, text)
+    // annotatorService.addView(ta, ViewNames.POS)
+    println(ta.getAvailableViews)
+
+  //  annotatorService.addView(ta, ViewNames.SHALLOW_PARSE)
+
+    //val chunks2: SpanLabelView = ta.getView(ViewNames.SHALLOW_PARSE).asInstanceOf[SpanLabelView]
+    // val parse2: SpanLabelView= ta.getView(ViewNames.NER).asInstanceOf[SpanLabelView]
+    //val Pos1: TokenLabelView =ta.getView(ViewNames.POS).asInstanceOf[TokenLabelView]
+    // Add views we need
+    ta
+  }
+
   // def makeSymbol[T,U](f:T=>List[U])(x:T):(Symbol,Symbol)={
   //val u=node[T]
   // val u=f(x)

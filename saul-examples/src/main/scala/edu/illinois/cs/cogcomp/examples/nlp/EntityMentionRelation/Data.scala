@@ -168,9 +168,9 @@ object ErDataModelExample extends DataModel {
     val trainTokens = trainSentences.map(_.sentTokens).flatten.toList
     val trainRelations = reader.relations.toList
 
-    this ++ trainSentences
-    this ++ trainTokens
-    this ++ trainRelations
+    this populate trainSentences
+    this populate trainTokens
+    this populate trainRelations
     this.testWith(trainTokens)
     this.testWith(trainRelations)
     this.testWith(trainSentences)
@@ -268,9 +268,9 @@ object ErDataModelExample extends DataModel {
     //  testReader.sentences.map(_.sentTokens).flatten.toList.filter(_.sentId == 5144).foreach(println)
 
     //  this ++ reader.instances.toList
-    this ++ trainSentences
-    this ++ trainTokens
-    this ++ trainRelations
+    this populate trainSentences
+    this populate trainTokens
+    this populate trainRelations
     //    this ++ blankRelation
     println("Done adding training")
     //  this.test  ++ testReader.instances.toList
