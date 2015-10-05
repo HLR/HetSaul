@@ -3,7 +3,6 @@ package edu.illinois.cs.cogcomp.examples.nlp.DataModelTests
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{ Sentence, TextAnnotation }
 import edu.illinois.cs.cogcomp.core.utilities.ResourceManager
 import edu.illinois.cs.cogcomp.curator.CuratorFactory
-//import edu.illinois.cs.cogcomp.examples.nlp
 import edu.illinois.cs.cogcomp.examples.sensors
 import edu.illinois.cs.cogcomp.tutorial_related.{ Document, DocumentReader }
 import scala.collection.JavaConversions._

@@ -8,7 +8,7 @@ import edu.illinois.cs.cogcomp.lfs.data_model.node.Node
 import edu.illinois.cs.cogcomp.tutorial_related.Document
 
 import scala.collection.JavaConversions._
-import scala.collection.mutable.{ Map => MutableMap }
+import scala.collection.mutable.{Map => MutableMap}
 
 object spamDataModel extends DataModel {
 
@@ -16,11 +16,7 @@ object spamDataModel extends DataModel {
   val NODES: List[Node[_]] = ~~(docs)
 
   val wordFeature = discreteAttributesGeneratorOf[Document]('wordF) {
-    x: Document =>
-      {
-        val words: List[String] = x.getWords.toList
-        words
-      }
+    x: Document => x.getWords.toList
   }
 
   val bigramFeature = discreteAttributesGeneratorOf[Document]('bigram) {
@@ -36,10 +32,8 @@ object spamDataModel extends DataModel {
   }
 
   val spamLable = discreteAttributeOf[Document]('label) {
-    x: Document =>
-      {
-        x.getLabel
-      }
+    x: Document => x.getLabel
+
   }
   val PROPERTIES: List[Attribute[_]] = List(wordFeature, bigramFeature)
   val EDGES: List[Edge[_, _]] = Nil

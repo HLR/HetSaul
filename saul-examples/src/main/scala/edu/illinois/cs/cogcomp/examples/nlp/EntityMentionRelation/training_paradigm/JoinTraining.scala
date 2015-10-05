@@ -1,6 +1,6 @@
 package edu.illinois.cs.cogcomp.examples.nlp.EntityMentionRelation.training_paradigm
 
-import edu.illinois.cs.cogcomp.er_task.datastruct.{ ConllRawToken, ConllRelation }
+import edu.illinois.cs.cogcomp.EntityMentionRelation.datastruct.{ ConllRawToken, ConllRelation }
 import edu.illinois.cs.cogcomp.examples.nlp.EntityMentionRelation.Classifiers._
 import edu.illinois.cs.cogcomp.examples.nlp.EntityMentionRelation.ErDataModelExample
 import edu.illinois.cs.cogcomp.examples.nlp.EntityMentionRelation.ErDataModelExample._
@@ -25,17 +25,17 @@ object JoinTraining {
     //    JointTrain.train[ConllRelation](ErDataModelExample,  P_O_relationClassifier  :: LiveIn_P_O_relationClassifier ::Nil,it)
   }
 
-  def forgotEverything() = {
+  def forgetEverything() = {
 
-    PersonClassifier.forgot()
-    orgClassifier.forgot()
+    PersonClassifier.forget()
+    orgClassifier.forget()
     //    PersonClassifier.forgot()
-    workForClassifier.forgot()
+    workForClassifier.forget()
   }
 
   def main(args: Array[String]) {
 
-    forgotEverything()
+    forgetEverything()
     ErDataModelExample.readAll()
 
     val testRels = ErDataModelExample.getNodeWithType[ConllRelation].getTestingInstances.toList

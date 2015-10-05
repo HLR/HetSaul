@@ -1,11 +1,10 @@
-package edu.illinois.cs.cogcomp.er_task.features;
+package edu.illinois.cs.cogcomp.EntityMentionRelation.features;
 
 
-import edu.illinois.cs.cogcomp.er_task.datastruct.ConllRawSentence;
-import edu.illinois.cs.cogcomp.er_task.datastruct.ConllRawToken;
-import edu.illinois.cs.cogcomp.er_task.datastruct.ConllRelation;
-import edu.illinois.cs.cogcomp.er_task.reader.GazeteerReader;
-
+import edu.illinois.cs.cogcomp.EntityMentionRelation.datastruct.ConllRawSentence;
+import edu.illinois.cs.cogcomp.EntityMentionRelation.datastruct.ConllRawToken;
+import edu.illinois.cs.cogcomp.EntityMentionRelation.datastruct.ConllRelation;
+import edu.illinois.cs.cogcomp.EntityMentionRelation.reader.GazeteerReader;
 import java.util.HashMap;
 import java.util.Vector;
 
@@ -15,14 +14,10 @@ public class ConllEntityFeatureExtractor {
 	public GazeteerReader locGazet, perGazet;
 	
 	public ConllEntityFeatureExtractor(){
-//		gazets=new Vector<GazeteerReader>();
-	}
-	
+}
 	public void addGazets(GazeteerReader g){
 		gazets.add(g);
 	}
-	
-	
 	public HashMap<String,Double> extractFeatures(ConllRawToken c_t){
 		HashMap<String, Double> features=new HashMap<String, Double>();
 		features.put("WORD:"+c_t.phrase,1.0);
@@ -46,7 +41,6 @@ public class ConllEntityFeatureExtractor {
 		int id;
 		for(int i=0;i<window.length;i++){
 			id=window[i].wordId-index;
-//			features.put("WINDOW "+id+window[i].getPhrase(isLowerCase),1.0);
 			features.put("POS_WINDOW "+id+window[i].POS,1.0);
 		}
 		
@@ -65,25 +59,7 @@ public class ConllEntityFeatureExtractor {
 			features.put("PER:", 1.0);
 			
 		}
-		
-/*		for(int i=0;i<gazets.size();i++){
-			g=gazets.elementAt(i);
-			if(g.testMembership(ct)){
-				features.put("MATCH"+g.listName,1.0);
-			}
-		}
-		
-		for(int i=0;i<gazets.size();i++){
-			g=gazets.elementAt(i);
-			if(g.containsAny(ct)){
-				features.put("CONTAINS:"+g.listName,1.0);
-			}
-		}*/
-		
 		features.put("BIAS",1.0);
-		
-		
-//		System.out.println("extracted features= "+features.keySet());
 		return features;
 	}
 	
@@ -101,13 +77,7 @@ public class ConllEntityFeatureExtractor {
 		ConllRawToken ct2=s.sentTokens.elementAt(index2);
 		String lPrefix="L",rPrefix="R";
 
-	
-//		features.put("PHRASE:"+ct1.getPhrase(isLowerCase), 1.0);
-//		features.put("PHRASE:"+ct2.getPhrase(isLowerCase), 1.0);
-		
-//		features.put(lPrefix+"ENTITYTYPE:"+ct1.entType,1.0);
-//		features.put(rPrefix+"ENTITYTYPE:"+ct2.entType,1.0);
-		
+
 		features.put(lPrefix+"PHRASE:"+ct1.getPhrase(isLowerCase), 1.0);
 		features.put(rPrefix+"PHRASE:"+ct2.getPhrase(isLowerCase), 1.0);
 		features.put(lPrefix+"P_LEN:"+ct1.splitWords.length,1.0);
@@ -120,13 +90,11 @@ public class ConllEntityFeatureExtractor {
 		
 		for(int i=0;i<window1.length;i++){
 			id=window1[i].wordId-index1;
-//			features.put(lPrefix+"WINDOW"+id+":"+window1[i].getPhrase(isLowerCase),1.0);
 			features.put(lPrefix+"POS_WINDOW"+id+":"+window1[i].POS,1.0);
 		}
 		
 		for(int i=0;i<window2.length;i++){
 			id=window2[i].wordId-index2;
-//			features.put(rPrefix+"WINDOW"+id+":"+window2[i].getPhrase(isLowerCase),1.0);
 			features.put(rPrefix+"POS_WINDOW"+id+":"+window2[i].POS,1.0);
 		}
 		
@@ -160,19 +128,10 @@ public class ConllEntityFeatureExtractor {
 			features.put(rPrefix+"-ment",1.0);
 		}
 		
-	//	features.put("REL_ENT_LEN:"+(Math.abs(index2-index1)-1), 1.0);
 		features.put("REL_ENT_LEN:",(double)(Math.abs(index2-index1)-1));
-//		features.put("REL_LEN:"+(Math.abs(index2-index1)+ct1.splitWords.length+ct2.splitWords.length-1), 1.0);
-//		features.put("REL_LEN:",(double) (Math.abs(index2-index1)+ct1.splitWords.length+ct2.splitWords.length-1));
-		
+
 		features.put("BIAS",1.0);
-//		System.out.println("extracted features= "+features.keySet());
-/*		
-		features.put("WORD1:"+ct1.phrase,1.0);
-		features.put("WORD2:"+ct2.phrase,1.0);
-		features.put("POS1:"+ct1.POS,1.0);
-		features.put("POS2:"+ct2.POS,1.0);*/		
-		return features;
+	return features;
 	}
 	
 	public HashMap<String,Double> extractFeatures(ConllRawToken ct1,ConllRawToken ct2, ConllRawSentence s){
@@ -183,15 +142,12 @@ public class ConllEntityFeatureExtractor {
 		features.put("POS2:"+ct2.POS,1.0);		
 		return features;
 	}
-	
-	
+
 	public HashMap<String,Double> extractFeatures(ConllRelation c,ConllRawSentence s){
 		HashMap<String, Double> features=new HashMap<String, Double>();		
 		features.put("WORD1:"+s.sentTokens.elementAt(c.wordId1).phrase,1.0);
 		features.put("WORD2:"+s.sentTokens.elementAt(c.wordId2).phrase,1.0);
 		
-//		features.put("POS1:"+s.sentTokens.elementAt(c.wordId1).POS,1.0);
-//		features.put("POS2:"+s.sentTokens.elementAt(c.wordId1).POS,1.0);		
-		return features;
+	return features;
 	}
 }

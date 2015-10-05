@@ -6,7 +6,6 @@ import edu.illinois.cs.cogcomp.curator.CuratorFactory
 import edu.illinois.cs.cogcomp.examples.sensors
 import edu.illinois.cs.cogcomp.lfs.data_model.DataModel
 import edu.illinois.cs.cogcomp.lfs.data_model.DataModel._
-import edu.illinois.cs.cogcomp.lfs.data_model.edge.Edge
 import edu.illinois.cs.cogcomp.tutorial_related.{Document, DocumentReader}
 
 import scala.collection.JavaConversions._
@@ -79,7 +78,7 @@ object EdisonDataModel extends DataModel {
         x.getText
       }
   }
-  val NODES = List(document, sentence, Chunk_constituents)
+  val NODES = ~~(document, sentence, Chunk_constituents)
 
   /** Edge Types
     */
@@ -97,7 +96,7 @@ object EdisonDataModel extends DataModel {
   // val DocTosen=edge[TextAnnotation,Sentence](util.f: TextAnnotation => List[Sentence])('dTos2)// oneToMany
 
   val PROPERTIES = List(Eview, Rveiw)
-  val EDGES: List[Edge[_, _]] = DocTosen
+  val EDGES = DocTosen
 }
 
 /** We populate the data and use features in the application below. */

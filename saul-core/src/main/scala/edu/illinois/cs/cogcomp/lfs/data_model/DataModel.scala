@@ -60,6 +60,10 @@ trait DataModel {
   // TODO: remove this/or make it more understandable
   def ~~(es: Node[_]*): List[Node[_]] = es.toList
 
+  //def flatList(es: Attribute[_]*): List[Attribute[_]] = es.toList
+
+ // def flatList(es: List[Edge[_, _]]*): List[Edge[_, _]] = es.toList.flatten
+
   def populate[T <: AnyRef](coll: Seq[T])(implicit tag: ClassTag[T]) = {
     this.getNodeWithType[T] ++ coll
   }

@@ -1,6 +1,6 @@
 package edu.illinois.cs.cogcomp.examples.nlp.EntityMentionRelation
 
-import edu.illinois.cs.cogcomp.er_task.datastruct.ConllRelation
+import edu.illinois.cs.cogcomp.EntityMentionRelation.datastruct.ConllRelation
 import edu.illinois.cs.cogcomp.lfs.classifier.ConstraintClassifier
 import edu.illinois.cs.cogcomp.lfs.constraint.ConstraintTypeConversion._
 import edu.illinois.cs.cogcomp.examples.nlp.EntityMentionRelation.Classifiers._
@@ -40,7 +40,7 @@ object Constrains {
           ((PersonClassifier on x.e1) isTrue)
       }
   }
-
+//TODO these commented out codes probably should be used in new examples
   //  val Per_Org=ConstraintClassifier.constraintOf[ConllRelation]  {
   //    x:ConllRelation=>{
   //      {OrgWorkFor on x &&& PersonWorkFor(x)}

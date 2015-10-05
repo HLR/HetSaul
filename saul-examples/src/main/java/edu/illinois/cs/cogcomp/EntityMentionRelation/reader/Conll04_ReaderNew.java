@@ -1,7 +1,7 @@
-package edu.illinois.cs.cogcomp.er_task.reader;
+package edu.illinois.cs.cogcomp.EntityMentionRelation.reader;
 
 import edu.illinois.cs.cogcomp.core.io.LineIO;
-import edu.illinois.cs.cogcomp.er_task.datastruct.*;
+import edu.illinois.cs.cogcomp.EntityMentionRelation.datastruct.*;
 import edu.illinois.cs.cogcomp.lbjava.parse.Parser;
 
 import java.io.FileNotFoundException;
@@ -13,7 +13,7 @@ import java.util.Vector;
 /**
  * Created by haowu on 2/9/15.
  */
-public class Conll04_RelationReaderNew implements Parser {
+public class Conll04_ReaderNew implements Parser {
 
 
     public Vector<ConllRawToken> instances;
@@ -27,7 +27,7 @@ public class Conll04_RelationReaderNew implements Parser {
     private int currentPairId;
     private int currentSentenceId;
 
-    public Conll04_RelationReaderNew(String filename, String ty) {
+    public Conll04_ReaderNew(String filename, String ty) {
 
         instances = new Vector<ConllRawToken>();
         relations = new Vector<ConllRelation>();
@@ -121,11 +121,9 @@ public class Conll04_RelationReaderNew implements Parser {
         }
     }
 
-
     public void printData() {
         System.out.println("printing total " + sentences.size() + " sentences");
         for (int i = 0; i < sentences.size(); i++) {
-//			sentences.elementAt(i).printSentence();
             sentences.elementAt(i).printEntities();
             sentences.elementAt(i).printRelations();
         }
@@ -158,7 +156,7 @@ public class Conll04_RelationReaderNew implements Parser {
                 ConllRelation file = relations.get(currentPairId++);
                 file.e1.setRelation(file);
                 file.e2.setRelation(file);
-                return file;//Document(file, label);
+                return file;
             } else
                 return null;
         }

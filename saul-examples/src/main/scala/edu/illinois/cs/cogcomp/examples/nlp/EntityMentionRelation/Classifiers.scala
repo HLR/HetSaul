@@ -1,6 +1,6 @@
 package edu.illinois.cs.cogcomp.examples.nlp.EntityMentionRelation
 
-import edu.illinois.cs.cogcomp.er_task.datastruct.{ ConllRawSentence, ConllRawToken, ConllRelation }
+import edu.illinois.cs.cogcomp.EntityMentionRelation.datastruct.{ ConllRawSentence, ConllRawToken, ConllRelation }
 import edu.illinois.cs.cogcomp.examples.nlp.EntityMentionRelation.Constrains._
 import edu.illinois.cs.cogcomp.lfs.classifier.{ ConstraintClassifier, Learnable }
 import edu.illinois.cs.cogcomp.lfs.constraint.ConstraintTypeConversion._
@@ -18,6 +18,7 @@ object Classifiers {
   object orgClassifier extends Learnable[ConllRawToken](ErDataModelExample) {
 
     def label: Attribute[ConllRawToken] = entityType is "Org"
+    //TODO add test units with explicit feature definition and remove these lines.
     //override def feature = using(
     //word,phrase,containsSubPhraseMent,containsSubPhraseIng,
     // containsInPersonList,wordLen,containsInCityList
@@ -79,15 +80,13 @@ object Classifiers {
 
   object LivesInClassifier extends Learnable[ConllRelation](ErDataModelExample) {
     override def label: Attribute[ConllRelation] = relationType is "Live_In"
-    //    val pipeLineFeature =
     override def feature = using(
-      relFeature, relPos //,ePipe
+      relFeature, relPos
     )
   }
 
   object LivesInClassifierPipe extends Learnable[ConllRelation](ErDataModelExample) {
     override def label: Attribute[ConllRelation] = relationType is "Live_In"
-    //    val pipeLineFeature =
     override def feature = using(
       relFeature, relPos, ePipe
     )
@@ -117,6 +116,7 @@ object Classifiers {
 
     def subjectTo = Per_Org
     override val pathToHead = Some('containE2)
+    //TODO add test unit for this filter
     //    override def filter(t: ConllRawToken,h:ConllRelation): Boolean = t.wordId==h.wordId2
   }
 

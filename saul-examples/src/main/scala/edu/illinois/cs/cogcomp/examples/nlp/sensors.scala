@@ -24,24 +24,17 @@ object sensors {
 
   def processDocumentWith(annotatorService: AnnotatorService, cid: String, did: String, text: String, services: String*): TextAnnotation = {
 
-    val ta = annotatorService.createBasicTextAnnotation(cid, did, text)
-    // annotatorService.addView(ta, ViewNames.POS)
-    println(ta.getAvailableViews)
-
-  //  annotatorService.addView(ta, ViewNames.SHALLOW_PARSE)
-
-    //val chunks2: SpanLabelView = ta.getView(ViewNames.SHALLOW_PARSE).asInstanceOf[SpanLabelView]
-    // val parse2: SpanLabelView= ta.getView(ViewNames.NER).asInstanceOf[SpanLabelView]
-    //val Pos1: TokenLabelView =ta.getView(ViewNames.POS).asInstanceOf[TokenLabelView]
-    // Add views we need
-    ta
+   val ta = annotatorService.createBasicTextAnnotation(cid, did, text)
+   // annotatorService.addView(ta, ViewNames.POS)
+   println(ta.getAvailableViews)
+   //The following lines can be used to get classes of various views from TextAnnotation
+   //annotatorService.addView(ta, ViewNames.SHALLOW_PARSE)
+   //val chunks2: SpanLabelView = ta.getView(ViewNames.SHALLOW_PARSE).asInstanceOf[SpanLabelView]
+   //val parse2: SpanLabelView= ta.getView(ViewNames.NER).asInstanceOf[SpanLabelView]
+   //val Pos1: TokenLabelView =ta.getView(ViewNames.POS).asInstanceOf[TokenLabelView]
+   //Add views we need
+   ta
   }
-
-  // def makeSymbol[T,U](f:T=>List[U])(x:T):(Symbol,Symbol)={
-  //val u=node[T]
-  // val u=f(x)
-  // (Symbol(x.hashCode().toString),Symbol(u(1).hashCode().toString))
-  //}
 
   def f(x: TextAnnotation): List[Sentence] = x.sentences().toList
   def alignment(x: TextAnnotation, y: Sentence): Boolean = x.getId == y.getSentenceConstituent.getTextAnnotation.getId

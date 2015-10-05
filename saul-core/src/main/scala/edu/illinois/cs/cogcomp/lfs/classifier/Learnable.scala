@@ -178,7 +178,7 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel)(implicit tag: Cl
     classifier.doneLearning()
   }
 
-  def forgot() = this.classifier.forget()
+  def forget() = this.classifier.forget()
 
   def test(): List[(String, (Double, Double, Double))] = {
     val data = this.datamodel.getNodeWithType[T].getTestingInstances

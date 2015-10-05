@@ -1,4 +1,4 @@
-package edu.illinois.cs.cogcomp.er_task.datastruct;
+package edu.illinois.cs.cogcomp.EntityMentionRelation.datastruct;
 
 import java.util.Vector;
 

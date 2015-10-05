@@ -39,10 +39,10 @@ object L_and_I_model {
   }
 
   def forgotEverything() = {
-    PersonClassifier.forgot()
-    orgClassifier.forgot()
+    PersonClassifier.forget()
+    orgClassifier.forget()
     //    PersonClassifier.forgot()
-    workForClassifier.forgot()
+    workForClassifier.forget()
   }
 
   def main(args: Array[String]) {

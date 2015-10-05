@@ -37,10 +37,10 @@ object PipelineTraining {
   }
 
   def forgotEverything() = {
-    PersonClassifier.forgot()
-    orgClassifier.forgot()
+    PersonClassifier.forget()
+    orgClassifier.forget()
     //    PersonClassifier.forgot()
-    workForClassifierPipe.forgot()
+    workForClassifierPipe.forget()
   }
 
   def main(args: Array[String]) {

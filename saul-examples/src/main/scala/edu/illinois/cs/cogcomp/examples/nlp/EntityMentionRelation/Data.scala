@@ -1,8 +1,8 @@
 package edu.illinois.cs.cogcomp.examples.nlp.EntityMentionRelation
 
-import edu.illinois.cs.cogcomp.er_task.reader.Conll04_RelationReaderNew
-import edu.illinois.cs.cogcomp.er_task.datastruct.{ ConllRawSentence, ConllRawToken, ConllRelation }
-import edu.illinois.cs.cogcomp.er_task.reader.GazeteerReader
+import edu.illinois.cs.cogcomp.EntityMentionRelation.reader.Conll04_ReaderNew
+import edu.illinois.cs.cogcomp.EntityMentionRelation.datastruct.{ ConllRawSentence, ConllRawToken, ConllRelation }
+import edu.illinois.cs.cogcomp.EntityMentionRelation.reader.GazeteerReader
 import edu.illinois.cs.cogcomp.examples.nlp.EntityMentionRelation.Classifiers.PersonClassifier
 import edu.illinois.cs.cogcomp.lfs.data_model.DataModel
 import scala.collection.mutable.{ Map => MutableMap }
@@ -80,10 +80,6 @@ object ErDataModelExample extends DataModel {
     t: ConllRawToken => t.phrase :: Nil
   }
 
-  //  val phrase=discreteAttributesGeneratorOf[ConllRawToken]('phrase){
-  //    t:ConllRawToken=> t.phrase :: Nil
-  //  }
-
   val tokenSurface = discreteAttributeOf[ConllRawToken]('tokenSurface) {
     _.getWords(false).toList.mkString(" ")
   }
@@ -138,12 +134,7 @@ object ErDataModelExample extends DataModel {
 
       }
   }
-  //
-  //  val relativePosition = realAttributesGeneratorOf[ConllRelation]('relPositionShift){
-  //    r => Math.abs(r.wordId1 - r.wordId2).toDouble :: Nil
-  //  }
 
-  //
   /** Labelers
     */
 
@@ -162,7 +153,7 @@ object ErDataModelExample extends DataModel {
   //  this ++
 
   def readAll() = {
-    val reader = new Conll04_RelationReaderNew("./data/EntityMentionRelation/conll04.corp", "Token")
+    val reader = new Conll04_ReaderNew("./data/EntityMentionRelation/conll04.corp", "Token")
     //  val testReader = new Conll04_RelationReaderNew("./data/conll04_test.corp", "Token",reader.sentences.size()+1)
     val trainSentences = reader.sentences.toList
     val trainTokens = trainSentences.map(_.sentTokens).flatten.toList
@@ -180,13 +171,13 @@ object ErDataModelExample extends DataModel {
   def read(fold: Int) = {
 
     println(s"Running fold ${fold}")
-
+    //This numbers are the size of the folds and this piece of code is customized for the experiments.
     val lower: Int = 1103 * fold
     val upper: Int = 1103 * (fold + 1)
 
     println(s"testing with [$lower $upper]")
 
-    val reader = new Conll04_RelationReaderNew("./data/EntityMentionRelation/conll04.corp", "Token")
+    val reader = new Conll04_ReaderNew("./data/EntityMentionRelation/conll04.corp", "Token")
     //  val testReader = new Conll04_RelationReaderNew("./data/conll04_test.corp", "Token",reader.sentences.size()+1)
 
     val trainSentences = reader.sentences.toList.filter(s => s.sentId < lower || s.sentId > upper)
@@ -286,7 +277,7 @@ object Data {
 
   def main(args: Array[String]) {
 
-    val reader = new Conll04_RelationReaderNew("./data/EntityMentionRelation/conll04.corp", "Token")
+    val reader = new Conll04_ReaderNew("./data/EntityMentionRelation/conll04.corp", "Token")
     //  val testReader = new Conll04_RelationReaderNew("./data/conll04_test.corp", "Token",reader.sentences.size()+1)
 
     val trainSentences = reader.sentences.toList

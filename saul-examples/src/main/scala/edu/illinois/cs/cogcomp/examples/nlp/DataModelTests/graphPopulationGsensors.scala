@@ -11,6 +11,7 @@ import scala.collection.JavaConversions._
 object graphPopulationGsensors {
 
   def main(args: Array[String]): Unit = {
+
     val corpus: String = "20-NewsGroup"
     val config = "./saul-examples/config/caching-curator.properties"
     val rm = new ResourceManager(config)

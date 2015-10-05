@@ -3,7 +3,7 @@
 These are small tests are for checking the edges in the data model graph, and the possibility of making contextual queries.
 ###Notes:
 
-The base classes are TextAnnotation, Sentence and Constituent
+The base classes are TextAnnotation, Sentence, Constituent
 
 ###Background:
 
@@ -37,19 +37,19 @@ Populate the dataModel with a collection of TextAnnotation objects:
 ```scala
 EdisonDataModel.populate(taList)
 ```
-use a generator sensor util.f [TextAnnotation=>Sentence], apply it on the current graph to  add items of type Sentence to the graph.
+use a generator sensor sensor.f: TextAnnotation=>Sentence, apply it on the current graph to  add items of type Sentence to the graph.
 
 ```scala
 EdisonDataModel.populateWith(sensor.f, 'dTos)
 ```
-Here sensor.f is a very simple function because the TextAnnotation already has the Sentences in it and can just return those to be added to the graph. Notice, *populate* just
+Here sensor.f is a very simple function because if you see the TextAnnotation class it already has the Sentences in it and can just return those to be added to the graph. Notice, *populate* just
   adds the nodes and *populateWith* adds the nodes and uses an edge to establish the connections.
 ```scala
 def f(x: TextAnnotation): List[Sentence] = x.sentences().toList
 ```
 ####Using matching sensors
 
-There is no need that to have a generating sensor but the user can use a matching sensor [(T,U)=>Boolean]
+There is no need that to have a generating sensor but the user can use a matching sensor:(T,U)=>Boolean
 that checks whether some conditions hold to connect two types node. In other words depending on
 the availability of the sensors, sometimes it makes more sense to populate the graph using
 these kind of boolean matching sensors. The declaration is exactly the same as the generator sensors

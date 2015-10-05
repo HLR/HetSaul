@@ -1,4 +1,4 @@
-package edu.illinois.cs.cogcomp.er_task.datastruct;
+package edu.illinois.cs.cogcomp.EntityMentionRelation.datastruct;
 
 public class ConllRelation {
     public int wordId1, wordId2;

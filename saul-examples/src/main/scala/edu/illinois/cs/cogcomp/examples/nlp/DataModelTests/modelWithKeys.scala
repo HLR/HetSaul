@@ -3,7 +3,6 @@ package edu.illinois.cs.cogcomp.examples.nlp.DataModelTests
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation._
 import edu.illinois.cs.cogcomp.lfs.data_model.DataModel
 import edu.illinois.cs.cogcomp.lfs.data_model.DataModel._
-import edu.illinois.cs.cogcomp.lfs.data_model.edge.Edge
 
 import scala.collection.mutable.{Map => MutableMap}
 
@@ -32,7 +31,6 @@ object modelWithKeys extends DataModel {
   )
   /** Property Types
     */
-
   val label = discreteAttributeOf[Constituent]('label) {
     x => {
       x.getLabel
@@ -52,11 +50,10 @@ object modelWithKeys extends DataModel {
 
   /** Edge Types
     */
-
   val docTosen = edge[TextAnnotation, Sentence]('dTos)
 
-  val NODES = List(document, sentence)
+  val NODES = ~~(document, sentence)
   val PROPERTIES = List(docFeatureExample, sentenceFeatureExample)
-  val EDGES: List[Edge[_, _]] = docTosen
+  val EDGES=docTosen
 
 }

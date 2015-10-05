@@ -1,6 +1,6 @@
-package edu.illinois.cs.cogcomp.er_task.reader;
+package edu.illinois.cs.cogcomp.EntityMentionRelation.reader;
 
-import edu.illinois.cs.cogcomp.er_task.datastruct.ConllRawToken;
+import edu.illinois.cs.cogcomp.EntityMentionRelation.datastruct.ConllRawToken;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
