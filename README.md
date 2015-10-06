@@ -1,5 +1,5 @@
 # Saul Project 
-[![Build Status](https://semaphoreci.com/api/v1/projects/e8cff869-9b76-4466-8955-8a7fb834f354/556304/badge.svg)](https://semaphoreci.com/Parisa/saul)
+[![Build Status](https://semaphoreci.com/api/v1/projects/3a8f460c-fd44-42e2-bedb-70611d83a15c/559124/badge.svg)](https://semaphoreci.com/christos-c/saul)
 
 The project contains two modules. See the readme files for each module: 
 

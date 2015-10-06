@@ -128,6 +128,7 @@ object LocConstraintClassifier extends ConstraintClassifier[ConllRawToken, Conll
 The following is the usual construct in the application program:
 
 ```scala
+
 object EXAMPLEapp {
   def main(args: Array[String]): Unit = {
     val TrainData: List[Post] = new ExampleDataReader("PathToTrainData").VariableOfdata.toList

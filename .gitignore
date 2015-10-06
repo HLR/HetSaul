@@ -1,14 +1,11 @@
+/data
 .idea
-.idea_modules
 /RUNNING_PID
 /logs/
 /project/*-shim.sbt
 /project/project/
-/project/target/
-/target/
 */target/
+target/
+/models
 .projectFilesBackup
-*.lc
-*.lex
 *.class
-.DS_Store

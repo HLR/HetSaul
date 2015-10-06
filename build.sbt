@@ -12,9 +12,6 @@ lazy val commonSettings = Seq(
   ),
   libraryDependencies ++= Seq(
     "com.gurobi" % "gurobi" % "6.0",
-    "edu.illinois.cs.cogcomp" % "illinois-caching-curator" % "2.1.1",
-    "edu.illinois.cs.cogcomp" % "illinois-nlp-pipeline" % "0.1.6",
-    "edu.illinois.cs.cogcomp" % "illinois-core-utilities" % "1.2.12-SNAPSHOT",
     "org.apache.commons" % "commons-math3" % "3.0"
   )
 )
@@ -24,14 +21,20 @@ lazy val saulCore = (project in file("saul-core")).
   settings(
     name := "saul",
     libraryDependencies ++= Seq(
-      "de.bwaldvogel" % "liblinear" % "1.94"
+      "de.bwaldvogel" % "liblinear" % "1.94",
+      "net.sf.squirrel-sql.thirdparty.non-maven" % "java-cup" % "11a",
+      "org.dmilne" % "weka-wrapper" % "0.0.1"
     )
   )
 
 lazy val saulExamples = (project in file("saul-examples")).
   settings(commonSettings: _*).
   settings(
-    name := "saulexamplespackage",
+    name := "saul-examples",
     libraryDependencies ++= Seq(
+      "edu.illinois.cs.cogcomp" % "illinois-core-utilities" % "1.2.12-SNAPSHOT",
+      "edu.illinois.cs.cogcomp" % "illinois-nlp-pipeline" % "0.1.6" exclude("edu.illinois.cs.cogcomp", "LBJava"),
+      "edu.illinois.cs.cogcomp" % "illinois-caching-curator" % "2.1.1",
+      "edu.illinois.cs.cogcomp" % "edison" % "1.7.9" exclude("edu.illinois.cs.cogcomp", "LBJava")
     )
   ).dependsOn(saulCore).aggregate(saulCore)
