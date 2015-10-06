@@ -29,7 +29,7 @@ object Classifiers {
 
     def label: Attribute[ConllRawToken] = entityType is "Peop"
     override def feature = using(
-      windowWithIn[ConllRawSentence](-2, 2, ~~(
+      windowWithIn[ConllRawSentence](-2, 2, List(
         pos
       )), word, phrase, containsSubPhraseMent, containsSubPhraseIng,
       containsInPersonList, wordLen, containsInCityList
@@ -41,7 +41,7 @@ object Classifiers {
 
     def label: Attribute[ConllRawToken] = entityType is "Loc"
     override def feature = using(
-      windowWithIn[ConllRawSentence](-2, 2, ~~(
+      windowWithIn[ConllRawSentence](-2, 2, List(
         pos
       )), word, phrase, containsSubPhraseMent, containsSubPhraseIng,
       containsInPersonList, wordLen, containsInCityList
