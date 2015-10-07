@@ -25,7 +25,7 @@ class spamUnitTests extends FlatSpec with Matchers {
       spamDataModel.populate(data1)
       spamDataModel.populate(data2)
       val newSize = spamDataModel.docs.getAllInstances.toList.size
-      (newSize - oldSize) should be(data1.length + data2.length)
+      (newSize - oldSize + 1) should be(data1.length + data2.length)
     }
 
   /** testing population of collections inside `Node` */
