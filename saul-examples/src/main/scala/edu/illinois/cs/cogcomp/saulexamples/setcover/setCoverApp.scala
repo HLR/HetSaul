@@ -13,19 +13,19 @@ object setCoverApp {
 
   val containsStationConstrint = ConstraintClassifier.constraintOf[City]({
     x: City =>
-    {
-      val containStation = new ContainsStation()
-      x.getNeighborhoods _forAll {
-        n: Neighborhood =>
-        {
-          (containStation on n isTrue) ||| (
-            n.getNeighbors _exists {
-              n2: Neighborhood => containStation on n2 isTrue
+      {
+        val containStation = new ContainsStation()
+        x.getNeighborhoods _forAll {
+          n: Neighborhood =>
+            {
+              (containStation on n isTrue) ||| (
+                n.getNeighbors _exists {
+                  n2: Neighborhood => containStation on n2 isTrue
+                }
+              )
             }
-            )
         }
       }
-    }
   })
 
   println(containsStationConstrint.createInferenceCondition[Neighborhood](trainingData).subjectTo.evalDiscreteValue(cities))
@@ -39,9 +39,9 @@ object setCoverApp {
 
     cities.getNeighborhoods.foreach {
       n =>
-      {
-        println(n.getNumber + ": " + containsStationConstraint.classifier.discreteValue(n))
-      }
+        {
+          println(n.getNumber + ": " + containsStationConstraint.classifier.discreteValue(n))
+        }
     }
     println(containsStationConstraint.getCandidates(cities))
   }
