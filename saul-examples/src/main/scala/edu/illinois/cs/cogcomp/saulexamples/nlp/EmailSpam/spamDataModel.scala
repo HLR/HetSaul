@@ -31,6 +31,5 @@ object spamDataModel extends DataModel {
 
   val spamLable = discreteAttributeOf[Document]('label) {
     x: Document => x.getLabel
-
   }
 }
