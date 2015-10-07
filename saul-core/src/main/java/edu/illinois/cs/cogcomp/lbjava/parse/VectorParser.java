@@ -17,7 +17,7 @@ public class VectorParser extends LineByLine {
 		if (line == null) return null;
 
 		String[] features = line.split(", ");
-		Vector<Double> result = new Vector<Double>();
+		Vector<Double> result = new Vector<>();
 		for (int i = 0; i < 101; ++i) result.add(null);
 
 		for (int i = 0; i < features.length; ++i) {

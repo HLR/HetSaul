@@ -29,7 +29,7 @@ public class PostReader extends LineByLine
      * @param file The name of file containing names of files that contain one
      *             news group post each.
      **/
-    public ArrayList<Post> docs=new ArrayList<Post>();
+    public ArrayList<Post> docs= new ArrayList<>();
     public PostReader(String file) {
         super(file);
         String files;

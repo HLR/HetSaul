@@ -31,9 +31,9 @@ public class Conll04_ReaderNew implements Parser {
 
     public Conll04_ReaderNew(String filename, String ty) {
 
-        instances = new Vector<ConllRawToken>();
-        relations = new Vector<ConllRelation>();
-        sentences = new Vector<ConllRawSentence>();
+        instances = new Vector<>();
+        relations = new Vector<>();
+        sentences = new Vector<>();
         entityLabels = new String[0];
         relLabels = new String[0];
         type_ = ty;
@@ -55,8 +55,8 @@ public class Conll04_ReaderNew implements Parser {
         boolean sentEnd = false;
         ConllRawSentence sent = new ConllRawSentence(currSentId);
 
-        ArrayList<String> entityal = new ArrayList<String>();
-        ArrayList<String> relal = new ArrayList<String>();
+        ArrayList<String> entityal = new ArrayList<>();
+        ArrayList<String> relal = new ArrayList<>();
 
         boolean relationSeen = false;
         int sentindex = 0;

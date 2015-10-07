@@ -30,8 +30,8 @@ public class Document {
 		this.label = label;
 		BufferedReader reader = new BufferedReader(new FileReader(file));
         this.guid=file.getName();
-		words = new ArrayList<String>();
-		String line = null;
+		words = new ArrayList<>();
+		String line;
 		while ((line = reader.readLine()) != null) {
 			for (String word : line.split("\\s+"))
 				words.add(word.trim());

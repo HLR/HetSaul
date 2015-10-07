@@ -12,7 +12,8 @@ lazy val commonSettings = Seq(
   ),
   libraryDependencies ++= Seq(
     "com.gurobi" % "gurobi" % "6.0",
-    "org.apache.commons" % "commons-math3" % "3.0"
+    "org.apache.commons" % "commons-math3" % "3.0",
+    "org.scalatest" % "scalatest_2.11" % "2.2.4"
   )
 )
 
