@@ -16,3 +16,4 @@ First, run `sbt`.
     - `project saulCore` will take you inside the core package. 
     -  `project saulExamples` will take you inside the examples package.
 - Inside each project you can `compile` it, or `run` it. 
+- To fix the formatting problems, run `format`
