@@ -37,9 +37,9 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel)(implicit tag: Cl
 
     import scala.sys.process._
 
-    ("rm ./data/" + getClassNameForClassifier + ".lc") !
+    ("rm ./models/" + getClassNameForClassifier + ".lc") !
 
-    ("rm ./data/" + getClassNameForClassifier + ".lex") !
+    ("rm ./models/" + getClassNameForClassifier + ".lex") !
 
     // Else we re train one (if that is what user want)
     //new SparsePerceptron(0.1,0,3.5)
@@ -55,8 +55,8 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel)(implicit tag: Cl
         }
 
         // Looks like we have to build the lexicon
-        lcFilePath = new URL(new URL("file:"), "./data/" + getClassNameForClassifier + ".lc") //new java.net.URL("file:/home/kordjam/Downloads/mylbjtest/target/classes/Pclassifier_scala.lc")
-        lexFilePath = new URL(new URL("file:"), "./data/" + getClassNameForClassifier + ".lex") //new java.net.URL("file:/home/kordjam/Downloads/mylbjtest/target/classes/Pclassifier_scala.lex")
+        lcFilePath = new URL(new URL("file:"), "./models/" + getClassNameForClassifier + ".lc") //new java.net.URL("file:/home/kordjam/Downloads/mylbjtest/target/classes/Pclassifier_scala.lc")
+        lexFilePath = new URL(new URL("file:"), "./models/" + getClassNameForClassifier + ".lex") //new java.net.URL("file:/home/kordjam/Downloads/mylbjtest/target/classes/Pclassifier_scala.lex")
         val out1: ExceptionlessOutputStream = ExceptionlessOutputStream.openCompressedStream(lexFilePath)
         if (lexicon == null) out1.writeInt(0)
         else lexicon.write(out1)
@@ -90,8 +90,8 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel)(implicit tag: Cl
         }
 
         // Looks like we have to build the lexicon
-        lcFilePath = new URL(new URL("file:"), "./data/" + getClassNameForClassifier + ".lc") //new java.net.URL("file:/home/kordjam/Downloads/mylbjtest/target/classes/Pclassifier_scala.lc")
-        lexFilePath = new URL(new URL("file:"), "./data/" + getClassNameForClassifier + ".lex") //new java.net.URL("file:/home/kordjam/Downloads/mylbjtest/target/classes/Pclassifier_scala.lex")
+        lcFilePath = new URL(new URL("file:"), "./models/" + getClassNameForClassifier + ".lc") //new java.net.URL("file:/home/kordjam/Downloads/mylbjtest/target/classes/Pclassifier_scala.lc")
+        lexFilePath = new URL(new URL("file:"), "./models/" + getClassNameForClassifier + ".lex") //new java.net.URL("file:/home/kordjam/Downloads/mylbjtest/target/classes/Pclassifier_scala.lex")
         val out1: ExceptionlessOutputStream = ExceptionlessOutputStream.openCompressedStream(lexFilePath)
         if (lexicon == null) out1.writeInt(0)
         else lexicon.write(out1)
@@ -124,8 +124,8 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel)(implicit tag: Cl
       }
 
       // Looks like we have to build the lexicon
-      lcFilePath = new URL(new URL("file:"), "./data/" + getClassNameForClassifier + ".lc") //new java.net.URL("file:/home/kordjam/Downloads/mylbjtest/target/classes/Pclassifier_scala.lc")
-      lexFilePath = new URL(new URL("file:"), "./data/" + getClassNameForClassifier + ".lex") //new java.net.URL("file:/home/kordjam/Downloads/mylbjtest/target/classes/Pclassifier_scala.lex")
+      lcFilePath = new URL(new URL("file:"), "./models/" + getClassNameForClassifier + ".lc") //new java.net.URL("file:/home/kordjam/Downloads/mylbjtest/target/classes/Pclassifier_scala.lc")
+      lexFilePath = new URL(new URL("file:"), "./models/" + getClassNameForClassifier + ".lex") //new java.net.URL("file:/home/kordjam/Downloads/mylbjtest/target/classes/Pclassifier_scala.lex")
       val out1: ExceptionlessOutputStream = ExceptionlessOutputStream.openCompressedStream(lexFilePath)
       if (lexicon == null) out1.writeInt(0)
       else lexicon.write(out1)
