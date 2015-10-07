@@ -42,7 +42,6 @@ A concatenation of 2 consecutive words (bigrams) at a time is returned, and the 
 val bigramFeature=discreteAttributesGeneratorOf[Document]('bigram) {
 
 x:Document=>{
-
    val words = x.getWords.toList                                    //get all the words in a list
    var big:List[String]= List()                                     //create a new empty list called big
    for (i<- 0 until  words.size-1)                                  //loop through all the words in the word list
@@ -67,7 +66,7 @@ The classifier is defined using the following construct for Spam Classification.
 It is created as an object inside an object for modularity
 
 ```scala
-object Classifiers {
+object classifiers {
   object spamClassifier extends Learnable[Document](spamDataModel) {   //Object extend learnable with entity Document using the Spam Data Model
 
     def label: Attribute[Document] = spamLable is "spam"               // the label we are training for, to check if it's spam or not using binary classification
@@ -81,7 +80,7 @@ We learn for 50 iterations of the training data and then test it on 10 data from
 
 
 ```scala
-object Spamapp {
+object spamApp {
 
   def main(args: Array[String]): Unit = {
   val dat:List[Document]=new DocumentReader("data/spam/train").docs.toList      //Defining the data and specifying it's location
