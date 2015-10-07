@@ -1,7 +1,6 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.DataModelTests
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation._
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
-import edu.illinois.cs.cogcomp.saul.datamodel.DataModel._
 import edu.illinois.cs.cogcomp.saul.datamodel.edge.Edge
 import edu.illinois.cs.cogcomp.saulexamples.data.Document
 
@@ -46,8 +45,5 @@ object modelWithSensors extends DataModel {
   val docTosen = edge[TextAnnotation, Sentence]('dTos)
   val SenToCons = edge[TextAnnotation, Constituent]('tToc)
 
-  val NODES = List(document, sentence)
-  val PROPERTIES = List(docFeatureExample, sentenceFeatureExample)
-  val EDGES: List[Edge[_, _]] = docTosen
 }
 

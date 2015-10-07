@@ -49,7 +49,7 @@ object Classifiers {
 
   }
 
-  val ePipe = DataModel.discreteAttributesGeneratorOf[ConllRelation]('e1pipe) {
+  val ePipe = discreteAttributesGeneratorOf[ConllRelation]('e1pipe) {
     rel =>
       {
         "e1-org: " + orgClassifier.discreteValue(rel.e1) ::
