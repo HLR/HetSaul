@@ -62,17 +62,6 @@ val spamLable=discreteAttributeOf[Document]('label){
 }
 ```
 
-##Relationships and Feature List
-
-A list of the features and relationships is defined here.
-The two features are Bag of Words and Bigram, and there is no relationship between the entities
-
-```scala
-    val PROPERTIES: List[Attribute[_]] = List(wordFeature,bigramFeature) //bag of words and Bigram features
-    val EDGES: List[Edge[_, _]] = Nil               //No relationship between the entities
-```
-
-
 ##Classifier
 The classifier is defined using the following construct for Spam Classification.
 It is created as an object inside an object for modularity
