@@ -4,7 +4,6 @@ import edu.illinois.cs.cogcomp.core.datastructures.textannotation._
 import edu.illinois.cs.cogcomp.core.utilities.ResourceManager
 import edu.illinois.cs.cogcomp.curator.CuratorFactory
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
-import edu.illinois.cs.cogcomp.saul.datamodel.DataModel._
 import edu.illinois.cs.cogcomp.saulexamples.data.{ Document, DocumentReader }
 import edu.illinois.cs.cogcomp.saulexamples.nlp.sensors
 
@@ -78,7 +77,6 @@ object EdisonDataModel extends DataModel {
         x.getText
       }
   }
-  val NODES = ~~(document, sentence, Chunk_constituents)
 
   /** Edge Types
     */
@@ -94,9 +92,6 @@ object EdisonDataModel extends DataModel {
   // val ConstToConst=edge[Constituent,Constituent]('cRc)(PID===PID) //TODO set connections
 
   // val DocTosen=edge[TextAnnotation,Sentence](util.f: TextAnnotation => List[Sentence])('dTos2)// oneToMany
-
-  val PROPERTIES = List(Eview, Rveiw)
-  val EDGES = DocTosen
 }
 
 /** We populate the data and use features in the application below. */

@@ -6,15 +6,15 @@ import edu.illinois.cs.cogcomp.saul.datamodel.attribute.{ Attribute, EvaluatedAt
 import edu.illinois.cs.cogcomp.saul.datamodel.node.Node
 import edu.illinois.cs.cogcomp.saul.datamodel.edge.Edge
 
-import scala.collection.mutable.{ Map => MutableMap }
+import scala.collection.mutable.{ Map => MutableMap, ListBuffer }
 import scala.reflect.ClassTag
 
 trait DataModel {
   val PID = 'PID
 
-  val NODES: List[Node[_]]
-  val PROPERTIES: List[Attribute[_]]
-  val EDGES: List[Edge[_, _]]
+  final val NODES = new ListBuffer[Node[_]]
+  final val PROPERTIES = new ListBuffer[Attribute[_]]
+  final val EDGES = new ListBuffer[Edge[_, _]]
 
   // TODO: comment this function
   def getType[T <: AnyRef](implicit tag: ClassTag[T]): ClassTag[T] = tag
@@ -37,17 +37,17 @@ trait DataModel {
   }
 
   // TODO: keep one of the following three functions
-  def getAllAttributesOf[T <: AnyRef](implicit tag: ClassTag[T]): List[Attribute[T]] = {
+  def getAllAttributesOf[T <: AnyRef](implicit tag: ClassTag[T]): Seq[Attribute[T]] = {
     // TODO: implement this
     getAllFeatures[T]
   }
 
-  def getAllFeatures[T](implicit tag: ClassTag[T]): List[Attribute[T]] = {
+  def getAllFeatures[T](implicit tag: ClassTag[T]): Seq[Attribute[T]] = {
     this.PROPERTIES.filter(_.tag.equals(tag)).map(_.asInstanceOf[Attribute[T]])
   }
 
   // TODO: create lbj feature classifier.
-  def getFeaturesOf[T](implicit tag: ClassTag[T]): List[Attribute[T]] = {
+  def getFeaturesOf[T](implicit tag: ClassTag[T]): Seq[Attribute[T]] = {
     this.getAllFeatures[T]
   }
 
@@ -119,7 +119,7 @@ trait DataModel {
   }
 
   // TODO: comment this function
-  def getFromRelation[FROM <: AnyRef, NEED <: AnyRef](t: FROM)(implicit tag: ClassTag[FROM], headTag: ClassTag[NEED]): List[NEED] = {
+  def getFromRelation[FROM <: AnyRef, NEED <: AnyRef](t: FROM)(implicit tag: ClassTag[FROM], headTag: ClassTag[NEED]): Seq[NEED] = {
     val dm = this
     if (tag.equals(headTag)) {
       List(t.asInstanceOf[NEED])
@@ -168,7 +168,7 @@ trait DataModel {
 
   // TODO: rename this function with a better name
   def getRelatedFieldsBetween[T, U](implicit tag: ClassTag[T], headTag: ClassTag[U]): List[Symbol] = {
-    this.EDGES.filter(r => r.tagT.equals(tag) && r.tagU.equals(headTag)) match {
+    this.EDGES.filter(r => r.tagT.equals(tag) && r.tagU.equals(headTag)).toList match {
       case x :: xs => x.matchesList.map(_._1)
       case Nil => Nil
     }
@@ -185,19 +185,6 @@ trait DataModel {
     getNodeWithType[T].addToTest(coll)
   }
 
-  /** edges */
-  def edge[ONE <: AnyRef, MANY <: AnyRef](name: Symbol)(implicit ptag: ClassTag[ONE], ctag: ClassTag[MANY]): List[Edge[_, _]] = {
-    val ss = List(('PID, name)) //when the edge is created the list of matching symbols for the identifiers also is created.
-    //now this should be added to the definition of the entities that are related by this edge.
-    val ptoc = new Edge[ONE, MANY](ss.toList, Some(name))
-    val reverted = ss.toList.map(v => (v._2, v._1)).toList
-    val ctop = new Edge[MANY, ONE](reverted, Some(name))
-    ptoc :: ctop :: Nil
-  }
-}
-
-object DataModel {
-
   /** node definitions */
   def node[T <: AnyRef](implicit tag: ClassTag[T]): Node[T] = {
     node[T](PrimaryKey = { t: T => String.valueOf(t.hashCode()) })
@@ -209,12 +196,28 @@ object DataModel {
 
   def node[T <: AnyRef](PrimaryKey: T => String, SecondaryKeyMap: MutableMap[Symbol, T => String])(implicit tag: ClassTag[T]): Node[T] = {
     val combinedSecondaryKeyMap = SecondaryKeyMap + ('PID -> ((t: T) => PrimaryKey(t)))
-    new Node[T](PrimaryKey, combinedSecondaryKeyMap, tag, null)
+    val n = new Node[T](PrimaryKey, combinedSecondaryKeyMap, tag, null)
+    NODES += n
+    n
   }
 
   def node[T <: AnyRef](PrimaryKey: T => String, SecondaryKeyMap: MutableMap[Symbol, T => String], Address: T => AnyRef)(implicit tag: ClassTag[T]): Node[T] = {
     val combinedSecondaryKeyMap = SecondaryKeyMap + ('PID -> ((t: T) => PrimaryKey(t)))
-    new Node[T](PrimaryKey, combinedSecondaryKeyMap, tag, Address)
+    val n = new Node[T](PrimaryKey, combinedSecondaryKeyMap, tag, Address)
+    NODES += n
+    n
+  }
+
+  /** edges */
+  def edge[ONE <: AnyRef, MANY <: AnyRef](name: Symbol)(implicit ptag: ClassTag[ONE], ctag: ClassTag[MANY]): List[Edge[_, _]] = {
+    val ss = List(('PID, name)) //when the edge is created the list of matching symbols for the identifiers also is created.
+    //now this should be added to the definition of the entities that are related by this edge.
+    val ptoc = new Edge[ONE, MANY](ss.toList, Some(name))
+    val reverted = ss.toList.map(v => (v._2, v._1)).toList
+    val ctop = new Edge[MANY, ONE](reverted, Some(name))
+    EDGES += ptoc
+    EDGES += ctop
+    ptoc :: ctop :: Nil
   }
 
   /** attribute definitions */
@@ -229,59 +232,81 @@ object DataModel {
 
   /** Discrete feature without range, same as discrete SpamLabel in lbjava */
   def discreteAttributeOf[T <: AnyRef](name: Symbol)(f: T => String)(implicit tag: ClassTag[T]): DiscreteAttribute[T] = {
-    new DiscreteAttribute[T](name.toString, f, None)
+    val a = new DiscreteAttribute[T](name.toString, f, None)
+    PROPERTIES += a
+    a
   }
 
   /** Discrete feature with range, same as discrete{"spam", "ham"} SpamLabel in lbjava */
   def rangedDiscreteAttributeOf[T <: AnyRef](name: Symbol)(range: String*)(f: T => String)(implicit tag: ClassTag[T]): DiscreteAttribute[T] = {
     val r = range.toList
-    new DiscreteAttribute[T](name.toString, f, Some(r))
+    val a = new DiscreteAttribute[T](name.toString, f, Some(r))
+    PROPERTIES += a
+    a
   }
 
   /** Discrete array feature with range, same as discrete[] SpamLabel in lbjava */
   def discreteAttributesArrayOf[T <: AnyRef](name: Symbol)(f: T => List[String])(implicit tag: ClassTag[T]): DiscreteArrayAttribute[T] = {
-    new DiscreteArrayAttribute[T](name.toString, f, None)
+    val a = new DiscreteArrayAttribute[T](name.toString, f, None)
+    PROPERTIES += a
+    a
   }
 
   /** Discrete sensor feature with range, same as discrete% name in lbjava */
   def discreteAttributesGeneratorOf[T <: AnyRef](name: Symbol)(f: T => List[String])(implicit tag: ClassTag[T]): DiscreteGenAttribute[T] = {
-    new DiscreteGenAttribute[T](name.toString, f)
+    val a = new DiscreteGenAttribute[T](name.toString, f)
+    PROPERTIES += a
+    a
   }
 
   /** Discrete sensor feature with range, same as real name in lbjava */
   def realAttributeOf[T <: AnyRef](name: Symbol)(f: T => Double)(implicit tag: ClassTag[T]): RealAttribute[T] = {
-    new RealAttribute[T](name.toString, f)
+    val a = new RealAttribute[T](name.toString, f)
+    PROPERTIES += a
+    a
   }
 
   /** Discrete sensor feature with range, same as real[] name in lbjava */
   def realAttributesArrayOf[T <: AnyRef](name: Symbol)(f: T => List[Double])(implicit tag: ClassTag[T]): RealArrayAttribute[T] = {
-    new RealArrayAttribute[T](name.toString, f)
+    val a = new RealArrayAttribute[T](name.toString, f)
+    PROPERTIES += a
+    a
   }
 
   /** Discrete sensor feature with range, same as real% name in lbjava */
   def realAttributesGeneratorOf[T <: AnyRef](name: Symbol)(f: T => List[Double])(implicit tag: ClassTag[T]): RealGenAttribute[T] = {
-    new RealGenAttribute[T](name.toString, f)
+    val a = new RealGenAttribute[T](name.toString, f)
+    PROPERTIES += a
+    a
   }
 
   /** Discrete sensor feature with range, same as real name in lbjava */
   def intAttributeOf[T <: AnyRef](name: Symbol)(f: T => Int)(implicit tag: ClassTag[T]): RealAttribute[T] = {
     val newf: T => Double = { t => f(t).toDouble }
-    new RealAttribute[T](name.toString, newf)
+    val a = new RealAttribute[T](name.toString, newf)
+    PROPERTIES += a
+    a
   }
 
   /** Discrete sensor feature with range, same as real[] name in lbjava */
   def intAttributesArrayOf[T <: AnyRef](name: Symbol)(f: T => List[Int])(implicit tag: ClassTag[T]): RealArrayAttribute[T] = {
     val newf: T => List[Double] = { t => f(t).map(_.toDouble) }
-    new RealArrayAttribute[T](name.toString, newf)
+    val a = new RealArrayAttribute[T](name.toString, newf)
+    PROPERTIES += a
+    a
   }
 
   /** Discrete sensor feature with range, same as real% name in lbjava */
   def intAttributesGeneratorOf[T <: AnyRef](name: Symbol)(f: T => List[Int])(implicit tag: ClassTag[T]): RealGenAttribute[T] = {
     val newf: T => List[Double] = { t => f(t).map(_.toDouble) }
-    new RealGenAttribute[T](name.toString, newf)
+    val a = new RealGenAttribute[T](name.toString, newf)
+    PROPERTIES += a
+    a
   }
 
   def booleanAttributeOf[T <: AnyRef](name: Symbol)(f: T => Boolean)(implicit tag: ClassTag[T]): BooleanAttribute[T] = {
-    new BooleanAttribute[T](name.toString, f)
+    val a = new BooleanAttribute[T](name.toString, f)
+    PROPERTIES += a
+    a
   }
 }

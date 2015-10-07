@@ -13,8 +13,6 @@ import scala.util.Random
 
 object ErDataModelExample extends DataModel {
 
-  import edu.illinois.cs.cogcomp.saul.datamodel.DataModel._
-
   /** Entity Definitions
     */
   val citygazet: GazeteerReader = new GazeteerReader("./data/EntityMentionRelation/known_city.lst", "Gaz:City", true)
@@ -46,8 +44,6 @@ object ErDataModelExample extends DataModel {
     )
   )
 
-  val NODES = ~~(tokens, sentences, pairedRelations)
-
   // val RelationToToken = oneToManyRelationOf[ConllRelation,ConllRawToken]('contain)(('sid,'sid))
 
   /** Access method definitions
@@ -58,8 +54,6 @@ object ErDataModelExample extends DataModel {
   val RelationToOrg = edge[ConllRawToken, ConllRelation]('e2id)
   //('sid === 'sid, 'e2id === 'wordid)//TODO check the runtime problem with the new edge implementation
   val tokenContainsInSentence = edge[ConllRawSentence, ConllRawToken]('sid) //('sid === 'sid)//TODO check the runtime problem with the new edge implementation
-
-  val EDGES = List(RelationToPer, RelationToOrg, tokenContainsInSentence) flatten
 
   /** Attributes
     */
@@ -146,8 +140,6 @@ object ErDataModelExample extends DataModel {
       //      println(r.relType)
       r.relType
   }
-
-  val PROPERTIES = List(word, pos, containsInPersonList, relFeature, relPos)
 
   //  this ++
 

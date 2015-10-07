@@ -74,7 +74,7 @@ abstract class ConstraintClassifier[T <: AnyRef, HEAD <: AnyRef](val dm: DataMod
     }
   }
 
-  def getCandidates(head: HEAD): List[T] = {
+  def getCandidates(head: HEAD): Seq[T] = {
 
     if (tType.equals(headType)) {
       head.asInstanceOf[T] :: Nil
@@ -145,7 +145,7 @@ abstract class ConstraintClassifier[T <: AnyRef, HEAD <: AnyRef](val dm: DataMod
 
   def cName: String = this.getClass.getName
   // TODO: Pick a better name
-  def lbjClassifier = DataModel.rangedDiscreteAttributeOf[T](Symbol(cName))("*", "*") {
+  def lbjClassifier = dm.rangedDiscreteAttributeOf[T](Symbol(cName))("*", "*") {
     x: T => buildWithConstrain(subjectTo.createInferenceCondition[T](this.dm).convertToType[T], onClassifier)(x)
   }
 

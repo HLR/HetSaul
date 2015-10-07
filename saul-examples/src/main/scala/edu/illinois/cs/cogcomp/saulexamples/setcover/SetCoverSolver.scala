@@ -2,7 +2,6 @@ package edu.illinois.cs.cogcomp.saulexamples.setcover
 import edu.illinois.cs.cogcomp.saul.classifier.ConstraintClassifier
 import edu.illinois.cs.cogcomp.saul.constraint.ConstraintTypeConversion._
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
-import edu.illinois.cs.cogcomp.saul.datamodel.DataModel._
 
 import scala.collection.JavaConversions._
 import scala.collection.mutable.{ Map => MutableMap }
@@ -26,9 +25,6 @@ class SetCoverSolverDataModel extends DataModel {
   )
 
   val cityContainsNeighborhoods = edge[City, Neighborhood]('cityID)
-  val NODES = ~~(cities, neighborhoods)
-  val EDGES = cityContainsNeighborhoods
-  val PROPERTIES = Nil
 }
 
 object ContainsStationConstraint extends ConstraintClassifier[Neighborhood, City](Data.trainingData, new ContainsStation()) {
