@@ -1,12 +1,13 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.EmailSpam
 
 import edu.illinois.cs.cogcomp.saulexamples.data.{ DocumentReader, Document }
-import edu.illinois.cs.cogcomp.saulexamples.nlp.EmailSpam.Classifers.spamClassifier
+import edu.illinois.cs.cogcomp.saulexamples.nlp.EmailSpam.classifers.spamClassifier
 
 import scala.collection.JavaConversions._
+
 /** Created by Parisa on 6/9/15.
   */
-object Spamapp {
+object spamApp {
 
   def main(args: Array[String]): Unit = {
     val dat: List[Document] = new DocumentReader("./data/EmailSpam/train").docs.toList

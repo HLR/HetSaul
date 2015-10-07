@@ -65,18 +65,20 @@ trait DataModel {
   // def flatList(es: List[Edge[_, _]]*): List[Edge[_, _]] = es.toList.flatten
 
   def populate[T <: AnyRef](coll: Seq[T])(implicit tag: ClassTag[T]) = {
-    this.getNodeWithType[T] ++ coll
+    this.getNodeWithType[T] populate coll
   }
 
   def populateWith[FROM <: AnyRef, TO <: AnyRef](sensor: FROM => List[TO], edgeKeyName: Symbol)(implicit tagF: ClassTag[FROM], tagT: ClassTag[TO]) = {
     //TODO send a sensor with FROM => TO and check whether the TO is a List or not in here.
+
     val toNode = this.getNodeWithType[TO]
     val fromInstances = this.getInstancesWithType[FROM]
-    fromInstances.foreach { instance =>
-      val manyInstances = sensor(instance)
-      val newSecondaryKeyMappingsList = manyInstances.map(x => edgeKeyName -> ((x: TO) => instance.hashCode().toString))
-      newSecondaryKeyMappingsList.foreach(secondaryKeyMapping => toNode.secondaryKeyMap += secondaryKeyMapping)
-      this populate manyInstances
+    fromInstances.foreach {
+      fromInstance =>
+        val toInstance_s = sensor(fromInstance)
+        val newSecondaryKeyMappingsList = toInstance_s.map(x => edgeKeyName -> ((x: TO) => fromInstance.hashCode().toString))
+        newSecondaryKeyMappingsList.foreach(secondaryKeyMapping => toNode.secondaryKeyMap += secondaryKeyMapping)
+        this.populate(toInstance_s)
     }
   }
 

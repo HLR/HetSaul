@@ -5,17 +5,17 @@ import edu.illinois.cs.cogcomp.saul.constraint.ConstraintTypeConversion._
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
 import edu.illinois.cs.cogcomp.saul.datamodel.attribute.Attribute
 import edu.illinois.cs.cogcomp.saulexamples.EntityMentionRelation.datastruct.{ ConllRawSentence, ConllRawToken, ConllRelation }
-import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.Constrains._
+import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.constrains._
 
 /** Created by haowu on 1/27/15.
   */
-object Classifiers {
+object classifiers {
 
-  import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.ErDataModelExample._
+  import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.entityRelationDataModel._
   // TODO : Write the type conversion
   //  val orgFeature = List(pos,entityType)
 
-  object orgClassifier extends Learnable[ConllRawToken](ErDataModelExample) {
+  object orgClassifier extends Learnable[ConllRawToken](entityRelationDataModel) {
 
     def label: Attribute[ConllRawToken] = entityType is "Org"
     //TODO add test units with explicit feature definition and remove these lines.
@@ -25,7 +25,7 @@ object Classifiers {
     // )
   }
 
-  object PersonClassifier extends Learnable[ConllRawToken](ErDataModelExample) {
+  object PersonClassifier extends Learnable[ConllRawToken](entityRelationDataModel) {
 
     def label: Attribute[ConllRawToken] = entityType is "Peop"
     override def feature = using(
@@ -37,7 +37,7 @@ object Classifiers {
 
   }
 
-  object LocClassifier extends Learnable[ConllRawToken](ErDataModelExample) {
+  object LocClassifier extends Learnable[ConllRawToken](entityRelationDataModel) {
 
     def label: Attribute[ConllRawToken] = entityType is "Loc"
     override def feature = using(
@@ -62,7 +62,7 @@ object Classifiers {
       }
   }
 
-  object workForClassifier extends Learnable[ConllRelation](ErDataModelExample) {
+  object workForClassifier extends Learnable[ConllRelation](entityRelationDataModel) {
     override def label: Attribute[ConllRelation] = relationType is "Work_For"
 
     override def feature = using(
@@ -70,7 +70,7 @@ object Classifiers {
     )
   }
 
-  object workForClassifierPipe extends Learnable[ConllRelation](ErDataModelExample) {
+  object workForClassifierPipe extends Learnable[ConllRelation](entityRelationDataModel) {
     override def label: Attribute[ConllRelation] = relationType is "Work_For"
 
     override def feature = using(
@@ -78,41 +78,41 @@ object Classifiers {
     )
   }
 
-  object LivesInClassifier extends Learnable[ConllRelation](ErDataModelExample) {
+  object LivesInClassifier extends Learnable[ConllRelation](entityRelationDataModel) {
     override def label: Attribute[ConllRelation] = relationType is "Live_In"
     override def feature = using(
       relFeature, relPos
     )
   }
 
-  object LivesInClassifierPipe extends Learnable[ConllRelation](ErDataModelExample) {
+  object LivesInClassifierPipe extends Learnable[ConllRelation](entityRelationDataModel) {
     override def label: Attribute[ConllRelation] = relationType is "Live_In"
     override def feature = using(
       relFeature, relPos, ePipe
     )
   }
 
-  object org_baseClassifier extends Learnable[ConllRelation](ErDataModelExample) {
+  object org_baseClassifier extends Learnable[ConllRelation](entityRelationDataModel) {
     override def label: Attribute[ConllRelation] = relationType is "OrgBased_In"
   }
-  object locatedInClassifier extends Learnable[ConllRelation](ErDataModelExample) {
+  object locatedInClassifier extends Learnable[ConllRelation](entityRelationDataModel) {
     override def label: Attribute[ConllRelation] = relationType is "Located_In"
   }
 
-  object orgConstraintClassifier extends ConstraintClassifier[ConllRawToken, ConllRelation](ErDataModelExample, orgClassifier) {
+  object orgConstraintClassifier extends ConstraintClassifier[ConllRawToken, ConllRelation](entityRelationDataModel, orgClassifier) {
     def subjectTo = Per_Org
     override val pathToHead = Some('containE2)
     override def filter(t: ConllRawToken, h: ConllRelation): Boolean = t.wordId == h.wordId1
   }
 
-  object PerConstraintClassifier extends ConstraintClassifier[ConllRawToken, ConllRelation](ErDataModelExample, PersonClassifier) {
+  object PerConstraintClassifier extends ConstraintClassifier[ConllRawToken, ConllRelation](entityRelationDataModel, PersonClassifier) {
 
     def subjectTo = Per_Org
     override val pathToHead = Some('containE1)
     override def filter(t: ConllRawToken, h: ConllRelation): Boolean = t.wordId == h.wordId2
   }
 
-  object LocConstraintClassifier extends ConstraintClassifier[ConllRawToken, ConllRelation](ErDataModelExample, LocClassifier) {
+  object LocConstraintClassifier extends ConstraintClassifier[ConllRawToken, ConllRelation](entityRelationDataModel, LocClassifier) {
 
     def subjectTo = Per_Org
     override val pathToHead = Some('containE2)
@@ -120,11 +120,11 @@ object Classifiers {
     //    override def filter(t: ConllRawToken,h:ConllRelation): Boolean = t.wordId==h.wordId2
   }
 
-  object P_O_relationClassifier extends ConstraintClassifier[ConllRelation, ConllRelation](ErDataModelExample, workForClassifier) {
+  object P_O_relationClassifier extends ConstraintClassifier[ConllRelation, ConllRelation](entityRelationDataModel, workForClassifier) {
     def subjectTo = Per_Org
   }
 
-  object LiveIn_P_O_relationClassifier extends ConstraintClassifier[ConllRelation, ConllRelation](ErDataModelExample, LivesInClassifier) {
+  object LiveIn_P_O_relationClassifier extends ConstraintClassifier[ConllRelation, ConllRelation](entityRelationDataModel, LivesInClassifier) {
     def subjectTo = Per_Org
   }
 }

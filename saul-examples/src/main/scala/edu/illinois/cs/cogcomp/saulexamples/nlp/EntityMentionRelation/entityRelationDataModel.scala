@@ -2,16 +2,13 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation
 
 import edu.illinois.cs.cogcomp.saulexamples.EntityMentionRelation.datastruct.{ ConllRawSentence, ConllRawToken, ConllRelation }
 import edu.illinois.cs.cogcomp.saulexamples.EntityMentionRelation.reader.{ GazeteerReader, Conll04_ReaderNew }
-import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.Classifiers.PersonClassifier
+import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.classifiers.PersonClassifier
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
 import scala.collection.mutable.{ Map => MutableMap }
 import scala.collection.JavaConversions._
 import scala.util.Random
 
-/** Created by haowu on 1/27/15.
-  */
-
-object ErDataModelExample extends DataModel {
+object entityRelationDataModel extends DataModel {
 
   /** Entity Definitions
     */
@@ -261,78 +258,5 @@ object ErDataModelExample extends DataModel {
     this testWith testRelations
     //    this testWith blankRelationTest
 
-  }
-}
-
-object Data {
-
-  def main(args: Array[String]) {
-
-    val reader = new Conll04_ReaderNew("./data/EntityMentionRelation/conll04.corp", "Token")
-    //  val testReader = new Conll04_RelationReaderNew("./data/conll04_test.corp", "Token",reader.sentences.size()+1)
-
-    val trainSentences = reader.sentences.toList
-    val trainTokens = trainSentences.flatMap(_.sentTokens)
-    val trainRelations = reader.relations.toList
-
-    //    val sentence = ErDataModelExample.reader.sentences
-
-    //    sentence.foreach(s => println(s.sentId))
-    //    sentence.sentTokens.foreach(println)
-
-    //    val t = sentence.sentTokens.get(2)
-
-    //    println(t)
-    //    println("====")
-    //    ErDataModelExample.tokens.getWithWindow(t,-4,3,'sid) foreach println
-    //    println("====")
-    //    ErDataModelExample.tokens.getWithWindow(t,-3,3) foreach println
-    //    println("====")
-    //    ErDataModelExample.tokens.nextOf(t,List('sid)) foreach println
-    //    println("====")
-    //    ErDataModelExample.tokens.pervOf(t,List('sid)) foreach println
-    //
-    //    println("====")
-    //    println(ErDataModelExample.tokens.getWithRelativePosition(t,-3,List('sid)))
-    //    println(ErDataModelExample.tokens.getWithRelativePosition(t,-2,List('sid)))
-    //    println(ErDataModelExample.tokens.getWithRelativePosition(t,-1,List('sid)))
-    //    println(ErDataModelExample.tokens.getWithRelativePosition(t,0,List('sid)))
-    //    println(ErDataModelExample.tokens.getWithRelativePosition(t,1,List('sid)))
-    //    println(ErDataModelExample.tokens.getWithRelativePosition(t,2,List('sid)))
-    //    println(ErDataModelExample.tokens.getWithRelativePosition(t,3,List('sid)))
-    //    println(ErDataModelExample.tokens.getWithRelativePosition(t,4,List('sid)))
-
-    //    val arr = ErDataModelExample.reader.relations
-    //
-    //    arr.foreach(
-    //    {
-    //      x => println(x.e1.sentId + "===" +x.sentId)
-    //    }
-    //    )
-    //
-    //    println("-=-=-")
-
-    //    val rarr = ErDataModelExample.testReader.relations
-    //
-    //    rarr.foreach(
-    //    {
-    //      x => println(x.e1.sentId + "===" +x.sentId)
-    //    }
-    //    )
-
-    //    (ErDataModelExample.pairedRelations.getPIWittSI('sid,"0") map {
-    //        p => ErDataModelExample.pairedRelations.getWithPI(p)
-    //      }).foreach(println)
-
-    //    sentence.printSentence()
-
-    PersonClassifier.learn(10)
-    //    PersonClassifier.test(testData)
-    //    orgClassifier.learn(10)
-    //    orgClassifier.test(testData)
-    //    LocClassifier.learn(10)
-    //    LocClassifier.test(testData)
-    //    workForClassifier.learn(10)
-    //    workForClassifier.test(testData)
   }
 }
