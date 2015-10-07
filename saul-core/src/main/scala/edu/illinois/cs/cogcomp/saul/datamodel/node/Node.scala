@@ -62,7 +62,7 @@ class Node[T <: AnyRef](
   // TODO: add doocumentation to this method
   def filterNode(attribute: DiscreteAttribute[T], value: String): Node[T] = {
     val node = new Node[T](primaryKeyFunction, this.secondaryKeyMap, tag, address)
-    node ++ collections.values.filter {
+    node populate collections.values.filter {
       attribute.mapping(_) == value
     }.toSeq
     node
@@ -100,7 +100,7 @@ class Node[T <: AnyRef](
 
   /** Operator for adding a sequence of T into my table.
     */
-  def ++(ts: Seq[T]) = {
+  def populate(ts: Seq[T]) = {
     ts foreach {
       t =>
         {
