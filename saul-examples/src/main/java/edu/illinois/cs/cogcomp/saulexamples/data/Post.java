@@ -86,7 +86,7 @@ public class Post
                 : "File set to Post constructor is missing expected headers.";
         line = (String) parser.next();
 
-        LinkedList<String[]> lines = new LinkedList<String[]>();
+        LinkedList<String[]> lines = new LinkedList<>();
         for (line = (String) parser.next(); line != null;
              line = (String) parser.next())
             lines.add(line.split(" +"));

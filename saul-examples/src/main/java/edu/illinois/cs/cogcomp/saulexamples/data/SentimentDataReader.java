@@ -25,7 +25,7 @@ public class SentimentDataReader implements Parser {
 
 	public SentimentDataReader(String dir, boolean train) {
 
-		docs = new ArrayList<Document>();
+		docs = new ArrayList<>();
 		try {
 			if (train) {
 				String positiveFile = dir + File.separator + "positive.review";
@@ -62,7 +62,7 @@ public class SentimentDataReader implements Parser {
 
 			String label = parts[parts.length - 1].split(":")[1].trim();
 
-			List<String> words = new ArrayList<String>();
+			List<String> words = new ArrayList<>();
 			for (int i = 0; i < parts.length - 1; i++) {
 				String[] p = parts[i].split(":");
 

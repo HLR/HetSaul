@@ -20,7 +20,7 @@ public class ConllEntityFeatureExtractor {
 		gazets.add(g);
 	}
 	public HashMap<String,Double> extractFeatures(ConllRawToken c_t){
-		HashMap<String, Double> features=new HashMap<String, Double>();
+		HashMap<String, Double> features= new HashMap<>();
 		features.put("WORD:"+c_t.phrase,1.0);
 		features.put("POS:"+c_t.POS,1.0);
 		
@@ -28,7 +28,7 @@ public class ConllEntityFeatureExtractor {
 	}
 	
 	public HashMap<String,Double> extractEntityFeatures(ConllRawSentence s, int index, boolean isLowerCase){
-		HashMap<String, Double> features=new HashMap<String, Double>();
+		HashMap<String, Double> features= new HashMap<>();
 		ConllRawToken ct=s.sentTokens.elementAt(index);
 		features.put("PHRASE:"+ct.getPhrase(isLowerCase),1.0);
 		features.put("LEN:"+ct.getLength(),1.0);
@@ -73,7 +73,7 @@ public class ConllEntityFeatureExtractor {
 		return false;
 	}
 	public HashMap<String,Double> extractRelationFeatures(ConllRawSentence s, int index1, int index2, boolean isLowerCase){
-		HashMap<String, Double> features=new HashMap<String, Double>();
+		HashMap<String, Double> features= new HashMap<>();
 		ConllRawToken ct1=s.sentTokens.elementAt(index1);
 		ConllRawToken ct2=s.sentTokens.elementAt(index2);
 		String lPrefix="L",rPrefix="R";
@@ -136,7 +136,7 @@ public class ConllEntityFeatureExtractor {
 	}
 	
 	public HashMap<String,Double> extractFeatures(ConllRawToken ct1,ConllRawToken ct2, ConllRawSentence s){
-		HashMap<String, Double> features=new HashMap<String, Double>();
+		HashMap<String, Double> features= new HashMap<>();
 		features.put("WORD1:"+ct1.phrase,1.0);
 		features.put("WORD2:"+ct2.phrase,1.0);
 		features.put("POS1:"+ct1.POS,1.0);
@@ -145,7 +145,7 @@ public class ConllEntityFeatureExtractor {
 	}
 
 	public HashMap<String,Double> extractFeatures(ConllRelation c,ConllRawSentence s){
-		HashMap<String, Double> features=new HashMap<String, Double>();		
+		HashMap<String, Double> features= new HashMap<>();
 		features.put("WORD1:"+s.sentTokens.elementAt(c.wordId1).phrase,1.0);
 		features.put("WORD2:"+s.sentTokens.elementAt(c.wordId2).phrase,1.0);
 		

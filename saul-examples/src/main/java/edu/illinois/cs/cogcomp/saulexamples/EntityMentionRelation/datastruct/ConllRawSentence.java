@@ -9,9 +9,9 @@ public class ConllRawSentence {
     public Vector<Integer> entityIndices;
 
     public ConllRawSentence(int sentId) {
-        sentTokens = new Vector<ConllRawToken>();
-        relations = new Vector<ConllRelation>();
-        entityIndices = new Vector<Integer>();
+        sentTokens = new Vector<>();
+        relations = new Vector<>();
+        entityIndices = new Vector<>();
         this.sentId = sentId;
     }
 
@@ -28,7 +28,7 @@ public class ConllRawSentence {
     }
 
     public Vector<ConllRawToken> getEntitiesInSentence() {
-        Vector<ConllRawToken> entities = new Vector<ConllRawToken>();
+        Vector<ConllRawToken> entities = new Vector<>();
         for (int i = 0; i < entityIndices.size(); i++) {
             entities.add(sentTokens.elementAt(entityIndices.elementAt(i)));
         }

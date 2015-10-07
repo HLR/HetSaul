@@ -266,8 +266,8 @@ public class Main
       // Happens if --lexerOutput, --parserOutput, or --semanticOutput is
       // enabled.
 
-    fileNames = new HashSet<String>();
-    passes = new LinkedList<Pass>();
+    fileNames = new HashSet<>();
+    passes = new LinkedList<>();
     runSemanticAnalysis(ast);
 
     if (clean) passes.add(new Clean(ast));

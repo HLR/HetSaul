@@ -23,12 +23,12 @@ public abstract class Pass
     * Errors and warnings are collected here so they can be printed in order
     * later.
    **/
-  private static Map<Integer, List<String>> errorsAndWarnings = new HashMap<Integer, List<String>>();
+  private static Map<Integer, List<String>> errorsAndWarnings = new HashMap<>();
   /**
     * Errors of the form "Cannot locate class ..." are only reported once;
     * this set remembers which have already been reported.
    **/
-  private static HashSet<String> missingClassErrors = new HashSet<String>();
+  private static HashSet<String> missingClassErrors = new HashSet<>();
   /**
     * A global flag controlling whether or not errors and warnings can
     * currently be added.  When this flag is false, the
@@ -131,7 +131,7 @@ public abstract class Pass
   private static void addErrorOrWarning(int key, String value) {
     List<String> values = errorsAndWarnings.get(key);
     if (values == null)
-      errorsAndWarnings.put(key, values = new LinkedList<String>());
+      errorsAndWarnings.put(key, values = new LinkedList<>());
     values.add(value);
   }
 

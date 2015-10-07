@@ -7,7 +7,7 @@ public class Neighborhood implements Comparable<Neighborhood> {
 
     City parent;
 	Integer number;
-	TreeSet<Neighborhood> neighbors = new TreeSet<Neighborhood>();
+	TreeSet<Neighborhood> neighbors = new TreeSet<>();
 	
 	public Neighborhood(Integer n, City p){
 		number = n;

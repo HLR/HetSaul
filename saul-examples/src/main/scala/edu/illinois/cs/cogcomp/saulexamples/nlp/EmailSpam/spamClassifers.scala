@@ -5,9 +5,7 @@ import edu.illinois.cs.cogcomp.saulexamples.nlp.EmailSpam.spamDataModel._
 import edu.illinois.cs.cogcomp.saul.classifier.Learnable
 import edu.illinois.cs.cogcomp.saul.datamodel.attribute.Attribute
 
-/** Created by Parisa on 6/8/15.
-  */
-object classifers {
+object spamClassifers {
   object spamClassifier extends Learnable[Document](spamDataModel) {
 
     def label: Attribute[Document] = spamLable is "spam"

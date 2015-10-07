@@ -28,7 +28,7 @@ public class BadgeDataReader implements Parser {
      * 
      */
     public BadgeDataReader(String file) {
-        lines = new ArrayList<String>();
+        lines = new ArrayList<>();
         try {
             br = new BufferedReader(new InputStreamReader(new FileInputStream(file)));
             String str = br.readLine();

@@ -20,7 +20,7 @@ public class DocumentReader implements Parser {
     private final List<File> files;
     
     private int currentFileId;
-    public ArrayList<Document> docs=new ArrayList<Document>(); //new
+    public ArrayList<Document> docs= new ArrayList<>(); //new
     
     /**
      * 
@@ -38,7 +38,7 @@ public class DocumentReader implements Parser {
             System.exit(-1);
         }
         
-        files = new ArrayList<File>();
+        files = new ArrayList<>();
         for (File f : d.listFiles()) {
             if (f.isDirectory()) {
                 files.addAll(Arrays.asList(f.listFiles()));

@@ -714,7 +714,7 @@ public class SemanticAnalysis extends Pass
 		HashSet<String> dependors = dependorGraph.get(dependency);
 
 		if (dependors == null) {
-			dependors = new HashSet<String>();
+			dependors = new HashSet<>();
 			dependorGraph.put(dependency, dependors);
 		}
 
@@ -732,10 +732,10 @@ public class SemanticAnalysis extends Pass
 	 *         <code>c2</code>.
 	 **/
 	public static boolean isDependentOn(String c1, String c2) {
-		LinkedList<String> queue = new LinkedList<String>();
+		LinkedList<String> queue = new LinkedList<>();
 		queue.add(c2);
 
-		HashSet<String> visited = new HashSet<String>();
+		HashSet<String> visited = new HashSet<>();
 
 		while (queue.size() > 0) {
 			String c = queue.removeFirst();
@@ -763,7 +763,7 @@ public class SemanticAnalysis extends Pass
 		HashSet<String> invokees = invokedGraph.get(invoker);
 
 		if (invokees == null) {
-			invokees = new HashSet<String>();
+			invokees = new HashSet<>();
 			invokedGraph.put(invoker, invokees);
 		}
 
@@ -967,9 +967,9 @@ public class SemanticAnalysis extends Pass
 			ast.symbolTable.addImported("edu.illinois.cs.cogcomp.lbjava.infer.*");
 		}
 
-		dependorGraph = new HashMap<String, HashSet<String>>();
-		invokedGraph = new HashMap<String, HashSet<String>>();
-		representationTable = new HashMap<String, ClassifierExpression>();
+		dependorGraph = new HashMap<>();
+		invokedGraph = new HashMap<>();
+		representationTable = new HashMap<>();
 		quantifierNesting = 0;
 
 		runOnChildren(ast);

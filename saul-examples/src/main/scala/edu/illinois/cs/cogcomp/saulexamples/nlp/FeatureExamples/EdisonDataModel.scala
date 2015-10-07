@@ -2,15 +2,12 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp.FeatureExamples
 
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation._
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
-import edu.illinois.cs.cogcomp.saulexamples.data.{ Document, DocumentReader }
 
 import scala.collection.JavaConversions._
-import scala.collection.mutable.{ Map => MutableMap }
 
 object edisonDataModel extends DataModel {
 
-  /** Node Types
-    */
+  /** Node Types */
   val document = node[TextAnnotation] //(
   // PrimaryKey = {
   //   t:TextAnnotation => t.getId}//.hashCode().toString}
@@ -42,10 +39,7 @@ object edisonDataModel extends DataModel {
     */
 
   val label = discreteAttributeOf[Constituent]('rubish) {
-    x =>
-      {
-        x.getLabel
-      }
+    x => x.getLabel
   }
 
   val Eaddress = discreteAttributeOf[Constituent]('address) {
@@ -57,27 +51,16 @@ object edisonDataModel extends DataModel {
   }
 
   val Rveiw = discreteAttributeOf[Relation]('RveiwName) {
-    x: Relation =>
-      {
-        x.getSource.getViewName
-      }
+    x: Relation => x.getSource.getViewName
   }
   val DocFeatureExample = discreteAttributeOf[TextAnnotation]('doc) {
-    x: TextAnnotation =>
-      {
-        x.getNumberOfSentences.toString
-      }
+    x: TextAnnotation => x.getNumberOfSentences.toString
   }
   val sentenceFeatureExample = discreteAttributeOf[Sentence]('sentnce) {
-    x: Sentence =>
-      {
-        x.getText
-      }
+    x: Sentence => x.getText
   }
 
-  /** Edge Types
-    */
-
+  /** Edge Types */
   val DocTosen = edge[TextAnnotation, Sentence]('dTos) //(PID,'dTos2)// {
   //   ta: TextAnnotation => ta.sentences()
   //}

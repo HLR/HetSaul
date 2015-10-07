@@ -6,7 +6,6 @@ import scala.collection.mutable.{ Map => MutableMap }
 import scala.reflect.ClassTag
 
 /** A Node E is an instances of base types T.
-  * @tparam T
   */
 class Node[T <: AnyRef](
   val primaryKeyFunction: T => String,
@@ -36,7 +35,7 @@ class Node[T <: AnyRef](
   private val orderingMap: scala.collection.mutable.Map[Int, T] = scala.collection.mutable.Map[Int, T]()
   private val reverseOrderingMap: scala.collection.mutable.Map[T, Int] = scala.collection.mutable.Map[T, Int]()
 
-  /** Maps from (Primary Idx => T)
+  /** Maps from (PrimaryID => T)
     */
   private val collections = scala.collection.mutable.Map[String, T]()
 
@@ -110,10 +109,9 @@ class Node[T <: AnyRef](
           this.trainingSet += primaryKey
           this.collections += (primaryKey -> t)
           secondaryKeyFunction(t) foreach {
-            case (secondaryKey, value) => {
+            case (secondaryKey, value) =>
               val secondaries = this.indices.getOrElseUpdate(secondaryKey, scala.collection.mutable.Map[String, scala.collection.mutable.MutableList[String]]())
               secondaries.getOrElseUpdate(value, new scala.collection.mutable.MutableList[String]()) += primaryKey
-            }
           }
           this.orderingMap += (order -> t)
           this.reverseOrderingMap += (t -> order)
