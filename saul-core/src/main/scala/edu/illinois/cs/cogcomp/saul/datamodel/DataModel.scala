@@ -75,10 +75,10 @@ trait DataModel {
     val fromInstances = this.getInstancesWithType[FROM]
     fromInstances.foreach {
       fromInstance =>
-      val toInstance_s= sensor(fromInstance)
-      val newSecondaryKeyMappingsList = toInstance_s.map(x => edgeKeyName -> ((x: TO) => fromInstance.hashCode().toString))
-      newSecondaryKeyMappingsList.foreach(secondaryKeyMapping => toNode.secondaryKeyMap += secondaryKeyMapping)
-      this.populate(toInstance_s)
+        val toInstance_s = sensor(fromInstance)
+        val newSecondaryKeyMappingsList = toInstance_s.map(x => edgeKeyName -> ((x: TO) => fromInstance.hashCode().toString))
+        newSecondaryKeyMappingsList.foreach(secondaryKeyMapping => toNode.secondaryKeyMap += secondaryKeyMapping)
+        this.populate(toInstance_s)
     }
   }
 
