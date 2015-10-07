@@ -1,3 +1,4 @@
+.DS_Store
 /data
 .idea
 /RUNNING_PID
@@ -9,3 +10,4 @@ target/
 /models
 .projectFilesBackup
 *.class
+annotation-cache/
