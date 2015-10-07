@@ -1,27 +1,25 @@
-The spam classifier example is a simple example designed to showcase a Binary text classification task in saul.
+The spam classifier example is a simple example designed to showcase a binary text classification task in saul.
 
-###Notes:
+ - Notes: The `Document` and `DocumentReader` classes are defined elsewhere.
 
-The Document class and the DocumentReader class are defined elsewhere.
+The `Document` class consists of a document constructor that defines a `Document` and it's contents
+The document reader consists of an iterator that iterates through all the documents using the constructor in the `Document` class and adds each document to an `ArrayList`.
 
-The Document class consists of a document constructor that defines a document and it's contents
-The Document reader consists of an iterator that iterates through all the documents using the constructor in the Document class and adds each document to an ArrayList.
-
-###The data Model:
+#The data Model:
 
 ##Entities
 
-The spam classifier simply has documents as one type of entity, so only a collection of Documents is defined.
+The spam classifier simply has `Document`s as one type of nodes, so only a collection of `Document`s is defined.
 
 ```scala
 object spamDataModel extends DataModel{
-
-  val docs=node[Document]             //Collection of documents
+  val docs=node[Document]     //Collection of documents
+}
 ```
 
-##Features  and Properties
+##Features and Properties
 
-The properties of a document are it's body and it's label.
+The properties of a document are its body and its label.
 Two features are defined based on the content of the document.
 A label is also defined.
 
@@ -30,10 +28,10 @@ Simply a list of all the words in the document is returned.
 
 ```scala
  val wordFeature=discreteAttributesGeneratorOf[Document]('wordF){    //Discrete Feature of the document
-  x:Document=> {
-    val words: List[String] = x.getWords.toList                      //Get all of the words in a list
-    words                                                            //and return it
-   }
+    x:Document=> {
+      val words: List[String] = x.getWords.toList                      //Get all of the words in a list
+      words                                                            //and return it
+    }
   }
 ```
 
