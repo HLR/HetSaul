@@ -65,7 +65,7 @@ trait DataModel {
   // def flatList(es: List[Edge[_, _]]*): List[Edge[_, _]] = es.toList.flatten
 
   def populate[T <: AnyRef](coll: Seq[T])(implicit tag: ClassTag[T]) = {
-    this.getNodeWithType[T] ++ coll
+    this.getNodeWithType[T] populate coll
   }
 
   def populateWith[FROM <: AnyRef, TO <: AnyRef](sensor: FROM => List[TO], edgeKeyName: Symbol)(implicit tagF: ClassTag[FROM], tagT: ClassTag[TO]) = {
