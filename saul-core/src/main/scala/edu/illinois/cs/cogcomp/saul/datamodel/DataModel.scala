@@ -82,6 +82,14 @@ trait DataModel {
     }
   }
 
+  def populateWith[FROM <: AnyRef, TO <: AnyRef](sensor: FROM => TO, edgeKeyName: Symbol)(implicit tagF: ClassTag[FROM], tagT: ClassTag[TO], d: DummyImplicit): Unit = {
+    populateWith[FROM, TO]((f: FROM) => List(sensor(f)), edgeKeyName)
+  }
+
+  def populateWith[FROM <: AnyRef, TO <: AnyRef](sensor: FROM => Option[TO], edgeKeyName: Symbol)(implicit tagF: ClassTag[FROM], tagT: ClassTag[TO], d1: DummyImplicit, d2: DummyImplicit): Unit = {
+    populateWith[FROM, TO]((f: FROM) => sensor(f).toList, edgeKeyName)
+  }
+
   def populateWith[FROM <: AnyRef, TO <: AnyRef](manyInstances: List[TO], sensor: (FROM, TO) => Boolean, edgeKeyName: Symbol)(implicit tagF: ClassTag[FROM], tagT: ClassTag[TO]) = {
     val toNode = this.getNodeWithType[TO]
     val fromInstances = this.getInstancesWithType[FROM]
