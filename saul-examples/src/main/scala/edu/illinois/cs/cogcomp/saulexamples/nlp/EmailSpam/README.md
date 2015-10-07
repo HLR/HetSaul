@@ -23,7 +23,7 @@ The properties of a document are its body and its label.
 Two features are defined based on the content of the document.
 A label is also defined.
 
-#Bag of Words:
+###Bag of Words:
 Simply a list of all the words in the document is returned.
 
 ```scala
@@ -35,7 +35,7 @@ Simply a list of all the words in the document is returned.
   }
 ```
 
-#Bigram
+###Bigram
 A concatenation of 2 consecutive words (bigrams) at a time is returned, and the set of grams contained in a document are used as its features.    
 
 ```scala
@@ -51,7 +51,7 @@ x:Document=>{
 }
 }
 ```
-#SpamLabel
+###SpamLabel
 The label is defined here
 
 ```scala
@@ -73,7 +73,7 @@ The two features are Bag of Words and Bigram, and there is no relationship betwe
 ```
 
 
-###Classifier
+##Classifier
 The classifier is defined using the following construct for Spam Classification.
 It is created as an object inside an object for modularity
 
@@ -86,7 +86,7 @@ object Classifiers {
 }
 ```
 
-###Running and testing
+##Running and testing
 To run and test, we create the following application. We use slices of the data to train and test.
 We learn for 50 iterations of the training data and then test it on 10 data from the same slice.
 
