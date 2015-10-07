@@ -1,7 +1,7 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.trainingparadigm
 
-import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.Classifiers._
-import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.ErDataModelExample
+import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.classifiers._
+import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.entityRelationDataModel
 
 /** Created by haowu on 5/6/15.
   */
@@ -47,7 +47,7 @@ object IndenpendentTraining {
 
   def main(args: Array[String]) {
     forgotEverything()
-    ErDataModelExample.readAll()
+    entityRelationDataModel.readAll()
     trainIndepedent(it)
   }
 
