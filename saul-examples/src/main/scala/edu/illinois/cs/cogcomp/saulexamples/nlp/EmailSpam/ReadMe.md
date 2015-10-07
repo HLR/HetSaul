@@ -15,10 +15,8 @@ The spam classifier simply has documents as one type of entity, so only a collec
 
 ```scala
 object spamDataModel extends DataModel{
-  import edu.illinois.cs.cogcomp.lfs.data_model.DataModel._
 
   val docs=node[Document]             //Collection of documents
-  val NODES: List[Entity[_]] = ~~(docs)    // is the entity for this data model
 ```
 
 ##Features  and Properties

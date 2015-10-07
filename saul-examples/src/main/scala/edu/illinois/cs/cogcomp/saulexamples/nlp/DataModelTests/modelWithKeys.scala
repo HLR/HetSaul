@@ -2,7 +2,6 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp.DataModelTests
 
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation._
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
-import edu.illinois.cs.cogcomp.saul.datamodel.DataModel._
 
 import scala.collection.mutable.{ Map => MutableMap }
 
@@ -52,9 +51,5 @@ object modelWithKeys extends DataModel {
   /** Edge Types
     */
   val docTosen = edge[TextAnnotation, Sentence]('dTos)
-
-  val NODES = ~~(document, sentence)
-  val PROPERTIES = List(docFeatureExample, sentenceFeatureExample)
-  val EDGES = docTosen
 
 }

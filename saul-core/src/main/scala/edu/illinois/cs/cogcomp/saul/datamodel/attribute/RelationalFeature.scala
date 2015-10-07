@@ -25,7 +25,7 @@ class RelationalFeature[HEAD <: AnyRef, CHILD <: AnyRef](
 
     head: HEAD =>
       {
-        val children = dataModel.getFromRelation[HEAD, CHILD](head)
+        val children = dataModel.getFromRelation[HEAD, CHILD](head).toList
         children.map({
           c => fts.map(f => f.mapping(c))
         })
@@ -68,7 +68,7 @@ class RelationalFeature[HEAD <: AnyRef, CHILD <: AnyRef](
 
   override def addToFeatureVector(t: HEAD, fv: FeatureVector): FeatureVector = {
 
-    val children: List[CHILD] = dataModel.getFromRelation[HEAD, CHILD](t)
+    val children: List[CHILD] = dataModel.getFromRelation[HEAD, CHILD](t).toList
 
     //		children foreach print
     children.zipWithIndex.foreach {

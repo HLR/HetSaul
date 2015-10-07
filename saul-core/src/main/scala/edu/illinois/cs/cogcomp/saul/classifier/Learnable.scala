@@ -20,7 +20,7 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel)(implicit tag: Cl
 
   def fromData = datamodel.getNodeWithType[T].getTrainingInstances
 
-  def feature: List[Attribute[T]] = datamodel.getFeaturesOf[T]
+  def feature: List[Attribute[T]] = datamodel.getFeaturesOf[T].toList
   def algorithm: String = "SparseNetwork"
   val featureExtractor = new CombinedDiscreteAttribute[T](this.feature)
 
