@@ -27,9 +27,9 @@ class SetCoverSolverDataModel extends DataModel {
   val cityContainsNeighborhoods = edge[City, Neighborhood]('cityID)
 }
 
-object ContainsStationConstraint extends ConstraintClassifier[Neighborhood, City](Data.trainingData, new ContainsStation()) {
+object containsStationConstraint extends ConstraintClassifier[Neighborhood, City](setCoverApp.trainingData, new ContainsStation()) {
 
-  override def subjectTo = Data.containsStationConstrint
+  override def subjectTo = setCoverApp.containsStationConstrint
 
   //    ConstraintClassifier.constraintOf[City]({
   //    x: City => {
@@ -46,47 +46,5 @@ object ContainsStationConstraint extends ConstraintClassifier[Neighborhood, City
   //  })
   override def filter(t: Neighborhood, head: City): Boolean = {
     true
-  }
-}
-
-object Data {
-
-  val trainingData = new SetCoverSolverDataModel
-  val cities = new City("./data/SetCover/example.txt")
-  val ns = cities.getNeighborhoods.toList
-
-  val containsStationConstrint = ConstraintClassifier.constraintOf[City]({
-    x: City =>
-      {
-        val containStation = new ContainsStation()
-        x.getNeighborhoods _forAll {
-          n: Neighborhood =>
-            {
-              (containStation on n isTrue) ||| (
-                n.getNeighbors _exists {
-                  n2: Neighborhood => containStation on n2 isTrue
-                }
-              )
-            }
-        }
-      }
-  })
-
-  println(containsStationConstrint.createInferenceCondition[Neighborhood](trainingData).subjectTo.evalDiscreteValue(cities))
-
-  def main(args: Array[String]) {
-    trainingData populate List(cities)
-    trainingData populate ns
-
-    println(trainingData.getFromRelation[City, Neighborhood](cities))
-    println(trainingData.getFromRelation[Neighborhood, City](ns.head))
-
-    cities.getNeighborhoods.foreach {
-      n =>
-        {
-          println(n.getNumber + ": " + ContainsStationConstraint.classifier.discreteValue(n))
-        }
-    }
-    println(ContainsStationConstraint.getCandidates(cities))
   }
 }

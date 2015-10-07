@@ -1,9 +1,9 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.trainingparadigm
 
 import edu.illinois.cs.cogcomp.saulexamples.EntityMentionRelation.datastruct.{ ConllRawToken, ConllRelation }
-import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.Classifiers._
-import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.ErDataModelExample
-import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.ErDataModelExample._
+import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.classifiers._
+import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.entityRelationDataModel
+import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.entityRelationDataModel._
 import edu.illinois.cs.cogcomp.saul.classifier.JointTrain
 
 /** Created by Parisa on 5/6/15.
@@ -21,8 +21,8 @@ object JoinTraining {
       // LivesInClassifier.learn(preTrainIteration)
     }
 
-    JointTrain.train[ConllRelation](ErDataModelExample, PerConstraintClassifier :: orgConstraintClassifier :: LocConstraintClassifier :: P_O_relationClassifier :: LiveIn_P_O_relationClassifier :: Nil, jointTrainIteration)
-    //    JointTrain.train[ConllRelation](ErDataModelExample,  P_O_relationClassifier  :: LiveIn_P_O_relationClassifier ::Nil,it)
+    JointTrain.train[ConllRelation](entityRelationDataModel, PerConstraintClassifier :: orgConstraintClassifier :: LocConstraintClassifier :: P_O_relationClassifier :: LiveIn_P_O_relationClassifier :: Nil, jointTrainIteration)
+    //    JointTrain.train[ConllRelation](entityRelationDataModel,  P_O_relationClassifier  :: LiveIn_P_O_relationClassifier ::Nil,it)
   }
 
   def forgetEverything() = {
@@ -36,10 +36,10 @@ object JoinTraining {
   def main(args: Array[String]) {
 
     forgetEverything()
-    ErDataModelExample.readAll()
+    entityRelationDataModel.readAll()
 
-    val testRels = ErDataModelExample.getNodeWithType[ConllRelation].getTestingInstances.toList
-    val testTokens = ErDataModelExample.getNodeWithType[ConllRawToken].getTestingInstances.toList
+    val testRels = entityRelationDataModel.getNodeWithType[ConllRelation].getTestingInstances.toList
+    val testTokens = entityRelationDataModel.getNodeWithType[ConllRawToken].getTestingInstances.toList
 
     trainJoint(preTrainIteration = 1, jointTrainIteration = 5)
 
