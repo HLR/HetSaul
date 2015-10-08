@@ -1,3 +1,4 @@
+# Email Spam Classification 
 The spam classifier example is a simple example designed to showcase a binary text classification task in Saul.
 
 The `Document` class consists of a document constructor that defines a `Document` and its contents
@@ -5,9 +6,9 @@ The document reader consists of an iterator that iterates through all the docume
 
  - Notes: The `Document` and `DocumentReader` classes are defined elsewhere.
 
-#The data Model:
+##The data Model:
 
-##Entities
+###Entities
 
 The spam classifier simply has `Document`s as one type of nodes, so only a collection of `Document`s is defined.
 
@@ -18,13 +19,13 @@ object spamDataModel extends DataModel{
 }
 ```
 
-##Features and Properties
+###Features and Properties
 
 The properties of a document are its body and its label.
 Two features are defined based on the content of the document.
 A label is also defined.
 
-###Bag of Words:
+####Bag of Words:
 Simply a list of all the words in the document is returned.
 
 ```scala
@@ -35,7 +36,7 @@ Simply a list of all the words in the document is returned.
   }
 ```
 
-###Bigram
+####Bigram
 A concatenation of 2 consecutive words (bigrams) at a time is returned, and the set of grams contained in a document are used as its features.    
 
 ```scala
@@ -57,7 +58,7 @@ x:Document => {
 }
 }
 ```
-###SpamLabel
+####SpamLabel
 The label is defined here
 
 ```scala
@@ -67,7 +68,7 @@ val spamLable=discreteAttributeOf[Document]('label){
 }
 ```
 
-##Classifier
+###Classifier
 The classifier is defined using the following construct for Spam Classification.
 It is created as an object inside an object for modularity
 
