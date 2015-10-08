@@ -78,7 +78,7 @@ trait DataModel {
       List(t.asInstanceOf[NEED])
     } else {
       val r = this.EDGES.filter {
-        r => r.to.tag.toString.equals(tag.toString) && r.from.tag.toString.equals(headTag.toString)
+        r => r.from.tag.toString.equals(tag.toString) && r.to.tag.toString.equals(headTag.toString)
       }
       if (r.isEmpty) {
         throw new Exception(s"Failed to found relations between $tag to $headTag")
