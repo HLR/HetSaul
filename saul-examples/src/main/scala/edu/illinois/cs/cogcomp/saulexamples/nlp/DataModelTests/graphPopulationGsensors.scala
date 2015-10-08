@@ -22,9 +22,9 @@ object graphPopulationGsensors {
     import modelWithSensors._
     modelWithSensors.populate(document, taList)
     //The below line uses a generator sensor
-    modelWithSensors.populateWith(docTosen, sensors.f(_))
-    modelWithSensors.populateWith(docTosen, (x: TextAnnotation) => sensors.f(x).head)
-    modelWithSensors.populateWith(docTosen, (x: TextAnnotation) => sensors.f(x).headOption)
+    modelWithSensors.docTosen populateWith (sensors.f(_))
+    modelWithSensors.docTosen populateWith ((x: TextAnnotation) => sensors.f(x).head)
+    modelWithSensors.docTosen populateWith ((x: TextAnnotation) => sensors.f(x).headOption)
     //TODO: make the below line work, to just use the edge name and depending on the type of sensor a generator or matching edge will be called.
     //EdisonDataModel.populateWith(EdisonDataModel.DocTosen)
 

@@ -4,7 +4,7 @@ import edu.illinois.cs.cogcomp.saul.datamodel.attribute.features.discrete.{ Bool
 import edu.illinois.cs.cogcomp.saul.datamodel.attribute.features.real.{ RealArrayAttribute, RealAttribute, RealGenAttribute }
 import edu.illinois.cs.cogcomp.saul.datamodel.attribute.{ Attribute, EvaluatedAttribute }
 import edu.illinois.cs.cogcomp.saul.datamodel.node.Node
-import edu.illinois.cs.cogcomp.saul.datamodel.edge.Edge
+import edu.illinois.cs.cogcomp.saul.datamodel.edge.{ Link, Edge }
 
 import scala.collection.mutable.{ Map => MutableMap, ListBuffer }
 import scala.reflect.ClassTag
@@ -15,8 +15,6 @@ trait DataModel {
   final val NODES = new ListBuffer[Node[_]]
   final val PROPERTIES = new ListBuffer[Attribute[_]]
   final val EDGES = new ListBuffer[Edge[_, _]]
-
-  type Link[T <: AnyRef, U <: AnyRef] = (Edge[T, U], Edge[U, T])
 
   // TODO: Implement this function.
   def select[T <: AnyRef](node: Node[T], conditions: EvaluatedAttribute[T, _]*): List[T] = {
@@ -57,44 +55,9 @@ trait DataModel {
 
   // def flatList(es: List[Edge[_, _]]*): List[Edge[_, _]] = es.toList.flatten
 
+  @deprecated("Use node.populate() instead.")
   def populate[T <: AnyRef](node: Node[T], coll: Seq[T]) = {
     node populate coll
-  }
-
-  def populateWith[FROM <: AnyRef, TO <: AnyRef](link: Link[FROM, TO], sensor: (FROM) => List[TO]) = {
-    val edge = link._1
-    val fromInstances = edge.from.getAllInstances
-    fromInstances.foreach {
-      fromInstance =>
-        val toInstance_s = sensor(fromInstance)
-        val newSecondaryKeyMappingsList = toInstance_s.map(x => edge.nameOfRelation.get -> ((x: TO) => fromInstance.hashCode().toString))
-        newSecondaryKeyMappingsList.foreach(secondaryKeyMapping => edge.to.secondaryKeyMap += secondaryKeyMapping)
-        this.populate(edge.to, toInstance_s)
-    }
-  }
-
-  def populateWith[FROM <: AnyRef, TO <: AnyRef](link: Link[FROM, TO], sensor: (FROM) => TO)(implicit d: DummyImplicit): Unit = {
-    populateWith[FROM, TO](link, (f: FROM) => List(sensor(f)))
-  }
-
-  def populateWith[FROM <: AnyRef, TO <: AnyRef](link: Link[FROM, TO], sensor: (FROM) => Option[TO])(implicit d1: DummyImplicit, d2: DummyImplicit): Unit = {
-    populateWith[FROM, TO](link, (f: FROM) => sensor(f).toList)
-  }
-
-  def populateWith[FROM <: AnyRef, TO <: AnyRef](link: Link[FROM, TO], manyInstances: List[TO], sensor: (FROM, TO) => Boolean) = {
-    val edge = link._1
-    val fromInstances = edge.from.getAllInstances
-    var temp = manyInstances
-    fromInstances.foreach { instance =>
-      val twoLists = temp.partition(sensor(instance, _))
-      val matching = twoLists._1
-      val unmatching = twoLists._2
-
-      val newSecondaryKeyMappingsList = matching.map(x => edge.nameOfRelation.get -> ((x: TO) => instance.hashCode().toString))
-      newSecondaryKeyMappingsList.foreach { secondaryKeyMapping => edge.to.secondaryKeyMap += secondaryKeyMapping }
-      this.populate(edge.to, matching)
-      temp = unmatching
-    }
   }
 
   @deprecated
@@ -209,7 +172,7 @@ trait DataModel {
     val ctop = new Edge[MANY, ONE](many, one, reverted, Some(name))
     EDGES += ptoc
     EDGES += ctop
-    ptoc -> ctop
+    Link(ptoc, ctop)
   }
 
   /** attribute definitions */
