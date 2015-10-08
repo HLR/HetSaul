@@ -1,9 +1,9 @@
-The spam classifier example is a simple example designed to showcase a binary text classification task in saul.
+The spam classifier example is a simple example designed to showcase a binary text classification task in Saul.
+
+The `Document` class consists of a document constructor that defines a `Document` and its contents
+The document reader consists of an iterator that iterates through all the documents using the constructor in the `Document` class and adds each document to an `ArrayList`.
 
  - Notes: The `Document` and `DocumentReader` classes are defined elsewhere.
-
-The `Document` class consists of a document constructor that defines a `Document` and it's contents
-The document reader consists of an iterator that iterates through all the documents using the constructor in the `Document` class and adds each document to an `ArrayList`.
 
 #The data Model:
 
@@ -13,7 +13,8 @@ The spam classifier simply has `Document`s as one type of nodes, so only a colle
 
 ```scala
 object spamDataModel extends DataModel{
-  val docs=node[Document]     //Collection of documents
+  /** Collection of documents */ 
+  val docs=node[Document]     
 }
 ```
 
@@ -27,11 +28,10 @@ A label is also defined.
 Simply a list of all the words in the document is returned.
 
 ```scala
- val wordFeature=discreteAttributesGeneratorOf[Document]('wordF){    //Discrete Feature of the document
-    x:Document=> {
-      val words: List[String] = x.getWords.toList                      //Get all of the words in a list
-      words                                                            //and return it
-    }
+ /** Discrete Feature of the document */ 
+ val wordFeature=discreteAttributesGeneratorOf[Document]('wordF){    
+    /** Get all of the words in a `Document` and return it */ 
+    x: Document => x.getWords.toList 
   }
 ```
 
