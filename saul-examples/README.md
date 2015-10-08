@@ -52,7 +52,7 @@ val tokens = node[ConllRawToken](
 )
 ```
 
-this line of code defines an entity of type `ConllRawToken` and names it as 'tokens' and defines a 'primary key' for it based on the original variables in the original ConllRawToken class.
+This line of code defines an entity of type `ConllRawToken` and names it as 'tokens' and defines a 'primary key' for it based on the original variables in the original ConllRawToken class.
 
 #### Defining attributes 
 This is done via several constructs depending on the type of the feature for discrete features for example the "discreteAttributesGeneratorOf" is used,
@@ -63,7 +63,7 @@ val pos = discreteAttributesGeneratorOf[ConllRawToken]('pos) {
 }
   ```
 This line of code defines a feature vector that is generated using the pos-tag of the original class of the entitiy that this property is assigned to (that is ConllRawToken class). The type of the feature is discrete. 
-The list of possibilities for other types of feature functions are listed in saul in `edu.illinois.cs.cogcomp.lfs.data_model.attributes.features._`
+The list of possibilities for other types of feature functions are listed in:  `edu.illinois.cs.cogcomp.lfs.data_model.attributes.features._`. 
 
 #### Defining edges 
 
