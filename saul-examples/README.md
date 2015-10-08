@@ -62,8 +62,8 @@ val pos = discreteAttributesGeneratorOf[ConllRawToken]('pos) {
    (t: ConllRawToken) => t.POS :: Nil
 }
   ```
-this line of code defines a feature vector that is generated using the pos-tag of the original class of the entitiy that this property is assigned to (that is ConllRawToken class). The type of the feature is discrete. 
-The list of possibilities for other types of feature functions are listed in saul in edu.illinois.cs.cogcomp.lfs.data_model.attributes.features._
+This line of code defines a feature vector that is generated using the pos-tag of the original class of the entitiy that this property is assigned to (that is ConllRawToken class). The type of the feature is discrete. 
+The list of possibilities for other types of feature functions are listed in saul in `edu.illinois.cs.cogcomp.lfs.data_model.attributes.features._`
 
 #### Defining edges 
 
@@ -134,10 +134,14 @@ object EXAMPLEapp {
     val TrainData: List[Post] = new ExampleDataReader("PathToTrainData").VariableOfdata.toList
     val TestData: List[Post] = new ExampleDataReader("data/20news/20news.test.shuffled").VariableOfDate.toList
 
-    newsGroupDataModel ++ TrainData //Add Training data to the data model
-    newsClassifer.learn(40) //Number of Training iterations
-    newsGroupDataModel.testWith(dat2) //Added Testing data
-    newsClassifer.test() //Run test
+    /** Add the training data to the data model */
+    newsGroupDataModel.populate(TrainData) 
+    /** Learn, given the number of Training iterations */
+    newsClassifer.learn(40) 
+    /** Add the testing data */
+    newsGroupDataModel.testWith(dat2) 
+    /** Run evaluation on the test data*/
+    newsClassifer.test() 
   }
 }
 ```
