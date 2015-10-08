@@ -55,7 +55,7 @@ val tokens = node[ConllRawToken](
 This line of code defines an entity of type `ConllRawToken` and names it as 'tokens' and defines a 'primary key' for it based on the original variables in the original ConllRawToken class.
 
 #### Defining attributes 
-This is done via several constructs depending on the type of the feature for discrete features for example the "discreteAttributesGeneratorOf" is used,
+This is done via several constructs depending on the type of the feature for discrete features for example the `discreteAttributesGeneratorOf` is used,
 
 ```scala
 val pos = discreteAttributesGeneratorOf[ConllRawToken]('pos) {
@@ -78,7 +78,7 @@ Each pair of token (with original class: ConllRelation) contains two tokens (wit
 
 ### Classifiers
 Here are the basic types essential for using classifiers. 
-  -`Label`: The "category" of the one object. For example, in a classification task, the category of one text  document can be related to its topic ,e.g. Sport, politic                                                      s, etc. 
+  -`Label`: The "category" of the one object. For example, in a classification task, the category of one text  document can be related to its topic, e.g. Sport, politics, etc. 
   -`Features`: A set of properties of object that is used for the classifiers to be trained based on those, for example the set of words that occur in a document can be used as feature s of that document (Bag of words). 
   -`Parameters`: Variables used to fine tune the classifier. It differs from one type of classification method to another. 
 
@@ -95,7 +95,7 @@ object orgClassifier extends Learnable[ConllRawToken](ErDataModelExample) {
 
 ### Constraints 
 A "constraint" is a logical restriction over possible values that can be assigned to a number of variables; 
-For example, a binary constraint could {if {A} then NOT {B}}
+For example, a binary constraint could be `{if {A} then NOT {B}}`. 
 In Saul, the constraints are defined for the assignments to class labels. 
 A constraint classifiers is a classifier that predicts the class labels with regard to the specified constraints.
 
