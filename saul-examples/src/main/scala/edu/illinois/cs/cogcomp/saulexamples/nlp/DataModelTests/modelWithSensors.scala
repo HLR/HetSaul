@@ -15,6 +15,7 @@ object modelWithSensors extends DataModel {
   val rawDocument = node[Document]
   val document = node[TextAnnotation]
   val sentence = node[Sentence]
+  val constituent = node[Constituent]
 
   /** Property Types
     */
@@ -42,8 +43,8 @@ object modelWithSensors extends DataModel {
   /** Edge Types
     */
 
-  val docTosen = edge[TextAnnotation, Sentence]('dTos)
-  val SenToCons = edge[TextAnnotation, Constituent]('tToc)
+  val docTosen = edge(document, sentence, 'dTos)
+  val SenToCons = edge(document, constituent, 'tToc)
 
 }
 

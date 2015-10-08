@@ -24,7 +24,7 @@ class SetCoverSolverDataModel extends DataModel {
     SecondaryKeyMap = MutableMap('cityID -> ((t: Neighborhood) => String.valueOf(t.getParentCity.hashCode())))
   )
 
-  val cityContainsNeighborhoods = edge[City, Neighborhood]('cityID)
+  val cityContainsNeighborhoods = edge(cities, neighborhoods, 'cityID)
 }
 
 object containsStationConstraint extends ConstraintClassifier[Neighborhood, City](setCoverApp.trainingData, new ContainsStation()) {

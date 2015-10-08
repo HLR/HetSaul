@@ -19,11 +19,12 @@ object graphPopulationGsensors {
 
     val a = sensors.textCollection(dat) zip dat.map(x => x.getGUID) // this generates a list of strings each member is a textual content of a document
     val taList = a.map(x => sensors.processDocumentWith(annotatorService, corpus, x._2, x._1))
-    modelWithSensors.populate(taList)
+    import modelWithSensors._
+    modelWithSensors.populate(document, taList)
     //The below line uses a generator sensor
-    modelWithSensors.populateWith(sensors.f(_), 'dTos)
-    modelWithSensors.populateWith((t: TextAnnotation) => sensors.f(t).head, 'dTos)
-    modelWithSensors.populateWith((t: TextAnnotation) => sensors.f(t).headOption, 'dTos)
+    modelWithSensors.populateWith(docTosen, sensors.f(_))
+    modelWithSensors.populateWith(docTosen, (x: TextAnnotation) => sensors.f(x).head)
+    modelWithSensors.populateWith(docTosen, (x: TextAnnotation) => sensors.f(x).headOption)
     //TODO: make the below line work, to just use the edge name and depending on the type of sensor a generator or matching edge will be called.
     //EdisonDataModel.populateWith(EdisonDataModel.DocTosen)
 

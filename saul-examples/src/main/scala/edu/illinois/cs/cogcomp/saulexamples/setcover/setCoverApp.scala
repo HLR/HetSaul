@@ -31,8 +31,8 @@ object setCoverApp {
   println(containsStationConstrint.createInferenceCondition[Neighborhood](trainingData).subjectTo.evalDiscreteValue(cities))
 
   def main(args: Array[String]) {
-    trainingData populate List(cities)
-    trainingData populate ns
+    trainingData.cities populate List(cities)
+    trainingData.neighborhoods populate ns
 
     println(trainingData.getFromRelation[City, Neighborhood](cities))
     println(trainingData.getFromRelation[Neighborhood, City](ns.head))

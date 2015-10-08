@@ -16,15 +16,8 @@ trait DataModel {
   final val PROPERTIES = new ListBuffer[Attribute[_]]
   final val EDGES = new ListBuffer[Edge[_, _]]
 
-//  // TODO: comment this function
-//  def getType[T <: AnyRef](implicit tag: ClassTag[T]): ClassTag[T] = tag
-//
-//  // TODO: implement this: retrieve all data with type T.
-//  // This will equals to select all where type is T
-//  def getInstancesWithType[T <: AnyRef](implicit tag: ClassTag[T]): Iterable[T] = {
-//    this.getNodeWithType[T].getAllInstances
-//  }
-//
+  type Link[T <: AnyRef, U <: AnyRef] = (Edge[T, U], Edge[U, T])
+
   // TODO: Implement this function.
   def select[T <: AnyRef](node: Node[T], conditions: EvaluatedAttribute[T, _]*): List[T] = {
     val conds = conditions.toList
@@ -68,7 +61,8 @@ trait DataModel {
     node populate coll
   }
 
-  def populateWith[FROM <: AnyRef, TO <: AnyRef](edge: Edge[FROM, TO], sensor: FROM => List[TO]) = {
+  def populateWith[FROM <: AnyRef, TO <: AnyRef](link: Link[FROM, TO], sensor: (FROM) => List[TO]) = {
+    val edge = link._1
     val fromInstances = edge.from.getAllInstances
     fromInstances.foreach {
       fromInstance =>
@@ -79,19 +73,20 @@ trait DataModel {
     }
   }
 
-  def populateWith[FROM <: AnyRef, TO <: AnyRef](edge: Edge[FROM, TO], sensor: FROM => TO)(implicit d: DummyImplicit): Unit = {
-    populateWith[FROM, TO](edge, (f: FROM) => List(sensor(f)))
+  def populateWith[FROM <: AnyRef, TO <: AnyRef](link: Link[FROM, TO], sensor: (FROM) => TO)(implicit d: DummyImplicit): Unit = {
+    populateWith[FROM, TO](link, (f: FROM) => List(sensor(f)))
   }
 
-  def populateWith[FROM <: AnyRef, TO <: AnyRef](edge: Edge[FROM, TO], sensor: FROM => Option[TO])(implicit d1: DummyImplicit, d2: DummyImplicit): Unit = {
-    populateWith[FROM, TO](edge, (f: FROM) => sensor(f).toList)
+  def populateWith[FROM <: AnyRef, TO <: AnyRef](link: Link[FROM, TO], sensor: (FROM) => Option[TO])(implicit d1: DummyImplicit, d2: DummyImplicit): Unit = {
+    populateWith[FROM, TO](link, (f: FROM) => sensor(f).toList)
   }
 
-  def populateWith[FROM <: AnyRef, TO <: AnyRef](edge: Edge[FROM, TO], manyInstances: List[TO], sensor: (FROM, TO) => Boolean) = {
+  def populateWith[FROM <: AnyRef, TO <: AnyRef](link: Link[FROM, TO], manyInstances: List[TO], sensor: (FROM, TO) => Boolean) = {
+    val edge = link._1
     val fromInstances = edge.from.getAllInstances
     var temp = manyInstances
     fromInstances.foreach { instance =>
-      var twoLists = temp.partition(sensor(instance, _))
+      val twoLists = temp.partition(sensor(instance, _))
       val matching = twoLists._1
       val unmatching = twoLists._2
 
@@ -111,19 +106,6 @@ trait DataModel {
         }
     }.head.asInstanceOf[Node[T]]
   }
-//
-//  def getNodesWithTypeTag(tag: ClassTag[_]): Node[_] = {
-//    this.NODES.filter {
-//      e: Node[_] =>
-//        {
-//          tag.equals(e.tag)
-//        }
-//    }.head
-//  }
-//
-//  def get[T <: AnyRef](pi: String)(implicit tag: ClassTag[T]): T = {
-//    this.getNodeWithType[T].getInstanceWithPrimaryKey(pi)
-//  }
 
   // TODO: comment this function
   @deprecated
@@ -176,6 +158,7 @@ trait DataModel {
   }
 
   // TODO: rename this function with a better name
+  @deprecated
   def getRelatedFieldsBetween[T, U](implicit tag: ClassTag[T], headTag: ClassTag[U]): List[Symbol] = {
     this.EDGES.filter(r => r.to.tag.equals(tag) && r.from.tag.equals(headTag)).toList match {
       case x :: xs => x.matchesList.map(_._1)
@@ -218,7 +201,7 @@ trait DataModel {
   }
 
   /** edges */
-  def edge[ONE <: AnyRef, MANY <: AnyRef](one: Node[ONE], many: Node[MANY], name: Symbol): List[Edge[_, _]] = {
+  def edge[ONE <: AnyRef, MANY <: AnyRef](one: Node[ONE], many: Node[MANY], name: Symbol): Link[ONE, MANY] = {
     val ss = List(('PID, name)) //when the edge is created the list of matching symbols for the identifiers also is created.
     //now this should be added to the definition of the entities that are related by this edge.
     val ptoc = new Edge[ONE, MANY](one, many, ss.toList, Some(name))
@@ -226,7 +209,7 @@ trait DataModel {
     val ctop = new Edge[MANY, ONE](many, one, reverted, Some(name))
     EDGES += ptoc
     EDGES += ctop
-    ptoc :: ctop :: Nil
+    ptoc -> ctop
   }
 
   /** attribute definitions */
