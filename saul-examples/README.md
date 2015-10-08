@@ -78,10 +78,10 @@ Each pair of token (with original class: ConllRelation) contains two tokens (wit
 
 ### Classifiers
 Here are the basic types essential for using classifiers. 
-  
-  -`Label`: The "category" of the one object. For example, in a classification task, the category of one text  document can be related to its topic, e.g. Sport, politics, etc. 
-  -`Features`: A set of properties of object that is used for the classifiers to be trained based on those, for example the set of words that occur in a document can be used as feature s of that document (Bag of words). 
-  -`Parameters`: Variables used to fine tune the classifier. It differs from one type of classification method to another. 
+
+  - `Label`: The "category" of the one object. For example, in a classification task, the category of one text  document can be related to its topic, e.g. Sport, politics, etc. 
+  - `Features`: A set of properties of object that is used for the classifiers to be trained based on those, for example the set of words that occur in a document can be used as feature s of that document (Bag of words). 
+  - `Parameters`: Variables used to fine tune the classifier. It differs from one type of classification method to another. 
 
 A classifier can be defined in the following way: 
 
