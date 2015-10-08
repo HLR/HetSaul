@@ -1,5 +1,6 @@
-import edu.illinois.cs.cogcomp.saulexamples.data.{ Document, DocumentReader }
-import edu.illinois.cs.cogcomp.saulexamples.nlp.EmailSpam.spamDataModel
+package edu.illinois.cs.cogcomp.saulexamples.nlp.EmailSpam
+
+import edu.illinois.cs.cogcomp.saulexamples.data.Document
 import org.scalatest._
 
 import scala.collection.JavaConversions._
