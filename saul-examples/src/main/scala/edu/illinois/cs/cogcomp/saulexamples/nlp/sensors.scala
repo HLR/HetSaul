@@ -10,6 +10,12 @@ import scala.collection.JavaConversions._
   */
 object sensors {
 
+  def getText(x: Document): String = {
+    val l = x.getWords()
+    val lx = l.mkString(" ")
+    lx
+  }
+
   def textCollection(x: List[Document]): List[String] = {
     var l1: List[String] = List[String]()
     for (x1 <- x) {

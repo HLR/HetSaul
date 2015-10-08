@@ -1,13 +1,9 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.EmailSpam
 
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
-import edu.illinois.cs.cogcomp.saul.datamodel.attribute.Attribute
-import edu.illinois.cs.cogcomp.saul.datamodel.edge.Edge
-import edu.illinois.cs.cogcomp.saul.datamodel.node.Node
 import edu.illinois.cs.cogcomp.saulexamples.data.Document
 
 import scala.collection.JavaConversions._
-import scala.collection.mutable.{ Map => MutableMap }
 
 object spamDataModel extends DataModel {
 
@@ -18,7 +14,6 @@ object spamDataModel extends DataModel {
   }
 
   val bigramFeature = discreteAttributesGeneratorOf[Document]('bigram) {
-
     x: Document =>
       {
         val words = x.getWords.toList

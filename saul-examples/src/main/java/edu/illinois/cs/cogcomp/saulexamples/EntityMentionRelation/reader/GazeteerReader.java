@@ -14,8 +14,8 @@ public class GazeteerReader {
 	public GazeteerReader(String fileName, String listName, boolean isLowerCase){
 		try {
 			this.listName=listName;
-			listGazet=new ArrayList<String>();
-			listWords=new ArrayList<String[]>();
+			listGazet= new ArrayList<>();
+			listWords= new ArrayList<>();
 			BufferedReader reader = new BufferedReader(new FileReader(fileName));
 			String line = null;
 			while ((line = reader.readLine()) != null) {

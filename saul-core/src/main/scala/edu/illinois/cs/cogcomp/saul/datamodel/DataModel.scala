@@ -70,14 +70,24 @@ trait DataModel {
 
   def populateWith[FROM <: AnyRef, TO <: AnyRef](sensor: FROM => List[TO], edgeKeyName: Symbol)(implicit tagF: ClassTag[FROM], tagT: ClassTag[TO]) = {
     //TODO send a sensor with FROM => TO and check whether the TO is a List or not in here.
+
     val toNode = this.getNodeWithType[TO]
     val fromInstances = this.getInstancesWithType[FROM]
-    fromInstances.foreach { instance =>
-      val manyInstances = sensor(instance)
-      val newSecondaryKeyMappingsList = manyInstances.map(x => edgeKeyName -> ((x: TO) => instance.hashCode().toString))
-      newSecondaryKeyMappingsList.foreach(secondaryKeyMapping => toNode.secondaryKeyMap += secondaryKeyMapping)
-      this populate manyInstances
+    fromInstances.foreach {
+      fromInstance =>
+        val toInstance_s = sensor(fromInstance)
+        val newSecondaryKeyMappingsList = toInstance_s.map(x => edgeKeyName -> ((x: TO) => fromInstance.hashCode().toString))
+        newSecondaryKeyMappingsList.foreach(secondaryKeyMapping => toNode.secondaryKeyMap += secondaryKeyMapping)
+        this.populate(toInstance_s)
     }
+  }
+
+  def populateWith[FROM <: AnyRef, TO <: AnyRef](sensor: FROM => TO, edgeKeyName: Symbol)(implicit tagF: ClassTag[FROM], tagT: ClassTag[TO], d: DummyImplicit): Unit = {
+    populateWith[FROM, TO]((f: FROM) => List(sensor(f)), edgeKeyName)
+  }
+
+  def populateWith[FROM <: AnyRef, TO <: AnyRef](sensor: FROM => Option[TO], edgeKeyName: Symbol)(implicit tagF: ClassTag[FROM], tagT: ClassTag[TO], d1: DummyImplicit, d2: DummyImplicit): Unit = {
+    populateWith[FROM, TO]((f: FROM) => sensor(f).toList, edgeKeyName)
   }
 
   def populateWith[FROM <: AnyRef, TO <: AnyRef](manyInstances: List[TO], sensor: (FROM, TO) => Boolean, edgeKeyName: Symbol)(implicit tagF: ClassTag[FROM], tagT: ClassTag[TO]) = {

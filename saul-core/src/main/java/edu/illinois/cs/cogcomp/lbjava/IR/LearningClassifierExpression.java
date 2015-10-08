@@ -400,7 +400,7 @@ public class LearningClassifierExpression extends ClassifierExpression
    learnerConstructor = null;
    checkDiscreteValues = false;
    alpha = new Constant("" + defaultAlpha);
-   parameterSets = new LinkedList<ParameterSet>();
+   parameterSets = new LinkedList<>();
 
    for (Iterator<Clause> I = cl.iterator(); I.hasNext(); ) {
      Clause c = I.next();
@@ -563,7 +563,7 @@ public class LearningClassifierExpression extends ClassifierExpression
    *         node.
   **/
  public ASTNodeIterator iterator() {
-   LinkedList<ASTNode> children = new LinkedList<ASTNode>();
+   LinkedList<ASTNode> children = new LinkedList<>();
 
    if (labeler != null) children.add(labeler);
    children.add(extractor);
@@ -621,7 +621,7 @@ public class LearningClassifierExpression extends ClassifierExpression
    Constant k = K == null ? null : (Constant) K.clone();
    LinkedList<ParameterSet> prms = null;
    if (parameterSets != null) {
-     prms = new LinkedList<ParameterSet>();
+     prms = new LinkedList<>();
      for (Iterator<ParameterSet> I = parameterSets.iterator(); I.hasNext(); )
        prms.add((ParameterSet) I.next().clone());
    }

@@ -13,16 +13,14 @@ import scala.collection.JavaConversions._
 object featureExamplesApp {
 
   def main(args: Array[String]): Unit = {
-    val corpus: String = "20-NewsGroup"
-    val x: Constituent = null
     val config = "./saul-examples/config/caching-curator.properties"
     val rm = new ResourceManager(config)
     val annotatorService = CuratorFactory.buildCuratorClient(rm)
-    //
-    // val annotatorService = IllinoisPipelineFactory.buildPipeline(rm)
-    val dat: List[Document] = new DocumentReader("./data/20newsToy/train").docs.toList.slice(1, 3)
 
-    val a = sensors.textCollection(dat) zip dat.map(x => x.getGUID) // this generates a list of strings each member is a textual content of a document
+    // val annotatorService = IllinoisPipelineFactory.buildPipeline(rm)
+    val data: List[Document] = new DocumentReader("./data/20newsToy/train").docs.toList.slice(1, 3)
+
+    val a = sensors.textCollection(data) zip data.map(x => x.getGUID) // this generates a list of strings each member is a textual content of a document
     //    var parserViewEnt:List[Constituent]=List()
     //    var posViewEnt:List[Serializable]=List()
     //    val taList=a.map(x=> CogcompGiantSensor.processDocumentWith(annotatorService,corpus,x._2, x._1))

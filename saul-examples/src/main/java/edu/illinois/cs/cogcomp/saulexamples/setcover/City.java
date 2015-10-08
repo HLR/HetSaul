@@ -9,7 +9,7 @@ import java.util.TreeMap;
 public class City {
 
   TreeMap<Integer, Neighborhood> neighborhoods =
-    new TreeMap<Integer, Neighborhood>();
+          new TreeMap<>();
 
   public City(String file){
     LineByLine parser = new LineByLine(file) {

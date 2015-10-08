@@ -76,13 +76,13 @@ public class SymbolTable
 	 **/
 	public SymbolTable(SymbolTable p) {
 		parent = p;
-		table = new HashMap<String, Type>();
-		children = new LinkedList<SymbolTable>();
+		table = new HashMap<>();
+		children = new LinkedList<>();
 		sourcePackage = "";
 
 		if (parent == null) {
-			external = new HashMap<String, Type>();
-			imported = new HashSet<String>();
+			external = new HashMap<>();
+			imported = new HashSet<>();
 		}
 		else parent.addChild(this);
 	}
@@ -308,7 +308,7 @@ public class SymbolTable
 
 		Class<?> result = null;
 
-		LinkedList<String> prefixes = new LinkedList<String>();
+		LinkedList<String> prefixes = new LinkedList<>();
 		prefixes.add("");
 		if (sourcePackage.length() != 0) prefixes.add(sourcePackage + ".");
 		prefixes.add("java.lang.");

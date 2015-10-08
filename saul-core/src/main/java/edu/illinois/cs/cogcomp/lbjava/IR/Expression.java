@@ -54,7 +54,7 @@ public abstract class Expression extends ASTNode
     * cannot be run before <code>SemanticAnalysis</code> runs.
    **/
   public HashSet<Argument> getVariableTypes() {
-    HashSet<Argument> result = new HashSet<Argument>();
+    HashSet<Argument> result = new HashSet<>();
     for (ASTNodeIterator I = iterator(); I.hasNext(); ) {
       ASTNode node = I.next();
       if (node instanceof Expression)

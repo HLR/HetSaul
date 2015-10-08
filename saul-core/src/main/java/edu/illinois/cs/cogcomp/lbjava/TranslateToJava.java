@@ -112,7 +112,7 @@ public class TranslateToJava extends Pass
 	public TranslateToJava(AST ast) {
 		super(ast);
 		methodBody = new StringBuffer();
-		files = new HashSet<String>();
+		files = new HashSet<>();
 	}
 
 
@@ -1423,8 +1423,8 @@ public class TranslateToJava extends Pass
 	 **/
 	public void run(AST ast) {
 		if (!RevisionAnalysis.noChanges) {
-			quantificationVariables = new HashMap<String, Integer>();
-			contextVariables = new HashMap<String, Integer>();
+			quantificationVariables = new HashMap<>();
+			contextVariables = new HashMap<>();
 			runOnChildren(ast);
 		}
 	}
@@ -1740,7 +1740,7 @@ public class TranslateToJava extends Pass
 		out.println("{");
 
 		{
-			HashSet<String> declared = new HashSet<String>();
+			HashSet<String> declared = new HashSet<>();
 			for (ClassifierExpressionList.ClassifierExpressionListIterator I =
 					cg.components.listIterator();
 					I.hasNext(); ) {
