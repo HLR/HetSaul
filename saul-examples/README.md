@@ -6,16 +6,16 @@ In this package two application examples in Saul are described.
 The list of the examples is listed bellow. To see more details on each example, click on its link to 
 visit its README file. 
 
-1. [Set Cover](saul-examples/src/main/scala/edu/illinois/cs/cogcomp/examples/setcover/README.md): The Set Cover problem which is a classical constraint programming 
+1. [Set Cover](src/main/scala/edu/illinois/cs/cogcomp/examples/setcover/README.md): The Set Cover problem which is a classical constraint programming 
 problem. This example shows declarative first order constraint programming in Saul. The constraints 
 are propositionalized and form an integer linear program (ILP) which are solved using Gurobi as our backend solver.
  Note that there is no training/learning involved in this example. 
  
-2. [Entity-Eelation Extraction](saul-examples/src/main/scala/edu/illinois/cs/cogcomp/examples/entity-relation/README.md): The entity-relation extraction task through 
+2. [Entity-Eelation Extraction](src/main/scala/edu/illinois/cs/cogcomp/examples/entity-relation/README.md): The entity-relation extraction task through 
 which designing various training and prediction configurations are exemplified. 
 One can see how local, global and pipeline configurations are designed, used and evaluated in Saul.
 
-3. [Spam Classification](saul-examples/src/main/scala/edu/illinois/cs/cogcomp/examples/spam/README.me): A third example which is a binary classification task 
+3. [Spam Classification](src/main/scala/edu/illinois/cs/cogcomp/examples/spam/README.me): A third example which is a binary classification task 
 to classify text documents as either Spam or Not Spam was also created.
 
 * Note: Examples are under active development. 
