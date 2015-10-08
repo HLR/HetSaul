@@ -11,7 +11,7 @@ problem. This example shows declarative first order constraint programming in Sa
 are propositionalized and form an integer linear program (ILP) which are solved using Gurobi as our backend solver.
  Note that there is no training/learning involved in this example. 
  
-2. [Entity-Eelation Extraction](src/main/scala/edu/illinois/cs/cogcomp/saulexamples/nlp/EntityMentionRelation/README.md): The entity-relation extraction task through 
+2. [Entity-Relation Extraction](src/main/scala/edu/illinois/cs/cogcomp/saulexamples/nlp/EntityMentionRelation/README.md): The entity-relation extraction task through 
 which designing various training and prediction configurations are exemplified. 
 One can see how local, global and pipeline configurations are designed, used and evaluated in Saul.
 
