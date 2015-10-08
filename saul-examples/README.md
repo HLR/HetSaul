@@ -15,7 +15,7 @@ are propositionalized and form an integer linear program (ILP) which are solved 
 which designing various training and prediction configurations are exemplified. 
 One can see how local, global and pipeline configurations are designed, used and evaluated in Saul.
 
-3. [Spam Classification](src/main/scala/edu/illinois/cs/cogcomp/saulexamples/nlp/EmailSpam/README.me): A third example which is a binary classification task 
+3. [Spam Classification](src/main/scala/edu/illinois/cs/cogcomp/saulexamples/nlp/EmailSpam/README.md): A third example which is a binary classification task 
 to classify text documents as either Spam or Not Spam was also created.
 
 * Note: Examples are under active development. 
