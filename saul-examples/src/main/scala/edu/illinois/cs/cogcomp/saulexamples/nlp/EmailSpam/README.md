@@ -40,23 +40,12 @@ Simply a list of all the words in the document is returned.
 A concatenation of 2 consecutive words (bigrams) at a time is returned, and the set of grams contained in a document are used as its features.    
 
 ```scala
-val bigramFeature=discreteAttributesGeneratorOf[Document]('bigram) {
-
-x:Document => {
-   /** get all the words in a list */ 
-   val words = x.getWords.toList                                    
-   
-   /** create a new empty list called big */ 
-   var big:List[String] = List()     
-   
-   /** loop through all the words in the word list and concatenate successive words and add it to the list */ 
-   for (i<- 0 until  words.size-1)                                  
-    big = (words.get(i)+"-"+words.get(i+1))::big                    
-   
-   /** return the list */  
-   big                                                              
-}
-}
+  val bigramFeature = discreteAttributesGeneratorOf[Document]('bigram) {
+    x: Document => 
+      val words = x.getWords.toList
+      /** bigram features */
+      words.sliding(2).map(_.mkString("-")).toList
+  }
 ```
 ####SpamLabel
 The label is defined here
@@ -93,10 +82,10 @@ object spamApp {
 
   def main(args: Array[String]): Unit = {
    /** Defining the data and specifying it's location  */ 
-   val dat:List[Document]=new DocumentReader("data/spam/train").docs.toList      
+   val dat:List[Document] = new DocumentReader("data/spam/train").docs.toList      
    
    /** Adding a slice to the data model */ 
-   spamDataModel++ dat.slice(0,50)                                               
+   spamDataModel.docs populate dat.slice(0,50)                                               
    
    /** learning with 50 iterations */ 
    spamClassifier.learn(50)                                                      

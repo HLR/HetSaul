@@ -1,6 +1,6 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation
 
-import edu.illinois.cs.cogcomp.saul.classifier.ConstraintClassifier
+import edu.illinois.cs.cogcomp.saul.classifier.ConstrainedClassifier
 import edu.illinois.cs.cogcomp.saul.constraint.ConstraintTypeConversion._
 import edu.illinois.cs.cogcomp.saulexamples.EntityMentionRelation.datastruct.ConllRelation
 import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.classifiers._
@@ -9,7 +9,7 @@ import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.classifier
   */
 object constrains {
 
-  val Per_Org = ConstraintClassifier.constraintOf[ConllRelation] {
+  val Per_Org = ConstrainedClassifier.constraintOf[ConllRelation] {
     x: ConllRelation =>
       {
         (((workForClassifier on x) isTrue) ==>
@@ -23,7 +23,7 @@ object constrains {
       }
   }
 
-  val LiveInConstrint = ConstraintClassifier.constraintOf[ConllRelation] {
+  val LiveInConstrint = ConstrainedClassifier.constraintOf[ConllRelation] {
     x: ConllRelation =>
       {
         ((LivesInClassifier on x) isTrue) ==> (
@@ -33,7 +33,7 @@ object constrains {
       }
   }
 
-  val PersonWorkFor = ConstraintClassifier.constraintOf[ConllRelation] {
+  val PersonWorkFor = ConstrainedClassifier.constraintOf[ConllRelation] {
     x: ConllRelation =>
       {
         ((workForClassifier on x) isTrue) ==>

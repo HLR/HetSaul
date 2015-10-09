@@ -1,6 +1,6 @@
-package edu.illinois.cs.cogcomp.saulexamples.setcover
+package edu.illinois.cs.cogcomp.saulexamples.setCover
 
-import edu.illinois.cs.cogcomp.saul.classifier.ConstraintClassifier
+import edu.illinois.cs.cogcomp.saul.classifier.ConstrainedClassifier
 import edu.illinois.cs.cogcomp.saul.constraint.ConstraintTypeConversion._
 
 import scala.collection.JavaConversions._
@@ -11,7 +11,7 @@ object setCoverApp {
   val cities = new City("./data/SetCover/example.txt")
   val ns = cities.getNeighborhoods.toList
 
-  val containsStationConstrint = ConstraintClassifier.constraintOf[City]({
+  val containsStationConstrint = ConstrainedClassifier.constraintOf[City]({
     x: City =>
       {
         val containStation = new ContainsStation()

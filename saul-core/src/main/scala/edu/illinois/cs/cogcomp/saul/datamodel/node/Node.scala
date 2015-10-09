@@ -2,11 +2,11 @@ package edu.illinois.cs.cogcomp.saul.datamodel.node
 
 import edu.illinois.cs.cogcomp.saul.datamodel.attribute.features.discrete.DiscreteAttribute
 
-import scala.collection.mutable.{ Map => MutableMap }
+import scala.collection.mutable
+import scala.collection.mutable.{ Map => MutableMap, HashSet => MutableSet }
 import scala.reflect.ClassTag
 
-/** A Node E is an instances of base types T.
-  */
+/** A Node E is an instances of base types T */
 class Node[T <: AnyRef](
   val primaryKeyFunction: T => String,
   var secondaryKeyMap: MutableMap[Symbol, T => String],
@@ -24,31 +24,28 @@ class Node[T <: AnyRef](
     case (s, t) => t
   })
 
-  def getTestingInstances: Iterable[T] = this.testingSet map {
+  def getTestingInstances: Iterable[T] = this.testingSet.map {
     primaryKey: String => this.collections.get(primaryKey).get
   }
 
-  // TODO: remove these 
-  val trainingSet: scala.collection.mutable.Set[String] = scala.collection.mutable.HashSet[String]()
-  val testingSet: scala.collection.mutable.Set[String] = scala.collection.mutable.HashSet[String]()
+  val trainingSet = MutableSet[String]()
+  val testingSet = MutableSet[String]()
 
-  private val orderingMap: scala.collection.mutable.Map[Int, T] = scala.collection.mutable.Map[Int, T]()
-  private val reverseOrderingMap: scala.collection.mutable.Map[T, Int] = scala.collection.mutable.Map[T, Int]()
+  private val orderingMap = MutableMap[Int, T]()
+  private val reverseOrderingMap = MutableMap[T, Int]()
 
-  /** Maps from (PrimaryID => T)
-    */
-  private val collections = scala.collection.mutable.Map[String, T]()
+  /** Maps from (PrimaryID => T) */
+  private val collections = MutableMap[String, T]()
 
-  /** Maps of (NameOfSecondaryID => ValueOfSecondary => PrimaryID)
-    */
-  private val indices = scala.collection.mutable.Map[Symbol, scala.collection.mutable.Map[String, scala.collection.mutable.MutableList[String]]]()
+  /** Maps of (NameOfSecondaryID => ValueOfSecondary => PrimaryID) */
+  private val indices = MutableMap[Symbol, MutableMap[String, mutable.MutableList[String]]]()
 
   def getInstanceWithPrimaryKey(s: String): T = this.collections.get(s) match {
     case Some(t) => t
     case _ => throw new Exception("Element not found")
   }
 
-  /** Auther Parisa
+  /** Author: Parisa
     * This is supposed to be the physical address with a flexible type depending on the
     * applcation domain.
     * TODO: explain more why/where this might be helpful.
@@ -58,7 +55,6 @@ class Node[T <: AnyRef](
     case _ => throw new Exception("Element not found")
   }
 
-  // TODO: add doocumentation to this method
   def filterNode(attribute: DiscreteAttribute[T], value: String): Node[T] = {
     val node = new Node[T](primaryKeyFunction, this.secondaryKeyMap, tag, address)
     node populate collections.values.filter {
@@ -75,9 +71,7 @@ class Node[T <: AnyRef](
     case Some(dict) => dict.get(value) match {
       case Some(t) => t.toList
       case _ =>
-        //        println(s"Can;t found ${tag}")
-        //        println(s"Can;t found ${key} => ${value}")
-        //        throw new Exception("Element not found")
+        /** Can't found the tag */
         Nil
     }
     case _ => throw new Exception("Element not found")
@@ -97,10 +91,9 @@ class Node[T <: AnyRef](
     ret
   }
 
-  /** Operator for adding a sequence of T into my table.
-    */
+  /** Operator for adding a sequence of T into my table. */
   def populate(ts: Seq[T]) = {
-    ts foreach {
+    ts.foreach {
       t =>
         {
           val order = incrementCount()
@@ -110,8 +103,8 @@ class Node[T <: AnyRef](
           this.collections += (primaryKey -> t)
           secondaryKeyFunction(t) foreach {
             case (secondaryKey, value) =>
-              val secondaries = this.indices.getOrElseUpdate(secondaryKey, scala.collection.mutable.Map[String, scala.collection.mutable.MutableList[String]]())
-              secondaries.getOrElseUpdate(value, new scala.collection.mutable.MutableList[String]()) += primaryKey
+              val secondaries = this.indices.getOrElseUpdate(secondaryKey, MutableMap[String, mutable.MutableList[String]]())
+              secondaries.getOrElseUpdate(value, new mutable.MutableList[String]()) += primaryKey
           }
           this.orderingMap += (order -> t)
           this.reverseOrderingMap += (t -> order)
@@ -120,7 +113,7 @@ class Node[T <: AnyRef](
   }
 
   def addToTest(ts: Seq[T]) = {
-    ts foreach {
+    ts.foreach {
       t =>
         {
           val order = incrementCount()
@@ -131,8 +124,8 @@ class Node[T <: AnyRef](
 
           secondaryKeyFunction(t) foreach {
             case (secondaryKey, value) => {
-              val secondaries = this.indices.getOrElseUpdate(secondaryKey, scala.collection.mutable.Map[String, scala.collection.mutable.MutableList[String]]())
-              secondaries.getOrElseUpdate(value, new scala.collection.mutable.MutableList[String]()) += primaryKey
+              val secondaries = this.indices.getOrElseUpdate(secondaryKey, MutableMap[String, mutable.MutableList[String]]())
+              secondaries.getOrElseUpdate(value, new mutable.MutableList[String]()) += primaryKey
             }
           }
           this.orderingMap += (order -> t)
@@ -141,8 +134,7 @@ class Node[T <: AnyRef](
     }
   }
 
-  /** Relational operators
-    */
+  /** Relational operators */
   val nodeOfTypeT = this
 
   def join[U <: AnyRef](nodeOfTypeU: Node[U]) = new {
@@ -173,8 +165,7 @@ class Node[T <: AnyRef](
     if (relativePos == 0) {
       Some(t)
     } else {
-      // relative <> 0
-
+      /** relative not equal to 0 */
       this.reverseOrderingMap.get(t) match {
         case Some(ord) => {
           val targetOrd = ord + relativePos
@@ -188,7 +179,6 @@ class Node[T <: AnyRef](
             }
             case None => None
           }
-
         }
         case _ => None
       }
@@ -251,7 +241,7 @@ class Node[T <: AnyRef](
               case None => None
             }
         }
-      } toList
+      }.toList
       case _ => throw new Exception("Can't find element.")
     }
   }
@@ -277,9 +267,11 @@ class Node[T <: AnyRef](
                     keyOnT != keyOnX
                   }
               })
-              // if it exist such a value,
-              // then we should discard it.
-              // So since this function passed to a filter. we put a not! in front.
+
+              /** if it exist such a value,
+                * then we should discard it.
+                * So since this function passed to a filter. we put a not! in front.
+                */
               !existNotMatch
             }
         }.toList
