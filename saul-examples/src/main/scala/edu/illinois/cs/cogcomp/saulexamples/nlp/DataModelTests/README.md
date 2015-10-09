@@ -113,6 +113,7 @@ modelWithKeys.populate(sentenceList)
 Examples of basic graph queries to traverse the graph.
 
 ```scala
-val s = document ~> DocToSen
-val d = sentences <~ DocToSen
+val s = document() ~> DocToSen // all sentences
+val d = sentences() ~> -DocToSen // all documents (using reverse link)
+val s2 = document() ~> DocToSen filter(_.contains("Saul")) ~> -DocToSen // all sentences in documents that contain "Saul"
 ```
