@@ -86,6 +86,7 @@ public class Conll04_ReaderNew implements Parser {
             } else {
                 if (sentEnd) {
                     {
+                        sentences.add(sent);
                         currSentId++;
                     }
                     sent = new ConllRawSentence(currSentId);
