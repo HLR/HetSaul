@@ -1,29 +1,27 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation
 
-import edu.illinois.cs.cogcomp.saulexamples.EntityMentionRelation.datastruct.{ConllRawToken, ConllRelation}
+import edu.illinois.cs.cogcomp.saulexamples.EntityMentionRelation.datastruct.{ ConllRawToken, ConllRelation }
 import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.classifiers._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.entityRelationDataModel._
 import edu.illinois.cs.cogcomp.saul.classifier.JointTrain
 
-/**
- * Created by haowu on 1/27/15.
- */
-/**
- * Experiment workspace for playing with language feature.
- */
+/** Created by haowu on 1/27/15.
+  */
+/** Experiment workspace for playing with language feature.
+  */
 
-object MyConfiguration{
+object MyConfiguration {
 
-    val it = 20
-    val pipeLine = true
-    val fold = 4
+  val it = 20
+  val pipeLine = true
+  val fold = 4
 
 }
 
-object RunnableExample{
+object RunnableExample {
 
-  def trainIndepedent(it : Int) : Unit = {
-    println("Indepent Training with iteration "+ it)
+  def trainIndepedent(it: Int): Unit = {
+    println("Indepent Training with iteration " + it)
     PersonClassifier.learn(it)
     PersonClassifier.test()
 
@@ -39,15 +37,13 @@ object RunnableExample{
     LivesInClassifier.learn(it)
     LivesInClassifier.test()
 
-//    locatedInClassifier.crossValidation(it)
-//    locatedInClassifier.test()
+    //    locatedInClassifier.crossValidation(it)
+    //    locatedInClassifier.test()
   }
 
+  def cv(it: Int): Unit = {
 
-  def cv(it : Int) : Unit = {
-
-    println("Running CV "+ it)
-
+    println("Running CV " + it)
 
     PersonClassifier.crossValidation(it)
     orgClassifier.crossValidation(it)
@@ -58,26 +54,24 @@ object RunnableExample{
 
   }
 
-  def trainJoint(preIt : Int,it : Int) : Unit = {
-    println("Joint Training with Pretraint "+ preIt)
-    println("Joint Training with iteration "+ it)
+  def trainJoint(preIt: Int, it: Int): Unit = {
+    println("Joint Training with Pretraint " + preIt)
+    println("Joint Training with iteration " + it)
     orgClassifier.learn(8)
     PersonClassifier.learn(8)
     LocClassifier.learn(8)
 
-    JointTrain.train[ConllRelation](entityRelationDataModel, PerConstraintClassifier :: orgConstraintClassifier :: LocConstraintClassifier :: P_O_relationClassifier  :: LiveIn_P_O_relationClassifier ::Nil,it)
-//    JointTrain.train[ConllRelation](ErDataModelExample,  P_O_relationClassifier  :: LiveIn_P_O_relationClassifier ::Nil,it)
+    JointTrain.train[ConllRelation](entityRelationDataModel, PerConstraintClassifier :: orgConstraintClassifier :: LocConstraintClassifier :: P_O_relationClassifier :: LiveIn_P_O_relationClassifier :: Nil, it)
+    //    JointTrain.train[ConllRelation](ErDataModelExample,  P_O_relationClassifier  :: LiveIn_P_O_relationClassifier ::Nil,it)
   }
-
 
   def forgotEverything() = {
 
     PersonClassifier.forget()
     orgClassifier.forget()
-//    PersonClassifier.forgot()
+    //    PersonClassifier.forgot()
     workForClassifier.forget()
   }
-
 
   val pipeLine = MyConfiguration.pipeLine
 
@@ -85,7 +79,7 @@ object RunnableExample{
 
     val fold = MyConfiguration.fold
 
-    if(pipeLine){
+    if (pipeLine) {
       println("using pipeline feature")
     }
 
@@ -94,41 +88,39 @@ object RunnableExample{
     forgotEverything()
     entityRelationDataModel.read(fold)
 
-    val testRels = entityRelationDataModel.getNodeWithType[ConllRelation].getTestingInstances.toList//.map( ErDataModelExample.getFromRelation[ConllRelation,ConllRawToken](_)  ).flatten
-    val testTokens = entityRelationDataModel.getNodeWithType[ConllRawToken].getTestingInstances.toList//.map( ErDataModelExample.getFromRelation[ConllRelation,ConllRawToken](_)  ).flatten
+    val testRels = entityRelationDataModel.getNodeWithType[ConllRelation].getTestingInstances.toList //.map( ErDataModelExample.getFromRelation[ConllRelation,ConllRawToken](_)  ).flatten
+    val testTokens = entityRelationDataModel.getNodeWithType[ConllRawToken].getTestingInstances.toList //.map( ErDataModelExample.getFromRelation[ConllRelation,ConllRawToken](_)  ).flatten
 
     trainIndepedent(it)
 
     println(Console.BLUE + "Peop")
-    JointTrain.testClassifiers(PersonClassifier.classifier,(entityType is "Peop").classifier,testTokens)
+    JointTrain.testClassifiers(PersonClassifier.classifier, (entityType is "Peop").classifier, testTokens)
     println(Console.RED + "Peop")
-    JointTrain.testClassifiers(PerConstraintClassifier.classifier,(entityType is "Peop").classifier,testTokens)
+    JointTrain.testClassifiers(PerConstraintClassifier.classifier, (entityType is "Peop").classifier, testTokens)
 
     println(Console.BLUE + "Org")
-    JointTrain.testClassifiers(orgClassifier.classifier,(entityType is "Org").classifier,testTokens)
+    JointTrain.testClassifiers(orgClassifier.classifier, (entityType is "Org").classifier, testTokens)
     println(Console.RED + "Org")
-    JointTrain.testClassifiers(orgConstraintClassifier.classifier,(entityType is "Org").classifier,testTokens)
+    JointTrain.testClassifiers(orgConstraintClassifier.classifier, (entityType is "Org").classifier, testTokens)
 
     println(Console.BLUE + "Loc")
-    JointTrain.testClassifiers(LocClassifier.classifier,(entityType is "Loc").classifier,testTokens)
+    JointTrain.testClassifiers(LocClassifier.classifier, (entityType is "Loc").classifier, testTokens)
     println(Console.RED + "Loc")
-    JointTrain.testClassifiers(LocConstraintClassifier.classifier,(entityType is "Loc").classifier,testTokens)
+    JointTrain.testClassifiers(LocConstraintClassifier.classifier, (entityType is "Loc").classifier, testTokens)
 
     println(Console.BLUE + "Work_For")
-    JointTrain.testClassifiers(workForClassifier.classifier,(relationType is "Work_For").classifier,testRels)
+    JointTrain.testClassifiers(workForClassifier.classifier, (relationType is "Work_For").classifier, testRels)
     println(Console.RED + "Work_For")
-    JointTrain.testClassifiers(P_O_relationClassifier.classifier,(relationType is "Work_For").classifier,testRels)
-//
+    JointTrain.testClassifiers(P_O_relationClassifier.classifier, (relationType is "Work_For").classifier, testRels)
+    //
 
     println(Console.BLUE + "Live_In")
-    JointTrain.testClassifiers(LivesInClassifier.classifier,(relationType is "Live_In").classifier,testRels)
+    JointTrain.testClassifiers(LivesInClassifier.classifier, (relationType is "Live_In").classifier, testRels)
     println(Console.RED + "Live_In")
-    JointTrain.testClassifiers(LiveIn_P_O_relationClassifier.classifier,(relationType is "Live_In").classifier,testRels)
-}
+    JointTrain.testClassifiers(LiveIn_P_O_relationClassifier.classifier, (relationType is "Live_In").classifier, testRels)
+  }
 
-
-  def moreExamples() : Unit = {
-
+  def moreExamples(): Unit = {
 
     //
     //
@@ -163,27 +155,12 @@ object RunnableExample{
 
     //  orgConstraintClassifier.crossValidation(5)
 
-
     //    workForClassifier.learn(1)
     //    workForClassifier.test()
 
     //    PersonClassifier.crossValidation(5)
     //    orgClassifier.crossValidation(5)
     //    LocClassifier.crossValidation(5)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     //    orgClassifier.test(Data.testData)
 
@@ -229,11 +206,6 @@ object RunnableExample{
     //
     //    JointTrain(SomeExampleDataModel, List(PerConstraintClassifier,orgConstraintClassifier,P_O_relationClassifier))
     //
-
-
-
-
-
 
     /// Parisa's verison
     //=======
@@ -282,7 +254,6 @@ object RunnableExample{
     //    //  println(p2)
     //
     //    JointTrain(SomeExampleDataModel, List(PerConstraintClassifier,orgConstraintClassifier,P_O_relationClassifier))
-
 
   }
 
