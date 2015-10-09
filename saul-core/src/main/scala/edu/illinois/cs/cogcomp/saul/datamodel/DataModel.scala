@@ -302,6 +302,16 @@ trait DataModel {
       PROPERTIES += a
       a
     }
+
+    // used to be called "rangedDiscreteAttributeOf"
+    def apply(range: String*)(f: T => String)(implicit tag: ClassTag[T], d1: DummyImplicit, d2: DummyImplicit, d3: DummyImplicit,
+      d4: DummyImplicit, d5: DummyImplicit, d6: DummyImplicit,
+      d7: DummyImplicit): DiscreteAttribute[T] = {
+      val r = range.toList
+      val a = new DiscreteAttribute[T](name.toString, f, Some(r))
+      PROPERTIES += a
+      a
+    }
   }
   def property[T <: AnyRef](name: Symbol) = new PropertyApply[T](name)
 }
