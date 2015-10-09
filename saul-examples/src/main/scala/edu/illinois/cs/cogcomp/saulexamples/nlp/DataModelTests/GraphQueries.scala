@@ -1,6 +1,7 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.DataModelTests
 
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
+import edu.illinois.cs.cogcomp.saul.datamodel.node.NodeSet
 
 /** @author sameer
   * @since 10/8/15.
@@ -20,13 +21,13 @@ object GraphQueries extends App {
 
   import model._
 
-  println(token ~> t2s == sentence)
-  println(token ~> t2s <~ t2s == token)
+  println((token() ~> t2s).node == sentence)
+  println((token() ~> t2s ~> -t2s).node == token)
   println("---")
-  println(token ~> t2s ~> s2d == document)
-  println(token ~> t2s ~> s2d <~ s2d == sentence)
-  println(token ~> t2s ~> s2d <~ s2d <~ t2s == token)
+  println((token() ~> t2s ~> s2d).node == document)
+  println((token() ~> t2s ~> s2d ~> -s2d).node == sentence)
+  println((token() ~> t2s ~> s2d ~> -s2d ~> -t2s).node == token)
   println("---")
-  println(token ~> t2s ~> s2d ~> d2c == corpus)
-  println(token ~> t2s ~> s2d ~> d2c <~ d2c <~ s2d <~ t2s == token)
+  println((token() ~> t2s ~> s2d ~> d2c).node == corpus)
+  println((token() ~> t2s ~> s2d ~> d2c ~> -d2c ~> -s2d ~> -t2s).node == token)
 }

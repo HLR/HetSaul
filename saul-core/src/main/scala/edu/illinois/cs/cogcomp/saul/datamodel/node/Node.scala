@@ -146,15 +146,9 @@ class Node[T <: AnyRef](
     */
   val nodeOfTypeT = this
 
-  def ~>[U <: AnyRef](edge: Edge[T, U]): Node[U] = {
-    assert(this == edge.forward.from)
-    edge.forward.to
-  }
-
-  def <~[U <: AnyRef](edge: Edge[U, T]): Node[U] = {
-    assert(this == edge.backward.from)
-    edge.backward.to
-  }
+  def apply() = NodeSet(nodeOfTypeT)
+  def apply(t: T) = SingletonSet(nodeOfTypeT, t)
+  def apply(ts: Iterable[T]) = BasicSet(nodeOfTypeT, ts)
 
   def join[U <: AnyRef](nodeOfTypeU: Node[U]) = new {
     def on(matchesList: (Symbol, Symbol)*): List[(T, U)] = // new LBPList[(T,U)]()
