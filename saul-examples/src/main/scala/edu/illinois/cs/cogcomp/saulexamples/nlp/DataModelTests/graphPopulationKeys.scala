@@ -20,8 +20,8 @@ object graphPopulationKeys {
     val a = sensors.textCollection(dat) zip dat.map(x => x.getGUID) // this generates a list of strings each member is a textual content of a document
     val taList = a.map(x => sensors.processDocumentWith(annotatorService, corpus, x._2, x._1))
     val sentenceList = taList.flatMap(x => x.sentences())
-    modelWithKeys.populate(taList)
-    modelWithKeys.populate(sentenceList)
+    modelWithKeys.document populate taList
+    modelWithKeys.sentence populate sentenceList
 
     val x1 = modelWithKeys.getFromRelation[Sentence, TextAnnotation](sentenceList.head)
     val x2 = modelWithKeys.getFromRelation[TextAnnotation, Sentence](taList.head)

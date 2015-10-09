@@ -61,10 +61,10 @@ object edisonDataModel extends DataModel {
   }
 
   /** Edge Types */
-  val DocTosen = edge[TextAnnotation, Sentence]('dTos) //(PID,'dTos2)// {
+  val DocTosen = edge(document, sentence, 'dTos) //(PID,'dTos2)// {
   //   ta: TextAnnotation => ta.sentences()
   //}
-  val SenToCons = edge[TextAnnotation, Constituent]('tToc)
+  val SenToCons = edge(document, Chunk_constituents, 'tToc)
   //val DocTosen=edge[TextAnnotation,Sentence](util.f: TextAnnotation => List[Sentence])('dTos)
   // val DocTosen=edge[TextAnnotation,Sentence]('dTos)
 

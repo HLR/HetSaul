@@ -12,7 +12,7 @@ class spamUnitTests extends FlatSpec with Matchers {
     "from DataModel" in {
       val data1 = toyDataGeneratorObject.generateToyDocuments(3)
       val oldSize = spamDataModel.docs.getAllInstances.toList.size
-      spamDataModel.populate(data1)
+      spamDataModel.docs populate (data1)
       val newSize = spamDataModel.docs.getAllInstances.toList.size
       (newSize - oldSize) should be(data1.length)
     }
@@ -23,8 +23,8 @@ class spamUnitTests extends FlatSpec with Matchers {
       val data1 = toyDataGeneratorObject.generateToyDocuments(4)
       val data2 = toyDataGeneratorObject.generateToyDocuments(5)
       val oldSize = spamDataModel.docs.getAllInstances.toList.size
-      spamDataModel.populate(data1)
-      spamDataModel.populate(data2)
+      spamDataModel.docs populate (data1)
+      spamDataModel.docs populate (data2)
       val newSize = spamDataModel.docs.getAllInstances.toList.size
       (newSize - oldSize) should be(data1.length + data2.length)
     }

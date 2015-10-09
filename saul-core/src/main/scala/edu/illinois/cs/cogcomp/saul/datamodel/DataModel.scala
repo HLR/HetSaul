@@ -4,7 +4,7 @@ import edu.illinois.cs.cogcomp.saul.datamodel.attribute.features.discrete.{ Bool
 import edu.illinois.cs.cogcomp.saul.datamodel.attribute.features.real.{ RealArrayAttribute, RealAttribute, RealGenAttribute }
 import edu.illinois.cs.cogcomp.saul.datamodel.attribute.{ Attribute, EvaluatedAttribute }
 import edu.illinois.cs.cogcomp.saul.datamodel.node.Node
-import edu.illinois.cs.cogcomp.saul.datamodel.edge.Edge
+import edu.illinois.cs.cogcomp.saul.datamodel.edge.{ Link, Edge }
 
 import scala.collection.mutable.{ Map => MutableMap, ListBuffer }
 import scala.reflect.ClassTag
@@ -16,19 +16,10 @@ trait DataModel {
   final val PROPERTIES = new ListBuffer[Attribute[_]]
   final val EDGES = new ListBuffer[Edge[_, _]]
 
-  // TODO: comment this function
-  def getType[T <: AnyRef](implicit tag: ClassTag[T]): ClassTag[T] = tag
-
-  // TODO: implement this: retrieve all data with type T.
-  // This will equals to select all where type is T
-  def getInstancesWithType[T <: AnyRef](implicit tag: ClassTag[T]): Iterable[T] = {
-    this.getNodeWithType[T].getAllInstances
-  }
-
   // TODO: Implement this function.
-  def select[T <: AnyRef](conditions: EvaluatedAttribute[T, _]*)(implicit tag: ClassTag[T]): List[T] = {
+  def select[T <: AnyRef](node: Node[T], conditions: EvaluatedAttribute[T, _]*): List[T] = {
     val conds = conditions.toList
-    this.getNodeWithType[T].getAllInstances.filter({
+    node.getAllInstances.filter({
       t =>
         conds.exists({
           cond => cond.att.mapping(t).equals(cond.value)
@@ -64,48 +55,12 @@ trait DataModel {
 
   // def flatList(es: List[Edge[_, _]]*): List[Edge[_, _]] = es.toList.flatten
 
-  def populate[T <: AnyRef](coll: Seq[T])(implicit tag: ClassTag[T]) = {
-    this.getNodeWithType[T] populate coll
+  @deprecated("Use node.populate() instead.")
+  def populate[T <: AnyRef](node: Node[T], coll: Seq[T]) = {
+    node populate coll
   }
 
-  def populateWith[FROM <: AnyRef, TO <: AnyRef](sensor: FROM => List[TO], edgeKeyName: Symbol)(implicit tagF: ClassTag[FROM], tagT: ClassTag[TO]) = {
-    //TODO send a sensor with FROM => TO and check whether the TO is a List or not in here.
-
-    val toNode = this.getNodeWithType[TO]
-    val fromInstances = this.getInstancesWithType[FROM]
-    fromInstances.foreach {
-      fromInstance =>
-        val toInstance_s = sensor(fromInstance)
-        val newSecondaryKeyMappingsList = toInstance_s.map(x => edgeKeyName -> ((x: TO) => fromInstance.hashCode().toString))
-        newSecondaryKeyMappingsList.foreach(secondaryKeyMapping => toNode.secondaryKeyMap += secondaryKeyMapping)
-        this.populate(toInstance_s)
-    }
-  }
-
-  def populateWith[FROM <: AnyRef, TO <: AnyRef](sensor: FROM => TO, edgeKeyName: Symbol)(implicit tagF: ClassTag[FROM], tagT: ClassTag[TO], d: DummyImplicit): Unit = {
-    populateWith[FROM, TO]((f: FROM) => List(sensor(f)), edgeKeyName)
-  }
-
-  def populateWith[FROM <: AnyRef, TO <: AnyRef](sensor: FROM => Option[TO], edgeKeyName: Symbol)(implicit tagF: ClassTag[FROM], tagT: ClassTag[TO], d1: DummyImplicit, d2: DummyImplicit): Unit = {
-    populateWith[FROM, TO]((f: FROM) => sensor(f).toList, edgeKeyName)
-  }
-
-  def populateWith[FROM <: AnyRef, TO <: AnyRef](manyInstances: List[TO], sensor: (FROM, TO) => Boolean, edgeKeyName: Symbol)(implicit tagF: ClassTag[FROM], tagT: ClassTag[TO]) = {
-    val toNode = this.getNodeWithType[TO]
-    val fromInstances = this.getInstancesWithType[FROM]
-    var temp = manyInstances
-    fromInstances.foreach { instance =>
-      var twoLists = temp.partition(sensor(instance, _))
-      val matching = twoLists._1
-      val unmatching = twoLists._2
-
-      val newSecondaryKeyMappingsList = matching.map(x => edgeKeyName -> ((x: TO) => instance.hashCode().toString))
-      newSecondaryKeyMappingsList.foreach { secondaryKeyMapping => toNode.secondaryKeyMap += secondaryKeyMapping }
-      this populate matching
-      temp = unmatching
-    }
-  }
-
+  @deprecated
   def getNodeWithType[T <: AnyRef](implicit tag: ClassTag[T]): Node[T] = {
     this.NODES.filter {
       e: Node[_] =>
@@ -115,27 +70,15 @@ trait DataModel {
     }.head.asInstanceOf[Node[T]]
   }
 
-  def getNodesWithTypeTag(tag: ClassTag[_]): Node[_] = {
-    this.NODES.filter {
-      e: Node[_] =>
-        {
-          tag.equals(e.tag)
-        }
-    }.head
-  }
-
-  def get[T <: AnyRef](pi: String)(implicit tag: ClassTag[T]): T = {
-    this.getNodeWithType[T].getInstanceWithPrimaryKey(pi)
-  }
-
   // TODO: comment this function
+  @deprecated
   def getFromRelation[FROM <: AnyRef, NEED <: AnyRef](t: FROM)(implicit tag: ClassTag[FROM], headTag: ClassTag[NEED]): Seq[NEED] = {
     val dm = this
     if (tag.equals(headTag)) {
       List(t.asInstanceOf[NEED])
     } else {
       val r = this.EDGES.filter {
-        r => r.tagT.toString.equals(tag.toString) && r.tagU.toString.equals(headTag.toString)
+        r => r.from.tag.toString.equals(tag.toString) && r.to.tag.toString.equals(headTag.toString)
       }
       if (r.isEmpty) {
         throw new Exception(s"Failed to found relations between $tag to $headTag")
@@ -152,13 +95,14 @@ trait DataModel {
   }
 
   // TODO: comment this function
+  @deprecated
   def getFromRelation[T <: AnyRef, HEAD <: AnyRef](name: Symbol, t: T)(implicit tag: ClassTag[T], headTag: ClassTag[HEAD]): List[HEAD] = {
     if (tag.equals(headTag)) {
       List(t.asInstanceOf[HEAD])
     } else {
       val r = this.EDGES.filter {
         r =>
-          r.tagT.equals(tag) && r.tagU.equals(headTag) && (if (r.nameOfRelation.isDefined) {
+          r.to.tag.equals(tag) && r.from.tag.equals(headTag) && (if (r.nameOfRelation.isDefined) {
             name.equals(r.nameOfRelation.get)
           } else {
             false
@@ -177,8 +121,9 @@ trait DataModel {
   }
 
   // TODO: rename this function with a better name
+  @deprecated
   def getRelatedFieldsBetween[T, U](implicit tag: ClassTag[T], headTag: ClassTag[U]): List[Symbol] = {
-    this.EDGES.filter(r => r.tagT.equals(tag) && r.tagU.equals(headTag)).toList match {
+    this.EDGES.filter(r => r.to.tag.equals(tag) && r.from.tag.equals(headTag)).toList match {
       case x :: xs => x.matchesList.map(_._1)
       case Nil => Nil
     }
@@ -192,7 +137,7 @@ trait DataModel {
   // TODO: remove this
   def testWith[T <: AnyRef](coll: Seq[T])(implicit tag: ClassTag[T]) = {
     println("Adding for type" + tag.toString)
-    getNodeWithType[T].addToTest(coll)
+    //getNodeWithType[T].addToTest(coll)
   }
 
   /** node definitions */
@@ -219,15 +164,15 @@ trait DataModel {
   }
 
   /** edges */
-  def edge[ONE <: AnyRef, MANY <: AnyRef](name: Symbol)(implicit ptag: ClassTag[ONE], ctag: ClassTag[MANY]): List[Edge[_, _]] = {
+  def edge[ONE <: AnyRef, MANY <: AnyRef](one: Node[ONE], many: Node[MANY], name: Symbol): Link[ONE, MANY] = {
     val ss = List(('PID, name)) //when the edge is created the list of matching symbols for the identifiers also is created.
     //now this should be added to the definition of the entities that are related by this edge.
-    val ptoc = new Edge[ONE, MANY](ss.toList, Some(name))
+    val ptoc = new Edge[ONE, MANY](one, many, ss.toList, Some(name))
     val reverted = ss.toList.map(v => (v._2, v._1)).toList
-    val ctop = new Edge[MANY, ONE](reverted, Some(name))
+    val ctop = new Edge[MANY, ONE](many, one, reverted, Some(name))
     EDGES += ptoc
     EDGES += ctop
-    ptoc :: ctop :: Nil
+    Link(ptoc, ctop)
   }
 
   /** attribute definitions */

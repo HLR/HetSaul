@@ -50,6 +50,6 @@ object modelWithKeys extends DataModel {
 
   /** Edge Types
     */
-  val docTosen = edge[TextAnnotation, Sentence]('dTos)
+  val docTosen = edge(document, sentence, 'dTos)
 
 }

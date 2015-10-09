@@ -46,11 +46,11 @@ object entityRelationDataModel extends DataModel {
   /** Access method definitions
     */
 
-  val RelationToPer = edge[ConllRawToken, ConllRelation]('e1id)
+  val RelationToPer = edge(tokens, pairedRelations, 'e1id)
   //('sid === 'sid, 'e1id === 'wordid) //TODO check the runtime problem with the new edge implementation
-  val RelationToOrg = edge[ConllRawToken, ConllRelation]('e2id)
+  val RelationToOrg = edge(tokens, pairedRelations, 'e2id)
   //('sid === 'sid, 'e2id === 'wordid)//TODO check the runtime problem with the new edge implementation
-  val tokenContainsInSentence = edge[ConllRawSentence, ConllRawToken]('sid) //('sid === 'sid)//TODO check the runtime problem with the new edge implementation
+  val tokenContainsInSentence = edge(tokens, pairedRelations, 'sid) //('sid === 'sid)//TODO check the runtime problem with the new edge implementation
 
   /** Attributes
     */
@@ -147,9 +147,9 @@ object entityRelationDataModel extends DataModel {
     val trainTokens = trainSentences.flatMap(_.sentTokens)
     val trainRelations = reader.relations.toList
 
-    this populate trainSentences
-    this populate trainTokens
-    this populate trainRelations
+    sentences populate trainSentences
+    tokens populate trainTokens
+    pairedRelations populate trainRelations
     this.testWith(trainTokens)
     this.testWith(trainRelations)
     this.testWith(trainSentences)
@@ -247,9 +247,9 @@ object entityRelationDataModel extends DataModel {
     //  testReader.sentences.map(_.sentTokens).flatten.toList.filter(_.sentId == 5144).foreach(println)
 
     //  this ++ reader.instances.toList
-    this populate trainSentences
-    this populate trainTokens
-    this populate trainRelations
+    sentences populate trainSentences
+    tokens populate trainTokens
+    pairedRelations populate trainRelations
     //    this ++ blankRelation
     println("Done adding training")
     //  this.test  ++ testReader.instances.toList
