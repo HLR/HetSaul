@@ -14,8 +14,6 @@ import edu.illinois.cs.cogcomp.saul.parser.LBJIteratorParserScala
 
 import scala.reflect.ClassTag
 
-import sys.process._
-
 abstract class Learnable[T <: AnyRef](val datamodel: DataModel)(implicit tag: ClassTag[T]) extends LBJLearnerEquivalent {
 
   def getClassNameForClassifier = this.getClass.getCanonicalName
@@ -124,8 +122,6 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel)(implicit tag: Cl
       if (feature != null) {
         setExtractor(lbpFeatures)
       }
-
-      println("pwd".!)
 
       // Looks like we have to build the lexicon
       lcFilePath = new URL(new URL("file:"), "./models/" + getClassNameForClassifier + ".lc") //new java.net.URL("file:/home/kordjam/Downloads/mylbjtest/target/classes/Pclassifier_scala.lc")
