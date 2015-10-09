@@ -1,4 +1,4 @@
-package edu.illinois.cs.cogcomp.saulexamples.setcover
+package edu.illinois.cs.cogcomp.saulexamples.setCover
 
 import edu.illinois.cs.cogcomp.saul.classifier.ConstraintClassifier
 import edu.illinois.cs.cogcomp.saul.constraint.ConstraintTypeConversion._

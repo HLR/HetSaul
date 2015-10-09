@@ -1,4 +1,4 @@
-package edu.illinois.cs.cogcomp.saulexamples.setcover;
+package edu.illinois.cs.cogcomp.saulexamples.setCover;
 
 import edu.illinois.cs.cogcomp.lbjava.classify.DiscretePrimitiveStringFeature;
 import edu.illinois.cs.cogcomp.lbjava.classify.FeatureVector;
