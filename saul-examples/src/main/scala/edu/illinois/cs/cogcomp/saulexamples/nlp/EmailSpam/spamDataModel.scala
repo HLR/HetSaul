@@ -15,13 +15,9 @@ object spamDataModel extends DataModel {
 
   val bigramFeature = discreteAttributesGeneratorOf[Document]('bigram) {
     x: Document =>
-      {
-        val words = x.getWords.toList
-        var big: List[String] = List()
-        for (i <- 0 until words.size - 1)
-          big = (words.get(i) + "-" + words.get(i + 1)) :: big
-        big
-      }
+      val words = x.getWords.toList
+      /** bigram features */
+      words.sliding(2).map(_.mkString("-")).toList
   }
 
   val spamLable = discreteAttributeOf[Document]('label) {

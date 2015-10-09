@@ -39,7 +39,7 @@ object JoinTrainSparseNetwork {
 
   def apply[HEAD <: AnyRef](
     dm: DataModel,
-    cls: List[ConstraintClassifier[_, HEAD]]
+    cls: List[ConstrainedClassifier[_, HEAD]]
   )(
     implicit
     headTag: ClassTag[HEAD]
@@ -50,7 +50,7 @@ object JoinTrainSparseNetwork {
 
   def apply[HEAD <: AnyRef](
     dm: DataModel,
-    cls: List[ConstraintClassifier[_, HEAD]],
+    cls: List[ConstrainedClassifier[_, HEAD]],
     it: Int
   )(
     implicit
@@ -62,7 +62,7 @@ object JoinTrainSparseNetwork {
 
   def train[HEAD <: AnyRef](
     dm: DataModel,
-    cls: List[ConstraintClassifier[_, HEAD]],
+    cls: List[ConstrainedClassifier[_, HEAD]],
     it: Int
   )(
     implicit
@@ -80,7 +80,7 @@ object JoinTrainSparseNetwork {
         h =>
           {
             cls.foreach {
-              case c: ConstraintClassifier[_, HEAD] => {
+              case c: ConstrainedClassifier[_, HEAD] => {
 
                 type C = c.LEFT
                 //              println("-=-=-=-=-")
@@ -88,7 +88,7 @@ object JoinTrainSparseNetwork {
                 //              println(c.headType)
                 //              println("-=-=-=-=-")
 
-                val typedC = c.asInstanceOf[ConstraintClassifier[_, HEAD]]
+                val typedC = c.asInstanceOf[ConstrainedClassifier[_, HEAD]]
 
                 //              println(Console.RED + typedC + Console.RESET)
 
