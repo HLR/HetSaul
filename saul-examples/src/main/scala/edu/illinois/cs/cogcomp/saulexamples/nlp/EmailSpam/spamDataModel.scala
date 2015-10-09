@@ -60,7 +60,6 @@ object spamDataModel extends DataModel {
     x: Document => List(1.0)
   }
 
-
   // Double
   val doubleAttribute = property[Document]('boolean) {
     x: Document => 1.0
@@ -68,7 +67,6 @@ object spamDataModel extends DataModel {
   val doubleAttributeOldWay = realAttributeOf[Document]('boolean) {
     x: Document => 1.0
   }
-
 
   // List[String]
   val listStringAttribute = property[Document]('boolean) {

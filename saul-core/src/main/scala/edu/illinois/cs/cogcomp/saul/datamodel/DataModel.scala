@@ -273,7 +273,7 @@ trait DataModel {
 
     // used to be "realAttributesGeneratorOf"
     def apply(f: T => List[Double])(implicit tag: ClassTag[T], d1: DummyImplicit, d2: DummyImplicit,
-                                    d3: DummyImplicit): RealGenAttribute[T] = {
+      d3: DummyImplicit): RealGenAttribute[T] = {
       val a = new RealGenAttribute[T](name.toString, f)
       PROPERTIES += a
       a
@@ -281,7 +281,7 @@ trait DataModel {
 
     // used to be called "realAttributeOf"
     def apply(f: T => Double)(implicit tag: ClassTag[T], d1: DummyImplicit, d2: DummyImplicit, d3: DummyImplicit,
-                                 d4: DummyImplicit): RealAttribute[T] = {
+      d4: DummyImplicit): RealAttribute[T] = {
       val a = new RealAttribute[T](name.toString, f)
       PROPERTIES += a
       a
@@ -289,7 +289,7 @@ trait DataModel {
 
     // used to be called "discreteAttributeOf"
     def apply(f: T => String)(implicit tag: ClassTag[T], d1: DummyImplicit, d2: DummyImplicit, d3: DummyImplicit,
-                                 d4: DummyImplicit, d5: DummyImplicit): DiscreteAttribute[T] = {
+      d4: DummyImplicit, d5: DummyImplicit): DiscreteAttribute[T] = {
       val a = new DiscreteAttribute[T](name.toString, f, None)
       PROPERTIES += a
       a
@@ -297,7 +297,7 @@ trait DataModel {
 
     // used to be called "discreteAttributesArrayOf"
     def apply(f: T => List[String])(implicit tag: ClassTag[T], d1: DummyImplicit, d2: DummyImplicit, d3: DummyImplicit,
-                              d4: DummyImplicit, d5: DummyImplicit, d6: DummyImplicit): DiscreteArrayAttribute[T] = {
+      d4: DummyImplicit, d5: DummyImplicit, d6: DummyImplicit): DiscreteArrayAttribute[T] = {
       val a = new DiscreteArrayAttribute[T](name.toString, f, None)
       PROPERTIES += a
       a
@@ -305,5 +305,4 @@ trait DataModel {
   }
   def property[T <: AnyRef](name: Symbol) = new PropertyApply[T](name)
 }
-
 
