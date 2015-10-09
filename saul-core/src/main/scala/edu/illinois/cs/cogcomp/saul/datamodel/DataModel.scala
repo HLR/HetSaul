@@ -42,18 +42,10 @@ trait DataModel {
     this.getAllFeatures[T]
   }
 
-  /** Functions for internal usages.
-    */
+  /** Functions for internal usages. */
   def getAllAttributeOf[T <: AnyRef](implicit tag: ClassTag[T]): List[Attribute[T]] = {
     this.PROPERTIES.filter(a => a.tag.equals(tag)).map(_.asInstanceOf[Attribute[T]]).toList
   }
-
-  // TODO: remove this/or make it more understandable
-  def ~~(es: Node[_]*): List[Node[_]] = es.toList
-
-  //def flatList(es: Attribute[_]*): List[Attribute[_]] = es.toList
-
-  // def flatList(es: List[Edge[_, _]]*): List[Edge[_, _]] = es.toList.flatten
 
   @deprecated("Use node.populate() instead.")
   def populate[T <: AnyRef](node: Node[T], coll: Seq[T]) = {
