@@ -1,13 +1,10 @@
 package edu.illinois.cs.cogcomp.saulexamples.setCover
-import edu.illinois.cs.cogcomp.saul.classifier.ConstraintClassifier
+
+import edu.illinois.cs.cogcomp.saul.classifier.ConstrainedClassifier
 import edu.illinois.cs.cogcomp.saul.constraint.ConstraintTypeConversion._
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
 
-import scala.collection.JavaConversions._
 import scala.collection.mutable.{ Map => MutableMap }
-
-/** Created by haowu on 1/29/15.
-  */
 
 class SetCoverSolverDataModel extends DataModel {
 
@@ -27,7 +24,7 @@ class SetCoverSolverDataModel extends DataModel {
   val cityContainsNeighborhoods = edge(cities, neighborhoods, 'cityID)
 }
 
-object containsStationConstraint extends ConstraintClassifier[Neighborhood, City](setCoverApp.trainingData, new ContainsStation()) {
+object containsStationConstraint extends ConstrainedClassifier[Neighborhood, City](setCoverApp.trainingData, new ContainsStation()) {
 
   override def subjectTo = setCoverApp.containsStationConstrint
 
@@ -44,7 +41,4 @@ object containsStationConstraint extends ConstraintClassifier[Neighborhood, City
   //      }
   //    }
   //  })
-  override def filter(t: Neighborhood, head: City): Boolean = {
-    true
-  }
 }

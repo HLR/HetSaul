@@ -12,8 +12,6 @@ import edu.illinois.cs.cogcomp.saul.parser.LBJIteratorParserScala
 
 import scala.reflect.ClassTag
 
-/** Created by haowu on 1/27/15.
-  */
 abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val dm: DataModel, val onClassifier: Learner)(
   implicit
   val tType: ClassTag[T],
@@ -248,12 +246,9 @@ object ConstrainedClassifier {
 
     val hash = f.hashCode()
 
-    //          println(hash.hashCode())
-
     ConstraintManager.getOrElseUpdate(hash, new LfsConstraint[HEAD] {
       override def makeConstrainDef(x: HEAD): FirstOrderConstraint = f(x)
     }).asInstanceOf[LfsConstraint[HEAD]]
-
   }
 
 }

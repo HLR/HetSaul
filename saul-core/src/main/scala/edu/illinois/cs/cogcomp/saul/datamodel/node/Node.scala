@@ -6,7 +6,7 @@ import scala.collection.mutable
 import scala.collection.mutable.{ Map => MutableMap, HashSet => MutableSet }
 import scala.reflect.ClassTag
 
-/** A Node E is an instances of base types T. */
+/** A Node E is an instances of base types T */
 class Node[T <: AnyRef](
   val primaryKeyFunction: T => String,
   var secondaryKeyMap: MutableMap[Symbol, T => String],

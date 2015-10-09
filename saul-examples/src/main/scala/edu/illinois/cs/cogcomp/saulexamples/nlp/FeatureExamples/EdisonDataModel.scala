@@ -25,7 +25,7 @@ object edisonDataModel extends DataModel {
 
   val relations = node[Relation]
 
-  val Chunk_constituents = node[Constituent] //(//example of adding keys we can change this
+  val chunkConstituents = node[Constituent] //(//example of adding keys we can change this
   //    PrimaryKey = {
   //      t: Constituent => String.valueOf(t.hashCode)
   //    },
@@ -35,9 +35,7 @@ object edisonDataModel extends DataModel {
   //    )
   //  )
 
-  /** Property Types
-    */
-
+  /** Property Types */
   val label = discreteAttributeOf[Constituent]('rubish) {
     x => x.getLabel
   }
@@ -64,7 +62,7 @@ object edisonDataModel extends DataModel {
   val DocTosen = edge(document, sentence, 'dTos) //(PID,'dTos2)// {
   //   ta: TextAnnotation => ta.sentences()
   //}
-  val SenToCons = edge(document, Chunk_constituents, 'tToc)
+  val SenToCons = edge(document, chunkConstituents, 'tToc)
   //val DocTosen=edge[TextAnnotation,Sentence](util.f: TextAnnotation => List[Sentence])('dTos)
   // val DocTosen=edge[TextAnnotation,Sentence]('dTos)
 

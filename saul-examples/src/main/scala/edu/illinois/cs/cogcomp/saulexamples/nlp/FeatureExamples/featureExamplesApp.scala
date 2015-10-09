@@ -56,7 +56,7 @@ object featureExamplesApp {
 
     val taa = edisonDataModel.document.getAllInstances
     val sen = edisonDataModel.sentence.getAllInstances
-    val constituents = edisonDataModel.Chunk_constituents.getAllInstances
+    val constituents = edisonDataModel.chunkConstituents.getAllInstances
     val x1 = edisonDataModel.getFromRelation[Sentence, TextAnnotation](sen.head)
     val x2 = edisonDataModel.getFromRelation[TextAnnotation, Sentence](taa.head)
     // val x3=EdisonDataModel.getFromRelation[TextAnnotation,Constituent](constituents.head)
