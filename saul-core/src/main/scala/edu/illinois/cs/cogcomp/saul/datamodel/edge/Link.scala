@@ -66,19 +66,3 @@ case class Edge[T <: AnyRef, U <: AnyRef](forward: Link[T, U], backward: Link[U,
     }
   }
 }
-
-class myClass {
-  def property[T](f: T => Boolean)(name: Symbol)(): Unit = {
-    // do something
-  }
-
-  def property[T](f: T => List[Int])(name: Symbol)(implicit d: DummyImplicit): Unit = {
-    // do something
-  }
-}
-
-object spamDataModel extends myClass {
-  property[Int] {
-    x:Int=> true
-  }('myBoolean)
-}
