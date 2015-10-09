@@ -1,7 +1,6 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.DataModelTests
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation._
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
-import edu.illinois.cs.cogcomp.saul.datamodel.edge.Edge
 import edu.illinois.cs.cogcomp.saulexamples.data.Document
 
 import scala.collection.mutable.{ Map => MutableMap }
