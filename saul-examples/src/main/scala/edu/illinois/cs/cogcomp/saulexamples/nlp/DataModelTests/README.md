@@ -107,3 +107,12 @@ such as follows:
 modelWithKeys.populate(taList)
 modelWithKeys.populate(sentenceList)
 ```
+
+####Graph Queries
+
+Examples of basic graph queries to traverse the graph.
+
+```scala
+val s = document ~> DocToSen
+val d = sentences <~ DocToSen
+```

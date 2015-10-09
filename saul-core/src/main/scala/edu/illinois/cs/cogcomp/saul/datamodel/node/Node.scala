@@ -1,6 +1,7 @@
 package edu.illinois.cs.cogcomp.saul.datamodel.node
 
 import edu.illinois.cs.cogcomp.saul.datamodel.attribute.features.discrete.DiscreteAttribute
+import edu.illinois.cs.cogcomp.saul.datamodel.edge.Edge
 
 import scala.collection.mutable.{ Map => MutableMap }
 import scala.reflect.ClassTag
@@ -144,6 +145,16 @@ class Node[T <: AnyRef](
   /** Relational operators
     */
   val nodeOfTypeT = this
+
+  def ~>[U <: AnyRef](edge: Edge[T, U]): Node[U] = {
+    assert(this == edge.forward.from)
+    edge.forward.to
+  }
+
+  def <~[U <: AnyRef](edge: Edge[U, T]): Node[U] = {
+    assert(this == edge.backward.from)
+    edge.backward.to
+  }
 
   def join[U <: AnyRef](nodeOfTypeU: Node[U]) = new {
     def on(matchesList: (Symbol, Symbol)*): List[(T, U)] = // new LBPList[(T,U)]()
