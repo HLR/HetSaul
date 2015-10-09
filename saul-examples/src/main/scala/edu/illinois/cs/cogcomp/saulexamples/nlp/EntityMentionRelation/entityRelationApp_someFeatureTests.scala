@@ -4,7 +4,7 @@ import edu.illinois.cs.cogcomp.saulexamples.EntityMentionRelation.reader.Conll04
 import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.classifiers.PersonClassifier
 import scala.collection.JavaConversions._
 
-object entityRelationApp {
+object entityRelationApp_someFeatureTests {
 
   def main(args: Array[String]) {
 
