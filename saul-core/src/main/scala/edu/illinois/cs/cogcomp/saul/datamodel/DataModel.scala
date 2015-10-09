@@ -49,20 +49,16 @@ trait DataModel {
 
   @deprecated("Use node.populate() instead.")
   def populate[T <: AnyRef](node: Node[T], coll: Seq[T]) = {
-    node populate coll
+    node.populate(coll)
   }
 
   @deprecated
   def getNodeWithType[T <: AnyRef](implicit tag: ClassTag[T]): Node[T] = {
     this.NODES.filter {
-      e: Node[_] =>
-        {
-          tag.equals(e.tag)
-        }
+      e: Node[_] => tag.equals(e.tag)
     }.head.asInstanceOf[Node[T]]
   }
 
-  // TODO: comment this function
   @deprecated
   def getFromRelation[FROM <: AnyRef, NEED <: AnyRef](t: FROM)(implicit tag: ClassTag[FROM], headTag: ClassTag[NEED]): Seq[NEED] = {
     val dm = this
@@ -112,7 +108,6 @@ trait DataModel {
     }
   }
 
-  // TODO: rename this function with a better name
   @deprecated
   def getRelatedFieldsBetween[T, U](implicit tag: ClassTag[T], headTag: ClassTag[U]): List[Symbol] = {
     this.LINKS.filter(r => r.to.tag.equals(tag) && r.from.tag.equals(headTag)).toList match {
@@ -121,12 +116,6 @@ trait DataModel {
     }
   }
 
-  // TODO: complete this (after figuring our what it is supposed to do!)
-  def childrenOf[T <: AnyRef, U <: AnyRef](t: T): List[U] = {
-    Nil
-  }
-
-  // TODO: remove this
   def testWith[T <: AnyRef](coll: Seq[T])(implicit tag: ClassTag[T]) = {
     println("Adding for type" + tag.toString)
     //getNodeWithType[T].addToTest(coll)
