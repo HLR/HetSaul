@@ -5,7 +5,7 @@ import edu.illinois.cs.cogcomp.saul.datamodel.node.Node
 
 import scala.reflect.ClassTag
 
-class Edge[FROM <: AnyRef, TO <: AnyRef](
+class Link[FROM <: AnyRef, TO <: AnyRef](
   val from: Node[FROM], val to: Node[TO],
   val matchesList: List[(Symbol, Symbol)],
   val nameOfRelation: Option[Symbol]
@@ -29,7 +29,7 @@ class Edge[FROM <: AnyRef, TO <: AnyRef](
   }
 }
 
-case class Link[T <: AnyRef, U <: AnyRef](forward: Edge[T, U], backward: Edge[U, T]) {
+case class Edge[T <: AnyRef, U <: AnyRef](forward: Link[T, U], backward: Link[U, T]) {
   def populateWith(sensor: (T) => List[U]) = {
     val edge = forward
     val fromInstances = edge.from.getAllInstances

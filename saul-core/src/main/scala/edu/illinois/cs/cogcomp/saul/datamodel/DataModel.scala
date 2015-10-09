@@ -4,7 +4,7 @@ import edu.illinois.cs.cogcomp.saul.datamodel.attribute.features.discrete.{ Bool
 import edu.illinois.cs.cogcomp.saul.datamodel.attribute.features.real.{ RealArrayAttribute, RealAttribute, RealGenAttribute }
 import edu.illinois.cs.cogcomp.saul.datamodel.attribute.{ Attribute, EvaluatedAttribute }
 import edu.illinois.cs.cogcomp.saul.datamodel.node.Node
-import edu.illinois.cs.cogcomp.saul.datamodel.edge.{ Link, Edge }
+import edu.illinois.cs.cogcomp.saul.datamodel.edge.{ Edge, Link }
 
 import scala.collection.mutable.{ Map => MutableMap, ListBuffer }
 import scala.reflect.ClassTag
@@ -14,7 +14,7 @@ trait DataModel {
 
   final val NODES = new ListBuffer[Node[_]]
   final val PROPERTIES = new ListBuffer[Attribute[_]]
-  final val EDGES = new ListBuffer[Edge[_, _]]
+  final val LINKS = new ListBuffer[Link[_, _]]
 
   // TODO: Implement this function.
   def select[T <: AnyRef](node: Node[T], conditions: EvaluatedAttribute[T, _]*): List[T] = {
@@ -77,7 +77,7 @@ trait DataModel {
     if (tag.equals(headTag)) {
       List(t.asInstanceOf[NEED])
     } else {
-      val r = this.EDGES.filter {
+      val r = this.LINKS.filter {
         r => r.from.tag.toString.equals(tag.toString) && r.to.tag.toString.equals(headTag.toString)
       }
       if (r.isEmpty) {
@@ -85,9 +85,9 @@ trait DataModel {
       } else {
 
         if (r.size == 1) {
-          r.head.asInstanceOf[Edge[FROM, NEED]].retrieveFromDataModel(dm, t)
+          r.head.asInstanceOf[Link[FROM, NEED]].retrieveFromDataModel(dm, t)
         } else {
-          val ret = r flatMap (_.asInstanceOf[Edge[FROM, NEED]].retrieveFromDataModel(dm, t))
+          val ret = r flatMap (_.asInstanceOf[Link[FROM, NEED]].retrieveFromDataModel(dm, t))
           ret
         }
       }
@@ -100,7 +100,7 @@ trait DataModel {
     if (tag.equals(headTag)) {
       List(t.asInstanceOf[HEAD])
     } else {
-      val r = this.EDGES.filter {
+      val r = this.LINKS.filter {
         r =>
           r.to.tag.equals(tag) && r.from.tag.equals(headTag) && (if (r.nameOfRelation.isDefined) {
             name.equals(r.nameOfRelation.get)
@@ -115,7 +115,7 @@ trait DataModel {
       } else if (r.size > 1) {
         throw new Exception(s"Found too many relations between $tag to $headTag,\nPlease specify a name")
       } else {
-        r.head.asInstanceOf[Edge[T, HEAD]].retrieveFromDataModel(this, t)
+        r.head.asInstanceOf[Link[T, HEAD]].retrieveFromDataModel(this, t)
       }
     }
   }
@@ -123,7 +123,7 @@ trait DataModel {
   // TODO: rename this function with a better name
   @deprecated
   def getRelatedFieldsBetween[T, U](implicit tag: ClassTag[T], headTag: ClassTag[U]): List[Symbol] = {
-    this.EDGES.filter(r => r.to.tag.equals(tag) && r.from.tag.equals(headTag)).toList match {
+    this.LINKS.filter(r => r.to.tag.equals(tag) && r.from.tag.equals(headTag)).toList match {
       case x :: xs => x.matchesList.map(_._1)
       case Nil => Nil
     }
@@ -164,15 +164,15 @@ trait DataModel {
   }
 
   /** edges */
-  def edge[ONE <: AnyRef, MANY <: AnyRef](one: Node[ONE], many: Node[MANY], name: Symbol): Link[ONE, MANY] = {
+  def edge[ONE <: AnyRef, MANY <: AnyRef](one: Node[ONE], many: Node[MANY], name: Symbol): Edge[ONE, MANY] = {
     val ss = List(('PID, name)) //when the edge is created the list of matching symbols for the identifiers also is created.
     //now this should be added to the definition of the entities that are related by this edge.
-    val ptoc = new Edge[ONE, MANY](one, many, ss.toList, Some(name))
+    val ptoc = new Link[ONE, MANY](one, many, ss.toList, Some(name))
     val reverted = ss.toList.map(v => (v._2, v._1)).toList
-    val ctop = new Edge[MANY, ONE](many, one, reverted, Some(name))
-    EDGES += ptoc
-    EDGES += ctop
-    Link(ptoc, ctop)
+    val ctop = new Link[MANY, ONE](many, one, reverted, Some(name))
+    LINKS += ptoc
+    LINKS += ctop
+    Edge(ptoc, ctop)
   }
 
   /** attribute definitions */
