@@ -245,4 +245,65 @@ trait DataModel {
     PROPERTIES += a
     a
   }
+
+  class PropertyApply[T <: AnyRef] private[DataModel] (name: Symbol) {
+
+    // used to be "booleanAttributeOf"
+    def apply(f: T => Boolean)(implicit tag: ClassTag[T]): BooleanAttribute[T] = {
+      val a = new BooleanAttribute[T](name.toString, f)
+      PROPERTIES += a
+      a
+    }
+
+    // used ot be "intAttributesGeneratorOf"
+    def apply(f: T => List[Int])(implicit tag: ClassTag[T], d: DummyImplicit): RealGenAttribute[T] = {
+      val newf: T => List[Double] = { t => f(t).map(_.toDouble) }
+      val a = new RealGenAttribute[T](name.toString, newf)
+      PROPERTIES += a
+      a
+    }
+
+    // used to be "intAttributeOf"
+    def apply(f: T => Int)(implicit tag: ClassTag[T], d1: DummyImplicit, d2: DummyImplicit): RealAttribute[T] = {
+      val newf: T => Double = { t => f(t).toDouble }
+      val a = new RealAttribute[T](name.toString, newf)
+      PROPERTIES += a
+      a
+    }
+
+    // used to be "realAttributesGeneratorOf"
+    def apply(f: T => List[Double])(implicit tag: ClassTag[T], d1: DummyImplicit, d2: DummyImplicit,
+                                    d3: DummyImplicit): RealGenAttribute[T] = {
+      val a = new RealGenAttribute[T](name.toString, f)
+      PROPERTIES += a
+      a
+    }
+
+    // used to be called "realAttributeOf"
+    def apply(f: T => Double)(implicit tag: ClassTag[T], d1: DummyImplicit, d2: DummyImplicit, d3: DummyImplicit,
+                                 d4: DummyImplicit): RealAttribute[T] = {
+      val a = new RealAttribute[T](name.toString, f)
+      PROPERTIES += a
+      a
+    }
+
+    // used to be called "discreteAttributeOf"
+    def apply(f: T => String)(implicit tag: ClassTag[T], d1: DummyImplicit, d2: DummyImplicit, d3: DummyImplicit,
+                                 d4: DummyImplicit, d5: DummyImplicit): DiscreteAttribute[T] = {
+      val a = new DiscreteAttribute[T](name.toString, f, None)
+      PROPERTIES += a
+      a
+    }
+
+    // used to be called "discreteAttributesArrayOf"
+    def apply(f: T => List[String])(implicit tag: ClassTag[T], d1: DummyImplicit, d2: DummyImplicit, d3: DummyImplicit,
+                              d4: DummyImplicit, d5: DummyImplicit, d6: DummyImplicit): DiscreteArrayAttribute[T] = {
+      val a = new DiscreteArrayAttribute[T](name.toString, f, None)
+      PROPERTIES += a
+      a
+    }
+  }
+  def property[T <: AnyRef](name: Symbol) = new PropertyApply[T](name)
 }
+
+
