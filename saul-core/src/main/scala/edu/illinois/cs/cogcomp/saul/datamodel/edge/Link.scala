@@ -10,7 +10,7 @@ class Link[FROM <: AnyRef, TO <: AnyRef](
   val matchesList: List[(Symbol, Symbol)],
   val nameOfRelation: Option[Symbol]
 ) {
-  def retrieveFromDataModel(t: FROM): List[TO] = {
+  def neighborsOf(t: FROM): List[TO] = {
     val listOfCandidatePrimaryKeySets = matchesList.map {
       case (secondaryKeyOfFrom, secondaryKeyOfTo) => {
         val v = from.secondaryKeyFunction(t).get(secondaryKeyOfFrom) match {

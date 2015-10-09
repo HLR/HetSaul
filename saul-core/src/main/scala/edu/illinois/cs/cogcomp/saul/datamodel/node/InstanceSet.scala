@@ -2,9 +2,6 @@ package edu.illinois.cs.cogcomp.saul.datamodel.node
 
 import edu.illinois.cs.cogcomp.saul.datamodel.edge.Edge
 
-/** @author sameer
-  * @since 10/8/15.
-  */
 trait InstanceSet[T <: AnyRef] {
   self =>
   def instances: Iterable[T]
@@ -14,7 +11,7 @@ trait InstanceSet[T <: AnyRef] {
     assert(node == edge.forward.from)
     new InstanceSet[U] {
       override def node: Node[U] = edge.forward.to
-      override def instances: Iterable[U] = self.instances.flatMap(t => edge.forward.retrieveFromDataModel(t))
+      override def instances: Iterable[U] = self.instances.flatMap(t => edge.forward.neighborsOf(t))
     }
   }
 

@@ -146,9 +146,9 @@ class Node[T <: AnyRef](
     */
   val nodeOfTypeT = this
 
-  def apply() = NodeSet(nodeOfTypeT)
-  def apply(t: T) = SingletonSet(nodeOfTypeT, t)
-  def apply(ts: Iterable[T]) = BasicSet(nodeOfTypeT, ts)
+  def apply() = NodeSet(this)
+  def apply(t: T) = SingletonSet(this, t)
+  def apply(ts: Iterable[T]) = BasicSet(this, ts)
 
   def join[U <: AnyRef](nodeOfTypeU: Node[U]) = new {
     def on(matchesList: (Symbol, Symbol)*): List[(T, U)] = // new LBPList[(T,U)]()

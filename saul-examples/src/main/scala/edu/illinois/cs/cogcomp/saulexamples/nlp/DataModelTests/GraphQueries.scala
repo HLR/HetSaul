@@ -3,9 +3,6 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp.DataModelTests
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
 import edu.illinois.cs.cogcomp.saul.datamodel.node.NodeSet
 
-/** @author sameer
-  * @since 10/8/15.
-  */
 object GraphQueries extends App {
 
   val model = new DataModel {
