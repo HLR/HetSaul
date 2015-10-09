@@ -14,7 +14,7 @@ import scala.reflect.ClassTag
 
 /** Created by haowu on 1/27/15.
   */
-abstract class ConstraintClassifier[T <: AnyRef, HEAD <: AnyRef](val dm: DataModel, val onClassifier: Learner)(
+abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val dm: DataModel, val onClassifier: Learner)(
   implicit
   val tType: ClassTag[T],
   implicit val headType: ClassTag[HEAD]
@@ -240,7 +240,7 @@ abstract class ConstraintClassifier[T <: AnyRef, HEAD <: AnyRef](val dm: DataMod
 
 }
 
-object ConstraintClassifier {
+object ConstrainedClassifier {
 
   val ConstraintManager = scala.collection.mutable.HashMap[Int, LfsConstraint[_]]()
 
