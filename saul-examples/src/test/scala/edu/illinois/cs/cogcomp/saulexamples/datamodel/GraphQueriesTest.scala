@@ -32,9 +32,9 @@ class GraphQueriesTest extends FlatSpec with Matchers {
   "atomic queries" should "return themselves" in {
     import TestGraph._
     firstNames().instances
-    firstNames().instances should be(Seq("Dave", "John", "Mark", "Michael"))
+    firstNames().instances.toSet should be(Set("Dave", "John", "Mark", "Michael"))
     println(firstNames("Jim").instances.mkString(", "))
-    firstNames("Jim").instances should be(Seq("Jim"))
+    firstNames("Jim").instances should be(Set("Jim"))
   }
 
   "single hop with all instances" should "return their neighbors" in {
