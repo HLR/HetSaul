@@ -34,10 +34,10 @@ case class Edge[T <: AnyRef, U <: AnyRef](forward: Link[T, U], backward: Link[U,
   def populateWith(sensor: (T) => Option[U])(implicit d1: DummyImplicit, d2: DummyImplicit): Unit = populateWith((f: T) => sensor(f).toList)
 
   def populateWith(
-                    sensor: (T, U) => Boolean,
-                    from: Iterable[T] = forward.from.getAllInstances,
-                    to: Iterable[U] = forward.to.getAllInstances
-                    ) =
+    sensor: (T, U) => Boolean,
+    from: Iterable[T] = forward.from.getAllInstances,
+    to: Iterable[U] = forward.to.getAllInstances
+  ) =
     for (t <- from; u <- to; if (sensor(t, u))) this += (t, u)
 
   def unary_- = Edge(backward, forward)

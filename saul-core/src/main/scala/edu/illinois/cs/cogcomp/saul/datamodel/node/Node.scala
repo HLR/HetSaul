@@ -51,26 +51,26 @@ class Node[T <: AnyRef](val tag: ClassTag[T]) {
   def populate(ts: Iterable[T]) = {
     ts.foreach {
       t =>
-      {
-        val order = incrementCount()
-        this.trainingSet += t
-        this.collections += t
-        this.orderingMap += (order -> t)
-        this.reverseOrderingMap += (t -> order)
-      }
+        {
+          val order = incrementCount()
+          this.trainingSet += t
+          this.collections += t
+          this.orderingMap += (order -> t)
+          this.reverseOrderingMap += (t -> order)
+        }
     }
   }
 
   def addToTest(ts: Seq[T]) = {
     ts.foreach {
       t =>
-      {
-        val order = incrementCount()
-        this.testingSet += t
-        this.collections += t
-        this.orderingMap += (order -> t)
-        this.reverseOrderingMap += (t -> order)
-      }
+        {
+          val order = incrementCount()
+          this.testingSet += t
+          this.collections += t
+          this.orderingMap += (order -> t)
+          this.reverseOrderingMap += (t -> order)
+        }
     }
   }
 
