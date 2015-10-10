@@ -8,20 +8,13 @@ import scala.collection.mutable.{ Map => MutableMap }
 
 class SetCoverSolverDataModel extends DataModel {
 
-  val cities = node[City](
-    PrimaryKey = {
-    t: City => String.valueOf(t.hashCode())
-  }
-  )
+  val cities = node[City]
 
-  val neighborhoods = node[Neighborhood](
-    PrimaryKey = {
-    t: Neighborhood => String.valueOf(t.getNumber)
-  },
-    SecondaryKeyMap = MutableMap('cityID -> ((t: Neighborhood) => String.valueOf(t.getParentCity.hashCode())))
-  )
+  val neighborhoods = node[Neighborhood]
 
   val cityContainsNeighborhoods = edge(cities, neighborhoods, 'cityID)
+
+  cityContainsNeighborhoods.populateWith((c, n) => c == n.getParentCity)
 }
 
 object containsStationConstraint extends ConstrainedClassifier[Neighborhood, City](setCoverApp.trainingData, new ContainsStation()) {

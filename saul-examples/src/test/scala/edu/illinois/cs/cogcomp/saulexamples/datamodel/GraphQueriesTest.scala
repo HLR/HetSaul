@@ -15,8 +15,9 @@ class GraphQueriesTest extends FlatSpec with Matchers {
     val name = edge(firstNames, lastNames, 'names)
 
     firstNames.populate(Seq("Dave", "John", "Mark", "Michael"))
+    lastNames.populate(List("Dell", "Jacobs", "Maron", "Mario"))
 
-    name.populateWith(List("Dell", "Jacobs", "Maron", "Mario"), _.charAt(0) == _.charAt(0))
+    name.populateWith(_.charAt(0) == _.charAt(0))
   }
 
   "finding neighbors of a link" should "find the neighbors" in {
