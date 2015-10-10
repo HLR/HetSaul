@@ -69,16 +69,14 @@ trait DataModel {
         r => r.from.tag.toString.equals(tag.toString) && r.to.tag.toString.equals(headTag.toString)
       }
       if (r.isEmpty) {
-        throw new Exception(s"Failed to found relations between $tag to $headTag")
-      } else {
-
-        if (r.size == 1) {
-          r.head.asInstanceOf[Link[FROM, NEED]].neighborsOf(t)
-        } else {
-          val ret = r flatMap (_.asInstanceOf[Link[FROM, NEED]].neighborsOf(t))
-          ret
+        // reverse search
+        val r = this.EDGES.filter {
+          r => r.to.tag.toString.equals(tag.toString) && r.from.tag.toString.equals(headTag.toString)
         }
-      }
+        if (r.isEmpty) {
+          throw new Exception(s"Failed to found relations between $tag to $headTag")
+        } else r flatMap (_.asInstanceOf[Edge[NEED, FROM]].backward.neighborsOf(t))
+      } else r flatMap (_.asInstanceOf[Edge[FROM, NEED]].forward.neighborsOf(t))
     }
   }
 
@@ -90,11 +88,7 @@ trait DataModel {
     } else {
       val r = this.EDGES.filter {
         r =>
-          r.to.tag.equals(tag) && r.from.tag.equals(headTag) && (if (r.forward.name.isDefined) {
-            name.equals(r.forward.name.get)
-          } else {
-            false
-          })
+          r.to.tag.equals(tag) && r.from.tag.equals(headTag) && r.forward.name.isDefined && name.equals(r.forward.name.get)
       }
 
       // there must be only one such relation
@@ -109,8 +103,9 @@ trait DataModel {
   }
 
   @deprecated
-  def getRelatedFieldsBetween[T <: AnyRef, U <: AnyRef](implicit tag: ClassTag[T], headTag: ClassTag[U]): Iterable[Edge[T, U]] = {
-    this.EDGES.filter(r => r.to.tag.equals(tag) && r.from.tag.equals(headTag)).map(_.asInstanceOf[Edge[T, U]])
+  def getRelatedFieldsBetween[T <: AnyRef, U <: AnyRef](implicit fromTag: ClassTag[T], toTag: ClassTag[U]): Iterable[Link[T, U]] = {
+    this.EDGES.filter(r => r.from.tag.equals(fromTag) && r.to.tag.equals(toTag)).map(_.forward.asInstanceOf[Link[T, U]]) ++
+      this.EDGES.filter(r => r.to.tag.equals(fromTag) && r.from.tag.equals(toTag)).map(_.backward.asInstanceOf[Link[T, U]])
   }
 
   def testWith[T <: AnyRef](coll: Seq[T])(implicit tag: ClassTag[T]) = {
