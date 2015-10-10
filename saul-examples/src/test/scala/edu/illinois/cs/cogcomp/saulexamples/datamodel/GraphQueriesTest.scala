@@ -1,12 +1,8 @@
 package edu.illinois.cs.cogcomp.saulexamples.datamodel
 
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
-import org.scalatest.{Matchers, FlatSpec}
+import org.scalatest.{ Matchers, FlatSpec }
 
-/**
- * @author sameer
- * @since 10/8/15.
- */
 class GraphQueriesTest extends FlatSpec with Matchers {
 
   object TestGraph extends DataModel {
@@ -27,7 +23,7 @@ class GraphQueriesTest extends FlatSpec with Matchers {
   }
 
   "finding neighbors of a reverse link" should "find the reverse neighbors" in {
-    import TestGraph._
+    import TestGraph._;
     // TODO: Doesn't work right now
     // name.backward.neighborsOf("Jacobs").toSet should be(Set("John"))
     // name.backward.neighborsOf("Maron").toSet should be(Set("Mark", "Michael"))
