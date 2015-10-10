@@ -1,6 +1,7 @@
 package edu.illinois.cs.cogcomp.saul.datamodel.node
 
 import edu.illinois.cs.cogcomp.saul.datamodel.attribute.features.discrete.DiscreteAttribute
+import edu.illinois.cs.cogcomp.saul.datamodel.edge.Edge
 
 import scala.collection.mutable
 import scala.collection.mutable.{ Map => MutableMap, HashSet => MutableSet }
@@ -136,6 +137,10 @@ class Node[T <: AnyRef](
 
   /** Relational operators */
   val nodeOfTypeT = this
+
+  def apply() = NodeSet(this)
+  def apply(t: T) = SingletonSet(this, t)
+  def apply(ts: Iterable[T]) = BasicSet(this, ts)
 
   def join[U <: AnyRef](nodeOfTypeU: Node[U]) = new {
     def on(matchesList: (Symbol, Symbol)*): List[(T, U)] = // new LBPList[(T,U)]()

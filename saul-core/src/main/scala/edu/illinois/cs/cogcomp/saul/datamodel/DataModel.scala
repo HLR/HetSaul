@@ -73,9 +73,9 @@ trait DataModel {
       } else {
 
         if (r.size == 1) {
-          r.head.asInstanceOf[Link[FROM, NEED]].retrieveFromDataModel(dm, t)
+          r.head.asInstanceOf[Link[FROM, NEED]].neighborsOf(t)
         } else {
-          val ret = r flatMap (_.asInstanceOf[Link[FROM, NEED]].retrieveFromDataModel(dm, t))
+          val ret = r flatMap (_.asInstanceOf[Link[FROM, NEED]].neighborsOf(t))
           ret
         }
       }
@@ -103,7 +103,7 @@ trait DataModel {
       } else if (r.size > 1) {
         throw new Exception(s"Found too many relations between $tag to $headTag,\nPlease specify a name")
       } else {
-        r.head.asInstanceOf[Link[T, HEAD]].retrieveFromDataModel(this, t)
+        r.head.asInstanceOf[Link[T, HEAD]].neighborsOf(t)
       }
     }
   }
