@@ -1,4 +1,4 @@
-package edu.illinois.cs.cogcomp.saulexamples.setCover;
+package edu.illinois.cs.cogcomp.saulexamples.setcover;
 
 //import LBJ2.classify.ScoreSet;
 

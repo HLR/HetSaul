@@ -1,7 +1,7 @@
 // Modifying this comment will cause the next execution of LBJava to overwrite this file.
 // discrete{false, true} containsStationConstrained(Neighborhood n) <- SetCover(ContainsStation)
 
-package edu.illinois.cs.cogcomp.saulexamples.setCover;
+package edu.illinois.cs.cogcomp.saulexamples.setcover;
 
 import edu.illinois.cs.cogcomp.lbjava.classify.*;
 import edu.illinois.cs.cogcomp.lbjava.infer.InferenceManager;
@@ -46,7 +46,7 @@ public class containsStationConstrained extends Classifier
       System.exit(1);
     }
 
-    City head = SetCover.findHead((edu.illinois.cs.cogcomp.saulexamples.setCover.Neighborhood) __example);
+    City head = SetCover.findHead((Neighborhood) __example);
     SetCover inference = (SetCover) InferenceManager.get("ilp.SetCover", head);
 
     if (inference == null)
@@ -70,7 +70,7 @@ public class containsStationConstrained extends Classifier
 
   public FeatureVector[] classify(Object[] examples)
   {
-    if (!(examples instanceof edu.illinois.cs.cogcomp.saulexamples.setCover.Neighborhood[]))
+    if (!(examples instanceof Neighborhood[]))
     {
       String type = examples == null ? "null" : examples.getClass().getName();
       System.err.println("Classifier 'containsStationConstrained(ilp.Neighborhood)' defined on line 17 of SetCover.lbj received '" + type + "' as input.");
