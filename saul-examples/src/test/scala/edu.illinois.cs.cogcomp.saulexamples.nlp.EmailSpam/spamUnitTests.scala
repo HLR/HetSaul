@@ -6,29 +6,6 @@ import org.scalatest._
 import scala.collection.JavaConversions._
 
 class spamUnitTests extends FlatSpec with Matchers {
-
-  /** testing population of collections inside `DataModel` */
-  "spamDataModel.doc" should "have correct number of objects in docs by adding in collection " +
-    "from DataModel" in {
-      val data1 = toyDataGeneratorObject.generateToyDocuments(3)
-      val oldSize = spamDataModel.docs.getAllInstances.toList.size
-      spamDataModel.docs populate (data1)
-      val newSize = spamDataModel.docs.getAllInstances.toList.size
-      (newSize - oldSize) should be(data1.length)
-    }
-
-  /** testing multiple population of collections inside `DataModel` */
-  "spamDataModel.doc" should "have correct number of objects in docs by adding in collection " +
-    "from DataModel, multiple times " in {
-      val data1 = toyDataGeneratorObject.generateToyDocuments(4)
-      val data2 = toyDataGeneratorObject.generateToyDocuments(5)
-      val oldSize = spamDataModel.docs.getAllInstances.toList.size
-      spamDataModel.docs populate (data1)
-      spamDataModel.docs populate (data2)
-      val newSize = spamDataModel.docs.getAllInstances.toList.size
-      (newSize - oldSize) should be(data1.length + data2.length)
-    }
-
   /** testing population of collections inside `Node` */
   "spamDataModel.doc" should "have correct number of objects in docs by adding in collection " +
     "from Node" in {

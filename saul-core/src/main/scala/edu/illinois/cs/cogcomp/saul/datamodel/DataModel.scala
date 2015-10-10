@@ -42,35 +42,23 @@ trait DataModel {
     this.getAllFeatures[T]
   }
 
-  /** Functions for internal usages.
-    */
+  /** Functions for internal usages. */
   def getAllAttributeOf[T <: AnyRef](implicit tag: ClassTag[T]): List[Attribute[T]] = {
     this.PROPERTIES.filter(a => a.tag.equals(tag)).map(_.asInstanceOf[Attribute[T]]).toList
   }
 
-  // TODO: remove this/or make it more understandable
-  def ~~(es: Node[_]*): List[Node[_]] = es.toList
-
-  //def flatList(es: Attribute[_]*): List[Attribute[_]] = es.toList
-
-  // def flatList(es: List[Edge[_, _]]*): List[Edge[_, _]] = es.toList.flatten
-
   @deprecated("Use node.populate() instead.")
   def populate[T <: AnyRef](node: Node[T], coll: Seq[T]) = {
-    node populate coll
+    node.populate(coll)
   }
 
   @deprecated
   def getNodeWithType[T <: AnyRef](implicit tag: ClassTag[T]): Node[T] = {
     this.NODES.filter {
-      e: Node[_] =>
-        {
-          tag.equals(e.tag)
-        }
+      e: Node[_] => tag.equals(e.tag)
     }.head.asInstanceOf[Node[T]]
   }
 
-  // TODO: comment this function
   @deprecated
   def getFromRelation[FROM <: AnyRef, NEED <: AnyRef](t: FROM)(implicit tag: ClassTag[FROM], headTag: ClassTag[NEED]): Seq[NEED] = {
     val dm = this
@@ -85,9 +73,9 @@ trait DataModel {
       } else {
 
         if (r.size == 1) {
-          r.head.asInstanceOf[Link[FROM, NEED]].retrieveFromDataModel(dm, t)
+          r.head.asInstanceOf[Link[FROM, NEED]].neighborsOf(t)
         } else {
-          val ret = r flatMap (_.asInstanceOf[Link[FROM, NEED]].retrieveFromDataModel(dm, t))
+          val ret = r flatMap (_.asInstanceOf[Link[FROM, NEED]].neighborsOf(t))
           ret
         }
       }
@@ -115,12 +103,11 @@ trait DataModel {
       } else if (r.size > 1) {
         throw new Exception(s"Found too many relations between $tag to $headTag,\nPlease specify a name")
       } else {
-        r.head.asInstanceOf[Link[T, HEAD]].retrieveFromDataModel(this, t)
+        r.head.asInstanceOf[Link[T, HEAD]].neighborsOf(t)
       }
     }
   }
 
-  // TODO: rename this function with a better name
   @deprecated
   def getRelatedFieldsBetween[T, U](implicit tag: ClassTag[T], headTag: ClassTag[U]): List[Symbol] = {
     this.LINKS.filter(r => r.to.tag.equals(tag) && r.from.tag.equals(headTag)).toList match {
@@ -129,12 +116,6 @@ trait DataModel {
     }
   }
 
-  // TODO: complete this (after figuring our what it is supposed to do!)
-  def childrenOf[T <: AnyRef, U <: AnyRef](t: T): List[U] = {
-    Nil
-  }
-
-  // TODO: remove this
   def testWith[T <: AnyRef](coll: Seq[T])(implicit tag: ClassTag[T]) = {
     println("Adding for type" + tag.toString)
     //getNodeWithType[T].addToTest(coll)
