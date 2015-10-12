@@ -11,8 +11,6 @@ object graphPopulationGsensors {
   def main(args: Array[String]): Unit = {
 
     val dat: List[Document] = new DocumentReader("./data/20newsToy/train").docs.toList.slice(1, 3)
-
-    val a = sensors.textCollection(dat) zip dat.map(x => x.getGUID) // this generates a list of strings each member is a textual content of a document
     val taList= dat.map(x=> sensors.curator(x))
     modelWithSensors.document.populate(taList)
     //The below line uses a generator sensor
