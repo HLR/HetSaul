@@ -3,6 +3,8 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp
 import edu.illinois.cs.cogcomp.annotation.AnnotatorService
 import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{ Constituent, Sentence, TextAnnotation }
+import edu.illinois.cs.cogcomp.core.utilities.ResourceManager
+import edu.illinois.cs.cogcomp.curator.CuratorFactory
 import edu.illinois.cs.cogcomp.saulexamples.data.Document
 
 import scala.collection.JavaConversions._
@@ -19,10 +21,7 @@ object sensors {
   def textCollection(x: List[Document]): List[String] = {
     var l1: List[String] = List[String]()
     for (x1 <- x) {
-      val l = x1.getWords
-      val lx = l.mkString(" ")
-      l1 = lx :: l1
-      print(lx)
+      l1 = documentContent(x1) :: l1
     }
     l1
   }
@@ -41,7 +40,24 @@ object sensors {
     ta
   }
 
+  def documentContent(x: Document): String = {
+    x.getWords.mkString(" ")
+  }
   def f(x: TextAnnotation): List[Sentence] = x.sentences().toList
+
   def alignment(x: TextAnnotation, y: Sentence): Boolean = x.getId == y.getSentenceConstituent.getTextAnnotation.getId
+
   def f2(x: TextAnnotation): List[Constituent] = x.getView(ViewNames.POS).getConstituents.toList
+
+  def curator(dat: Document): TextAnnotation = {
+    val config = "./saul-examples/config/caching-curator.properties"
+    val rm = new ResourceManager(config)
+    val annotatorService = CuratorFactory.buildCuratorClient(rm)
+    val a = documentContent(dat)
+    val ret = processDocumentWith(annotatorService, "corpus",dat.getGUID, a)
+    annotatorService.closeCache()
+    ret
+  }
+
+
 }
