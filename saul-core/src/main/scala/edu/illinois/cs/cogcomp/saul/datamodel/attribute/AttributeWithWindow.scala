@@ -20,7 +20,7 @@ class AttributeWithWindow[T <: AnyRef](
   var dataModel: DataModel,
   val before: Int,
   val after: Int,
-  val filters: List[Symbol],
+  val filters: Iterable[T => Any],
   val atts: List[Attribute[T]]
 )(implicit val tag: ClassTag[T]) extends TypedAttribute[T, List[_]] with DataModelSensitiveAttribute[T] {
 

@@ -15,31 +15,13 @@ object entityRelationDataModel extends DataModel {
   val citygazet: GazeteerReader = new GazeteerReader("./data/EntityMentionRelation/known_city.lst", "Gaz:City", true)
   val persongazet: GazeteerReader = new GazeteerReader("./data/EntityMentionRelation/known_maleFirst.lst", "Gaz:Person", true)
   persongazet.addFile("./data/EntityMentionRelation/known_femaleFirst.lst", true)
-  val tokens = node[ConllRawToken](
-    PrimaryKey = {
-    t: ConllRawToken => String.valueOf(t.sentId) + ":" + String.valueOf(t.wordId)
-  },
+  val tokens = node[ConllRawToken]
 
-    SecondaryKeyMap = MutableMap(
-      'sid -> ((t: ConllRawToken) => String.valueOf(t.sentId)),
-      'wordid -> ((t: ConllRawToken) => String.valueOf(t.wordId))
-    )
-  )
+  val sentences = node[ConllRawSentence]
 
-  val sentences = node[ConllRawSentence](
-    PrimaryKey = { s: ConllRawSentence => String.valueOf(s.sentId) },
-    SecondaryKeyMap = MutableMap('sid -> ((snet: ConllRawSentence) => String.valueOf(snet.sentId)))
-  )
-
-  val pairedRelations = node[ConllRelation](
-    PrimaryKey = { s: ConllRelation => String.valueOf(s.hashCode()) },
-
-    SecondaryKeyMap = MutableMap(
-      'sid -> ((t: ConllRelation) => String.valueOf(t.sentId)),
-      'e1id -> ((t: ConllRelation) => String.valueOf(t.sentId) + ":" + String.valueOf(t.wordId1)), // String.valueOf(t.sentId)+ ":" + String.valueOf(t.wordId1)),
-      'e2id -> ((t: ConllRelation) => String.valueOf(t.sentId) + ":" + String.valueOf(t.wordId2))
-    )
-  )
+  val pairedRelations = node[ConllRelation]
+  //'e1id -> ((t: ConllRelation) => String.valueOf(t.sentId) + ":" + String.valueOf(t.wordId1)), // String.valueOf(t.sentId)+ ":" + String.valueOf(t.wordId1)),
+  //'e2id -> ((t: ConllRelation) => String.valueOf(t.sentId) + ":" + String.valueOf(t.wordId2))
 
   // val RelationToToken = oneToManyRelationOf[ConllRelation,ConllRawToken]('contain)(('sid,'sid))
 
@@ -113,11 +95,11 @@ object entityRelationDataModel extends DataModel {
         val e1 = rela.e1
         val e2 = rela.e2
 
-        this.getNodeWithType[ConllRawToken].getWithWindow(e1, -2, 2, 'sid).zipWithIndex.map({
+        this.getNodeWithType[ConllRawToken].getWithWindow(e1, -2, 2, _.sentId).zipWithIndex.map({
           case (Some(t), idx) => s"left-$idx-pos-${t.POS} "
           case (None, idx) => s"left-$idx-pos-EMPTY "
         }) ++
-          this.getNodeWithType[ConllRawToken].getWithWindow(e2, -2, 2, 'sid).zipWithIndex.map({
+          this.getNodeWithType[ConllRawToken].getWithWindow(e2, -2, 2, _.sentId).zipWithIndex.map({
             case (Some(t), idx) => s"right-$idx-pos-${t.POS} "
             case (None, idx) => s"right-$idx-pos-EMPTY} "
           })

@@ -85,7 +85,7 @@ abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val dm: DataMo
       if (l.isEmpty) {
         throw new Exception("Failed to find part")
       } else {
-        l.filter(filter(_, head))
+        l.filter(filter(_, head)).toSeq
       }
 
     }

@@ -1,70 +1,44 @@
 package edu.illinois.cs.cogcomp.saul.datamodel.edge
 
-import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
 import edu.illinois.cs.cogcomp.saul.datamodel.node.Node
 
-import scala.reflect.ClassTag
+import scala.collection.mutable
+import scala.collection.mutable.ArrayBuffer
 
-class Link[FROM <: AnyRef, TO <: AnyRef](
-  val from: Node[FROM], val to: Node[TO],
-  val matchesList: List[(Symbol, Symbol)],
-  val nameOfRelation: Option[Symbol]
-) {
-  def neighborsOf(t: FROM): List[TO] = {
-    val listOfCandidatePrimaryKeySets = matchesList.map {
-      case (secondaryKeyOfFrom, secondaryKeyOfTo) => {
-        val v = from.secondaryKeyFunction(t).get(secondaryKeyOfFrom) match {
-          case Some(va) =>
-            va
-          case _ => throw new Exception("Secondary Key not found for " + secondaryKeyOfFrom)
-        }
-        to.getPrimaryKeyGivenSecondaryKey(secondaryKeyOfTo, v).toSet
-      }
-    }
-
-    val candidatePrimaryKeySet = listOfCandidatePrimaryKeySets.reduce(_ intersect _)
-
-    // get list of nodes
-    candidatePrimaryKeySet.map { candidatePI => to.getInstanceWithPrimaryKey(candidatePI) }.toList
-  }
+class Link[A <: AnyRef, B <: AnyRef](val from: Node[A], val to: Node[B], val name: Option[Symbol]) {
+  val index = new mutable.HashMap[A, ArrayBuffer[B]]
+  def neighborsOf(t: A): Iterable[B] = index.getOrElse(t, Seq.empty)
+  def +=(a: A, b: B) = index.getOrElseUpdate(a, new ArrayBuffer) += b
+  def ++=(a: A, bs: Iterable[B]) = index.getOrElseUpdate(a, new ArrayBuffer) ++= bs
 }
 
 case class Edge[T <: AnyRef, U <: AnyRef](forward: Link[T, U], backward: Link[U, T]) {
-  def populateWith(sensor: (T) => List[U]) = {
-    val edge = forward
-    val fromInstances = edge.from.getAllInstances
-    fromInstances.foreach {
-      fromInstance =>
-        val toInstance_s = sensor(fromInstance)
-        val newSecondaryKeyMappingsList = toInstance_s.map(x => edge.nameOfRelation.get -> ((x: U) => fromInstance.hashCode().toString))
-        newSecondaryKeyMappingsList.foreach(secondaryKeyMapping => edge.to.secondaryKeyMap += secondaryKeyMapping)
-        edge.to.populate(toInstance_s)
-    }
+  def from = forward.from
+  def to = forward.to
+  def +=(t: T, u: U) = {
+    forward += (t, u)
+    backward += (u, t)
   }
 
-  def populateWith(sensor: (T) => U)(implicit d: DummyImplicit): Unit = {
-    populateWith((f: T) => List(sensor(f)))
+  def populateWith(sensor: (T) => Iterable[U]) = {
+    forward.from.getAllInstances foreach (t => {
+      val us = sensor(t)
+      forward.to.populate(us)
+      forward ++= (t, us)
+      for (u <- us) backward += (u, t)
+    })
   }
 
-  def populateWith(sensor: (T) => Option[U])(implicit d1: DummyImplicit, d2: DummyImplicit): Unit = {
-    populateWith((f: T) => sensor(f).toList)
-  }
+  def populateWith(sensor: (T) => U)(implicit d: DummyImplicit): Unit = populateWith((f: T) => List(sensor(f)))
 
-  def populateWith(manyInstances: List[U], sensor: (T, U) => Boolean) = {
-    val edge = forward
-    val fromInstances = edge.from.getAllInstances
-    var temp = manyInstances
-    fromInstances.foreach { instance =>
-      val twoLists = temp.partition(sensor(instance, _))
-      val matching = twoLists._1
-      val unmatching = twoLists._2
+  def populateWith(sensor: (T) => Option[U])(implicit d1: DummyImplicit, d2: DummyImplicit): Unit = populateWith((f: T) => sensor(f).toList)
 
-      val newSecondaryKeyMappingsList = matching.map(x => edge.nameOfRelation.get -> ((x: U) => instance.hashCode().toString))
-      newSecondaryKeyMappingsList.foreach { secondaryKeyMapping => edge.to.secondaryKeyMap += secondaryKeyMapping }
-      edge.to.populate(matching)
-      temp = unmatching
-    }
-  }
+  def populateWith(
+    sensor: (T, U) => Boolean,
+    from: Iterable[T] = forward.from.getAllInstances,
+    to: Iterable[U] = forward.to.getAllInstances
+  ) =
+    for (t <- from; u <- to; if (sensor(t, u))) this += (t, u)
 
   def unary_- = Edge(backward, forward)
 }

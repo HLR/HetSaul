@@ -313,14 +313,14 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel)(implicit tag: Cl
     */
   def windowWithIn[U <: AnyRef](before: Int, after: Int, att: List[Attribute[T]])(implicit uTag: ClassTag[U]): Attribute[T] = {
     val fls = datamodel.getRelatedFieldsBetween[T, U]
-    getWindowWithFilters(before, after, fls.toList, att)
+    getWindowWithFilters(before, after, fls.map(e => (t: T) => e.neighborsOf(t).head), att)
   }
 
   def window(before: Int, after: Int)(att: List[Attribute[T]]): Attribute[T] = {
     getWindowWithFilters(before, after, Nil, att)
   }
 
-  private def getWindowWithFilters(before: Int, after: Int, filters: List[Symbol], att: List[Attribute[T]]): Attribute[T] = {
+  private def getWindowWithFilters(before: Int, after: Int, filters: Iterable[T => Any], att: List[Attribute[T]]): Attribute[T] = {
     new AttributeWithWindow[T](this.datamodel, before, after, filters, att)
   }
 
