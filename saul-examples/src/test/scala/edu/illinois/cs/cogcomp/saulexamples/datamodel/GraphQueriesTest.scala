@@ -23,10 +23,9 @@ class GraphQueriesTest extends FlatSpec with Matchers {
   }
 
   "finding neighbors of a reverse link" should "find the reverse neighbors" in {
-    import TestGraph._;
-    // TODO: Doesn't work right now
-    // name.backward.neighborsOf("Jacobs").toSet should be(Set("John"))
-    // name.backward.neighborsOf("Maron").toSet should be(Set("Mark", "Michael"))
+    import TestGraph._
+    name.backward.neighborsOf("Jacobs").toSet should be(Set("John"))
+    name.backward.neighborsOf("Maron").toSet should be(Set("Mark", "Michael"))
   }
 
   "atomic queries" should "return themselves" in {
@@ -57,27 +56,22 @@ class GraphQueriesTest extends FlatSpec with Matchers {
     import TestGraph._
 
     val query = lastNames() ~> -name
-    // TODO: Doesn't work right now
-    // query.instances.toSet should be(firstNames.getAllInstances.toSet)
+    query.instances.toSet should be(firstNames.getAllInstances.toSet)
 
     val query1 = lastNames("Jacobs") ~> -name
-    // TODO: Doesn't work right now
-    // query1.instances.toSet should be(Set("John"))
+    query1.instances.toSet should be(Set("John"))
 
     val query2 = lastNames("Maron") ~> -name
-    // TODO: Doesn't work right now
-    // query2.instances.toSet should be(Set("Mark", "Michael"))
+    query2.instances.toSet should be(Set("Mark", "Michael"))
   }
 
   "reverse hop with custom instances" should "return similar ones" in {
     import TestGraph._
 
     val query1 = firstNames("John") ~> name ~> -name
-    // TODO: Doesn't work right now
-    // query1.instances.toSet should be(Set("John"))
+    query1.instances.toSet should be(Set("John"))
 
     val query2 = firstNames("Mark") ~> name ~> -name
-    // TODO: Doesn't work right now
-    // query2.instances.toSet should be(Set("Mark", "Michael"))
+    query2.instances.toSet should be(Set("Mark", "Michael"))
   }
 }
