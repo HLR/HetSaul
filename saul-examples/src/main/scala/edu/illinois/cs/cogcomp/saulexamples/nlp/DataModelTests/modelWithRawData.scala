@@ -1,8 +1,8 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.DataModelTests
 
-import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{Sentence, TextAnnotation}
+import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{ Sentence, TextAnnotation }
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
-import edu.illinois.cs.cogcomp.saulexamples.data.{Document, DocumentReader}
+import edu.illinois.cs.cogcomp.saulexamples.data.{ Document, DocumentReader }
 import edu.illinois.cs.cogcomp.saulexamples.nlp.sensors
 
 import scala.collection.JavaConversions._
@@ -34,8 +34,8 @@ object myapp {
     val taa = annotatedText.getAllInstances
     val sen = sentences.getAllInstances
     //The new version
-    val x3=(annotatedText(taa.head) ~> textToCon).instances
-    val x4=(sentences(sen.head)~> -textToCon).instances
+    val x3 = (annotatedText(taa.head) ~> textToCon).instances
+    val x4 = (sentences(sen.head) ~> -textToCon).instances
     //The old version
     val x1 = getFromRelation[Sentence, TextAnnotation](sen.head)
     val x2 = getFromRelation[TextAnnotation, Sentence](taa.head)

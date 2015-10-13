@@ -8,8 +8,7 @@ import edu.illinois.cs.cogcomp.curator.CuratorFactory
 import edu.illinois.cs.cogcomp.saulexamples.data.Document
 
 import scala.collection.JavaConversions._
-/** Created by Parisa on 9/10/15.
-  */
+
 object sensors {
 
   def getText(x: Document): String = {
@@ -19,11 +18,7 @@ object sensors {
   }
 
   def textCollection(x: List[Document]): List[String] = {
-    var l1: List[String] = List[String]()
-    for (x1 <- x) {
-      l1 = documentContent(x1) :: l1
-    }
-    l1
+    x.map(documentContent)
   }
 
   def processDocumentWith(annotatorService: AnnotatorService, cid: String, did: String, text: String, services: String*): TextAnnotation = {
@@ -54,10 +49,9 @@ object sensors {
     val rm = new ResourceManager(config)
     val annotatorService = CuratorFactory.buildCuratorClient(rm)
     val a = documentContent(dat)
-    val ret = processDocumentWith(annotatorService, "corpus",dat.getGUID, a)
+    val ret = processDocumentWith(annotatorService, "corpus", dat.getGUID, a)
     annotatorService.closeCache()
     ret
   }
-
 
 }
