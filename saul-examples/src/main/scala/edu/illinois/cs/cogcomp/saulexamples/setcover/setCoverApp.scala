@@ -1,4 +1,4 @@
-package edu.illinois.cs.cogcomp.saulexamples.setCover
+package edu.illinois.cs.cogcomp.saulexamples.setcover
 
 import edu.illinois.cs.cogcomp.saul.classifier.ConstrainedClassifier
 import edu.illinois.cs.cogcomp.saul.constraint.ConstraintTypeConversion._
@@ -33,6 +33,7 @@ object setCoverApp {
   def main(args: Array[String]) {
     trainingData.cities populate List(cities)
     trainingData.neighborhoods populate ns
+    trainingData.cityContainsNeighborhoods.populateWith(_ == _.getParentCity)
 
     println(trainingData.getFromRelation[City, Neighborhood](cities))
     println(trainingData.getFromRelation[Neighborhood, City](ns.head))
