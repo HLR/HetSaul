@@ -99,7 +99,6 @@ class SensorsTest extends FlatSpec with Matchers {
     n1.populate(Seq("males" -> Seq("blue"), "females" -> Seq("pink"), "unisex" -> Seq("yellow", "green")))
     n1.getAllInstances.size should be(3)
     n2.getAllInstances.size should be(4)
-    println(e.links)
     e.links.size should be(4)
 
     (n1() ~> e).instances.size should be(4)
