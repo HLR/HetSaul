@@ -49,7 +49,7 @@ class Node[T <: AnyRef](val tag: ClassTag[T]) {
     ret
   }
 
-  def contains(t: T): Boolean = collections(t) || trainingSet(t) || testingSet(t)
+  def contains(t: T): Boolean = collections(t)
 
   def addInstance(t: T, train: Boolean = true) = {
     if (!contains(t)) {
