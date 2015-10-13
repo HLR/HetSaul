@@ -14,7 +14,6 @@ object graphPopulationMsensors {
 
     val dat: List[Document] = new DocumentReader("./data/20newsToy/train").docs.toList.slice(0, 2)
     val taList = dat.map(x => sensors.curator(x))
-    modelWithSensors.document.populate(taList)
     val sentenceList = taList.flatMap(x => x.sentences())
 
     modelWithSensors.document populate taList
