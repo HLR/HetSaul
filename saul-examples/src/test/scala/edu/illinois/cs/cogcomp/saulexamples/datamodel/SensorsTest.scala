@@ -1,7 +1,6 @@
 package edu.illinois.cs.cogcomp.saulexamples.datamodel
 
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
-import edu.illinois.cs.cogcomp.saul.datamodel.edge.Edge
 import org.scalatest.{ Matchers, FlatSpec }
 
 class SensorsTest extends FlatSpec with Matchers {
@@ -52,7 +51,7 @@ class SensorsTest extends FlatSpec with Matchers {
     e.links.forall(p => p._1.toUpperCase == p._2) should be(true)
   }
 
-  "adding 2 generating sensors" should "populate indirect links and neighbors" in {
+  "adding 2 singleton generating sensors" should "populate indirect links and neighbors" in {
     val dm = new DataModel {
       val n1 = node[String]
       val n2 = node[String]
@@ -81,6 +80,39 @@ class SensorsTest extends FlatSpec with Matchers {
     e1.links.forall(p => p._1.toUpperCase == p._2) should be(true)
     n3.getAllInstances should be(n1.getAllInstances.map(_.toLowerCase()).toSet)
     e2.links.forall(p => p._1.toLowerCase == p._2) should be(true)
+  }
+
+  "adding a multiple generator sensors" should "populate indirect links and neighbors" in {
+    val dm = new DataModel {
+      type P = (String, Seq[String])
+      val n1 = node[P]
+      val n2 = node[String]
+      val e = edge(n1, n2)
+      e.addSensor((p: P) => p._2)
+    }
+    import dm._
+
+    n1.getAllInstances.size should be(0)
+    n2.getAllInstances.size should be(0)
+    e.links.size should be(0)
+
+    n1.populate(Seq("males" -> Seq("blue"), "females" -> Seq("pink"), "unisex" -> Seq("yellow", "green")))
+    n1.getAllInstances.size should be(3)
+    n2.getAllInstances.size should be(4)
+    println(e.links)
+    e.links.size should be(4)
+
+    (n1() ~> e).instances.size should be(4)
+    (n1("males" -> Seq("blue")) ~> e).instances.size should be(1)
+    (n1("unisex" -> Seq("yellow", "green")) ~> e).instances.size should be(2)
+
+    (n2() ~> -e).instances.size should be(3)
+    (n2("blue") ~> -e).instances.size should be(1)
+    (n2("green") ~> -e).instances.size should be(1)
+
+    (n1() ~> e ~> -e).instances.size should be(3)
+    (n1("males" -> Seq("blue")) ~> e ~> -e).instances.size should be(1)
+    (n1("unisex" -> Seq("yellow", "green")) ~> e ~> -e).instances.size should be(1)
   }
 
   "adding generating and matching sensors" should "populate indirect links and neighbors" in {

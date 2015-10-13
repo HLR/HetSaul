@@ -15,18 +15,10 @@ class Link[A <: AnyRef, B <: AnyRef](val from: Node[A], val to: Node[B], val nam
   val sensors = new ArrayBuffer[A => Iterable[B]]()
 
   def addSensor(f: A => Iterable[B]) = sensors += f
-
-  def populate(a: A, train: Boolean = true): Unit = {
-    sensors foreach (f => {
-      for (b <- f(a)) {
-        this += (a, b)
-        to.addInstance(b, train)
-      }
-    })
-  }
 }
 
-case class Edge[T <: AnyRef, U <: AnyRef](forward: Link[T, U], backward: Link[U, T]) {
+case class Edge[T <: AnyRef, U <: AnyRef](forward: Link[T, U], backward: Link[U, T],
+  matchers: ArrayBuffer[(T, U) => Boolean] = ArrayBuffer.empty[(T, U) => Boolean]) {
   def from = forward.from
   def to = forward.to
   def +=(t: T, u: U) = {
@@ -57,12 +49,9 @@ case class Edge[T <: AnyRef, U <: AnyRef](forward: Link[T, U], backward: Link[U,
   ) =
     for (t <- from; u <- to; if (sensor(t, u))) this += (t, u)
 
-  def unary_- = Edge(backward, forward)
+  def unary_- = Edge(backward, forward, matchers.map(f => (u: U, t: T) => f(t, u)))
 
-  def links = forward.index.flatMap((p) => p._2.map(b => p._1 -> b)).toSeq
-
-  /** matchers */
-  val matchers = new ArrayBuffer[(T, U) => Boolean]
+  def links = forward.index.map((p) => p._2.map(b => p._1 -> b)).flatten.toSeq
 
   def addSensor(f: (T, U) => Boolean) = matchers += f
 
@@ -79,12 +68,22 @@ case class Edge[T <: AnyRef, U <: AnyRef](forward: Link[T, U], backward: Link[U,
   // def addReverseSensor(sensor: (T) => Option[U])(implicit d1: DummyImplicit, d2: DummyImplicit) = forward.addSensor((a => sensor(a).toList))
 
   def populateUsingFrom(t: T, train: Boolean = true): Unit = {
-    forward.populate(t)
+    forward.sensors foreach (f => {
+      for (u <- f(t)) {
+        this += (t, u)
+        to.addInstance(u, train)
+      }
+    })
     matchers.foreach(f => populateWith(f, Seq(t)))
   }
 
   def populateUsingTo(u: U, train: Boolean = true): Unit = {
-    backward.populate(u)
+    backward.sensors foreach (f => {
+      for (t <- f(u)) {
+        this += (t, u)
+        from.addInstance(t, train)
+      }
+    })
     matchers.foreach(f => populateWith(f, to = Seq(u)))
   }
 }
