@@ -3,8 +3,7 @@ package edu.illinois.cs.cogcomp.saul.datamodel.node
 import edu.illinois.cs.cogcomp.saul.datamodel.attribute.features.discrete.DiscreteAttribute
 import edu.illinois.cs.cogcomp.saul.datamodel.edge.Edge
 
-import scala.collection.mutable
-import scala.collection.mutable.{ Map => MutableMap, HashSet => MutableSet, ArrayBuffer }
+import scala.collection.mutable.{ Map => MutableMap, LinkedHashSet => MutableSet, ArrayBuffer }
 import scala.reflect.ClassTag
 
 /** A Node E is an instances of base types T */

@@ -6,10 +6,10 @@ import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 
 class Link[A <: AnyRef, B <: AnyRef](val from: Node[A], val to: Node[B], val name: Option[Symbol]) {
-  val index = new mutable.HashMap[A, ArrayBuffer[B]]
+  val index = new mutable.HashMap[A, mutable.LinkedHashSet[B]]
   def neighborsOf(t: A): Iterable[B] = index.getOrElse(t, Seq.empty)
-  def +=(a: A, b: B) = index.getOrElseUpdate(a, new ArrayBuffer) += b
-  def ++=(a: A, bs: Iterable[B]) = index.getOrElseUpdate(a, new ArrayBuffer) ++= bs
+  def +=(a: A, b: B) = index.getOrElseUpdate(a, new mutable.LinkedHashSet) += b
+  def ++=(a: A, bs: Iterable[B]) = index.getOrElseUpdate(a, new mutable.LinkedHashSet) ++= bs
 
   /** sensors */
   val sensors = new ArrayBuffer[A => Iterable[B]]()
