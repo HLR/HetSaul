@@ -35,6 +35,12 @@ case class Edge[T <: AnyRef, U <: AnyRef](forward: Link[T, U], backward: Link[U,
   }
 
   @deprecated
+  def populateWith(sensor: (T) => U)(implicit d: DummyImplicit): Unit = populateWith((t: T) => Seq(sensor(t)))
+
+  @deprecated
+  def populateWith(sensor: (T) => Option[U])(implicit d1: DummyImplicit, d2: DummyImplicit): Unit = populateWith((t: T) => sensor(t).toSeq)
+
+  @deprecated
   def populateWith(sensor: (T) => Iterable[U]) = {
     forward.from.getAllInstances foreach (t => {
       val us = sensor(t)
