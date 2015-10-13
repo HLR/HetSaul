@@ -12,20 +12,9 @@ object modelWithKeys extends DataModel {
 
   /** Node Types
     */
-  val document = node[TextAnnotation](
-    PrimaryKey = {
-    t: TextAnnotation => t.getId
-  }
-  )
+  val document = node[TextAnnotation]
+  val sentence = node[Sentence]
 
-  val sentence = node[Sentence](
-    PrimaryKey = {
-    t: Sentence => t.hashCode().toString
-  },
-    SecondaryKeyMap = MutableMap(
-      'dTos -> ((t: Sentence) => t.getSentenceConstituent.getTextAnnotation.getId)
-    )
-  )
   /** Property Types
     */
   val label = discreteAttributeOf[Constituent]('label) {
@@ -51,5 +40,6 @@ object modelWithKeys extends DataModel {
   /** Edge Types
     */
   val docTosen = edge(document, sentence, 'dTos)
+  docTosen.populateWith((d, s) => d.getId == s.getSentenceConstituent.getTextAnnotation.getId)
 
 }

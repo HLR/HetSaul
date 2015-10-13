@@ -14,7 +14,7 @@ trait DataModel {
 
   final val NODES = new ListBuffer[Node[_]]
   final val PROPERTIES = new ListBuffer[Attribute[_]]
-  final val LINKS = new ListBuffer[Link[_, _]]
+  final val EDGES = new ListBuffer[Edge[_, _]]
 
   // TODO: Implement this function.
   def select[T <: AnyRef](node: Node[T], conditions: EvaluatedAttribute[T, _]*): List[T] = {
@@ -60,41 +60,35 @@ trait DataModel {
   }
 
   @deprecated
-  def getFromRelation[FROM <: AnyRef, NEED <: AnyRef](t: FROM)(implicit tag: ClassTag[FROM], headTag: ClassTag[NEED]): Seq[NEED] = {
+  def getFromRelation[FROM <: AnyRef, NEED <: AnyRef](t: FROM)(implicit tag: ClassTag[FROM], headTag: ClassTag[NEED]): Iterable[NEED] = {
     val dm = this
     if (tag.equals(headTag)) {
       List(t.asInstanceOf[NEED])
     } else {
-      val r = this.LINKS.filter {
+      val r = this.EDGES.filter {
         r => r.from.tag.toString.equals(tag.toString) && r.to.tag.toString.equals(headTag.toString)
       }
       if (r.isEmpty) {
-        throw new Exception(s"Failed to found relations between $tag to $headTag")
-      } else {
-
-        if (r.size == 1) {
-          r.head.asInstanceOf[Link[FROM, NEED]].neighborsOf(t)
-        } else {
-          val ret = r flatMap (_.asInstanceOf[Link[FROM, NEED]].neighborsOf(t))
-          ret
+        // reverse search
+        val r = this.EDGES.filter {
+          r => r.to.tag.toString.equals(tag.toString) && r.from.tag.toString.equals(headTag.toString)
         }
-      }
+        if (r.isEmpty) {
+          throw new Exception(s"Failed to found relations between $tag to $headTag")
+        } else r flatMap (_.asInstanceOf[Edge[NEED, FROM]].backward.neighborsOf(t))
+      } else r flatMap (_.asInstanceOf[Edge[FROM, NEED]].forward.neighborsOf(t))
     }
   }
 
   // TODO: comment this function
   @deprecated
-  def getFromRelation[T <: AnyRef, HEAD <: AnyRef](name: Symbol, t: T)(implicit tag: ClassTag[T], headTag: ClassTag[HEAD]): List[HEAD] = {
+  def getFromRelation[T <: AnyRef, HEAD <: AnyRef](name: Symbol, t: T)(implicit tag: ClassTag[T], headTag: ClassTag[HEAD]): Iterable[HEAD] = {
     if (tag.equals(headTag)) {
       List(t.asInstanceOf[HEAD])
     } else {
-      val r = this.LINKS.filter {
+      val r = this.EDGES.filter {
         r =>
-          r.to.tag.equals(tag) && r.from.tag.equals(headTag) && (if (r.nameOfRelation.isDefined) {
-            name.equals(r.nameOfRelation.get)
-          } else {
-            false
-          })
+          r.to.tag.equals(tag) && r.from.tag.equals(headTag) && r.forward.name.isDefined && name.equals(r.forward.name.get)
       }
 
       // there must be only one such relation
@@ -109,11 +103,9 @@ trait DataModel {
   }
 
   @deprecated
-  def getRelatedFieldsBetween[T, U](implicit tag: ClassTag[T], headTag: ClassTag[U]): List[Symbol] = {
-    this.LINKS.filter(r => r.to.tag.equals(tag) && r.from.tag.equals(headTag)).toList match {
-      case x :: xs => x.matchesList.map(_._1)
-      case Nil => Nil
-    }
+  def getRelatedFieldsBetween[T <: AnyRef, U <: AnyRef](implicit fromTag: ClassTag[T], toTag: ClassTag[U]): Iterable[Link[T, U]] = {
+    this.EDGES.filter(r => r.from.tag.equals(fromTag) && r.to.tag.equals(toTag)).map(_.forward.asInstanceOf[Link[T, U]]) ++
+      this.EDGES.filter(r => r.to.tag.equals(fromTag) && r.from.tag.equals(toTag)).map(_.backward.asInstanceOf[Link[T, U]])
   }
 
   def testWith[T <: AnyRef](coll: Seq[T])(implicit tag: ClassTag[T]) = {
@@ -123,37 +115,16 @@ trait DataModel {
 
   /** node definitions */
   def node[T <: AnyRef](implicit tag: ClassTag[T]): Node[T] = {
-    node[T](PrimaryKey = { t: T => String.valueOf(t.hashCode()) })
-  }
-
-  def node[T <: AnyRef](PrimaryKey: T => String)(implicit tag: ClassTag[T]): Node[T] = {
-    node(PrimaryKey, MutableMap.empty[Symbol, T => String])
-  }
-
-  def node[T <: AnyRef](PrimaryKey: T => String, SecondaryKeyMap: MutableMap[Symbol, T => String])(implicit tag: ClassTag[T]): Node[T] = {
-    val combinedSecondaryKeyMap = SecondaryKeyMap + ('PID -> ((t: T) => PrimaryKey(t)))
-    val n = new Node[T](PrimaryKey, combinedSecondaryKeyMap, tag, null)
-    NODES += n
-    n
-  }
-
-  def node[T <: AnyRef](PrimaryKey: T => String, SecondaryKeyMap: MutableMap[Symbol, T => String], Address: T => AnyRef)(implicit tag: ClassTag[T]): Node[T] = {
-    val combinedSecondaryKeyMap = SecondaryKeyMap + ('PID -> ((t: T) => PrimaryKey(t)))
-    val n = new Node[T](PrimaryKey, combinedSecondaryKeyMap, tag, Address)
+    val n = new Node[T](tag)
     NODES += n
     n
   }
 
   /** edges */
-  def edge[ONE <: AnyRef, MANY <: AnyRef](one: Node[ONE], many: Node[MANY], name: Symbol): Edge[ONE, MANY] = {
-    val ss = List(('PID, name)) //when the edge is created the list of matching symbols for the identifiers also is created.
-    //now this should be added to the definition of the entities that are related by this edge.
-    val ptoc = new Link[ONE, MANY](one, many, ss.toList, Some(name))
-    val reverted = ss.toList.map(v => (v._2, v._1)).toList
-    val ctop = new Link[MANY, ONE](many, one, reverted, Some(name))
-    LINKS += ptoc
-    LINKS += ctop
-    Edge(ptoc, ctop)
+  def edge[A <: AnyRef, B <: AnyRef](a: Node[A], b: Node[B], name: Symbol = 'default): Edge[A, B] = {
+    val e = Edge(new Link(a, b, Some(name)), new Link(b, a, Some(Symbol("-" + name.name))))
+    EDGES += e
+    e
   }
 
   /** attribute definitions */

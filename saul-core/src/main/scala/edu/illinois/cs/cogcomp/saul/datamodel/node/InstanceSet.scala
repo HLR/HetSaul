@@ -29,6 +29,6 @@ case class NodeSet[T <: AnyRef](node: Node[T]) extends InstanceSet[T] {
 }
 
 case class SingletonSet[T <: AnyRef](node: Node[T], t: T) extends InstanceSet[T] {
-  override def instances: Iterable[T] = Seq(t)
+  override def instances: Iterable[T] = Set(t)
 }
 
