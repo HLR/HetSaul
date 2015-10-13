@@ -63,7 +63,7 @@ trait DataModel {
   def getFromRelation[FROM <: AnyRef, NEED <: AnyRef](t: FROM)(implicit tag: ClassTag[FROM], headTag: ClassTag[NEED]): Iterable[NEED] = {
     val dm = this
     if (tag.equals(headTag)) {
-      List(t.asInstanceOf[NEED])
+      Set(t.asInstanceOf[NEED])
     } else {
       val r = this.EDGES.filter {
         r => r.from.tag.toString.equals(tag.toString) && r.to.tag.toString.equals(headTag.toString)
@@ -75,8 +75,8 @@ trait DataModel {
         }
         if (r.isEmpty) {
           throw new Exception(s"Failed to found relations between $tag to $headTag")
-        } else r flatMap (_.asInstanceOf[Edge[NEED, FROM]].backward.neighborsOf(t))
-      } else r flatMap (_.asInstanceOf[Edge[FROM, NEED]].forward.neighborsOf(t))
+        } else r flatMap (_.asInstanceOf[Edge[NEED, FROM]].backward.neighborsOf(t)) distinct
+      } else r flatMap (_.asInstanceOf[Edge[FROM, NEED]].forward.neighborsOf(t)) distinct
     }
   }
 
