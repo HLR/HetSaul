@@ -17,7 +17,8 @@ object graphPopulationMsensors {
     val sentenceList = taList.flatMap(x => x.sentences())
 
     modelWithSensors.document populate taList
-    modelWithSensors.docTosen populateWith (sensors.alignment, to = sentenceList)
+    modelWithSensors.sentence.populate(sentenceList)
+    modelWithSensors.docTosen populateWith (sensors.alignment: (TextAnnotation, Sentence) => Boolean)
 
     val taa = modelWithSensors.document.getAllInstances
     val sen = modelWithSensors.sentence.getAllInstances
