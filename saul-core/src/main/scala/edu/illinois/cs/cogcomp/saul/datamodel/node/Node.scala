@@ -4,14 +4,14 @@ import edu.illinois.cs.cogcomp.saul.datamodel.attribute.features.discrete.Discre
 import edu.illinois.cs.cogcomp.saul.datamodel.edge.Edge
 
 import scala.collection.mutable
-import scala.collection.mutable.{Map => MutableMap, HashSet => MutableSet, ArrayBuffer}
+import scala.collection.mutable.{ Map => MutableMap, HashSet => MutableSet, ArrayBuffer }
 import scala.reflect.ClassTag
 
 /** A Node E is an instances of base types T */
 class Node[T <: AnyRef](val tag: ClassTag[T]) {
 
-  val outgoing = new ArrayBuffer[Edge[T,_]]()
-  val incoming = new ArrayBuffer[Edge[_,T]]()
+  val outgoing = new ArrayBuffer[Edge[T, _]]()
+  val incoming = new ArrayBuffer[Edge[_, T]]()
 
   private val collections = MutableSet[T]()
 
@@ -53,9 +53,9 @@ class Node[T <: AnyRef](val tag: ClassTag[T]) {
   def contains(t: T): Boolean = collections(t) || trainingSet(t) || testingSet(t)
 
   def addInstance(t: T, train: Boolean = true) = {
-    if(!contains(t)) {
+    if (!contains(t)) {
       val order = incrementCount()
-      if(train) this.trainingSet += t else this.testingSet += t
+      if (train) this.trainingSet += t else this.testingSet += t
       this.collections += t
       this.orderingMap += (order -> t)
       this.reverseOrderingMap += (t -> order)

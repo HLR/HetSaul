@@ -17,8 +17,8 @@ class Link[A <: AnyRef, B <: AnyRef](val from: Node[A], val to: Node[B], val nam
   def addSensor(f: A => Iterable[B]) = sensors += f
 
   def populate(a: A, train: Boolean = true): Unit = {
-    sensors foreach(f => {
-      for(b <- f(a)) {
+    sensors foreach (f => {
+      for (b <- f(a)) {
         this += (a, b)
         to.addInstance(b, train)
       }
@@ -53,18 +53,20 @@ case class Edge[T <: AnyRef, U <: AnyRef](forward: Link[T, U], backward: Link[U,
 
   def unary_- = Edge(backward, forward)
 
+  def links = forward.index.flatMap((p) => p._2.map(b => p._1 -> b)).toSeq
+
   /** matchers */
-  val matchers = new ArrayBuffer[(T,U)=>Boolean]
+  val matchers = new ArrayBuffer[(T, U) => Boolean]
 
-  def addSensor(f: (T,U) => Boolean) = matchers += f
+  def addSensor(f: (T, U) => Boolean) = matchers += f
 
-  def addSensor(sensor: (T)=> Iterable[U]) = forward.addSensor(sensor)
+  def addSensor(sensor: (T) => Iterable[U]) = forward.addSensor(sensor)
 
   def addSensor(sensor: (T) => U)(implicit d: DummyImplicit) = forward.addSensor(a => Seq(sensor(a)))
 
   // def addSensor(sensor: (T) => Option[U])(implicit d1: DummyImplicit, d2: DummyImplicit) = forward.addSensor((a => sensor(a).toList))
 
-  def addReverseSensor(sensor: (T)=> Iterable[U]) = forward.addSensor(sensor)
+  def addReverseSensor(sensor: (T) => Iterable[U]) = forward.addSensor(sensor)
 
   def addReverseSensor(sensor: (T) => U)(implicit d: DummyImplicit) = forward.addSensor(a => Seq(sensor(a)))
 
