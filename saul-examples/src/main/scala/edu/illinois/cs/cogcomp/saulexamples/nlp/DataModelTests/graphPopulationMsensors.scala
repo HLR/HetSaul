@@ -4,27 +4,21 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp.DataModelTests
   */
 
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{ Sentence, TextAnnotation }
-import edu.illinois.cs.cogcomp.core.utilities.ResourceManager
-import edu.illinois.cs.cogcomp.curator.CuratorFactory
-import edu.illinois.cs.cogcomp.saulexamples.data.{ DocumentReader, Document }
+import edu.illinois.cs.cogcomp.saulexamples.data.{ Document, DocumentReader }
 import edu.illinois.cs.cogcomp.saulexamples.nlp.sensors
 
 import scala.collection.JavaConversions._
 
 object graphPopulationMsensors {
   def main(args: Array[String]): Unit = {
-    val corpus: String = "20-NewsGroup"
-    val config = "./saul-examples/config/caching-curator.properties"
-    val rm = new ResourceManager(config)
-    val annotatorService = CuratorFactory.buildCuratorClient(rm)
-    val dat: List[Document] = new DocumentReader("./data/20newsToy/train").docs.toList.slice(0, 2)
 
-    val a = sensors.textCollection(dat) zip dat.map(x => x.getGUID) // this generates a list of strings each member is a textual content of a document
-    val taList = a.map(x => sensors.processDocumentWith(annotatorService, corpus, x._2, x._1))
+    val dat: List[Document] = new DocumentReader("./data/20newsToy/train").docs.toList.slice(0, 2)
+    val taList = dat.map(x => sensors.curator(x))
     val sentenceList = taList.flatMap(x => x.sentences())
 
     modelWithSensors.document populate taList
-    modelWithSensors.docTosen populateWith (sensors.alignment, to = sentenceList)
+    modelWithSensors.sentence.populate(sentenceList)
+    modelWithSensors.docTosen populateWith (sensors.alignment: (TextAnnotation, Sentence) => Boolean)
 
     val taa = modelWithSensors.document.getAllInstances
     val sen = modelWithSensors.sentence.getAllInstances
@@ -34,7 +28,6 @@ object graphPopulationMsensors {
     println(s"x1.size = ${x1.size}")
     println(s"x2.size = ${x2.size}")
 
-    annotatorService.closeCache()
     print("finished")
   }
 
