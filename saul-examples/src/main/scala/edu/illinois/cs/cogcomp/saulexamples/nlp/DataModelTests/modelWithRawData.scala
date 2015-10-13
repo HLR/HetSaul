@@ -21,7 +21,7 @@ object myapp {
   def main(args: Array[String]) {
     import modelWithRawData._
     //call the reader
-    val dat: List[Document] = new DocumentReader("./data/20newsToy/train").docs.toList.slice(1, 3)
+    val dat: List[Document] = new DocumentReader("./data/20newsToy/train").docs.toList.slice(1, 2)
     //Add the reader objects to the model which contains raw text
     modelWithRawData.rawText.populate(dat)
     //populate the graph with sensors
@@ -34,12 +34,14 @@ object myapp {
     val taa = annotatedText.getAllInstances
     val sen = sentences.getAllInstances
     //The new version
+    val x0 = (rawText(tests.head) ~> rawToAnn ~> textToCon).instances
     val x3 = (annotatedText(taa.head) ~> textToCon).instances
     val x4 = (sentences(sen.head) ~> -textToCon).instances
     //The old version
     val x1 = getFromRelation[Sentence, TextAnnotation](sen.head)
     val x2 = getFromRelation[TextAnnotation, Sentence](taa.head)
 
+    println(s"x0.size = ${x0.size}")
     println(s"x1.size = ${x1.size}")
     println(s"x2.size = ${x2.size}")
     println(s"x3.size = ${x3.size}")
