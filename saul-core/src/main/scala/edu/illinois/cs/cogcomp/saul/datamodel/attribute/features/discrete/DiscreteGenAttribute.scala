@@ -7,12 +7,12 @@ import edu.illinois.cs.cogcomp.saul.datamodel.attribute.features.ClassifierConta
 
 import scala.reflect.ClassTag
 
-/** Created by haowu on 2/5/15.
-  */
+trait DiscreteAttributeCollection[T <: AnyRef]
+
 class DiscreteGenAttribute[T <: AnyRef](
   val name: String,
   val mapping: T => List[String]
-)(implicit val tag: ClassTag[T]) extends TypedAttribute[T, List[String]] {
+)(implicit val tag: ClassTag[T]) extends TypedAttribute[T, List[String]] with DiscreteAttributeCollection[T] {
 
   override def makeClassifierWithName(n: String): Classifier = new ClassifierContainsInLBP() {
 

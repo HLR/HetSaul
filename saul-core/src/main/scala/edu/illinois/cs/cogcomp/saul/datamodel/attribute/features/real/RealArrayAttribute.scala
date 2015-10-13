@@ -6,12 +6,10 @@ import edu.illinois.cs.cogcomp.saul.datamodel.attribute.features.ClassifierConta
 
 import scala.reflect.ClassTag
 
-/** Created by haowu on 2/5/15.
-  */
 case class RealArrayAttribute[T <: AnyRef](
-  val name: String,
-  val mapping: T => List[Double]
-)(implicit val tag: ClassTag[T]) extends TypedAttribute[T, List[Double]] {
+  name: String,
+  mapping: T => List[Double]
+)(implicit val tag: ClassTag[T]) extends TypedAttribute[T, List[Double]] with RealAttributeCollection[T] {
 
   val ra = this
 

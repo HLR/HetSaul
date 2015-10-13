@@ -1,7 +1,7 @@
 package edu.illinois.cs.cogcomp.saul.datamodel
 
-import edu.illinois.cs.cogcomp.saul.datamodel.attribute.features.discrete.{ BooleanAttribute, DiscreteArrayAttribute, DiscreteAttribute, DiscreteGenAttribute }
-import edu.illinois.cs.cogcomp.saul.datamodel.attribute.features.real.{ RealArrayAttribute, RealAttribute, RealGenAttribute }
+import edu.illinois.cs.cogcomp.saul.datamodel.attribute.features.discrete._
+import edu.illinois.cs.cogcomp.saul.datamodel.attribute.features.real.{ RealAttributeCollection, RealArrayAttribute, RealAttribute, RealGenAttribute }
 import edu.illinois.cs.cogcomp.saul.datamodel.attribute.{ Attribute, EvaluatedAttribute }
 import edu.illinois.cs.cogcomp.saul.datamodel.node.Node
 import edu.illinois.cs.cogcomp.saul.datamodel.edge.{ Edge, Link }
@@ -217,7 +217,11 @@ trait DataModel {
     a
   }
 
-  class PropertyApply[T <: AnyRef] private[DataModel] (name: Symbol) {
+  class PropertyApply[T <: AnyRef] private[DataModel] (name: Symbol, bagOfWords: Boolean) {
+
+    def this(name: Symbol) {
+      this(name, false)
+    }
 
     // used to be "booleanAttributeOf"
     def apply(f: T => Boolean)(implicit tag: ClassTag[T]): BooleanAttribute[T] = {
@@ -226,10 +230,14 @@ trait DataModel {
       a
     }
 
-    // used ot be "intAttributesGeneratorOf"
-    def apply(f: T => List[Int])(implicit tag: ClassTag[T], d: DummyImplicit): RealGenAttribute[T] = {
+    // used ot be "intAttributesGeneratorOf", and "intAttributesArrayOf"
+    def apply(f: T => List[Int])(implicit tag: ClassTag[T], d: DummyImplicit): RealAttributeCollection[T] = {
       val newf: T => List[Double] = { t => f(t).map(_.toDouble) }
-      val a = new RealGenAttribute[T](name.toString, newf)
+      val a = if (bagOfWords) {
+        new RealGenAttribute[T](name.toString, newf)
+      } else {
+        new RealArrayAttribute[T](name.toString, newf)
+      }
       PROPERTIES += a
       a
     }
@@ -242,10 +250,14 @@ trait DataModel {
       a
     }
 
-    // used to be "realAttributesGeneratorOf"
+    // used to be "realAttributesGeneratorOf", and "realAttributesArrayOf"
     def apply(f: T => List[Double])(implicit tag: ClassTag[T], d1: DummyImplicit, d2: DummyImplicit,
-      d3: DummyImplicit): RealGenAttribute[T] = {
-      val a = new RealGenAttribute[T](name.toString, f)
+      d3: DummyImplicit): RealAttributeCollection[T] = {
+      val a = if (bagOfWords) {
+        new RealGenAttribute[T](name.toString, f)
+      } else {
+        new RealArrayAttribute[T](name.toString, f)
+      }
       PROPERTIES += a
       a
     }
@@ -266,10 +278,14 @@ trait DataModel {
       a
     }
 
-    // used to be called "discreteAttributesArrayOf"
+    // used to be called "discreteAttributesArrayOf", and "discreteAttributesGeneratorOf"
     def apply(f: T => List[String])(implicit tag: ClassTag[T], d1: DummyImplicit, d2: DummyImplicit, d3: DummyImplicit,
-      d4: DummyImplicit, d5: DummyImplicit, d6: DummyImplicit): DiscreteArrayAttribute[T] = {
-      val a = new DiscreteArrayAttribute[T](name.toString, f, None)
+      d4: DummyImplicit, d5: DummyImplicit, d6: DummyImplicit): DiscreteAttributeCollection[T] = {
+      val a = if (bagOfWords) {
+        new DiscreteArrayAttribute[T](name.toString, f, None)
+      } else {
+        new DiscreteGenAttribute[T](name.toString, f)
+      }
       PROPERTIES += a
       a
     }

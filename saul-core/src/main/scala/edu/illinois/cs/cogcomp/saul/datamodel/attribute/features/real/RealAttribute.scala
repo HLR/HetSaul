@@ -6,11 +6,9 @@ import edu.illinois.cs.cogcomp.saul.datamodel.attribute.features.ClassifierConta
 
 import scala.reflect.ClassTag
 
-/** Created by haowu on 2/5/15.
-  */
 case class RealAttribute[T <: AnyRef](
-  val name: String,
-  val mapping: T => Double
+  name: String,
+  mapping: T => Double
 )(implicit val tag: ClassTag[T]) extends TypedAttribute[T, Double] {
   override def makeClassifierWithName(n: String): Classifier =
 
