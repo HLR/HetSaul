@@ -123,6 +123,8 @@ trait DataModel {
   /** edges */
   def edge[A <: AnyRef, B <: AnyRef](a: Node[A], b: Node[B], name: Symbol = 'default): Edge[A, B] = {
     val e = Edge(new Link(a, b, Some(name)), new Link(b, a, Some(Symbol("-" + name.name))))
+    a.outgoing += e
+    b.incoming += e
     EDGES += e
     e
   }
