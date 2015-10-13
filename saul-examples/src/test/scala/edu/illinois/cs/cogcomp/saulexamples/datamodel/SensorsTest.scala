@@ -48,7 +48,7 @@ class SensorsTest extends FlatSpec with Matchers {
     e.links.size should be(4)
 
     n2.getAllInstances should be(n1.getAllInstances.map(_.toUpperCase()).toSet)
-    e.links.forall(p => p._1.toUpperCase == p._2) should be(true)
+    e.links.forall { case (first, second) => first.toUpperCase == second } should be(true)
   }
 
   "adding 2 singleton generating sensors" should "populate indirect links and neighbors" in {
@@ -77,9 +77,9 @@ class SensorsTest extends FlatSpec with Matchers {
     e2.links.size should be(4)
 
     n2.getAllInstances should be(n1.getAllInstances.map(_.toUpperCase()).toSet)
-    e1.links.forall(p => p._1.toUpperCase == p._2) should be(true)
+    e1.links.forall { case (first, second) => first.toUpperCase == second } should be(true)
     n3.getAllInstances should be(n1.getAllInstances.map(_.toLowerCase()).toSet)
-    e2.links.forall(p => p._1.toLowerCase == p._2) should be(true)
+    e2.links.forall { case (first, second) => first.toLowerCase == second } should be(true)
   }
 
   "adding a multiple generator sensors" should "populate indirect links and neighbors" in {
@@ -147,7 +147,7 @@ class SensorsTest extends FlatSpec with Matchers {
     e2.links.size should be(3)
 
     n3.getAllInstances should be(n2.getAllInstances.map(_.toUpperCase).toSet)
-    e2.links.forall(p => p._1.toUpperCase == p._2) should be(true)
+    e2.links.forall { case (first, second) => first.toUpperCase == second } should be(true)
   }
 
 }
