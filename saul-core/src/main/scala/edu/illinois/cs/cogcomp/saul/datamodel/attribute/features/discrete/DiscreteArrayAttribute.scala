@@ -14,7 +14,7 @@ case class DiscreteArrayAttribute[T <: AnyRef](
   name: String,
   mapping: T => List[String],
   range: Option[List[String]]
-)(implicit val tag: ClassTag[T]) extends TypedAttribute[T, List[String]] {
+)(implicit val tag: ClassTag[T]) extends TypedAttribute[T, List[String]] with DiscreteAttributeCollection[T] {
 
   override def addToFeatureVector(t: T, fv: FeatureVector): FeatureVector = {
     fv.addFeatures(this.classifier.classify(t))
