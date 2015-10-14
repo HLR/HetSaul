@@ -10,14 +10,26 @@ class propertyTest extends FlatSpec with Matchers {
     import toyDataModel._
 
     booleanAttribute.classifier.classify(new toyClass).discreteValueArray().mkString should be("true")
-    stringAttribute.classifier.classify(new toyClass).discreteValueArray().mkString should be("value")
-    rangedAttribute.classifier.classify(new toyClass).discreteValueArray().mkString should be("ranged")
-    doubleAttribute.classifier.classify(new toyClass).realValueArray().mkString should be("1.0")
-    intAttribute.classifier.classify(new toyClass).realValueArray().mkString should be("2.0")
-    //    listDoubleAttributeGenerator.makeClassifierWithName("newClassifier").classify(new toyClass).realValueArray().mkString should be("1.02.0")
 
-    //    listDoubleAttributeArrayOld.makeClassifierWithName("newClassifier").classify(new toyClass).realValueArray().mkString should be("1.0-2.0")
-    //    listDoubleAttributeGeneratorOld.makeClassifierWithName("newClassifier").classify(new toyClass).realValueArray().mkString should be("1.02.0")
+    stringAttribute.classifier.classify(new toyClass).discreteValueArray().mkString should be("value")
+    //    listStringAttributeArray.makeClassifierWithName("newClassifier").classify(new toyClass).realValueArray().mkString should be("1.02.0")
+    //    listStringAttributeGenerator.makeClassifierWithName("newClassifier").classify(new toyClass).realValueArray().mkString should be("1.02.0")
+    //
+    //    listStringAttributeArray.classifier.classify(new toyClass).discreteValueArray().mkString should be("value")
+    //    listStringAttributeGenerator.classifier.classify(new toyClass).discreteValueArray().mkString should be("value")
+
+    // ranged
+    rangedAttribute.classifier.classify(new toyClass).discreteValueArray().mkString should be("ranged")
+
+    // Double
+    doubleAttribute.classifier.classify(new toyClass).realValueArray().mkString should be("1.0")
+    listDoubleAttributeGenerator.makeClassifierWithName("newClassifier").classify(new toyClass).realValueArray().mkString should be("1.02.0")
+    listDoubleAttributeArray.makeClassifierWithName("newClassifier").classify(new toyClass).realValueArray().mkString should be("1.02.0")
+
+    // Int
+    intAttribute.classifier.classify(new toyClass).realValueArray().mkString should be("2.0")
+    listIntAttributeArray.classifier.classify(new toyClass).realValueArray().mkString should be("1.03.0")
+    listIntAttributeGenerator.classifier.classify(new toyClass).realValueArray().mkString should be("1.03.0")
 
   }
 }
@@ -81,3 +93,4 @@ object toyDataModel extends DataModel {
 }
 
 class toyClass
+

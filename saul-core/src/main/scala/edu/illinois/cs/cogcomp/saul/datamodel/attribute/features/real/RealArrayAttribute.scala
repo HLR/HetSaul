@@ -37,7 +37,8 @@ case class RealArrayAttribute[T <: AnyRef](
         case (value, idx) => featureVector.addFeature(new RealArrayStringFeature(this.containingPackage, this.name, "", value, idx, 0))
       }
 
-      (0 to values.size) foreach { x => featureVector.getFeature(x).setArrayLength(values.size) }
+      // Commented by Daniel
+      //(0 to values.size) foreach { x => featureVector.getFeature(x).setArrayLength(values.size) }
 
       featureVector
     }
