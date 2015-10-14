@@ -6,12 +6,12 @@ import edu.illinois.cs.cogcomp.saul.datamodel.attribute.features.ClassifierConta
 
 import scala.reflect.ClassTag
 
-/** Created by haowu on 2/5/15.
-  */
+trait RealAttributeCollection[T <: AnyRef]
+
 case class RealGenAttribute[T <: AnyRef](
-  val name: String,
-  val mapping: T => List[Double]
-)(implicit val tag: ClassTag[T]) extends TypedAttribute[T, List[Double]] {
+  name: String,
+  mapping: T => List[Double]
+)(implicit val tag: ClassTag[T]) extends TypedAttribute[T, List[Double]] with RealAttributeCollection[T] {
 
   val ra = this.name
 
@@ -25,14 +25,14 @@ case class RealGenAttribute[T <: AnyRef](
         val d: T = __example.asInstanceOf[T]
         val values = mapping(d)
 
-        var __result: FeatureVector = null
-        __result = new FeatureVector
+        var featureVector: FeatureVector = null
+        featureVector = new FeatureVector
 
         values.zipWithIndex.foreach {
-          case (value, __id) => __result.addFeature(new RealPrimitiveStringFeature(this.containingPackage, this.name, __id + "", value))
+          case (value, __id) => featureVector.addFeature(new RealPrimitiveStringFeature(this.containingPackage, this.name, __id + "", value))
         }
 
-        __result
+        featureVector
       }
     }
   }
@@ -46,5 +46,4 @@ case class RealGenAttribute[T <: AnyRef](
     fv.addFeatures(makeClassifierWithName(nameOfClassifier).classify(t))
     fv
   }
-
 }

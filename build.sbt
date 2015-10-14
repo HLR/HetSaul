@@ -12,7 +12,8 @@ lazy val commonSettings = Seq(
   ),
   libraryDependencies ++= Seq(
     "com.gurobi" % "gurobi" % "6.0",
-    "org.apache.commons" % "commons-math3" % "3.0"
+    "org.apache.commons" % "commons-math3" % "3.0",
+    "org.scalatest" % "scalatest_2.11" % "2.2.4"
   )
 )
 
@@ -35,7 +36,6 @@ lazy val saulExamples = (project in file("saul-examples")).
       "edu.illinois.cs.cogcomp" % "illinois-core-utilities" % "1.2.12-SNAPSHOT",
       "edu.illinois.cs.cogcomp" % "illinois-nlp-pipeline" % "0.1.6" exclude("edu.illinois.cs.cogcomp", "LBJava"),
       "edu.illinois.cs.cogcomp" % "illinois-caching-curator" % "2.1.1",
-      "edu.illinois.cs.cogcomp" % "edison" % "1.7.9" exclude("edu.illinois.cs.cogcomp", "LBJava"),
-      "org.scalatest" % "scalatest_2.11" % "2.2.4"
+      "edu.illinois.cs.cogcomp" % "edison" % "1.7.9" exclude("edu.illinois.cs.cogcomp", "LBJava")
     )
   ).dependsOn(saulCore).aggregate(saulCore)

@@ -1,7 +1,7 @@
 package edu.illinois.cs.cogcomp.saul.datamodel
 
-import edu.illinois.cs.cogcomp.saul.datamodel.attribute.features.discrete.{ BooleanAttribute, DiscreteArrayAttribute, DiscreteAttribute, DiscreteGenAttribute }
-import edu.illinois.cs.cogcomp.saul.datamodel.attribute.features.real.{ RealArrayAttribute, RealAttribute, RealGenAttribute }
+import edu.illinois.cs.cogcomp.saul.datamodel.attribute.features.discrete._
+import edu.illinois.cs.cogcomp.saul.datamodel.attribute.features.real.{ RealAttributeCollection, RealArrayAttribute, RealAttribute, RealGenAttribute }
 import edu.illinois.cs.cogcomp.saul.datamodel.attribute.{ Attribute, EvaluatedAttribute }
 import edu.illinois.cs.cogcomp.saul.datamodel.node.Node
 import edu.illinois.cs.cogcomp.saul.datamodel.edge.{ Edge, Link }
@@ -218,4 +218,91 @@ trait DataModel {
     PROPERTIES += a
     a
   }
+
+  class PropertyApply[T <: AnyRef] private[DataModel] (name: String, bagOfWords: Boolean) {
+
+    def this(name: String) {
+      this(name, false)
+    }
+
+    // used to be "booleanAttributeOf"
+    def apply(f: T => Boolean)(implicit tag: ClassTag[T]): BooleanAttribute[T] = {
+      val a = new BooleanAttribute[T](name, f)
+      PROPERTIES += a
+      a
+    }
+
+    // used ot be "intAttributesGeneratorOf", and "intAttributesArrayOf"
+    def apply(f: T => List[Int])(implicit tag: ClassTag[T], d: DummyImplicit): RealAttributeCollection[T] = {
+      val newf: T => List[Double] = { t => f(t).map(_.toDouble) }
+      val a = if (bagOfWords) {
+        new RealGenAttribute[T](name, newf)
+      } else {
+        new RealArrayAttribute[T](name, newf)
+      }
+      PROPERTIES += a
+      a
+    }
+
+    // used to be "intAttributeOf"
+    def apply(f: T => Int)(implicit tag: ClassTag[T], d1: DummyImplicit, d2: DummyImplicit): RealAttribute[T] = {
+      val newf: T => Double = { t => f(t).toDouble }
+      val a = new RealAttribute[T](name, newf)
+      PROPERTIES += a
+      a
+    }
+
+    // used to be "realAttributesGeneratorOf", and "realAttributesArrayOf"
+    def apply(f: T => List[Double])(implicit tag: ClassTag[T], d1: DummyImplicit, d2: DummyImplicit,
+      d3: DummyImplicit): RealAttributeCollection[T] = {
+      val a = if (bagOfWords) {
+        new RealGenAttribute[T](name, f)
+      } else {
+        new RealArrayAttribute[T](name, f)
+      }
+      PROPERTIES += a
+      a
+    }
+
+    // used to be called "realAttributeOf"
+    def apply(f: T => Double)(implicit tag: ClassTag[T], d1: DummyImplicit, d2: DummyImplicit, d3: DummyImplicit,
+      d4: DummyImplicit): RealAttribute[T] = {
+      val a = new RealAttribute[T](name, f)
+      PROPERTIES += a
+      a
+    }
+
+    // used to be called "discreteAttributeOf"
+    def apply(f: T => String)(implicit tag: ClassTag[T], d1: DummyImplicit, d2: DummyImplicit, d3: DummyImplicit,
+      d4: DummyImplicit, d5: DummyImplicit): DiscreteAttribute[T] = {
+      val a = new DiscreteAttribute[T](name, f, None)
+      PROPERTIES += a
+      a
+    }
+
+    // used to be called "discreteAttributesArrayOf", and "discreteAttributesGeneratorOf"
+    def apply(f: T => List[String])(implicit tag: ClassTag[T], d1: DummyImplicit, d2: DummyImplicit, d3: DummyImplicit,
+      d4: DummyImplicit, d5: DummyImplicit, d6: DummyImplicit): DiscreteAttributeCollection[T] = {
+      val a = if (bagOfWords) {
+        new DiscreteArrayAttribute[T](name, f, None)
+      } else {
+        new DiscreteGenAttribute[T](name, f)
+      }
+      PROPERTIES += a
+      a
+    }
+
+    // used to be called "rangedDiscreteAttributeOf"
+    def apply(range: String*)(f: T => String)(implicit tag: ClassTag[T], d1: DummyImplicit, d2: DummyImplicit, d3: DummyImplicit,
+      d4: DummyImplicit, d5: DummyImplicit, d6: DummyImplicit,
+      d7: DummyImplicit): DiscreteAttribute[T] = {
+      val r = range.toList
+      val a = new DiscreteAttribute[T](name, f, Some(r))
+      PROPERTIES += a
+      a
+    }
+  }
+  def property[T <: AnyRef](name: String) = new PropertyApply[T](name)
+  def property[T <: AnyRef](name: String, bagOfWords: Boolean) = new PropertyApply[T](name, bagOfWords)
 }
+
