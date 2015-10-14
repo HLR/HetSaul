@@ -13,33 +13,29 @@ case class RealAttribute[T <: AnyRef](
   override def makeClassifierWithName(n: String): Classifier =
 
     {
-
-      println(Console.BLUE + n)
       new ClassifierContainsInLBP() {
 
         this.containingPackage = "LBP_Package"
         this.name = n
 
         def classify(__example: AnyRef): FeatureVector = {
-          return new FeatureVector(featureValue(__example))
+          new FeatureVector(featureValue(__example))
         }
 
         override def featureValue(__example: AnyRef): Feature = {
           val result: Double = realValue(__example)
-          return new RealPrimitiveStringFeature(containingPackage, name, "", result)
+          new RealPrimitiveStringFeature(containingPackage, name, "", result)
         }
 
         override def realValue(__example: AnyRef): Double = {
           val d: T = __example.asInstanceOf[T]
-          return mapping(d)
+          mapping(d)
         }
 
         override def classify(examples: Array[AnyRef]): Array[FeatureVector] = {
           super.classify(examples)
         }
-
       }
-
     }
 
   override def addToFeatureVector(t: T, fv: FeatureVector): FeatureVector = {

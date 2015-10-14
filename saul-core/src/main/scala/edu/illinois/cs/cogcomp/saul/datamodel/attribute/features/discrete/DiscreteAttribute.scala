@@ -43,7 +43,7 @@ case class DiscreteAttribute[T <: AnyRef](
 
         private def _discreteValue(__example: AnyRef): String = {
           val t: T = __example.asInstanceOf[T]
-          fdt.mapping(t).mkString("")
+          self.mapping(t).mkString("")
         }
       }
     }

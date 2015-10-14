@@ -4,10 +4,8 @@ import edu.illinois.cs.cogcomp.saul.datamodel.attribute.features.discrete.Boolea
 
 import scala.reflect.ClassTag
 
-/** Created by haowu on 1/27/15.
-  */
 trait TypedAttribute[T <: AnyRef, U] extends Attribute[T] {
-  val fdt = this
+  val self = this
 
   override type S = U
   override val mapping: T => U

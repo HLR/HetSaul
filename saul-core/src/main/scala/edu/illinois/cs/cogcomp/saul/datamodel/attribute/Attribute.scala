@@ -16,10 +16,9 @@ trait Attribute[T] extends LBJClassifierEquivalent {
 
   val mapping: T => S
 
-  def apply(t: T): S =
-    {
-      mapping(t)
-    }
+  def apply(t: T): S = {
+    mapping(t)
+  }
 
   val classifier: Classifier = makeClassifierWithName(name)
 

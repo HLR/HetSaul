@@ -1,7 +1,7 @@
 package edu.illinois.cs.cogcomp.saul.datamodel
 
 import edu.illinois.cs.cogcomp.saul.datamodel.attribute.features.discrete._
-import edu.illinois.cs.cogcomp.saul.datamodel.attribute.features.real.{ RealAttributeCollection, RealArrayAttribute, RealAttribute, RealGenAttribute }
+import edu.illinois.cs.cogcomp.saul.datamodel.attribute.features.real._
 import edu.illinois.cs.cogcomp.saul.datamodel.attribute.{ Attribute, EvaluatedAttribute }
 import edu.illinois.cs.cogcomp.saul.datamodel.node.Node
 import edu.illinois.cs.cogcomp.saul.datamodel.edge.{ Edge, Link }
@@ -217,7 +217,7 @@ trait DataModel {
     a
   }
 
-  class PropertyApply[T <: AnyRef] private[DataModel] (name: String, bagOfWords: Boolean) {
+  class PropertyApply[T <: AnyRef] private[DataModel] (name: String, ordered: Boolean) {
 
     def this(name: String) {
       this(name, false)
@@ -233,10 +233,10 @@ trait DataModel {
     // used ot be "intAttributesGeneratorOf", and "intAttributesArrayOf"
     def apply(f: T => List[Int])(implicit tag: ClassTag[T], d: DummyImplicit): RealAttributeCollection[T] = {
       val newf: T => List[Double] = { t => f(t).map(_.toDouble) }
-      val a = if (bagOfWords) {
-        new RealGenAttribute[T](name, newf)
-      } else {
+      val a = if (ordered) {
         new RealArrayAttribute[T](name, newf)
+      } else {
+        new RealGenAttribute[T](name, newf)
       }
       PROPERTIES += a
       a
@@ -252,12 +252,13 @@ trait DataModel {
 
     // used to be "realAttributesGeneratorOf", and "realAttributesArrayOf"
     def apply(f: T => List[Double])(implicit tag: ClassTag[T], d1: DummyImplicit, d2: DummyImplicit,
-      d3: DummyImplicit): RealAttributeCollection[T] = {
-      val a = if (bagOfWords) {
-        new RealGenAttribute[T](name, f)
-      } else {
-        new RealArrayAttribute[T](name, f)
-      }
+      d3: DummyImplicit): RealCollectionAttribute[T] = {
+      //      val a = if (ordered) {
+      //        new RealArrayAttribute[T](name, f)
+      //      } else {
+      //        new RealGenAttribute[T](name, f)
+      //      }
+      val a = new RealCollectionAttribute[T](name, f, ordered)
       PROPERTIES += a
       a
     }
@@ -281,7 +282,7 @@ trait DataModel {
     // used to be called "discreteAttributesArrayOf", and "discreteAttributesGeneratorOf"
     def apply(f: T => List[String])(implicit tag: ClassTag[T], d1: DummyImplicit, d2: DummyImplicit, d3: DummyImplicit,
       d4: DummyImplicit, d5: DummyImplicit, d6: DummyImplicit): DiscreteAttributeCollection[T] = {
-      val a = if (bagOfWords) {
+      val a = if (ordered) {
         new DiscreteArrayAttribute[T](name, f, None)
       } else {
         new DiscreteGenAttribute[T](name, f)
@@ -301,6 +302,6 @@ trait DataModel {
     }
   }
   def property[T <: AnyRef](name: String) = new PropertyApply[T](name)
-  def property[T <: AnyRef](name: String, bagOfWords: Boolean) = new PropertyApply[T](name, bagOfWords)
+  def property[T <: AnyRef](name: String, ordered: Boolean) = new PropertyApply[T](name, ordered)
 }
 

@@ -9,39 +9,37 @@ import scala.reflect.ClassTag
 case class RealArrayAttribute[T <: AnyRef](
   name: String,
   mapping: T => List[Double]
-)(implicit val tag: ClassTag[T]) extends TypedAttribute[T, List[Double]] with RealAttributeCollection[T] {
+)(implicit val tag: ClassTag[T]) extends RealAttributeCollection[T] with TypedAttribute[T, List[Double]] {
 
-  val ra = this
+  val ra = this // shouldn't this be this.name?
 
   override def makeClassifierWithName(n: String): Classifier = new ClassifierContainsInLBP() {
-
     this.containingPackage = "LBP_Package"
 
     this.name = n
 
-    override def realValueArray(__example: AnyRef): Array[Double] = {
-      classify(__example).realValueArray
+    override def realValueArray(example: AnyRef): Array[Double] = {
+      classify(example).realValueArray
     }
 
     override def classify(examples: Array[AnyRef]): Array[FeatureVector] = {
       super.classify(examples)
     }
 
-    def classify(__example: AnyRef): FeatureVector = {
+    def classify(example: AnyRef): FeatureVector = {
 
-      val d: T = __example.asInstanceOf[T]
+      val d: T = example.asInstanceOf[T]
       val values = mapping(d)
 
-      var __result: FeatureVector = null
-      __result = new FeatureVector
+      var featureVector = new FeatureVector
 
-      values.zipWithIndex.map {
-        case (__value, __featureIndex) => __result.addFeature(new RealArrayStringFeature(this.containingPackage, this.name, "", __value, __featureIndex, 0))
+      values.zipWithIndex.foreach {
+        case (value, idx) => featureVector.addFeature(new RealArrayStringFeature(this.containingPackage, this.name, "", value, idx, 0))
       }
 
-      (0 to values.size) foreach { x => __result.getFeature(x).setArrayLength(values.size) }
+      (0 to values.size) foreach { x => featureVector.getFeature(x).setArrayLength(values.size) }
 
-      __result
+      featureVector
     }
   }
 
