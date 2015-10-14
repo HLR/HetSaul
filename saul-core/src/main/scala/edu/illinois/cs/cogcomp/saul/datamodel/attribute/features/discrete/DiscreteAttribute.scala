@@ -6,9 +6,6 @@ import edu.illinois.cs.cogcomp.saul.datamodel.attribute.features.ClassifierConta
 
 import scala.reflect.ClassTag
 
-/** Created by haowu on 2/5/15.
-  */
-
 case class DiscreteAttribute[T <: AnyRef](
   name: String,
   mapping: T => String,

@@ -16,7 +16,8 @@ case class RealArrayAttribute[T <: AnyRef](
   override def makeClassifierWithName(n: String): Classifier = new ClassifierContainsInLBP() {
 
     this.containingPackage = "LBP_Package"
-    this.name = ra.name
+
+    this.name = n
 
     override def realValueArray(__example: AnyRef): Array[Double] = {
       classify(__example).realValueArray

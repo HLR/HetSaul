@@ -25,14 +25,14 @@ case class RealGenAttribute[T <: AnyRef](
         val d: T = __example.asInstanceOf[T]
         val values = mapping(d)
 
-        var __result: FeatureVector = null
-        __result = new FeatureVector
+        var featureVector: FeatureVector = null
+        featureVector = new FeatureVector
 
         values.zipWithIndex.foreach {
-          case (value, __id) => __result.addFeature(new RealPrimitiveStringFeature(this.containingPackage, this.name, __id + "", value))
+          case (value, __id) => featureVector.addFeature(new RealPrimitiveStringFeature(this.containingPackage, this.name, __id + "", value))
         }
 
-        __result
+        featureVector
       }
     }
   }

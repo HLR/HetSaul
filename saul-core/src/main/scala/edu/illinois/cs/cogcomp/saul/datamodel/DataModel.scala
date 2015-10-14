@@ -217,15 +217,15 @@ trait DataModel {
     a
   }
 
-  class PropertyApply[T <: AnyRef] private[DataModel] (name: Symbol, bagOfWords: Boolean) {
+  class PropertyApply[T <: AnyRef] private[DataModel] (name: String, bagOfWords: Boolean) {
 
-    def this(name: Symbol) {
+    def this(name: String) {
       this(name, false)
     }
 
     // used to be "booleanAttributeOf"
     def apply(f: T => Boolean)(implicit tag: ClassTag[T]): BooleanAttribute[T] = {
-      val a = new BooleanAttribute[T](name.toString, f)
+      val a = new BooleanAttribute[T](name, f)
       PROPERTIES += a
       a
     }
@@ -234,9 +234,9 @@ trait DataModel {
     def apply(f: T => List[Int])(implicit tag: ClassTag[T], d: DummyImplicit): RealAttributeCollection[T] = {
       val newf: T => List[Double] = { t => f(t).map(_.toDouble) }
       val a = if (bagOfWords) {
-        new RealGenAttribute[T](name.toString, newf)
+        new RealGenAttribute[T](name, newf)
       } else {
-        new RealArrayAttribute[T](name.toString, newf)
+        new RealArrayAttribute[T](name, newf)
       }
       PROPERTIES += a
       a
@@ -245,7 +245,7 @@ trait DataModel {
     // used to be "intAttributeOf"
     def apply(f: T => Int)(implicit tag: ClassTag[T], d1: DummyImplicit, d2: DummyImplicit): RealAttribute[T] = {
       val newf: T => Double = { t => f(t).toDouble }
-      val a = new RealAttribute[T](name.toString, newf)
+      val a = new RealAttribute[T](name, newf)
       PROPERTIES += a
       a
     }
@@ -254,9 +254,9 @@ trait DataModel {
     def apply(f: T => List[Double])(implicit tag: ClassTag[T], d1: DummyImplicit, d2: DummyImplicit,
       d3: DummyImplicit): RealAttributeCollection[T] = {
       val a = if (bagOfWords) {
-        new RealGenAttribute[T](name.toString, f)
+        new RealGenAttribute[T](name, f)
       } else {
-        new RealArrayAttribute[T](name.toString, f)
+        new RealArrayAttribute[T](name, f)
       }
       PROPERTIES += a
       a
@@ -265,7 +265,7 @@ trait DataModel {
     // used to be called "realAttributeOf"
     def apply(f: T => Double)(implicit tag: ClassTag[T], d1: DummyImplicit, d2: DummyImplicit, d3: DummyImplicit,
       d4: DummyImplicit): RealAttribute[T] = {
-      val a = new RealAttribute[T](name.toString, f)
+      val a = new RealAttribute[T](name, f)
       PROPERTIES += a
       a
     }
@@ -273,7 +273,7 @@ trait DataModel {
     // used to be called "discreteAttributeOf"
     def apply(f: T => String)(implicit tag: ClassTag[T], d1: DummyImplicit, d2: DummyImplicit, d3: DummyImplicit,
       d4: DummyImplicit, d5: DummyImplicit): DiscreteAttribute[T] = {
-      val a = new DiscreteAttribute[T](name.toString, f, None)
+      val a = new DiscreteAttribute[T](name, f, None)
       PROPERTIES += a
       a
     }
@@ -282,9 +282,9 @@ trait DataModel {
     def apply(f: T => List[String])(implicit tag: ClassTag[T], d1: DummyImplicit, d2: DummyImplicit, d3: DummyImplicit,
       d4: DummyImplicit, d5: DummyImplicit, d6: DummyImplicit): DiscreteAttributeCollection[T] = {
       val a = if (bagOfWords) {
-        new DiscreteArrayAttribute[T](name.toString, f, None)
+        new DiscreteArrayAttribute[T](name, f, None)
       } else {
-        new DiscreteGenAttribute[T](name.toString, f)
+        new DiscreteGenAttribute[T](name, f)
       }
       PROPERTIES += a
       a
@@ -295,11 +295,12 @@ trait DataModel {
       d4: DummyImplicit, d5: DummyImplicit, d6: DummyImplicit,
       d7: DummyImplicit): DiscreteAttribute[T] = {
       val r = range.toList
-      val a = new DiscreteAttribute[T](name.toString, f, Some(r))
+      val a = new DiscreteAttribute[T](name, f, Some(r))
       PROPERTIES += a
       a
     }
   }
-  def property[T <: AnyRef](name: Symbol) = new PropertyApply[T](name)
+  def property[T <: AnyRef](name: String) = new PropertyApply[T](name)
+  def property[T <: AnyRef](name: String, bagOfWords: Boolean) = new PropertyApply[T](name, bagOfWords)
 }
 
