@@ -12,8 +12,12 @@ object modelWithRawData extends DataModel {
   val rawText = node[Document]
   val annotatedText = node[TextAnnotation]
   val sentences = node[Sentence]
-  val rawToAnn = edge(rawText, annotatedText, 'rToa)
-  val textToCon = edge(annotatedText, sentences, 'tToc)
+  val rawToAnn = edge(rawText, annotatedText)
+  val textToCon = edge(annotatedText, sentences)
+  textToCon.addSensor(sensors.f(_))
+  rawToAnn.addSensor(sensors.curator(_))
+
+  // textToCon.addSensor(sensors.alignment:(TextAnnotation,Sentence)=>Boolean)
 }
 
 object myapp {
@@ -22,17 +26,28 @@ object myapp {
     import modelWithRawData._
     //call the reader
     val dat: List[Document] = new DocumentReader("./data/20newsToy/train").docs.toList.slice(1, 2)
+    // val taList = dat.map(x => sensors.curator(x))
+    // val sentenceList = taList.flatMap(x => x.sentences())
+
     //Add the reader objects to the model which contains raw text
-    modelWithRawData.rawText.populate(dat)
+    rawText.populate(dat)
+    // annotatedText.populate(taList)
+    //sentences.populate(sentenceList)
+
     //populate the graph with sensors
-    modelWithRawData.rawToAnn.populateWith(sensors.curator(_))
-    modelWithRawData.textToCon.populateWith(sensors.f(_))
+    // modelWithRawData.rawToAnn.populateWith(sensors.curator(_))
+    // modelWithRawData.textToCon.populateWith(sensors.f _)
 
     //TODO: make the below line work, to just use the edge name and depending on the type of sensor a generator or matching edge will be called.
     //test the content of the graph
     val tests = rawText.getAllInstances
     val taa = annotatedText.getAllInstances
     val sen = sentences.getAllInstances
+    println(s"tests.size = ${tests.size}")
+    println(s"taa.size = ${taa.size}")
+    println(s"sen.size = ${sen.size}")
+    println(s"textToCon.size = ${textToCon.links.size}")
+    println(s"rawToAnn.size = ${rawToAnn.links.size}")
     //The new version
     val x0 = (rawText(tests.head) ~> rawToAnn ~> textToCon).instances
     val x3 = (annotatedText(taa.head) ~> textToCon).instances
