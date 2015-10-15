@@ -9,14 +9,13 @@ class propertyTest extends FlatSpec with Matchers {
   "properties" should "work!" in {
     import toyDataModel._
 
+    // boolean
     booleanAttribute.classifier.classify(new toyClass).discreteValueArray().mkString should be("true")
 
+    // discrete
     stringAttribute.classifier.classify(new toyClass).discreteValueArray().mkString should be("value")
-    //    listStringAttributeArray.makeClassifierWithName("newClassifier").classify(new toyClass).realValueArray().mkString should be("1.02.0")
-    //    listStringAttributeGenerator.makeClassifierWithName("newClassifier").classify(new toyClass).realValueArray().mkString should be("1.02.0")
-    //
-    //    listStringAttributeArray.classifier.classify(new toyClass).discreteValueArray().mkString should be("value")
-    //    listStringAttributeGenerator.classifier.classify(new toyClass).discreteValueArray().mkString should be("value")
+    listStringAttributeArray.makeClassifierWithName("newClassifier").classify(new toyClass).discreteValueArray().mkString should be("listValue")
+    listStringAttributeGenerator.makeClassifierWithName("newClassifier").classify(new toyClass).discreteValueArray().mkString should be("listValue")
 
     // ranged
     rangedAttribute.classifier.classify(new toyClass).discreteValueArray().mkString should be("ranged")
@@ -30,7 +29,6 @@ class propertyTest extends FlatSpec with Matchers {
     intAttribute.classifier.classify(new toyClass).realValueArray().mkString should be("2.0")
     listIntAttributeArray.classifier.classify(new toyClass).realValueArray().mkString should be("1.03.0")
     listIntAttributeGenerator.classifier.classify(new toyClass).realValueArray().mkString should be("1.03.0")
-
   }
 }
 
@@ -94,3 +92,13 @@ object toyDataModel extends DataModel {
 
 class toyClass
 
+
+object sample{
+  def main(args: Array[String]): Unit = {
+    println(toyDataModel.listStringAttributeGenerator)
+    println(toyDataModel.listStringAttributeGenerator.makeClassifierWithName("newClassifier"))
+    println(toyDataModel.listStringAttributeGenerator.makeClassifierWithName("newClassifier").classify(new toyClass))
+    println(toyDataModel.listStringAttributeGenerator.makeClassifierWithName("newClassifier").classify(new toyClass).discreteValueArray())
+    println(toyDataModel.listStringAttributeGenerator.makeClassifierWithName("newClassifier").classify(new toyClass).discreteValueArray().mkString)
+  }
+}

@@ -6,7 +6,7 @@ import edu.illinois.cs.cogcomp.lbjava.classify.Classifier
 import edu.illinois.cs.cogcomp.lbjava.classify.FeatureVector
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
 import edu.illinois.cs.cogcomp.saul.datamodel.attribute.features.{ DataSensitiveLBJFeature, ClassifierContainsInLBP }
-import edu.illinois.cs.cogcomp.saul.datamodel.attribute.features.discrete.DiscreteArrayAttribute
+import edu.illinois.cs.cogcomp.saul.datamodel.attribute.features.discrete.DiscreteCollectionAttribute
 import edu.illinois.cs.cogcomp.saul.datamodel.attribute.features.discrete.DiscreteAttribute
 import edu.illinois.cs.cogcomp.saul.datamodel.attribute.features.discrete.DiscreteGenAttribute
 import edu.illinois.cs.cogcomp.saul.datamodel.attribute.features.real.RealAttribute

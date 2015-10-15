@@ -7,12 +7,10 @@ import edu.illinois.cs.cogcomp.saul.datamodel.attribute.features.ClassifierConta
 
 import scala.reflect.ClassTag
 
-trait DiscreteAttributeCollection[T <: AnyRef]
-
 class DiscreteGenAttribute[T <: AnyRef](
   val name: String,
   val mapping: T => List[String]
-)(implicit val tag: ClassTag[T]) extends TypedAttribute[T, List[String]] with DiscreteAttributeCollection[T] {
+)(implicit val tag: ClassTag[T]) extends TypedAttribute[T, List[String]] {
 
   override def makeClassifierWithName(n: String): Classifier = new ClassifierContainsInLBP() {
 
@@ -20,20 +18,16 @@ class DiscreteGenAttribute[T <: AnyRef](
     this.name = n
 
     def classify(__example: AnyRef): FeatureVector = {
+      val d: T = __example.asInstanceOf[T]
+      val values = mapping(d)
 
-      val t: T = __example.asInstanceOf[T]
       var __result: FeatureVector = null
       __result = new FeatureVector
-      var __id: String = null
-      var __value: String = null
 
-      val __ids = mapping(t)
-
-      __ids foreach (
+      values foreach (
         x => {
           val __id = x
-          val __value = "true"
-          __result.addFeature(new DiscretePrimitiveStringFeature(this.containingPackage, this.name, __id, __value, valueIndexOf(__value), 0.toShort))
+          __result.addFeature(new DiscretePrimitiveStringFeature(this.containingPackage, this.name, __id, x, valueIndexOf(x), 0.toShort))
         }
       )
 

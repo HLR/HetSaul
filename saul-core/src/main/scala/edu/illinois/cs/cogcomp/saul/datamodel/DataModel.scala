@@ -154,7 +154,7 @@ trait DataModel {
 
   /** Discrete array feature with range, same as discrete[] SpamLabel in lbjava */
   def discreteAttributesArrayOf[T <: AnyRef](name: Symbol)(f: T => List[String])(implicit tag: ClassTag[T]): DiscreteArrayAttribute[T] = {
-    val a = new DiscreteArrayAttribute[T](name.toString, f, None)
+    val a = new DiscreteArrayAttribute[T](name.toString, f)
     PROPERTIES += a
     a
   }
@@ -281,11 +281,11 @@ trait DataModel {
 
     // used to be called "discreteAttributesArrayOf", and "discreteAttributesGeneratorOf"
     def apply(f: T => List[String])(implicit tag: ClassTag[T], d1: DummyImplicit, d2: DummyImplicit, d3: DummyImplicit,
-      d4: DummyImplicit, d5: DummyImplicit, d6: DummyImplicit): DiscreteAttributeCollection[T] = {
+      d4: DummyImplicit, d5: DummyImplicit, d6: DummyImplicit): DiscreteCollectionAttribute[T] = {
       val a = if (ordered) {
-        new DiscreteArrayAttribute[T](name, f, None)
+        new DiscreteCollectionAttribute[T](name, f, ordered = false)
       } else {
-        new DiscreteGenAttribute[T](name, f)
+        new DiscreteCollectionAttribute[T](name, f, ordered = true)
       }
       PROPERTIES += a
       a
