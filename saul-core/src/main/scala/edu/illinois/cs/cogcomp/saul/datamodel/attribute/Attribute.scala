@@ -14,10 +14,10 @@ trait Attribute[T] extends LBJClassifierEquivalent {
   val tag: ClassTag[T]
   type S
 
-  val mapping: T => S
+  val sensor: T => S
 
   def apply(t: T): S = {
-    mapping(t)
+    sensor(t)
   }
 
   val classifier: Classifier = makeClassifierWithName(name)

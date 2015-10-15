@@ -21,13 +21,13 @@ class RelationalFeature[HEAD <: AnyRef, CHILD <: AnyRef](
 
   override val name: String = s"RelationalFeature of ${tag.toString()} to ${cTag.toString()}"
 
-  override val mapping: (HEAD) => S = {
+  override val sensor: (HEAD) => S = {
 
     head: HEAD =>
       {
         val children = dataModel.getFromRelation[HEAD, CHILD](head).toList
         children.map({
-          c => fts.map(f => f.mapping(c))
+          c => fts.map(f => f.sensor(c))
         })
       }
   }

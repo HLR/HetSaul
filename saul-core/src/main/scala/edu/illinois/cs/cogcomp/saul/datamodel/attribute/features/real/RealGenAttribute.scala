@@ -10,7 +10,7 @@ trait RealAttributeCollection[T <: AnyRef] extends Attribute[T]
 
 case class RealGenAttribute[T <: AnyRef](
   name: String,
-  mapping: T => List[Double]
+  sensor: T => List[Double]
 )(implicit val tag: ClassTag[T]) extends RealAttributeCollection[T] with TypedAttribute[T, List[Double]] {
 
   val ra = this.name
@@ -23,7 +23,7 @@ case class RealGenAttribute[T <: AnyRef](
 
     def classify(example: AnyRef): FeatureVector = {
       val d: T = example.asInstanceOf[T]
-      val values = mapping(d)
+      val values = sensor(d)
 
       var featureVector = new FeatureVector
 

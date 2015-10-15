@@ -8,7 +8,7 @@ import scala.reflect.ClassTag
 
 case class RealAttribute[T <: AnyRef](
   name: String,
-  mapping: T => Double
+  sensor: T => Double
 )(implicit val tag: ClassTag[T]) extends TypedAttribute[T, Double] {
   override def makeClassifierWithName(n: String): Classifier =
 
@@ -29,7 +29,7 @@ case class RealAttribute[T <: AnyRef](
 
         override def realValue(__example: AnyRef): Double = {
           val d: T = __example.asInstanceOf[T]
-          mapping(d)
+          sensor(d)
         }
 
         override def classify(examples: Array[AnyRef]): Array[FeatureVector] = {

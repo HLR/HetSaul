@@ -10,7 +10,7 @@ import scala.reflect.ClassTag
 
 case class DiscreteArrayAttribute[T <: AnyRef](
   name: String,
-  mapping: T => List[String]
+  sensor: T => List[String]
 )(implicit val tag: ClassTag[T]) extends TypedAttribute[T, List[String]] {
 
   override def makeClassifierWithName(n: String): Classifier = new ClassifierContainsInLBP() {
@@ -20,7 +20,7 @@ case class DiscreteArrayAttribute[T <: AnyRef](
 
     def classify(__example: AnyRef): FeatureVector = {
       val d: T = __example.asInstanceOf[T]
-      val values = mapping(d)
+      val values = sensor(d)
 
       var __result: FeatureVector = null
       __result = new FeatureVector

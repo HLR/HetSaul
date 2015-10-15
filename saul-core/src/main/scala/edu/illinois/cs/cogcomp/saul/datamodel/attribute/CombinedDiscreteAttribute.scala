@@ -14,10 +14,10 @@ case class CombinedDiscreteAttribute[T <: AnyRef](
   val atts: List[Attribute[T]] // T => (String | Double | List[String] | List[Double])
 )(implicit val tag: ClassTag[T]) extends TypedAttribute[T, List[_]] {
 
-  override val mapping: (T) => List[_] = {
+  override val sensor: (T) => List[_] = {
     t: T =>
       {
-        atts.map(att => att.mapping(t))
+        atts.map(att => att.sensor(t))
       }
   }
 

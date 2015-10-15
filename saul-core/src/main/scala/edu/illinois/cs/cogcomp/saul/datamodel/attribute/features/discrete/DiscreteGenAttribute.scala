@@ -9,7 +9,7 @@ import scala.reflect.ClassTag
 
 class DiscreteGenAttribute[T <: AnyRef](
   val name: String,
-  val mapping: T => List[String]
+  val sensor: T => List[String]
 )(implicit val tag: ClassTag[T]) extends TypedAttribute[T, List[String]] {
 
   override def makeClassifierWithName(n: String): Classifier = new ClassifierContainsInLBP() {
@@ -19,7 +19,7 @@ class DiscreteGenAttribute[T <: AnyRef](
 
     def classify(__example: AnyRef): FeatureVector = {
       val d: T = __example.asInstanceOf[T]
-      val values = mapping(d)
+      val values = sensor(d)
 
       var __result: FeatureVector = null
       __result = new FeatureVector

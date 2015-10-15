@@ -16,7 +16,7 @@ class EvaluatedAttribute[T <: AnyRef, U](
 
   val boolMapping: (T) => Boolean = {
     t: T =>
-      if (att.mapping(t).equals(this.value)) {
+      if (att.sensor(t).equals(this.value)) {
         true
       } else {
         false
@@ -37,5 +37,5 @@ class EvaluatedAttribute[T <: AnyRef, U](
   def addToFeatureVector(t: T, fv: FeatureVector, nameOfClassifier: String): FeatureVector = {
     fv
   }
-  override val mapping: (T) => String = { t: T => "" }
+  override val sensor: (T) => String = { t: T => "" }
 }

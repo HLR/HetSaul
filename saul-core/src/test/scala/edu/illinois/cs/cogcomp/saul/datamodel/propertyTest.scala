@@ -91,14 +91,3 @@ object toyDataModel extends DataModel {
 }
 
 class toyClass
-
-
-object sample{
-  def main(args: Array[String]): Unit = {
-    println(toyDataModel.listStringAttributeGenerator)
-    println(toyDataModel.listStringAttributeGenerator.makeClassifierWithName("newClassifier"))
-    println(toyDataModel.listStringAttributeGenerator.makeClassifierWithName("newClassifier").classify(new toyClass))
-    println(toyDataModel.listStringAttributeGenerator.makeClassifierWithName("newClassifier").classify(new toyClass).discreteValueArray())
-    println(toyDataModel.listStringAttributeGenerator.makeClassifierWithName("newClassifier").classify(new toyClass).discreteValueArray().mkString)
-  }
-}

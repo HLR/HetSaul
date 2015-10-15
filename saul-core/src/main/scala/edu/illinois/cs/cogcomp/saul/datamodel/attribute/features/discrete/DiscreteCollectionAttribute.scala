@@ -4,57 +4,61 @@ import edu.illinois.cs.cogcomp.lbjava.classify.{ DiscretePrimitiveStringFeature,
 import edu.illinois.cs.cogcomp.saul.datamodel.attribute.TypedAttribute
 import edu.illinois.cs.cogcomp.saul.datamodel.attribute.features.ClassifierContainsInLBP
 
-//import tutorial_related.Document
-
 import scala.reflect.ClassTag
 
 case class DiscreteCollectionAttribute[T <: AnyRef](
   name: String,
-  mapping: T => List[String],
+  sensor: T => List[String],
   ordered: Boolean
 )(implicit val tag: ClassTag[T]) extends TypedAttribute[T, List[String]] {
 
-  override def addToFeatureVector(t: T, fv: FeatureVector): FeatureVector = {
-    fv.addFeatures(this.classifier.classify(t))
-    fv
-  }
-
-  override def makeClassifierWithName(n: String): Classifier = {
+  override def makeClassifierWithName(name: String): Classifier = {
     new ClassifierContainsInLBP() {
 
-      this.name = n
+      this.name = name
 
-      def classify(__example: AnyRef): FeatureVector = {
-        val d: T = __example.asInstanceOf[T]
-        val values = mapping(d)
+      def classify(instance: AnyRef): FeatureVector = {
+        val d: T = instance.asInstanceOf[T]
+        val values = sensor(d)
 
-        var result = new FeatureVector
+        var featureVector = new FeatureVector
 
         if (ordered) {
           values.zipWithIndex.foreach {
-            case (__value, __featureIndex) => result.addFeature(new DiscreteArrayStringFeature(this.containingPackage, this.name, "", __value, valueIndexOf(__value), 0.toShort, __featureIndex, 0))
+            case (value, idx) =>
+              featureVector.addFeature(
+                new DiscreteArrayStringFeature(this.containingPackage, this.name, "", value,
+                  valueIndexOf(value), 0.toShort, idx, 0)
+              )
           }
-          // Daniel commented this line
-          //(0 to values.size) foreach { x => result.getFeature(x).setArrayLength(values.size) }
+          // TODO: Daniel commented this line. Make sure this does not introduce a bug 
+          //(0 to values.size) foreach { x => featureVector.getFeature(x).setArrayLength(values.size) }
         } else {
-          values foreach (
-            x => {
-              val __id = x
-              result.addFeature(new DiscretePrimitiveStringFeature(this.containingPackage, this.name, __id, x, valueIndexOf(x), 0.toShort))
-            }
-          )
+          values.foreach {
+            value =>
+              val id = value
+              featureVector.addFeature(new DiscretePrimitiveStringFeature(
+                this.containingPackage,
+                this.name, id, value, valueIndexOf(value), 0.toShort
+              ))
+          }
         }
-        result
+        featureVector
       }
 
-      override def discreteValueArray(__example: AnyRef): Array[String] = {
-        classify(__example).discreteValueArray
+      override def discreteValueArray(instance: AnyRef): Array[String] = {
+        classify(instance).discreteValueArray
       }
     }
   }
 
-  def addToFeatureVector(t: T, fv: FeatureVector, nameOfClassifier: String): FeatureVector = {
-    fv.addFeatures(makeClassifierWithName(nameOfClassifier).classify(t))
-    fv
+  override def addToFeatureVector(t: T, featureVector: FeatureVector): FeatureVector = {
+    featureVector.addFeatures(this.classifier.classify(t))
+    featureVector
+  }
+
+  def addToFeatureVector(t: T, featureVector: FeatureVector, classifierName: String): FeatureVector = {
+    featureVector.addFeatures(makeClassifierWithName(classifierName).classify(t))
+    featureVector
   }
 }

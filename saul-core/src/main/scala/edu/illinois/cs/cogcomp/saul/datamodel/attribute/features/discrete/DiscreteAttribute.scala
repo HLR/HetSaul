@@ -8,7 +8,7 @@ import scala.reflect.ClassTag
 
 case class DiscreteAttribute[T <: AnyRef](
   name: String,
-  mapping: T => String,
+  sensor: T => String,
   range: Option[List[String]]
 )(implicit val tag: ClassTag[T]) extends TypedAttribute[T, String] {
   override def makeClassifierWithName(n: String): Classifier = range match {
@@ -43,7 +43,7 @@ case class DiscreteAttribute[T <: AnyRef](
 
         private def _discreteValue(__example: AnyRef): String = {
           val t: T = __example.asInstanceOf[T]
-          self.mapping(t).mkString("")
+          self.sensor(t).mkString("")
         }
       }
     }
@@ -63,7 +63,7 @@ case class DiscreteAttribute[T <: AnyRef](
 
       override def discreteValue(__example: AnyRef): String = {
         val d: T = __example.asInstanceOf[T]
-        "" + mapping(d)
+        "" + sensor(d)
       }
 
       override def classify(examples: Array[AnyRef]): Array[FeatureVector] = {

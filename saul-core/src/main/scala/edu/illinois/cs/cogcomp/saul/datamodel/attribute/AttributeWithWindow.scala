@@ -25,7 +25,7 @@ class AttributeWithWindow[T <: AnyRef](
 )(implicit val tag: ClassTag[T]) extends TypedAttribute[T, List[_]] with DataModelSensitiveAttribute[T] {
 
   // TODO: need to work on the mapping such that.
-  override val mapping: (T) => List[_] = {
+  override val sensor: (T) => List[_] = {
     t: T =>
       {
         {
@@ -37,7 +37,7 @@ class AttributeWithWindow[T <: AnyRef](
 
           atts.flatMap(att => {
             winds map {
-              case Some(x) => Some(att.mapping(x))
+              case Some(x) => Some(att.sensor(x))
               case _ => None
             }
           })
@@ -81,7 +81,7 @@ class AttributeWithWindow[T <: AnyRef](
                                     ent.getWithRelativePosition(t, idx, filters) match {
                                       case Some(target) => {
                                         {
-                                          da.mapping(target)
+                                          da.sensor(target)
                                         }
                                       }
                                       case _ => {
@@ -104,7 +104,7 @@ class AttributeWithWindow[T <: AnyRef](
 
                                   ent.getWithRelativePosition(t, idx, filters) match {
                                     case Some(target) =>
-                                      dga.mapping(target)
+                                      dga.sensor(target)
                                     case _ => Nil
                                   }
                                 }
@@ -122,7 +122,7 @@ class AttributeWithWindow[T <: AnyRef](
                                     ent.getWithRelativePosition(t, idx, filters) match {
                                       case Some(target) => {
                                         {
-                                          ra.mapping(target)
+                                          ra.sensor(target)
                                         }
                                       }
                                       case _ => {
@@ -143,7 +143,7 @@ class AttributeWithWindow[T <: AnyRef](
                               {
                                 ent.getWithRelativePosition(t, idx, filters) match {
                                   case Some(target) => {
-                                    rga.mapping(target)
+                                    rga.sensor(target)
                                   }
                                   case _ => {
                                     Nil

@@ -8,7 +8,7 @@ import scala.reflect.ClassTag
 
 case class RealCollectionAttribute[T <: AnyRef](
   name: String,
-  mapping: T => List[Double],
+  sensor: T => List[Double],
   ordered: Boolean
 )(implicit val tag: ClassTag[T]) extends RealAttributeCollection[T] with TypedAttribute[T, List[Double]] {
 
@@ -30,7 +30,7 @@ case class RealCollectionAttribute[T <: AnyRef](
     def classify(example: AnyRef): FeatureVector = {
 
       val d: T = example.asInstanceOf[T]
-      val values = mapping(d)
+      val values = sensor(d)
 
       var featureVector = new FeatureVector
 
