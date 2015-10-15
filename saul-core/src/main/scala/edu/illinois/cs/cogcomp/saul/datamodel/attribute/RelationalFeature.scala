@@ -2,20 +2,16 @@ package edu.illinois.cs.cogcomp.saul.datamodel.attribute
 
 import edu.illinois.cs.cogcomp.lbjava.classify.{ Classifier, FeatureVector }
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
-//import example.er_task.datastruct.ConllRelation
 
 import edu.illinois.cs.cogcomp.saul.datamodel.attribute.features.DataSensitiveLBJFeature
 
 import scala.reflect.ClassTag
 
-/** Created by haowu on 2/9/15.
-  */
 class RelationalFeature[HEAD <: AnyRef, CHILD <: AnyRef](
   val dataModel: DataModel,
   val fts: List[Attribute[CHILD]]
 )(implicit val tag: ClassTag[HEAD], val cTag: ClassTag[CHILD])
-  extends Attribute[HEAD] // with DataModelSensitiveAttribute[HEAD]
-  {
+  extends Attribute[HEAD] {
 
   override type S = List[_]
 
@@ -24,86 +20,70 @@ class RelationalFeature[HEAD <: AnyRef, CHILD <: AnyRef](
   override val sensor: (HEAD) => S = {
 
     head: HEAD =>
-      {
-        val children = dataModel.getFromRelation[HEAD, CHILD](head).toList
-        children.map({
-          c => fts.map(f => f.sensor(c))
-        })
-      }
+      val children = dataModel.getFromRelation[HEAD, CHILD](head).toList
+      children.map(
+        c => fts.map(f => f.sensor(c))
+      )
   }
 
-  override def makeClassifierWithName(n: String): Classifier = new DataSensitiveLBJFeature {
+  override def makeClassifierWithName(name: String): Classifier = new DataSensitiveLBJFeature {
 
     this.containingPackage = "LBP_Package"
-    this.name = n
+    this.name = name
 
-    override var datamodel: DataModel = dataModel
+    override var datamodel = dataModel
 
     override def getOutputType: String = {
-      return "mixed%"
+      "mixed%"
     }
 
-    def classify(__example: AnyRef): FeatureVector = {
-      val t: HEAD = __example.asInstanceOf[HEAD]
-      val fv: FeatureVector = new FeatureVector()
-      val children = dataModel.getFromRelation[HEAD, CHILD](t)
+    def classify(instance: AnyRef): FeatureVector = {
+      val typedInstance = instance.asInstanceOf[HEAD]
+      val featureVector = new FeatureVector()
+      val children = dataModel.getFromRelation[HEAD, CHILD](typedInstance)
 
       fts.foreach(x => println(x + " Found!!"))
 
       children.zipWithIndex.foreach {
-        case (c, idx) => {
-          def getName(clsName: String) = s"RelationalFeature $clsName at position $idx of ${tag.toString()} to ${cTag.toString()}"
-          fts.foreach {
-            f =>
-              {
-                val newName = getName(f.name)
-                f.addToFeatureVector(c, fv, newName)
-              }
+        case (c, idx) =>
+          def getName(className: String) = s"RelationalFeature $className at position $idx of ${tag.toString()} to ${cTag.toString()}"
+          fts.foreach { f =>
+            val newName = getName(f.name)
+            f.addToFeatureVector(c, featureVector, newName)
           }
-        }
       }
-      fv
+      featureVector
     }
   }
 
-  override def addToFeatureVector(t: HEAD, fv: FeatureVector): FeatureVector = {
+  override def addToFeatureVector(t: HEAD, featureVector: FeatureVector): FeatureVector = {
 
     val children: List[CHILD] = dataModel.getFromRelation[HEAD, CHILD](t).toList
 
-    //		children foreach print
     children.zipWithIndex.foreach {
-      case (c, idx) => {
+      case (c, idx) =>
         def getName(clsName: String) = s" $name:RelationalFeature $clsName at position $idx of ${tag.toString()} to ${cTag.toString()}"
-        fts.foreach {
-          f =>
-            {
-              val newName = getName(f.name)
-              //						println("Adding features !!")
-              f.addToFeatureVector(c, fv, newName)
-            }
+        fts.foreach { f =>
+          val newName = getName(f.name)
+          f.addToFeatureVector(c, featureVector, newName)
         }
-      }
     }
-    fv
+    featureVector
   }
 
-  override def addToFeatureVector(t: HEAD, fv: FeatureVector, nameOfClassifier: String): FeatureVector = {
+  override def addToFeatureVector(t: HEAD, featureVector: FeatureVector, nameOfClassifier: String): FeatureVector = {
     val TAG_NAME = nameOfClassifier
     val children = dataModel.getFromRelation[HEAD, CHILD](t)
     children.zipWithIndex.foreach {
-      case (c, idx) => {
+      case (c, idx) =>
         def getName(clsName: String) = s" $clsName $TAG_NAME:RelationalFeature at position $idx of ${tag.toString()} to ${cTag.toString()}"
         fts.foreach {
           f =>
-            {
-              val newName = getName(f.name)
-              println("Adding features !!")
-              f.addToFeatureVector(c, fv, newName)
-            }
+            val newName = getName(f.name)
+            println("Adding features !!")
+            f.addToFeatureVector(c, featureVector, newName)
         }
-      }
     }
-
-    fv
+    featureVector
   }
 }

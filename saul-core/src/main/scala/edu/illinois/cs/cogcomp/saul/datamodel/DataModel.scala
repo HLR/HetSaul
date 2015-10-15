@@ -22,7 +22,7 @@ trait DataModel {
     node.getAllInstances.filter({
       t =>
         conds.exists({
-          cond => cond.att.sensor(t).equals(cond.value)
+          cond => cond.attribute.sensor(t).equals(cond.value)
         })
     }).toList
   }

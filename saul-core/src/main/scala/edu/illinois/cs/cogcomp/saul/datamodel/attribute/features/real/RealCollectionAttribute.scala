@@ -14,35 +14,43 @@ case class RealCollectionAttribute[T <: AnyRef](
 
   val ra = this.name
 
-  override def makeClassifierWithName(n: String): Classifier = new ClassifierContainsInLBP() {
+  override def makeClassifierWithName(name: String): Classifier = new ClassifierContainsInLBP() {
     this.containingPackage = "LBP_Package"
 
-    this.name = n
+    this.name = name
 
-    override def realValueArray(example: AnyRef): Array[Double] = {
-      classify(example).realValueArray
+    override def realValueArray(instance: AnyRef): Array[Double] = {
+      classify(instance).realValueArray
     }
 
-    override def classify(examples: Array[AnyRef]): Array[FeatureVector] = {
-      super.classify(examples)
+    override def classify(instance: Array[AnyRef]): Array[FeatureVector] = {
+      super.classify(instance)
     }
 
-    def classify(example: AnyRef): FeatureVector = {
+    def classify(instance: AnyRef): FeatureVector = {
 
-      val d: T = example.asInstanceOf[T]
+      val d: T = instance.asInstanceOf[T]
       val values = sensor(d)
 
       var featureVector = new FeatureVector
 
       if (ordered) {
         values.zipWithIndex.foreach {
-          case (value, idx) => featureVector.addFeature(new RealArrayStringFeature(this.containingPackage, this.name, "", value, idx, 0))
+          case (value, idx) =>
+            featureVector.addFeature(new RealArrayStringFeature(
+              this.containingPackage,
+              this.name, "", value, idx, 0
+            ))
         }
-        // commented by Daniel
+        // TODO: commented by Daniel. Make sure this does not introduce any bugs
         //(0 to values.size) foreach { x => featureVector.getFeature(x).setArrayLength(values.size) }
       } else {
         values.zipWithIndex.foreach {
-          case (value, idx) => featureVector.addFeature(new RealPrimitiveStringFeature(this.containingPackage, this.name, idx + "", value))
+          case (value, idx) =>
+            featureVector.addFeature(new RealPrimitiveStringFeature(
+              this.containingPackage,
+              this.name, idx + "", value
+            ))
         }
       }
 
@@ -50,13 +58,13 @@ case class RealCollectionAttribute[T <: AnyRef](
     }
   }
 
-  override def addToFeatureVector(t: T, fv: FeatureVector): FeatureVector = {
-    fv.addFeatures(this.classifier.classify(t))
-    fv
+  override def addToFeatureVector(instance: T, featureVector: FeatureVector): FeatureVector = {
+    featureVector.addFeatures(this.classifier.classify(instance))
+    featureVector
   }
 
-  def addToFeatureVector(t: T, fv: FeatureVector, nameOfClassifier: String): FeatureVector = {
-    fv.addFeatures(makeClassifierWithName(nameOfClassifier).classify(t))
-    fv
+  def addToFeatureVector(instance: T, featureVector: FeatureVector, nameOfClassifier: String): FeatureVector = {
+    featureVector.addFeatures(makeClassifierWithName(nameOfClassifier).classify(instance))
+    featureVector
   }
 }

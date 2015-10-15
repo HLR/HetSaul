@@ -1,12 +1,10 @@
 package edu.illinois.cs.cogcomp.saul.datamodel.attribute
 
-import edu.illinois.cs.cogcomp.lbjava.classify.{ FeatureVector, Classifier }
+import edu.illinois.cs.cogcomp.lbjava.classify.{ FeatureVector, Classifier => FeatureGenerator }
 import edu.illinois.cs.cogcomp.saul.lbjrelated.LBJClassifierEquivalent
 
 import scala.reflect.ClassTag
 
-/** Created by haowu on 1/27/15.
-  */
 trait Attribute[T] extends LBJClassifierEquivalent {
 
   val name: String
@@ -16,31 +14,24 @@ trait Attribute[T] extends LBJClassifierEquivalent {
 
   val sensor: T => S
 
-  def apply(t: T): S = {
-    sensor(t)
+  def apply(instance: T): S = {
+    sensor(instance)
   }
 
-  val classifier: Classifier = makeClassifierWithName(name)
+  val classifier = makeClassifierWithName(name)
 
-  def addToFeatureVector(t: T, fv: FeatureVector): FeatureVector
+  def addToFeatureVector(instance: T, featureVector: FeatureVector): FeatureVector
 
-  def addToFeatureVector(t: T, fv: FeatureVector, nameOfClassifier: String): FeatureVector
+  def addToFeatureVector(instance: T, featureVector: FeatureVector, nameOfClassifier: String): FeatureVector
 
-  def makeClassifierWithName(n: String): Classifier
+  def makeClassifierWithName(n: String): FeatureGenerator
 
 }
 
 object Attribute {
 
-  /** Transfer a list of attributes to a lbj classifier.
-    * @param atts
-    * @return
-    */
-  def entitiesToLBJFeature[T](atts: List[Attribute[T]]): Classifier = {
-    null
-  }
-
-  def entitiesToLBJFeature[T](atts: Attribute[T]): Classifier = {
+  /** Transfer a list of attributes to a lbj classifier. */
+  def entitiesToLBJFeature[T](atts: Attribute[T]): FeatureGenerator = {
     atts.classifier
   }
 }

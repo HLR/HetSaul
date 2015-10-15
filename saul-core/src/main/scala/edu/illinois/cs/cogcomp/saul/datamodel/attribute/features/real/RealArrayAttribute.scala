@@ -11,19 +11,20 @@ case class RealArrayAttribute[T <: AnyRef](
   sensor: T => List[Double]
 )(implicit val tag: ClassTag[T]) extends RealAttributeCollection[T] with TypedAttribute[T, List[Double]] {
 
-  val ra = this // shouldn't this be this.name?
+  // TODO: shouldn't this be this.name?
+  val ra = this
 
-  override def makeClassifierWithName(n: String): Classifier = new ClassifierContainsInLBP() {
+  override def makeClassifierWithName(name: String): Classifier = new ClassifierContainsInLBP() {
     this.containingPackage = "LBP_Package"
 
-    this.name = n
+    this.name = name
 
-    override def realValueArray(example: AnyRef): Array[Double] = {
-      classify(example).realValueArray
+    override def realValueArray(instance: AnyRef): Array[Double] = {
+      classify(instance).realValueArray
     }
 
-    override def classify(examples: Array[AnyRef]): Array[FeatureVector] = {
-      super.classify(examples)
+    override def classify(instance: Array[AnyRef]): Array[FeatureVector] = {
+      super.classify(instance)
     }
 
     def classify(example: AnyRef): FeatureVector = {
@@ -37,7 +38,7 @@ case class RealArrayAttribute[T <: AnyRef](
         case (value, idx) => featureVector.addFeature(new RealArrayStringFeature(this.containingPackage, this.name, "", value, idx, 0))
       }
 
-      // Commented by Daniel
+      // TODO: Commented by Daniel. Make sure this does not create any bugs
       //(0 to values.size) foreach { x => featureVector.getFeature(x).setArrayLength(values.size) }
 
       featureVector
