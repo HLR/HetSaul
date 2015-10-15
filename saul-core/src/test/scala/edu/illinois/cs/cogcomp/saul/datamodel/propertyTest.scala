@@ -10,25 +10,25 @@ class propertyTest extends FlatSpec with Matchers {
     import toyDataModel._
 
     // boolean
-    booleanAttribute.classifier.classify(new toyClass).discreteValueArray().mkString should be("true")
+    booleanAttribute(new toyClass).mkString should be("true")
 
     // discrete
-    stringAttribute.classifier.classify(new toyClass).discreteValueArray().mkString should be("value")
-    listStringAttributeArray.makeClassifierWithName("newClassifier").classify(new toyClass).discreteValueArray().mkString should be("listValue")
-    listStringAttributeGenerator.makeClassifierWithName("newClassifier").classify(new toyClass).discreteValueArray().mkString should be("listValue")
+    stringAttribute(new toyClass).mkString should be("value")
+    listStringAttributeArray(new toyClass).mkString should be("listValue")
+    listStringAttributeGenerator(new toyClass).mkString should be("listValue")
 
     // ranged
-    rangedAttribute.classifier.classify(new toyClass).discreteValueArray().mkString should be("ranged")
+    rangedAttribute(new toyClass).mkString should be("ranged")
 
     // Double
-    doubleAttribute.classifier.classify(new toyClass).realValueArray().mkString should be("1.0")
-    listDoubleAttributeGenerator.makeClassifierWithName("newClassifier").classify(new toyClass).realValueArray().mkString should be("1.02.0")
-    listDoubleAttributeArray.makeClassifierWithName("newClassifier").classify(new toyClass).realValueArray().mkString should be("1.02.0")
+    doubleAttribute(new toyClass) should be(1.0)
+    listDoubleAttributeGenerator(new toyClass).mkString should be("1.02.0")
+    listDoubleAttributeArray(new toyClass).mkString should be("1.02.0")
 
     // Int
-    intAttribute.classifier.classify(new toyClass).realValueArray().mkString should be("2.0")
-    listIntAttributeArray.classifier.classify(new toyClass).realValueArray().mkString should be("1.03.0")
-    listIntAttributeGenerator.classifier.classify(new toyClass).realValueArray().mkString should be("1.03.0")
+    intAttribute(new toyClass) should be(2.0)
+    listIntAttributeArray(new toyClass) should be(List(1.0, 3.0))
+    listIntAttributeGenerator(new toyClass) should be(List(1.0, 3.0))
   }
 }
 

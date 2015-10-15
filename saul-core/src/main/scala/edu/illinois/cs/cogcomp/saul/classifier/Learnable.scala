@@ -136,11 +136,11 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel)(implicit tag: Cl
       readLexiconOnDemand = true
 
       val p: SparseAveragedPerceptron.Parameters =
-        new SparseAveragedPerceptron.Parameters();
-      p.learningRate = .1;
-      p.thickness = 3;
+        new SparseAveragedPerceptron.Parameters()
+      p.learningRate = .1
+      p.thickness = 3
       //p.thickness = {{ 1 -> 3 : .5 }};
-      baseLTU = new SparseAveragedPerceptron(p);
+      baseLTU = new SparseAveragedPerceptron(p)
       //setParameters(p)
       //Thickness(3)
       //learningRate=0.1
