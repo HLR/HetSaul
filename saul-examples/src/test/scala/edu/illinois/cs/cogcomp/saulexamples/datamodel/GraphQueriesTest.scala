@@ -32,7 +32,6 @@ class GraphQueriesTest extends FlatSpec with Matchers {
     import TestGraph._
     firstNames().instances
     firstNames().instances.toSet should be(Set("Dave", "John", "Mark", "Michael"))
-    println(firstNames("Jim").instances.mkString(", "))
     firstNames("Jim").instances should be(Set("Jim"))
   }
 

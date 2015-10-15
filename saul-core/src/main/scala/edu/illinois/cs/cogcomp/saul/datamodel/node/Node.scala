@@ -3,12 +3,14 @@ package edu.illinois.cs.cogcomp.saul.datamodel.node
 import edu.illinois.cs.cogcomp.saul.datamodel.attribute.features.discrete.DiscreteAttribute
 import edu.illinois.cs.cogcomp.saul.datamodel.edge.Edge
 
-import scala.collection.mutable
-import scala.collection.mutable.{ Map => MutableMap, HashSet => MutableSet }
+import scala.collection.mutable.{ Map => MutableMap, LinkedHashSet => MutableSet, ArrayBuffer }
 import scala.reflect.ClassTag
 
 /** A Node E is an instances of base types T */
 class Node[T <: AnyRef](val tag: ClassTag[T]) {
+
+  val outgoing = new ArrayBuffer[Edge[T, _]]()
+  val incoming = new ArrayBuffer[Edge[_, T]]()
 
   private val collections = MutableSet[T]()
 
@@ -47,31 +49,23 @@ class Node[T <: AnyRef](val tag: ClassTag[T]) {
     ret
   }
 
-  /** Operator for adding a sequence of T into my table. */
-  def populate(ts: Iterable[T]) = {
-    ts.foreach {
-      t =>
-        {
-          val order = incrementCount()
-          this.trainingSet += t
-          this.collections += t
-          this.orderingMap += (order -> t)
-          this.reverseOrderingMap += (t -> order)
-        }
+  def contains(t: T): Boolean = collections(t)
+
+  def addInstance(t: T, train: Boolean = true) = {
+    if (!contains(t)) {
+      val order = incrementCount()
+      if (train) this.trainingSet += t else this.testingSet += t
+      this.collections += t
+      this.orderingMap += (order -> t)
+      this.reverseOrderingMap += (t -> order)
+      outgoing.foreach(_.populateUsingFrom(t, train))
+      incoming.foreach(_.populateUsingTo(t, train))
     }
   }
 
-  def addToTest(ts: Seq[T]) = {
-    ts.foreach {
-      t =>
-        {
-          val order = incrementCount()
-          this.testingSet += t
-          this.collections += t
-          this.orderingMap += (order -> t)
-          this.reverseOrderingMap += (t -> order)
-        }
-    }
+  /** Operator for adding a sequence of T into my table. */
+  def populate(ts: Iterable[T], train: Boolean = true) = {
+    ts.foreach(addInstance(_, train))
   }
 
   /** Relational operators */
