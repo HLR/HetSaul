@@ -1,5 +1,5 @@
 # Saul Project 
-[![Build Status](http://128.174.241.91:8080/buildStatus/icon?job=saul-test1)](http://128.174.241.91:8080/job/saul-test1/)
+[![Build Status](http://128.174.241.91:8080/buildStatus/icon?job=saul)](http://128.174.241.91:8080/job/saul)
 
 The project contains two modules. See the readme files for each module: 
 
