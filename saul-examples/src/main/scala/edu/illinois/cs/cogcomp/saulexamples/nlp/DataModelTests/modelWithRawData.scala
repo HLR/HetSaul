@@ -67,7 +67,7 @@ object myapp {
     // it means applying the property on a collection.
     val b = annotatedText(taa).instances.map(x => docFeatureExample(x))
 
-     //TODO This is applying an aggregation function on the outcome of the collection property, should be doen easier
+    //TODO This is applying an aggregation function on the outcome of the collection property, should be doen easier
     val c = annotatedText(taa).instances.map(x => docFeatureExample(x)).mkString("_")
     //TODO Getting the neighbors of a node: This is challenging because the graph is heterogeneous unless the neighbors are always from same type.
 
