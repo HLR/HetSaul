@@ -67,20 +67,22 @@ object myapp {
     // it means applying the property on a collection.
     val b = annotatedText(taa).instances.map(x => docFeatureExample(x))
 
-    // This is applying an aggregation function on the outcome of the collection property
+     //TODO This is applying an aggregation function on the outcome of the collection property, should be doen easier
     val c = annotatedText(taa).instances.map(x => docFeatureExample(x)).mkString("_")
-
-    //Getting the neighbors of a node: This is challenging because the graph is heterogeneous unless the neighbors are always from same type.
+    //TODO Getting the neighbors of a node: This is challenging because the graph is heterogeneous unless the neighbors are always from same type.
 
     //val d= annotatedText(taa) ~> *
-
-    //Getting neighbors of a node within a specific distance forward and/or backward:
+    //TODO Getting neighbors of a node within a specific distance forward and/or backward:
 
     //val d= annotated(taa)~> edgename(2).propertyx
+
+    //TODO Getting neighbors of a node within a specific window
 
     //val d= annotated(taa)~> edgename(2,-2).propertyx
 
     //this gives the concatination of the edgenames that connect x to y if any
+
+    //TODO Getting the path between two nodes
 
     //val d= node(x).path(node(y))
 
