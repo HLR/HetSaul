@@ -1,8 +1,8 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.DataModelTests
 
-import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{ Sentence, TextAnnotation }
+import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{Sentence, TextAnnotation}
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
-import edu.illinois.cs.cogcomp.saulexamples.data.{ Document, DocumentReader }
+import edu.illinois.cs.cogcomp.saulexamples.data.{Document, DocumentReader}
 import edu.illinois.cs.cogcomp.saulexamples.nlp.sensors
 
 import scala.collection.JavaConversions._
@@ -17,6 +17,12 @@ object modelWithRawData extends DataModel {
   textToCon.addSensor(sensors.f(_))
   rawToAnn.addSensor(sensors.curator(_))
 
+  val docFeatureExample = discreteAttributeOf[TextAnnotation]('doc) {
+    x: TextAnnotation =>
+    {
+      x.getNumberOfSentences.toString
+    }
+  }
   // textToCon.addSensor(sensors.alignment:(TextAnnotation,Sentence)=>Boolean)
 }
 
@@ -37,8 +43,6 @@ object myapp {
     //populate the graph with sensors
     // modelWithRawData.rawToAnn.populateWith(sensors.curator(_))
     // modelWithRawData.textToCon.populateWith(sensors.f _)
-
-    //TODO: make the below line work, to just use the edge name and depending on the type of sensor a generator or matching edge will be called.
     //test the content of the graph
     val tests = rawText.getAllInstances
     val taa = annotatedText.getAllInstances
@@ -55,6 +59,30 @@ object myapp {
     //The old version
     val x1 = getFromRelation[Sentence, TextAnnotation](sen.head)
     val x2 = getFromRelation[TextAnnotation, Sentence](taa.head)
+
+    // This is a filter based on a specific property
+    val a= annotatedText(taa.head).filter(docFeatureExample(_).equals("1"))
+
+    // This is what we want to do by writing some thing like annotatedText(taa).docFeatureExample,
+    // it means applying the property on a collection.
+    val b= annotatedText(taa).instances.map(x=> docFeatureExample(x))
+
+    // This is applying an aggregation function on the outcome of the collection property
+    val c= annotatedText(taa).instances.map(x=> docFeatureExample(x)).mkString("_")
+
+    //Getting the neighbors of a node: This is challenging because the graph is heterogeneous unless the neighbors are always from same type.
+
+    //val d= annotatedText(taa) ~> *
+
+    //Getting neighbors of a node within a specific distance forward and/or backward:
+
+    //val d= annotated(taa)~> edgename(2).propertyx
+
+    //val d= annotated(taa)~> edgename(2,-2).propertyx
+
+    //this gives the concatination of the edgenames that connect x to y if any
+
+    //val d= node(x).path(node(y))
 
     println(s"x0.size = ${x0.size}")
     println(s"x1.size = ${x1.size}")
