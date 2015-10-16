@@ -7,7 +7,7 @@ import edu.illinois.cs.cogcomp.saul.datamodel.node.Node
 import edu.illinois.cs.cogcomp.saul.datamodel.edge.{ Edge, Link }
 
 import scala.collection.mutable.{ Map => MutableMap, ListBuffer }
- import scala.reflect.ClassTag
+import scala.reflect.ClassTag
 
 trait DataModel {
   val PID = 'PID
