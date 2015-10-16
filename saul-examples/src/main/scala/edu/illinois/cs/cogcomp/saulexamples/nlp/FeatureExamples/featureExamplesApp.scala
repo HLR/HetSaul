@@ -1,9 +1,8 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.FeatureExamples
 
-import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{ TextAnnotation, Sentence }
+import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{ Sentence, TextAnnotation }
 import edu.illinois.cs.cogcomp.core.utilities.ResourceManager
 import edu.illinois.cs.cogcomp.curator.CuratorFactory
-import edu.illinois.cs.cogcomp.core.datastructures.textannotation.Constituent
 import edu.illinois.cs.cogcomp.saulexamples.data.{ Document, DocumentReader }
 import edu.illinois.cs.cogcomp.saulexamples.nlp.sensors
 
@@ -70,7 +69,7 @@ object featureExamplesApp {
     //EdisonDataModel ++ filteredConstituent
     //EdisonDataModel.constituents
 
-    annotatorService.closeCache()
+    //annotatorService.closeCache()
     print("finished")
   }
 }

@@ -50,7 +50,7 @@ object sensors {
     val annotatorService = CuratorFactory.buildCuratorClient(rm)
     val a = documentContent(dat)
     val ret = processDocumentWith(annotatorService, "corpus", dat.getGUID, a)
-    annotatorService.closeCache()
+    // annotatorService.closeCache()
     ret
   }
 

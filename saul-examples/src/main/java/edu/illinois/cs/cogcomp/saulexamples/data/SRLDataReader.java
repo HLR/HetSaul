@@ -5,6 +5,7 @@ import edu.illinois.cs.cogcomp.core.datastructures.textannotation.TextAnnotation
 import edu.illinois.cs.cogcomp.nlp.corpusreaders.PropbankReader;
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SRL.SRLDataModel;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -17,6 +18,7 @@ public class SRLDataReader {
 	public List<TextAnnotation> textAnnotations;
 
 	public SRLDataReader(String treebankHome, String propbankHome) throws Exception {
+        textAnnotations = new ArrayList<>();
 		reader = new PropbankReader(treebankHome, propbankHome, ViewNames.SRL_VERB, true);
 	}
 
