@@ -120,11 +120,8 @@ object entityRelationDataModel extends DataModel {
       r.relType
   }
 
-  //  this ++
-
   def readAll() = {
     val reader = new Conll04_ReaderNew("./data/EntityMentionRelation/conll04.corp", "Token")
-    //  val testReader = new Conll04_RelationReaderNew("./data/conll04_test.corp", "Token",reader.sentences.size()+1)
     val trainSentences = reader.sentences.toList
     val trainTokens = trainSentences.flatMap(_.sentTokens)
     val trainRelations = reader.relations.toList
@@ -135,29 +132,22 @@ object entityRelationDataModel extends DataModel {
     this.testWith(trainTokens)
     this.testWith(trainRelations)
     this.testWith(trainSentences)
-
   }
 
   def read(fold: Int) = {
 
     println(s"Running fold $fold")
-    //This numbers are the size of the folds and this piece of code is customized for the experiments.
+    //These numbers are the size of the folds and this piece of code is customized for the experiments.
     val lower: Int = 1103 * fold
     val upper: Int = 1103 * (fold + 1)
 
     println(s"testing with [$lower $upper]")
-
     val reader = new Conll04_ReaderNew("./data/EntityMentionRelation/conll04.corp", "Token")
-    //  val testReader = new Conll04_RelationReaderNew("./data/conll04_test.corp", "Token",reader.sentences.size()+1)
-
     val trainSentences = reader.sentences.toList.filter(s => s.sentId < lower || s.sentId > upper)
     val trainTokens = trainSentences.flatMap(_.sentTokens)
     val trainRelations = reader.relations.toList.filter(s => s.sentId < lower || s.sentId > upper)
 
-    println(trainSentences.size)
-
     val blankRelation = trainSentences.flatMap {
-
       sent =>
         {
           val zipped = Random.shuffle(sent.sentTokens.toList).zip(Random.shuffle(sent.sentTokens.toList))
@@ -175,7 +165,6 @@ object entityRelationDataModel extends DataModel {
               ret
           })
         }
-
     }
 
     //    val trainSentences = reader.sentences.toList.filter(_.sentId < 4750)

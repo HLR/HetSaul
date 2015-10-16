@@ -30,7 +30,7 @@ class Node[T <: AnyRef](val tag: ClassTag[T]) {
   def filterNode(attribute: DiscreteAttribute[T], value: String): Node[T] = {
     val node = new Node[T](this.tag)
     node populate collections.filter {
-      attribute.mapping(_) == value
+      attribute.sensor(_) == value
     }.toSeq
     node
   }
