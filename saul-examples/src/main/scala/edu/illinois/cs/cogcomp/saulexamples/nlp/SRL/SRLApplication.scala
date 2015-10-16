@@ -11,10 +11,9 @@ import scala.collection.JavaConversions._
   * @author Christos Christodoulopoulos
   */
 object SRLApplication {
-  val SRLconfig = "./saul-examples/config/SRL.properties"
-  // TODO set these
 
   def main(args: Array[String]) {
+
     import SRLDataModel._
     val rm = new ExamplesConfigurator().getDefaultConfig
     val reader = new SRLDataReader(rm.getString(ExamplesConfigurator.TREEBANK_HOME.getFirst), rm.getString(ExamplesConfigurator.PROPBANK_HOME.getFirst))
