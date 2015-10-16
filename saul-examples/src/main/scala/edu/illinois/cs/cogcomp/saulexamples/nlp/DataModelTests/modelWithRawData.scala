@@ -60,10 +60,10 @@ object myapp {
     val x1 = getFromRelation[Sentence, TextAnnotation](sen.head)
     val x2 = getFromRelation[TextAnnotation, Sentence](taa.head)
 
-    // This is a filter based on a specific property
+    // TODO: refine: This is a filter based on a specific property
     val a = annotatedText(taa.head).filter(docFeatureExample(_).equals("1"))
 
-    // This is what we want to do by writing some thing like annotatedText(taa).docFeatureExample,
+    //TODO: refien:  This is what we want to do by writing some thing like annotatedText(taa).docFeatureExample,
     // it means applying the property on a collection.
     val b = annotatedText(taa).instances.map(x => docFeatureExample(x))
 
