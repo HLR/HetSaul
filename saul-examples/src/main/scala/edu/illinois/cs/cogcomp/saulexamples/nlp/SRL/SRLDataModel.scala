@@ -1,7 +1,6 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.SRL
 
-import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
-import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{ TextAnnotation, Constituent, Relation }
+import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{ Constituent, Relation, TextAnnotation }
 import edu.illinois.cs.cogcomp.core.datastructures.trees.Tree
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
 
@@ -21,7 +20,7 @@ object SRLDataModel extends DataModel {
   taToRelation.addSensor(SRLSensors.textAnnotationToRelation _)
   val taToTree = edge(textAnnotation, tree)
   //TODO PARSE_GOLD is only good for training; for testing we need PARSE_STANFORD or PARSE_CHARNIAK
-  taToTree.addSensor(SRLSensors.textAnnotationToTree(_, ViewNames.PARSE_GOLD))
+  //taToTree.addSensor(SRLSensors.textAnnotationToTree(_, ViewNames.PARSE_GOLD))
 
   val relToArg = edge(relation, argument)
   relToArg.addSensor(SRLSensors.relToArgument _)
