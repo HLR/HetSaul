@@ -1,8 +1,8 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.DataModelTests
 
-import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{Sentence, TextAnnotation}
+import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{ Sentence, TextAnnotation }
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
-import edu.illinois.cs.cogcomp.saulexamples.data.{Document, DocumentReader}
+import edu.illinois.cs.cogcomp.saulexamples.data.{ Document, DocumentReader }
 import edu.illinois.cs.cogcomp.saulexamples.nlp.sensors
 
 import scala.collection.JavaConversions._
@@ -19,9 +19,9 @@ object modelWithRawData extends DataModel {
 
   val docFeatureExample = discreteAttributeOf[TextAnnotation]('doc) {
     x: TextAnnotation =>
-    {
-      x.getNumberOfSentences.toString
-    }
+      {
+        x.getNumberOfSentences.toString
+      }
   }
   // textToCon.addSensor(sensors.alignment:(TextAnnotation,Sentence)=>Boolean)
 }
@@ -61,14 +61,14 @@ object myapp {
     val x2 = getFromRelation[TextAnnotation, Sentence](taa.head)
 
     // This is a filter based on a specific property
-    val a= annotatedText(taa.head).filter(docFeatureExample(_).equals("1"))
+    val a = annotatedText(taa.head).filter(docFeatureExample(_).equals("1"))
 
     // This is what we want to do by writing some thing like annotatedText(taa).docFeatureExample,
     // it means applying the property on a collection.
-    val b= annotatedText(taa).instances.map(x=> docFeatureExample(x))
+    val b = annotatedText(taa).instances.map(x => docFeatureExample(x))
 
     // This is applying an aggregation function on the outcome of the collection property
-    val c= annotatedText(taa).instances.map(x=> docFeatureExample(x)).mkString("_")
+    val c = annotatedText(taa).instances.map(x => docFeatureExample(x)).mkString("_")
 
     //Getting the neighbors of a node: This is challenging because the graph is heterogeneous unless the neighbors are always from same type.
 
