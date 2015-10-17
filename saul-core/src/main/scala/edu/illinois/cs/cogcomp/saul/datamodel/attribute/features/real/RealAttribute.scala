@@ -8,47 +8,42 @@ import scala.reflect.ClassTag
 
 case class RealAttribute[T <: AnyRef](
   name: String,
-  mapping: T => Double
+  sensor: T => Double
 )(implicit val tag: ClassTag[T]) extends TypedAttribute[T, Double] {
-  override def makeClassifierWithName(n: String): Classifier =
+  override def makeClassifierWithName(name: String): Classifier =
 
     {
-
-      println(Console.BLUE + n)
       new ClassifierContainsInLBP() {
 
         this.containingPackage = "LBP_Package"
-        this.name = n
+        this.name = name
 
-        def classify(__example: AnyRef): FeatureVector = {
-          return new FeatureVector(featureValue(__example))
+        def classify(instance: AnyRef): FeatureVector = {
+          new FeatureVector(featureValue(instance))
         }
 
-        override def featureValue(__example: AnyRef): Feature = {
-          val result: Double = realValue(__example)
-          return new RealPrimitiveStringFeature(containingPackage, name, "", result)
+        override def featureValue(instance: AnyRef): Feature = {
+          val result: Double = realValue(instance)
+          new RealPrimitiveStringFeature(containingPackage, name, "", result)
         }
 
-        override def realValue(__example: AnyRef): Double = {
-          val d: T = __example.asInstanceOf[T]
-          return mapping(d)
+        override def realValue(instance: AnyRef): Double = {
+          val d: T = instance.asInstanceOf[T]
+          sensor(d)
         }
 
-        override def classify(examples: Array[AnyRef]): Array[FeatureVector] = {
-          super.classify(examples)
+        override def classify(instance: Array[AnyRef]): Array[FeatureVector] = {
+          super.classify(instance)
         }
-
       }
-
     }
 
-  override def addToFeatureVector(t: T, fv: FeatureVector): FeatureVector = {
-    fv.addFeature(this.classifier.featureValue(t))
-    fv
+  override def addToFeatureVector(instance: T, featureVector: FeatureVector): FeatureVector = {
+    featureVector.addFeature(this.classifier.featureValue(instance))
+    featureVector
   }
-  def addToFeatureVector(t: T, fv: FeatureVector, nameOfClassifier: String): FeatureVector = {
-    fv.addFeature(makeClassifierWithName(nameOfClassifier).featureValue(t))
-    fv
+  def addToFeatureVector(instance: T, featureVector: FeatureVector, nameOfClassifier: String): FeatureVector = {
+    featureVector.addFeature(makeClassifierWithName(nameOfClassifier).featureValue(instance))
+    featureVector
   }
-
 }

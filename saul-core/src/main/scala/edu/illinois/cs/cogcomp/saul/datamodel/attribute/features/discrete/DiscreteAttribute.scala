@@ -8,16 +8,16 @@ import scala.reflect.ClassTag
 
 case class DiscreteAttribute[T <: AnyRef](
   name: String,
-  mapping: T => String,
+  sensor: T => String,
   range: Option[List[String]]
 )(implicit val tag: ClassTag[T]) extends TypedAttribute[T, String] {
-  override def makeClassifierWithName(n: String): Classifier = range match {
-    case Some(r) => {
+  override def makeClassifierWithName(name: String): Classifier = range match {
+    case Some(r) =>
       new ClassifierContainsInLBP() {
         private var __allowableValues: Array[String] = r.toArray.asInstanceOf[Array[String]]
 
         this.containingPackage = "LBP_Package"
-        this.name = n
+        this.name = name
 
         def getAllowableValues: Array[String] = {
           __allowableValues
@@ -27,43 +27,44 @@ case class DiscreteAttribute[T <: AnyRef](
           __allowableValues
         }
 
-        def classify(__example: AnyRef): FeatureVector = {
-          new FeatureVector(featureValue(__example))
+        def classify(instance: AnyRef): FeatureVector = {
+          new FeatureVector(featureValue(instance))
         }
 
-        override def featureValue(__example: AnyRef): Feature = {
-          val result: String = discreteValue(__example)
-          new DiscretePrimitiveStringFeature(containingPackage, this.name, "", result, valueIndexOf(result), allowableValues.length.asInstanceOf[Short])
+        override def featureValue(instance: AnyRef): Feature = {
+          val result: String = discreteValue(instance)
+          new DiscretePrimitiveStringFeature(containingPackage, this.name, "", result,
+            valueIndexOf(result), allowableValues.length.asInstanceOf[Short])
         }
 
-        override def discreteValue(__example: AnyRef): String = {
+        override def discreteValue(instance: AnyRef): String = {
           // TODO: catching errors (type checking)
-          _discreteValue(__example)
+          _discreteValue(instance)
         }
 
         private def _discreteValue(__example: AnyRef): String = {
           val t: T = __example.asInstanceOf[T]
-          fdt.mapping(t).mkString("")
+          self.sensor(t).mkString("")
         }
       }
-    }
     case _ => new ClassifierContainsInLBP {
 
       this.containingPackage = "LBP_Package"
-      this.name = n
+      this.name = name
 
-      def classify(__example: AnyRef): FeatureVector = {
-        new FeatureVector(featureValue(__example))
+      def classify(instance: AnyRef): FeatureVector = {
+        new FeatureVector(featureValue(instance))
       }
 
-      override def featureValue(__example: AnyRef): Feature = {
-        val result: String = discreteValue(__example)
-        new DiscretePrimitiveStringFeature(containingPackage, this.name, "", result, valueIndexOf(result), allowableValues.length.toShort)
+      override def featureValue(instance: AnyRef): Feature = {
+        val result: String = discreteValue(instance)
+        new DiscretePrimitiveStringFeature(containingPackage, this.name, "", result,
+          valueIndexOf(result), allowableValues.length.toShort)
       }
 
       override def discreteValue(__example: AnyRef): String = {
         val d: T = __example.asInstanceOf[T]
-        "" + mapping(d)
+        "" + sensor(d)
       }
 
       override def classify(examples: Array[AnyRef]): Array[FeatureVector] = {
@@ -72,13 +73,13 @@ case class DiscreteAttribute[T <: AnyRef](
     }
   }
 
-  override def addToFeatureVector(t: T, fv: FeatureVector): FeatureVector = {
-    fv.addFeature(this.classifier.featureValue(t))
-    fv
+  override def addToFeatureVector(t: T, featureVector: FeatureVector): FeatureVector = {
+    featureVector.addFeature(this.classifier.featureValue(t))
+    featureVector
   }
 
-  def addToFeatureVector(t: T, fv: FeatureVector, nameOfClassifier: String): FeatureVector = {
-    fv.addFeature(makeClassifierWithName(nameOfClassifier).featureValue(t))
-    fv
+  def addToFeatureVector(t: T, featureVector: FeatureVector, nameOfClassifier: String): FeatureVector = {
+    featureVector.addFeature(makeClassifierWithName(nameOfClassifier).featureValue(t))
+    featureVector
   }
 }

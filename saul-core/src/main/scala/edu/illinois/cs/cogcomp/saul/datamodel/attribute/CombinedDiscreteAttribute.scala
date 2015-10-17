@@ -8,17 +8,12 @@ import edu.illinois.cs.cogcomp.saul.datamodel.attribute.features.ClassifierConta
 
 import scala.reflect.ClassTag
 
-/** Created by haowu on 1/27/15.
-  */
 case class CombinedDiscreteAttribute[T <: AnyRef](
-  val atts: List[Attribute[T]] // T => (String | Double | List[String] | List[Double])
+  atts: List[Attribute[T]]
 )(implicit val tag: ClassTag[T]) extends TypedAttribute[T, List[_]] {
 
-  override val mapping: (T) => List[_] = {
-    t: T =>
-      {
-        atts.map(att => att.mapping(t))
-      }
+  override val sensor: (T) => List[_] = {
+    t: T => atts.map(att => att.sensor(t))
   }
 
   val name = "combined++" + atts.map(x => { x.name }).mkString("+")
@@ -30,17 +25,16 @@ case class CombinedDiscreteAttribute[T <: AnyRef](
       this.name = n
 
       override def getOutputType: String = {
-        return "mixed%"
+        "mixed%"
       }
 
-      def classify(__example: AnyRef): FeatureVector = {
+      def classify(instance: AnyRef): FeatureVector = {
 
-        val t: T = __example.asInstanceOf[T]
-        val __result: FeatureVector = new FeatureVector()
-        //          println(atts)
-        atts.foreach(_.addToFeatureVector(t, __result))
+        val t: T = instance.asInstanceOf[T]
+        val featureVector = new FeatureVector()
+        atts.foreach(_.addToFeatureVector(t, featureVector))
 
-        __result
+        featureVector
       }
 
       override def classify(examples: Array[AnyRef]): Array[FeatureVector] = {
@@ -55,13 +49,13 @@ case class CombinedDiscreteAttribute[T <: AnyRef](
     }
   }
 
-  override def addToFeatureVector(t: T, fv: FeatureVector): FeatureVector = {
-    atts.foreach(_.addToFeatureVector(t, fv))
-    fv
+  override def addToFeatureVector(instance: T, featureVector: FeatureVector): FeatureVector = {
+    atts.foreach(_.addToFeatureVector(instance, featureVector))
+    featureVector
   }
 
-  def addToFeatureVector(t: T, fv: FeatureVector, nameOfClassifier: String): FeatureVector = {
-    fv.addFeatures(makeClassifierWithName(nameOfClassifier).classify(t))
-    fv
+  def addToFeatureVector(instance: T, featureVector: FeatureVector, nameOfClassifier: String): FeatureVector = {
+    featureVector.addFeatures(makeClassifierWithName(nameOfClassifier).classify(instance))
+    featureVector
   }
 }

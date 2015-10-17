@@ -2,8 +2,6 @@ package edu.illinois.cs.cogcomp.saul.datamodel.attribute.features
 
 import edu.illinois.cs.cogcomp.lbjava.classify.Classifier
 
-/** Created by haowu on 2/6/15.
-  */
 abstract class ClassifierContainsInLBP extends Classifier {
 
   this.containingPackage = "LBP_Package"

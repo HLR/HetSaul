@@ -1,5 +1,6 @@
 package edu.illinois.cs.cogcomp.saul.datamodel
 
+import edu.illinois.cs.cogcomp.saul.datamodel.attribute.features.real.{ RealAttributeCollection, RealAttribute }
 import org.scalatest._
 
 /** testing techniques for proprerties */
@@ -8,14 +9,30 @@ class propertyTest extends FlatSpec with Matchers {
   "properties" should "work!" in {
     import toyDataModel._
 
-    // TODO
-    println(toyDataModel.a)
+    // boolean
+    booleanAttribute(new toyClass).mkString should be("true")
+
+    // discrete
+    stringAttribute(new toyClass).mkString should be("value")
+    listStringAttributeArray(new toyClass).mkString should be("listValue")
+    listStringAttributeGenerator(new toyClass).mkString should be("listValue")
+
+    // ranged
+    rangedAttribute(new toyClass).mkString should be("ranged")
+
+    // Double
+    doubleAttribute(new toyClass) should be(1.0)
+    listDoubleAttributeGenerator(new toyClass).mkString should be("1.02.0")
+    listDoubleAttributeArray(new toyClass).mkString should be("1.02.0")
+
+    // Int
+    intAttribute(new toyClass) should be(2.0)
+    listIntAttributeArray(new toyClass) should be(List(1.0, 3.0))
+    listIntAttributeGenerator(new toyClass) should be(List(1.0, 3.0))
   }
 }
 
 object toyDataModel extends DataModel {
-
-  val a = "ads"
 
   // boolean
   val booleanAttribute = property[toyClass]("boolean") {
@@ -24,23 +41,29 @@ object toyDataModel extends DataModel {
 
   // List[Int]
   val listIntAttributeArray = property[toyClass]("listInt") {
-    x: toyClass => List(1)
+    x: toyClass => List(1, 3)
   }
-  val listIntAttributeGenerator = property[toyClass]("listInt", bagOfWords = true) {
-    x: toyClass => List(1)
+  val listIntAttributeGenerator = property[toyClass]("listInt", ordered = true) {
+    x: toyClass => List(1, 3)
   }
 
   // Int
   val intAttribute = property[toyClass]("int") {
-    x: toyClass => 1
+    x: toyClass => 2
   }
 
   // List[Double]
-  val listDoubleAttributeArray = property[toyClass]("ListDouble") {
-    x: toyClass => List(1.0)
+  val listDoubleAttributeArray = property[toyClass]("listDouble") {
+    x: toyClass => List(1.0, 2.0)
   }
-  val listDoubleAttributeGenerator = property[toyClass]("ListDouble", bagOfWords = true) {
-    x: toyClass => List(1.0)
+  val listDoubleAttributeGenerator = property[toyClass]("listDouble", ordered = true) {
+    x: toyClass => List(1.0, 2.0)
+  }
+  val listDoubleAttributeArrayOld = realAttributesArrayOf[toyClass]('listDouble) {
+    x: toyClass => List(1.0, 2.0)
+  }
+  val listDoubleAttributeGeneratorOld = realAttributesGeneratorOf[toyClass]('listDouble) {
+    x: toyClass => List(1.0, 2.0)
   }
 
   // Double
@@ -50,10 +73,10 @@ object toyDataModel extends DataModel {
 
   // List[String]
   val listStringAttributeArray = property[toyClass]("listString") {
-    x: toyClass => List("value")
+    x: toyClass => List("listValue")
   }
-  val listStringAttributeGenerator = property[toyClass]("listString", bagOfWords = true) {
-    x: toyClass => List("value")
+  val listStringAttributeGenerator = property[toyClass]("listString", ordered = true) {
+    x: toyClass => List("listValue")
   }
 
   // String
@@ -63,7 +86,7 @@ object toyDataModel extends DataModel {
 
   // ranged attribute
   val rangedAttribute = property[toyClass]("funnyRange")("string") {
-    x: toyClass => "value"
+    x: toyClass => "ranged"
   }
 }
 
