@@ -19,7 +19,7 @@ public class SRLDataReader {
 
 	public SRLDataReader(String treebankHome, String propbankHome) throws Exception {
         textAnnotations = new ArrayList<>();
-		reader = new PropbankReader(treebankHome, propbankHome, ViewNames.SRL_VERB, true);
+		reader = new PropbankReader(treebankHome, propbankHome, new String[]{"00"}, ViewNames.SRL_VERB, true);
 	}
 
 	public void readData() {
