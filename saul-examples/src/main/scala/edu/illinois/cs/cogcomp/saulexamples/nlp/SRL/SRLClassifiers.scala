@@ -13,9 +13,5 @@ object SRLClassifiers {
 
     def label: Attribute[Constituent] = predicateLable
     override def algorithm = "SparseNetwork"
-    //    override def feature = using(
-    //    word,phrase,containsSubPhraseMent,containsSubPhraseIng,
-    //    containsInPersonList,wordLen,containsInCityList
-    //    )
   }
 }
