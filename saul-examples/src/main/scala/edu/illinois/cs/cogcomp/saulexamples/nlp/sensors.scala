@@ -5,6 +5,7 @@ import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{ Constituent, Sentence, TextAnnotation }
 import edu.illinois.cs.cogcomp.core.utilities.ResourceManager
 import edu.illinois.cs.cogcomp.curator.CuratorFactory
+import edu.illinois.cs.cogcomp.saulexamples.EntityMentionRelation.reader.GazeteerReader
 import edu.illinois.cs.cogcomp.saulexamples.data.Document
 
 import scala.collection.JavaConversions._
@@ -38,6 +39,7 @@ object sensors {
   def documentContent(x: Document): String = {
     x.getWords.mkString(" ")
   }
+
   def f(x: TextAnnotation): List[Sentence] = x.sentences().toList
 
   def alignment(x: TextAnnotation, y: Sentence): Boolean = x.getId == y.getSentenceConstituent.getTextAnnotation.getId
@@ -54,4 +56,13 @@ object sensors {
     ret
   }
 
+  def cityGazetSensor: GazeteerReader = {
+    new GazeteerReader("./data/EntityMentionRelation/known_city.lst", "Gaz:City", true)
+  }
+
+  def personGazetSensor: GazeteerReader = {
+    val persongazet = new GazeteerReader("./data/EntityMentionRelation/known_maleFirst.lst", "Gaz:Person", true)
+    persongazet.addFile("./data/EntityMentionRelation/known_femaleFirst.lst", true)
+    persongazet
+  }
 }

@@ -2,15 +2,9 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.RewriteBa
 
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
 import edu.illinois.cs.cogcomp.saulexamples.EntityMentionRelation.datastruct.{ ConllRawSentence, ConllRawToken, ConllRelation }
-import edu.illinois.cs.cogcomp.saulexamples.EntityMentionRelation.reader.GazeteerReader
-
-import scala.collection.mutable.{ Map => MutableMap }
+import edu.illinois.cs.cogcomp.saulexamples.nlp.sensors._
 
 object entityRelationBasicDataModel extends DataModel {
-
-  val citygazet: GazeteerReader = new GazeteerReader("./data/EntityMentionRelation/known_city.lst", "Gaz:City", true)
-  val persongazet: GazeteerReader = new GazeteerReader("./data/EntityMentionRelation/known_maleFirst.lst", "Gaz:Person", true)
-  persongazet.addFile("./data/EntityMentionRelation/known_femaleFirst.lst", true)
 
   /** Nodes */
   val tokens = node[ConllRawToken]
@@ -26,7 +20,6 @@ object entityRelationBasicDataModel extends DataModel {
   val tokenContainsInSentence = edge(tokens, pairs)
 
   /** Properties */
-
   val pos = property[ConllRawToken]("pos") {
     t: ConllRawToken => t.POS :: Nil
   }
@@ -51,11 +44,11 @@ object entityRelationBasicDataModel extends DataModel {
   }
 
   val containsInCityList = property[ConllRawToken]("containsInCityList") {
-    t: ConllRawToken => citygazet.isContainedIn(t).toString
+    t: ConllRawToken => cityGazetSensor.isContainedIn(t).toString
   }
 
   val containsInPersonList = property[ConllRawToken]("containsInCityList") {
-    t: ConllRawToken => persongazet.containsAny(t).toString
+    t: ConllRawToken => personGazetSensor.containsAny(t).toString
   }
 
   val wordLen = property[ConllRawToken]("wordLen") {
@@ -67,8 +60,8 @@ object entityRelationBasicDataModel extends DataModel {
       {
         "w1-word-" + token.e1.phrase :: "w2-word-" + token.e2.phrase ::
           "w1-pos-" + token.e1.POS :: "w2-pos-" + token.e2.POS ::
-          "w1-city-" + citygazet.isContainedIn(token.e1) :: "w2-city-" + citygazet.isContainedIn(token.e2) ::
-          "w1-per-" + persongazet.containsAny(token.e1) :: "w2-per-" + persongazet.containsAny(token.e2) ::
+          "w1-city-" + cityGazetSensor.isContainedIn(token.e1) :: "w2-city-" + cityGazetSensor.isContainedIn(token.e2) ::
+          "w1-per-" + personGazetSensor.containsAny(token.e1) :: "w2-per-" + personGazetSensor.containsAny(token.e2) ::
           "w1-ment-" + token.e1.getWords(false).exists(_.contains("ing")) :: "w2-ment-" + token.e2.getWords(false).exists(_.contains("ing")) ::
           "w1-ing-" + token.e1.getWords(false).exists(_.contains("ing")) :: "w2-ing-" + token.e2.getWords(false).exists(_.contains("ing")) ::
           Nil
@@ -93,7 +86,6 @@ object entityRelationBasicDataModel extends DataModel {
   }
 
   /** Labeler Properties  */
-
   val entityType = property[ConllRawToken]("entityType") {
     t: ConllRawToken => t.entType
   }
