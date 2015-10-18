@@ -5,40 +5,25 @@ import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
 
 import scala.collection.mutable.{ Map => MutableMap }
 
-/** Created by Parisa on 10/4/15.
-  */
-
 object modelWithKeys extends DataModel {
 
-  /** Node Types
-    */
+  /** Node Types */
   val document = node[TextAnnotation]
   val sentence = node[Sentence]
 
-  /** Property Types
-    */
-  val label = discreteAttributeOf[Constituent]('label) {
-    x =>
-      {
-        x.getLabel
-      }
+  /** Property Types */
+  val label = discretePropertyOf[Constituent]('label) {
+    _.getLabel
   }
 
-  val docFeatureExample = discreteAttributeOf[TextAnnotation]('doc) {
-    x: TextAnnotation =>
-      {
-        x.getNumberOfSentences.toString
-      }
+  val docFeatureExample = discretePropertyOf[TextAnnotation]('doc) {
+    x: TextAnnotation => x.getNumberOfSentences.toString
   }
-  val sentenceFeatureExample = discreteAttributeOf[Sentence]('sentence) {
-    x: Sentence =>
-      {
-        x.getText
-      }
+  val sentenceFeatureExample = discretePropertyOf[Sentence]('sentence) {
+    x: Sentence => x.getText
   }
 
-  /** Edge Types
-    */
+  /** Edge Types */
   val docTosen = edge(document, sentence, 'dTos)
   docTosen.populateWith((d, s) => d.getId == s.getSentenceConstituent.getTextAnnotation.getId)
 

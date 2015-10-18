@@ -33,11 +33,11 @@ The provided constructs are design to enable programing for the following concep
 
 ### Data Model: 
 The data model in Saul conceptually is represented with a graph containing nodes, edges, 
-and their attributes. Defining entities with the following constructs:
+and their properties. Defining entities with the following constructs:
 
   -`Node`: The different types of objects, for example documents, sound files, pictures, text documents, etc.
   -`Edge`: In a graph with nodes of type `Node`, their connections can be defined with `Edge`s. 
-  -`Attribute`: The attributes of a node, for example a node of type `Document` can have properties 
+  -`Property`: The attributes of a node, for example a node of type `Document` can have properties 
   such as `Title`, `Subject`, `Author`, `Body`, etc.  
   
 #### Defining nodes
@@ -54,16 +54,16 @@ val tokens = node[ConllRawToken](
 
 This line of code defines an entity of type `ConllRawToken` and names it as 'tokens' and defines a 'primary key' for it based on the original variables in the original ConllRawToken class.
 
-#### Defining attributes 
-This is done via several constructs depending on the type of the feature for discrete features for example the `discreteAttributesGeneratorOf` is used,
+#### Defining properties
+This is done via several constructs depending on the type of the feature for discrete features for example the `propertyOf` is used,
 
 ```scala
-val pos = discreteAttributesGeneratorOf[ConllRawToken]('pos) {
+val pos = propertyOf[ConllRawToken]('pos) {
    (t: ConllRawToken) => t.POS :: Nil
 }
   ```
 This line of code defines a feature vector that is generated using the pos-tag of the original class of the entitiy that this property is assigned to (that is ConllRawToken class). The type of the feature is discrete. 
-The list of possibilities for other types of feature functions are listed in:  `edu.illinois.cs.cogcomp.lfs.data_model.attributes.features._`. 
+The list of possibilities for other types of feature functions are listed in:  `edu.illinois.cs.cogcomp.lfs.data_model.properties.features._`. 
 
 #### Defining edges 
 
@@ -87,7 +87,7 @@ A classifier can be defined in the following way:
 
 ```scala
 object orgClassifier extends Learnable[ConllRawToken](ErDataModelExample) {
-  override def label: Attribute[ConllRawToken] = entityType is "Org"
+  override def label: Property[ConllRawToken] = entityType is "Org"
 
   override def feature = using(word, phrase, containsSubPhraseMent, containsSubPhraseIng,
     containsInPersonList, wordLen, containsInCityList)

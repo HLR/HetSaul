@@ -36,25 +36,25 @@ object edisonDataModel extends DataModel {
   //  )
 
   /** Property Types */
-  val label = discreteAttributeOf[Constituent]('rubish) {
+  val label = discretePropertyOf[Constituent]('rubish) {
     x => x.getLabel
   }
 
-  val Eaddress = discreteAttributeOf[Constituent]('address) {
+  val Eaddress = discretePropertyOf[Constituent]('address) {
     x => x.getSpan.toString
   }
 
-  val Eview = discreteAttributeOf[Constituent]('CviewName) {
+  val Eview = discretePropertyOf[Constituent]('CviewName) {
     x => x.getViewName
   }
 
-  val Rveiw = discreteAttributeOf[Relation]('RveiwName) {
+  val Rveiw = discretePropertyOf[Relation]('RveiwName) {
     x: Relation => x.getSource.getViewName
   }
-  val DocFeatureExample = discreteAttributeOf[TextAnnotation]('doc) {
+  val DocFeatureExample = discretePropertyOf[TextAnnotation]('doc) {
     x: TextAnnotation => x.getNumberOfSentences.toString
   }
-  val sentenceFeatureExample = discreteAttributeOf[Sentence]('sentnce) {
+  val sentenceFeatureExample = discretePropertyOf[Sentence]('sentnce) {
     x: Sentence => x.getText
   }
 

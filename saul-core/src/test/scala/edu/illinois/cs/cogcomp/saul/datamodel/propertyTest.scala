@@ -1,91 +1,84 @@
 package edu.illinois.cs.cogcomp.saul.datamodel
 
-import edu.illinois.cs.cogcomp.saul.datamodel.attribute.features.real.{ RealAttributeCollection, RealAttribute }
 import org.scalatest._
 
-/** testing techniques for proprerties */
+/** testing techniques for properties */
 class propertyTest extends FlatSpec with Matchers {
   /** testing population of collections inside `Node` */
   "properties" should "work!" in {
     import toyDataModel._
 
     // boolean
-    booleanAttribute(new toyClass).mkString should be("true")
+    booleanProperty(new toyClass).mkString should be("true")
 
     // discrete
-    stringAttribute(new toyClass).mkString should be("value")
-    listStringAttributeArray(new toyClass).mkString should be("listValue")
-    listStringAttributeGenerator(new toyClass).mkString should be("listValue")
+    stringProperty(new toyClass).mkString should be("value")
+    listStringPropertyArray(new toyClass).mkString should be("listValue")
+    listStringPropertyGenerator(new toyClass).mkString should be("listValue")
 
     // ranged
-    rangedAttribute(new toyClass).mkString should be("ranged")
+    rangedProperty(new toyClass).mkString should be("ranged")
 
     // Double
-    doubleAttribute(new toyClass) should be(1.0)
-    listDoubleAttributeGenerator(new toyClass).mkString should be("1.02.0")
-    listDoubleAttributeArray(new toyClass).mkString should be("1.02.0")
+    doubleProperty(new toyClass) should be(1.0)
+    listDoublePropertyGenerator(new toyClass).mkString should be("1.02.0")
+    listDoublePropertyArray(new toyClass).mkString should be("1.02.0")
 
     // Int
-    intAttribute(new toyClass) should be(2.0)
-    listIntAttributeArray(new toyClass) should be(List(1.0, 3.0))
-    listIntAttributeGenerator(new toyClass) should be(List(1.0, 3.0))
+    intProperty(new toyClass) should be(2.0)
+    listIntPropertyArray(new toyClass) should be(List(1.0, 3.0))
+    listIntPropertyGenerator(new toyClass) should be(List(1.0, 3.0))
   }
 }
 
 object toyDataModel extends DataModel {
 
   // boolean
-  val booleanAttribute = property[toyClass]("boolean") {
+  val booleanProperty = property[toyClass]("boolean") {
     x: toyClass => true
   }
 
   // List[Int]
-  val listIntAttributeArray = property[toyClass]("listInt") {
+  val listIntPropertyArray = property[toyClass]("listInt") {
     x: toyClass => List(1, 3)
   }
-  val listIntAttributeGenerator = property[toyClass]("listInt", ordered = true) {
+  val listIntPropertyGenerator = property[toyClass]("listInt", ordered = true) {
     x: toyClass => List(1, 3)
   }
 
   // Int
-  val intAttribute = property[toyClass]("int") {
+  val intProperty = property[toyClass]("int") {
     x: toyClass => 2
   }
 
   // List[Double]
-  val listDoubleAttributeArray = property[toyClass]("listDouble") {
+  val listDoublePropertyArray = property[toyClass]("listDouble") {
     x: toyClass => List(1.0, 2.0)
   }
-  val listDoubleAttributeGenerator = property[toyClass]("listDouble", ordered = true) {
-    x: toyClass => List(1.0, 2.0)
-  }
-  val listDoubleAttributeArrayOld = realAttributesArrayOf[toyClass]('listDouble) {
-    x: toyClass => List(1.0, 2.0)
-  }
-  val listDoubleAttributeGeneratorOld = realAttributesGeneratorOf[toyClass]('listDouble) {
+  val listDoublePropertyGenerator = property[toyClass]("listDouble", ordered = true) {
     x: toyClass => List(1.0, 2.0)
   }
 
   // Double
-  val doubleAttribute = property[toyClass]("double") {
+  val doubleProperty = property[toyClass]("double") {
     x: toyClass => 1.0
   }
 
   // List[String]
-  val listStringAttributeArray = property[toyClass]("listString") {
+  val listStringPropertyArray = property[toyClass]("listString") {
     x: toyClass => List("listValue")
   }
-  val listStringAttributeGenerator = property[toyClass]("listString", ordered = true) {
+  val listStringPropertyGenerator = property[toyClass]("listString", ordered = true) {
     x: toyClass => List("listValue")
   }
 
   // String
-  val stringAttribute = property[toyClass]("string") {
+  val stringProperty = property[toyClass]("string") {
     x: toyClass => "value"
   }
 
-  // ranged attribute
-  val rangedAttribute = property[toyClass]("funnyRange")("string") {
+  // ranged property
+  val rangedProperty = property[toyClass]("funnyRange")("string") {
     x: toyClass => "ranged"
   }
 }

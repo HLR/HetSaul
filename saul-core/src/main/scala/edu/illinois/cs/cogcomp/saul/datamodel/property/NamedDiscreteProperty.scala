@@ -1,11 +1,9 @@
-package edu.illinois.cs.cogcomp.saul.datamodel.attribute
+package edu.illinois.cs.cogcomp.saul.datamodel.property
 
 import edu.illinois.cs.cogcomp.lbjava.classify.{ DiscretePrimitiveStringFeature, Feature, FeatureVector }
-import edu.illinois.cs.cogcomp.saul.datamodel.attribute.features.ClassifierContainsInLBP
+import edu.illinois.cs.cogcomp.saul.datamodel.property.features.ClassifierContainsInLBP
 
-/** Created by haowu on 3/4/15.
-  */
-class NamedDiscreteAttribute[T <: AnyRef](
+class NamedDiscreteProperty[T <: AnyRef](
   val attName: String,
   val function: T => String
 ) {
@@ -20,25 +18,25 @@ class NamedDiscreteAttribute[T <: AnyRef](
         this.name = attName
 
         def getAllowableValues: Array[String] = {
-          return __allowableValues
+          __allowableValues
         }
 
         override def allowableValues: Array[String] = {
-          return __allowableValues
+          __allowableValues
         }
 
         def classify(__example: AnyRef): FeatureVector = {
-          return new FeatureVector(featureValue(__example))
+          new FeatureVector(featureValue(__example))
         }
 
         override def featureValue(__example: AnyRef): Feature = {
           val result: String = discreteValue(__example)
-          return new DiscretePrimitiveStringFeature(containingPackage, this.name, "", result, valueIndexOf(result), allowableValues.length.asInstanceOf[Short])
+          new DiscretePrimitiveStringFeature(containingPackage, this.name, "", result, valueIndexOf(result), allowableValues.length.asInstanceOf[Short])
         }
 
         override def discreteValue(__example: AnyRef): String = {
           // TODO: catching errors (type checking)
-          return _discreteValue(__example)
+          _discreteValue(__example)
         }
 
         private def _discreteValue(__example: AnyRef): String = {
@@ -54,8 +52,12 @@ class NamedDiscreteAttribute[T <: AnyRef](
     this.containingPackage = "LBP_Package"
     this.name = attName
 
-    def classify(__example: AnyRef): FeatureVector = {
-      new FeatureVector(featureValue(__example))
+    def classify(instance: AnyRef): FeatureVector = {
+      new FeatureVector(featureValue(instance))
+    }
+
+    override def classify(instances: Array[AnyRef]): Array[FeatureVector] = {
+      super.classify(instances)
     }
 
     override def featureValue(__example: AnyRef): Feature = {
@@ -63,13 +65,9 @@ class NamedDiscreteAttribute[T <: AnyRef](
       new DiscretePrimitiveStringFeature(containingPackage, this.name, "", result, valueIndexOf(result), allowableValues.length.toShort)
     }
 
-    override def discreteValue(__example: AnyRef): String = {
-      val d: T = __example.asInstanceOf[T]
+    override def discreteValue(instance: AnyRef): String = {
+      val d: T = instance.asInstanceOf[T]
       function(d).toString
-    }
-
-    override def classify(examples: Array[AnyRef]): Array[FeatureVector] = {
-      super.classify(examples)
     }
   }
 

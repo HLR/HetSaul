@@ -1,8 +1,8 @@
-package edu.illinois.cs.cogcomp.saul.datamodel.attribute
+package edu.illinois.cs.cogcomp.saul.datamodel.property
 
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
 
-trait DataModelSensitiveAttribute[T <: AnyRef] extends Attribute[T] {
+trait DataModelSensitiveProperty[T <: AnyRef] extends Property[T] {
 
   var dataModel: DataModel
 

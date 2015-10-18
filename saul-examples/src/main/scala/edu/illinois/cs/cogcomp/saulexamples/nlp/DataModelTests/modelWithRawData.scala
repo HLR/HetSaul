@@ -17,20 +17,18 @@ object modelWithRawData extends DataModel {
   textToCon.addSensor(sensors.f(_))
   rawToAnn.addSensor(sensors.curator(_))
 
-  val docFeatureExample = discreteAttributeOf[TextAnnotation]('doc) {
-    x: TextAnnotation =>
-      {
-        x.getNumberOfSentences.toString
-      }
+  val docFeatureExample = discretePropertyOf[TextAnnotation]('doc) {
+    x: TextAnnotation => x.getNumberOfSentences.toString
   }
   // textToCon.addSensor(sensors.alignment:(TextAnnotation,Sentence)=>Boolean)
 }
 
-object myapp {
+object myApp {
 
   def main(args: Array[String]) {
     import modelWithRawData._
-    //call the reader
+
+    /** call the reader */
     val dat: List[Document] = new DocumentReader("./data/20newsToy/train").docs.toList.slice(1, 2)
     // val taList = dat.map(x => sensors.curator(x))
     // val sentenceList = taList.flatMap(x => x.sentences())
