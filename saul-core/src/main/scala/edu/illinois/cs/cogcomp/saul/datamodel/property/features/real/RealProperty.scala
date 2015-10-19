@@ -10,13 +10,13 @@ case class RealProperty[T <: AnyRef](
   name: String,
   sensor: T => Double
 )(implicit val tag: ClassTag[T]) extends TypedProperty[T, Double] {
-  override def makeClassifierWithName(name: String): Classifier =
+  override def makeClassifierWithName(__name: String): Classifier =
 
     {
       new ClassifierContainsInLBP() {
 
         this.containingPackage = "LBP_Package"
-        this.name = name
+        this.name = __name
 
         def classify(instance: AnyRef): FeatureVector = {
           new FeatureVector(featureValue(instance))

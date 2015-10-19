@@ -9,7 +9,7 @@ object spamDataModel extends DataModel {
 
   val docs = node[Document]
 
-  val wordFeature = discretePropertiesGeneratorOf[Document]('wordF) {
+  /*  val wordFeature = discretePropertiesGeneratorOf[Document]('wordF) {
     x: Document => x.getWords.toList
   }
 
@@ -19,7 +19,7 @@ object spamDataModel extends DataModel {
 
       /** bigram features */
       words.sliding(2).map(_.mkString("-")).toList
-  }
+  }*/
 
   val spamLable = discretePropertyOf[Document]('label) {
     x: Document => x.getLabel

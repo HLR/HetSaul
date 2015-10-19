@@ -12,10 +12,10 @@ case class DiscreteCollectionProperty[T <: AnyRef](
   ordered: Boolean
 )(implicit val tag: ClassTag[T]) extends TypedProperty[T, List[String]] {
 
-  override def makeClassifierWithName(name: String): Classifier = {
+  override def makeClassifierWithName(__name: String): Classifier = {
     new ClassifierContainsInLBP() {
 
-      this.name = name
+      this.name = __name
 
       def classify(instance: AnyRef): FeatureVector = {
         val d: T = instance.asInstanceOf[T]

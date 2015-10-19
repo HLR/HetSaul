@@ -14,10 +14,10 @@ case class RealCollectionProperty[T <: AnyRef](
 
   val ra = this.name
 
-  override def makeClassifierWithName(name: String): Classifier = new ClassifierContainsInLBP() {
+  override def makeClassifierWithName(__name: String): Classifier = new ClassifierContainsInLBP() {
     this.containingPackage = "LBP_Package"
 
-    this.name = name
+    this.name = __name
 
     override def realValueArray(instance: AnyRef): Array[Double] = {
       classify(instance).realValueArray

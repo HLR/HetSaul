@@ -26,10 +26,10 @@ class RelationalFeature[HEAD <: AnyRef, CHILD <: AnyRef](
       )
   }
 
-  override def makeClassifierWithName(name: String): Classifier = new DataSensitiveLBJFeature {
+  override def makeClassifierWithName(__name: String): Classifier = new DataSensitiveLBJFeature {
 
     this.containingPackage = "LBP_Package"
-    this.name = name
+    this.name = __name
 
     override var datamodel = dataModel
 
