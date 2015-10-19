@@ -7,10 +7,10 @@ import edu.illinois.cs.cogcomp.saul.datamodel.property.features.ClassifierContai
 import scala.reflect.ClassTag
 
 case class DiscreteProperty[T <: AnyRef](
-                                          name: String,
-                                          sensor: T => String,
-                                          range: Option[List[String]]
-                                          )(implicit val tag: ClassTag[T]) extends TypedProperty[T, String] {
+  name: String,
+  sensor: T => String,
+  range: Option[List[String]]
+)(implicit val tag: ClassTag[T]) extends TypedProperty[T, String] {
   override def makeClassifierWithName(__name: String): Classifier = range match {
     case Some(r) =>
       new ClassifierContainsInLBP() {

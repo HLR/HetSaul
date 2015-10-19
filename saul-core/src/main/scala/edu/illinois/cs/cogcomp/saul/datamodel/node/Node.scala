@@ -176,7 +176,7 @@ class Node[T <: AnyRef](val tag: ClassTag[T]) {
           toPrepend ::: middle ::: toAppend
         }
       case _ =>
-        throw new Exception("Can't found order of " + t.toString)
+        throw new Exception("Can't find order of " + t.toString)
     }
   }
 }
