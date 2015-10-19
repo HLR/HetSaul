@@ -12,12 +12,11 @@ import scala.collection.JavaConversions._
 object sensors {
 
   def getText(x: Document): String = {
-    val l = x.getWords()
-    val lx = l.mkString(" ")
-    lx
+    val words = x.getWords
+    words.mkString(" ")
   }
 
-  def textCollection(x: List[Document]): List[String] = {
+  def textCollection(x: List[Document]) = {
     x.map(documentContent)
   }
 
@@ -53,5 +52,4 @@ object sensors {
     annotatorService.closeCache()
     ret
   }
-
 }
