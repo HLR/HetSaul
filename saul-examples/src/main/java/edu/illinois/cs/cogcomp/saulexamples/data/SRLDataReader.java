@@ -25,7 +25,8 @@ public class SRLDataReader {
 	public void readData() {
 		while (reader.hasNext()) {
 			TextAnnotation ta = reader.next();
-			assert ta.hasView(ViewNames.SRL_VERB);
+			if (!ta.hasView(ViewNames.SRL_VERB))
+				continue;
 
 			textAnnotations.add(ta);
 		}

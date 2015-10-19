@@ -27,7 +27,7 @@ object SRLDataModel extends DataModel {
 
   val taToTree = edge(textAnnotation, tree)
   //TODO PARSE_GOLD is only good for training; for testing we need PARSE_STANFORD or PARSE_CHARNIAK
-  taToTree.addSensor(SRLSensors.textAnnotationToTree(_))
+  taToTree.addSensor(SRLSensors.textAnnotationToTree _)
 
   val relToArg = edge(relation, argument)
   relToArg.addSensor(SRLSensors.relToArgument _)
@@ -41,7 +41,7 @@ object SRLDataModel extends DataModel {
   //  lemma.use(SRLSensors.lemmatizer _)
   // SRL Properties
 
-  val predicateLable = property[Constituent]("p") {
+  val predicateLabel = property[Constituent]("p") {
     x: Constituent => x.getLabel
   }
 }
