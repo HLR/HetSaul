@@ -1,16 +1,16 @@
-package edu.illinois.cs.cogcomp.saul.datamodel.attribute.features.discrete
+package edu.illinois.cs.cogcomp.saul.datamodel.property.features.discrete
 
 import edu.illinois.cs.cogcomp.lbjava.classify.{ Classifier, DiscretePrimitiveStringFeature, FeatureVector }
-import edu.illinois.cs.cogcomp.saul.datamodel.attribute.TypedAttribute
-import edu.illinois.cs.cogcomp.saul.datamodel.attribute.features.ClassifierContainsInLBP
+import edu.illinois.cs.cogcomp.saul.datamodel.property.TypedProperty
+import edu.illinois.cs.cogcomp.saul.datamodel.property.features.ClassifierContainsInLBP
 //import tutorial_related.Document
 
 import scala.reflect.ClassTag
 
-class DiscreteGenAttribute[T <: AnyRef](
+class DiscreteGenProperty[T <: AnyRef](
   val name: String,
   val sensor: T => List[String]
-)(implicit val tag: ClassTag[T]) extends TypedAttribute[T, List[String]] {
+)(implicit val tag: ClassTag[T]) extends TypedProperty[T, List[String]] {
 
   override def makeClassifierWithName(n: String): Classifier = new ClassifierContainsInLBP() {
 

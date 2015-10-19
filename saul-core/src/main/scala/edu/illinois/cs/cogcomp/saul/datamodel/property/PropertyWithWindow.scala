@@ -1,78 +1,69 @@
-package edu.illinois.cs.cogcomp.saul.datamodel.attribute
+package edu.illinois.cs.cogcomp.saul.datamodel.property
 
 import java.util
 
 import edu.illinois.cs.cogcomp.lbjava.classify.Classifier
 import edu.illinois.cs.cogcomp.lbjava.classify.FeatureVector
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
-import edu.illinois.cs.cogcomp.saul.datamodel.attribute.features.{ DataSensitiveLBJFeature, ClassifierContainsInLBP }
-import edu.illinois.cs.cogcomp.saul.datamodel.attribute.features.discrete.DiscreteCollectionAttribute
-import edu.illinois.cs.cogcomp.saul.datamodel.attribute.features.discrete.DiscreteAttribute
-import edu.illinois.cs.cogcomp.saul.datamodel.attribute.features.discrete.DiscreteGenAttribute
-import edu.illinois.cs.cogcomp.saul.datamodel.attribute.features.real.RealAttribute
-import edu.illinois.cs.cogcomp.saul.datamodel.attribute.features.real.RealGenAttribute
+import edu.illinois.cs.cogcomp.saul.datamodel.property.features.{ DataSensitiveLBJFeature, ClassifierContainsInLBP }
+import edu.illinois.cs.cogcomp.saul.datamodel.property.features.discrete.DiscreteCollectionProperty
+import edu.illinois.cs.cogcomp.saul.datamodel.property.features.discrete.DiscreteProperty
+import edu.illinois.cs.cogcomp.saul.datamodel.property.features.discrete.DiscreteGenProperty
+import edu.illinois.cs.cogcomp.saul.datamodel.property.features.real.RealProperty
+import edu.illinois.cs.cogcomp.saul.datamodel.property.features.real.RealGenProperty
 
 import scala.reflect.ClassTag
 
-/** Created by haowu on 2/8/15.
-  */
-class AttributeWithWindow[T <: AnyRef](
+class PropertyWithWindow[T <: AnyRef](
   var dataModel: DataModel,
   val before: Int,
   val after: Int,
   val filters: Iterable[T => Any],
-  val atts: List[Attribute[T]]
-)(implicit val tag: ClassTag[T]) extends TypedAttribute[T, List[_]] with DataModelSensitiveAttribute[T] {
+  val properties: List[Property[T]]
+)(implicit val tag: ClassTag[T]) extends TypedProperty[T, List[_]] with DataModelSensitiveProperty[T] {
 
   // TODO: need to work on the mapping such that.
   override val sensor: (T) => List[_] = {
     t: T =>
-      {
-        {
+      val ent = dataModel.getNodeWithType[T]
 
-          val ent = dataModel.getNodeWithType[T]
+      val winds = ent.getWithWindow(t, before, after)
+      // Now we have a windows of option items.
 
-          val winds = ent.getWithWindow(t, before, after)
-          // Now we have a windows of option items.
-
-          atts.flatMap(att => {
-            winds map {
-              case Some(x) => Some(att.sensor(x))
-              case _ => None
-            }
-          })
-
-        }
-      }
+      properties.flatMap(property =>
+        winds.map {
+          case Some(x) => Some(property.sensor(x))
+          case _ => None
+        })
   }
 
   override def setDM(dm: DataModel): Unit = {
     super.setDM(dm)
-    this.hiddenAttributes = this.rebuildHiddenAttribute(dataModel: DataModel)
+    this.hiddenProperties = this.rebuildHiddenProperties(dataModel: DataModel)
   }
 
-  var hiddenAttributes: List[Attribute[T]] = rebuildHiddenAttribute(this.dataModel)
+  var hiddenProperties: List[Property[T]] = rebuildHiddenProperties(this.dataModel)
 
-  def rebuildHiddenAttribute(dm: DataModel): List[Attribute[T]] = {
+  def rebuildHiddenProperties(dm: DataModel): List[Property[T]] = {
     {
       val ent = dm.getNodeWithType[T]
 
-      atts.toList.flatMap {
-        knowAtt: Attribute[T] =>
+      properties.toList.flatMap {
+        knowProperty: Property[T] =>
           {
             {
-              type OUTPUT_TYPE = knowAtt.S
+              type OUTPUT_TYPE = knowProperty.S
 
               (before to after).map {
                 idx =>
                   {
                     {
 
-                      val newName = s"WindowsClassifierAtPosition${idx}<=${knowAtt.name}"
+                      val newName = s"WindowsClassifierAtPosition${idx}<=${knowProperty.name}"
                       //									println(newName)
-                      knowAtt match {
+                      knowProperty match {
 
-                        case da: DiscreteAttribute[T] => {
+                        case da: DiscreteProperty[T] => {
                           {
                             val newMappingFunction: T => String = {
                               t: T =>
@@ -93,10 +84,10 @@ class AttributeWithWindow[T <: AnyRef](
                                   }
                                 }
                             }
-                            new DiscreteAttribute[T](newName, newMappingFunction, da.range)
+                            new DiscreteProperty[T](newName, newMappingFunction, da.range)
                           }
                         }
-                        case dga: DiscreteGenAttribute[T] => {
+                        case dga: DiscreteGenProperty[T] => {
                           {
                             val newMappingFunction: T => List[String] = {
                               t: T =>
@@ -109,10 +100,10 @@ class AttributeWithWindow[T <: AnyRef](
                                   }
                                 }
                             }
-                            new DiscreteGenAttribute[T](newName, newMappingFunction)
+                            new DiscreteGenProperty[T](newName, newMappingFunction)
                           }
                         }
-                        case ra: RealAttribute[T] => {
+                        case ra: RealProperty[T] => {
                           {
                             val newMappingFunction: T => Double = {
                               t: T =>
@@ -134,10 +125,10 @@ class AttributeWithWindow[T <: AnyRef](
                                   }
                                 }
                             }
-                            new RealAttribute[T](newName, newMappingFunction)
+                            new RealProperty[T](newName, newMappingFunction)
                           }
                         }
-                        case rga: RealGenAttribute[T] => {
+                        case rga: RealGenProperty[T] => {
                           val newMappingFunction: T => List[Double] = {
                             t: T =>
                               {
@@ -151,7 +142,7 @@ class AttributeWithWindow[T <: AnyRef](
                                 }
                               }
                           }
-                          new RealGenAttribute[T](newName, newMappingFunction)
+                          new RealGenProperty[T](newName, newMappingFunction)
                         }
                         case _ => {
                           throw new Exception("Can't combine classifier with ranges")
@@ -169,18 +160,18 @@ class AttributeWithWindow[T <: AnyRef](
 
   override def addToFeatureVector(t: T, fv: FeatureVector): FeatureVector = {
     // All it need to do is calling the curated classifiers.
-    hiddenAttributes.foreach(_.addToFeatureVector(t, fv))
+    hiddenProperties.foreach(_.addToFeatureVector(t, fv))
     fv
   }
 
   override def addToFeatureVector(t: T, fv: FeatureVector, name: String): FeatureVector = {
     // All it need to do is calling the curated classifiers.
-    hiddenAttributes.foreach(_.addToFeatureVector(t, fv))
+    hiddenProperties.foreach(_.addToFeatureVector(t, fv))
     fv
   }
 
   override val name: String = {
-    s"WindowAtt($before,$after}_Of${this.atts.map(_.name).mkString("|")}})"
+    s"WindowProperty($before,$after}_Of${this.properties.map(_.name).mkString("|")}})"
   }
 
   val o = this
@@ -190,7 +181,7 @@ class AttributeWithWindow[T <: AnyRef](
 
     val parent = o
 
-    def rebuidWithDM(dm: DataModel) = this.parent.rebuildHiddenAttribute(dm)
+    def rebuidWithDM(dm: DataModel) = this.parent.rebuildHiddenProperties(dm)
 
     this.containingPackage = "LBP_Package"
     this.name = n
@@ -204,7 +195,7 @@ class AttributeWithWindow[T <: AnyRef](
       val t: T = __example.asInstanceOf[T]
       val __result: FeatureVector = new FeatureVector()
 
-      parent.hiddenAttributes.foreach(_.addToFeatureVector(t, __result))
+      parent.hiddenProperties.foreach(_.addToFeatureVector(t, __result))
 
       __result
     }
@@ -215,7 +206,7 @@ class AttributeWithWindow[T <: AnyRef](
 
     override def getCompositeChildren: util.LinkedList[_] = {
       val result: util.LinkedList[Classifier] = new util.LinkedList[Classifier]()
-      parent.atts.foreach(x => {
+      parent.properties.foreach(x => {
         result.add(x.classifier)
       })
       result

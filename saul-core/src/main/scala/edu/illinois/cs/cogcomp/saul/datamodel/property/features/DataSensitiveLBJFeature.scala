@@ -1,4 +1,4 @@
-package edu.illinois.cs.cogcomp.saul.datamodel.attribute.features
+package edu.illinois.cs.cogcomp.saul.datamodel.property.features
 
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
 

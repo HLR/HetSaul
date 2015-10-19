@@ -1,23 +1,23 @@
-package edu.illinois.cs.cogcomp.saul.datamodel.attribute.features.discrete
+package edu.illinois.cs.cogcomp.saul.datamodel.property.features.discrete
 
 import edu.illinois.cs.cogcomp.lbjava.classify.{ DiscretePrimitiveStringFeature, Feature, FeatureVector, Classifier }
-import edu.illinois.cs.cogcomp.saul.datamodel.attribute.TypedAttribute
-import edu.illinois.cs.cogcomp.saul.datamodel.attribute.features.ClassifierContainsInLBP
+import edu.illinois.cs.cogcomp.saul.datamodel.property.TypedProperty
+import edu.illinois.cs.cogcomp.saul.datamodel.property.features.ClassifierContainsInLBP
 
 import scala.reflect.ClassTag
 
-case class DiscreteAttribute[T <: AnyRef](
-  name: String,
-  sensor: T => String,
-  range: Option[List[String]]
-)(implicit val tag: ClassTag[T]) extends TypedAttribute[T, String] {
-  override def makeClassifierWithName(name: String): Classifier = range match {
+case class DiscreteProperty[T <: AnyRef](
+                                          name: String,
+                                          sensor: T => String,
+                                          range: Option[List[String]]
+                                          )(implicit val tag: ClassTag[T]) extends TypedProperty[T, String] {
+  override def makeClassifierWithName(__name: String): Classifier = range match {
     case Some(r) =>
       new ClassifierContainsInLBP() {
         private var __allowableValues: Array[String] = r.toArray.asInstanceOf[Array[String]]
 
         this.containingPackage = "LBP_Package"
-        this.name = name
+        this.name = __name
 
         def getAllowableValues: Array[String] = {
           __allowableValues
@@ -50,7 +50,7 @@ case class DiscreteAttribute[T <: AnyRef](
     case _ => new ClassifierContainsInLBP {
 
       this.containingPackage = "LBP_Package"
-      this.name = name
+      this.name = __name
 
       def classify(instance: AnyRef): FeatureVector = {
         new FeatureVector(featureValue(instance))

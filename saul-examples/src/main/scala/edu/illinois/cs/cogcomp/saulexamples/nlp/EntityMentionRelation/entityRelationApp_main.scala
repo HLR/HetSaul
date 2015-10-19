@@ -5,20 +5,15 @@ import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.classifier
 import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.entityRelationDataModel._
 import edu.illinois.cs.cogcomp.saul.classifier.JointTrain
 
-/** Created by haowu on 1/27/15.
-  */
-/** Experiment workspace for playing with language feature.
-  */
+/** Experiment workspace for playing with language feature. */
 
 object MyConfiguration {
-
-  val it = 20
+  val iterations = 20
   val pipeLine = true
   val fold = 4
-
 }
 
-object RunnableExample {
+object runnableExample {
 
   def trainIndepedent(it: Int): Unit = {
     println("Indepent Training with iteration " + it)
@@ -83,7 +78,7 @@ object RunnableExample {
       println("using pipeline feature")
     }
 
-    val it = MyConfiguration.it
+    val it = MyConfiguration.iterations
 
     forgotEverything()
     entityRelationDataModel.read(fold)
@@ -122,8 +117,6 @@ object RunnableExample {
 
   def moreExamples(): Unit = {
 
-    //
-    //
     //    println(Console.RED)
     //    println("Testing org")
     //    println(Console.RESET)

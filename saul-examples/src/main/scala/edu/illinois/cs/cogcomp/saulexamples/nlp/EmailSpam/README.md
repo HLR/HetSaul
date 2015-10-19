@@ -30,7 +30,7 @@ Simply a list of all the words in the document is returned.
 
 ```scala
  /** Discrete Feature of the document */ 
- val wordFeature=discreteAttributesGeneratorOf[Document]('wordF){    
+ val wordFeature = property[Document]('wordF){    
     /** Get all of the words in a `Document` and return it */ 
     x: Document => x.getWords.toList 
   }
@@ -40,7 +40,7 @@ Simply a list of all the words in the document is returned.
 A concatenation of 2 consecutive words (bigrams) at a time is returned, and the set of grams contained in a document are used as its features.    
 
 ```scala
-  val bigramFeature = discreteAttributesGeneratorOf[Document]('bigram) {
+  val bigramFeature = property[Document]('bigram) {
     x: Document => 
       val words = x.getWords.toList
       /** bigram features */
@@ -51,7 +51,7 @@ A concatenation of 2 consecutive words (bigrams) at a time is returned, and the 
 The label is defined here
 
 ```scala
-val spamLable=discreteAttributeOf[Document]('label){
+val spamLable = property[Document]('label){
    /** The label obtained from the document through a getLabel function defined in the document class */ 
   x: Document => x.getLabel
 }
@@ -67,7 +67,7 @@ object classifiers {
   object spamClassifier extends Learnable[Document](spamDataModel) {   
 
     /** the label we are training for, to check if it's spam or not using binary classification */ 
-    def label: Attribute[Document] = spamLable is "spam"               
+    def label: Property[Document] = spamLable is "spam"               
   }
 }
 ```

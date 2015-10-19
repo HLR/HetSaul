@@ -1,22 +1,22 @@
-package edu.illinois.cs.cogcomp.saul.datamodel.attribute.features.real
+package edu.illinois.cs.cogcomp.saul.datamodel.property.features.real
 
 import edu.illinois.cs.cogcomp.lbjava.classify.{ RealPrimitiveStringFeature, Feature, FeatureVector, Classifier }
-import edu.illinois.cs.cogcomp.saul.datamodel.attribute.TypedAttribute
-import edu.illinois.cs.cogcomp.saul.datamodel.attribute.features.ClassifierContainsInLBP
+import edu.illinois.cs.cogcomp.saul.datamodel.property.TypedProperty
+import edu.illinois.cs.cogcomp.saul.datamodel.property.features.ClassifierContainsInLBP
 
 import scala.reflect.ClassTag
 
-case class RealAttribute[T <: AnyRef](
+case class RealProperty[T <: AnyRef](
   name: String,
   sensor: T => Double
-)(implicit val tag: ClassTag[T]) extends TypedAttribute[T, Double] {
-  override def makeClassifierWithName(name: String): Classifier =
+)(implicit val tag: ClassTag[T]) extends TypedProperty[T, Double] {
+  override def makeClassifierWithName(__name: String): Classifier =
 
     {
       new ClassifierContainsInLBP() {
 
         this.containingPackage = "LBP_Package"
-        this.name = name
+        this.name = __name
 
         def classify(instance: AnyRef): FeatureVector = {
           new FeatureVector(featureValue(instance))
