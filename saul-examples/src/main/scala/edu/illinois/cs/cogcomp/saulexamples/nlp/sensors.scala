@@ -37,6 +37,7 @@ object sensors {
   def documentContent(x: Document): String = {
     x.getWords.mkString(" ")
   }
+
   def f(x: TextAnnotation): List[Sentence] = x.sentences().toList
 
   def alignment(x: TextAnnotation, y: Sentence): Boolean = x.getId == y.getSentenceConstituent.getTextAnnotation.getId
@@ -49,7 +50,17 @@ object sensors {
     val annotatorService = CuratorFactory.buildCuratorClient(rm)
     val a = documentContent(dat)
     val ret = processDocumentWith(annotatorService, "corpus", dat.getGUID, a)
-    annotatorService.closeCache()
+    // annotatorService.closeCache()
     ret
+  }
+
+  def cityGazetSensor: GazeteerReader = {
+    new GazeteerReader("./data/EntityMentionRelation/known_city.lst", "Gaz:City", true)
+  }
+
+  def personGazetSensor: GazeteerReader = {
+    val persongazet = new GazeteerReader("./data/EntityMentionRelation/known_maleFirst.lst", "Gaz:Person", true)
+    persongazet.addFile("./data/EntityMentionRelation/known_femaleFirst.lst", true)
+    persongazet
   }
 }

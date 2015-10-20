@@ -60,7 +60,7 @@ object classifiers {
   }
 
   object workForClassifier extends Learnable[ConllRelation](entityRelationDataModel) {
-    override def label: Property[ConllRelation] = relationType is "Work_For"
+    override def label: Attribute[ConllRelation] = relationType is "Work_For"
 
     override def feature = using(
       relFeature, relPos //,ePipe

@@ -6,7 +6,7 @@ import edu.illinois.cs.cogcomp.saul.datamodel.property.{ Property, EvaluatedProp
 import edu.illinois.cs.cogcomp.saul.datamodel.node.Node
 import edu.illinois.cs.cogcomp.saul.datamodel.edge.{ Edge, Link }
 
-import scala.collection.mutable.{ Map => MutableMap, ListBuffer }
+import scala.collection.mutable.{ListBuffer, Map => MutableMap}
 import scala.reflect.ClassTag
 
 trait DataModel {
