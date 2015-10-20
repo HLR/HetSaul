@@ -3,7 +3,7 @@ package edu.illinois.cs.cogcomp.saul.datamodel
 import edu.illinois.cs.cogcomp.saul.datamodel.property.features.discrete._
 import edu.illinois.cs.cogcomp.saul.datamodel.property.features.real._
 import edu.illinois.cs.cogcomp.saul.datamodel.property.{ Property, EvaluatedProperty }
-import edu.illinois.cs.cogcomp.saul.datamodel.node.Node
+import edu.illinois.cs.cogcomp.saul.datamodel.node.{ JoinNode, Node }
 import edu.illinois.cs.cogcomp.saul.datamodel.edge.{ Edge, Link }
 
 import scala.collection.mutable.{ Map => MutableMap, ListBuffer }
@@ -116,6 +116,14 @@ trait DataModel {
   /** node definitions */
   def node[T <: AnyRef](implicit tag: ClassTag[T]): Node[T] = {
     val n = new Node[T](tag)
+    NODES += n
+    n
+  }
+
+  def join[A <: AnyRef, B <: AnyRef](a: Node[A], b: Node[B])(matcher: (A, B) => Boolean)(implicit tag: ClassTag[(A, B)]): Node[(A, B)] = {
+    val n = new JoinNode(a, b, matcher, tag)
+    a.joinNodes += n
+    b.joinNodes += n
     NODES += n
     n
   }
