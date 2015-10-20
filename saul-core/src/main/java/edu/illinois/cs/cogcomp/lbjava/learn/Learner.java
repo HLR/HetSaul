@@ -1422,8 +1422,7 @@ public abstract class Learner extends Classifier
     *
     * @author Nick Rizzolo
    **/
-  public static class Parameters implements Serializable
-  {
+  public static class Parameters implements Serializable {
     /**
       * The number of rounds of training; but wait; this parameter doesn't
       * actually affect the behavior of any learners as the number of training
@@ -1433,6 +1432,7 @@ public abstract class Learner extends Classifier
      **/
     public int rounds;
 
+	  public String modelDir;
 
     /** Sets all the default values. */
     public Parameters() { }

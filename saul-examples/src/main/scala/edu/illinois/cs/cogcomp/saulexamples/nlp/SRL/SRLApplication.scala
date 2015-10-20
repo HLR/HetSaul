@@ -3,6 +3,7 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp.SRL
 import edu.illinois.cs.cogcomp.saulexamples.ExamplesConfigurator
 import edu.illinois.cs.cogcomp.saulexamples.data.SRLDataReader
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SRL.SRLClassifiers.predicateClassifier
+import edu.illinois.cs.cogcomp.saulexamples.nlp.SRL.SRLDataModel._
 
 import scala.collection.JavaConversions._
 
@@ -13,10 +14,9 @@ import scala.collection.JavaConversions._
 object SRLApplication {
 
   def main(args: Array[String]) {
-
-    import SRLDataModel._
     val rm = new ExamplesConfigurator().getDefaultConfig
-    val reader = new SRLDataReader(rm.getString(ExamplesConfigurator.TREEBANK_HOME.getFirst), rm.getString(ExamplesConfigurator.PROPBANK_HOME.getFirst))
+    val reader = new SRLDataReader(rm.getString(ExamplesConfigurator.TREEBANK_HOME.getFirst),
+      rm.getString(ExamplesConfigurator.PROPBANK_HOME.getFirst))
     reader.readData()
     textAnnotation.populate(reader.textAnnotations.toList)
     predicateClassifier.learn(2)
