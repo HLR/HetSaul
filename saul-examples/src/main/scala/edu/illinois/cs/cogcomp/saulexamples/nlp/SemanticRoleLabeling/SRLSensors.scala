@@ -16,8 +16,9 @@ object SRLSensors {
     rel.getTarget
   }
 
-  def textAnnotationToTree(ta: TextAnnotation, parseViewName: String): Tree[String] = {
+  def textAnnotationToTree(ta: TextAnnotation): Tree[String] = {
     // We assume that there is only 1 sentence per TextAnnotation
+    val parseViewName: String = ViewNames.PARSE_GOLD
     ta.getView(parseViewName).asInstanceOf[TreeView].getTree(0)
   }
 
