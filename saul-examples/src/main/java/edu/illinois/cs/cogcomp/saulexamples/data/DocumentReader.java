@@ -20,11 +20,8 @@ public class DocumentReader implements Parser {
     private final List<File> files;
     
     private int currentFileId;
-    public ArrayList<Document> docs= new ArrayList<>(); //new
-    
-    /**
-     * 
-     */
+    public ArrayList<Document> docs= new ArrayList<>();
+
     public DocumentReader(String directory) throws IOException {
         File d = new File(directory);
         

@@ -2,12 +2,10 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation
 
 import edu.illinois.cs.cogcomp.saul.classifier.{ ConstrainedClassifier, Learnable }
 import edu.illinois.cs.cogcomp.saul.constraint.ConstraintTypeConversion._
-import edu.illinois.cs.cogcomp.saul.datamodel.attribute.Attribute
+import edu.illinois.cs.cogcomp.saul.datamodel.property.Property
 import edu.illinois.cs.cogcomp.saulexamples.EntityMentionRelation.datastruct.{ ConllRawSentence, ConllRawToken, ConllRelation }
 import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.constrains._
 
-/** Created by haowu on 1/27/15.
-  */
 object classifiers {
 
   import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.entityRelationDataModel._
@@ -16,7 +14,7 @@ object classifiers {
 
   object orgClassifier extends Learnable[ConllRawToken](entityRelationDataModel) {
 
-    def label: Attribute[ConllRawToken] = entityType is "Org"
+    def label: Property[ConllRawToken] = entityType is "Org"
     //TODO add test units with explicit feature definition and remove these lines.
     //override def feature = using(
     //word,phrase,containsSubPhraseMent,containsSubPhraseIng,
@@ -26,7 +24,7 @@ object classifiers {
 
   object PersonClassifier extends Learnable[ConllRawToken](entityRelationDataModel) {
 
-    def label: Attribute[ConllRawToken] = entityType is "Peop"
+    def label: Property[ConllRawToken] = entityType is "Peop"
     override def feature = using(
       windowWithIn[ConllRawSentence](-2, 2, List(
         pos
@@ -38,7 +36,7 @@ object classifiers {
 
   object LocClassifier extends Learnable[ConllRawToken](entityRelationDataModel) {
 
-    def label: Attribute[ConllRawToken] = entityType is "Loc"
+    def label: Property[ConllRawToken] = entityType is "Loc"
     override def feature = using(
       windowWithIn[ConllRawSentence](-2, 2, List(
         pos
@@ -48,7 +46,7 @@ object classifiers {
 
   }
 
-  val ePipe = discreteAttributesGeneratorOf[ConllRelation]('e1pipe) {
+  val ePipe = discretePropertiesGeneratorOf[ConllRelation]('e1pipe) {
     rel =>
       {
         "e1-org: " + orgClassifier.discreteValue(rel.e1) ::
@@ -62,7 +60,7 @@ object classifiers {
   }
 
   object workForClassifier extends Learnable[ConllRelation](entityRelationDataModel) {
-    override def label: Attribute[ConllRelation] = relationType is "Work_For"
+    override def label: Property[ConllRelation] = relationType is "Work_For"
 
     override def feature = using(
       relFeature, relPos //,ePipe
@@ -70,7 +68,7 @@ object classifiers {
   }
 
   object workForClassifierPipe extends Learnable[ConllRelation](entityRelationDataModel) {
-    override def label: Attribute[ConllRelation] = relationType is "Work_For"
+    override def label: Property[ConllRelation] = relationType is "Work_For"
 
     override def feature = using(
       relFeature, relPos, ePipe
@@ -78,24 +76,24 @@ object classifiers {
   }
 
   object LivesInClassifier extends Learnable[ConllRelation](entityRelationDataModel) {
-    override def label: Attribute[ConllRelation] = relationType is "Live_In"
+    override def label: Property[ConllRelation] = relationType is "Live_In"
     override def feature = using(
       relFeature, relPos
     )
   }
 
   object LivesInClassifierPipe extends Learnable[ConllRelation](entityRelationDataModel) {
-    override def label: Attribute[ConllRelation] = relationType is "Live_In"
+    override def label: Property[ConllRelation] = relationType is "Live_In"
     override def feature = using(
       relFeature, relPos, ePipe
     )
   }
 
   object org_baseClassifier extends Learnable[ConllRelation](entityRelationDataModel) {
-    override def label: Attribute[ConllRelation] = relationType is "OrgBased_In"
+    override def label: Property[ConllRelation] = relationType is "OrgBased_In"
   }
   object locatedInClassifier extends Learnable[ConllRelation](entityRelationDataModel) {
-    override def label: Attribute[ConllRelation] = relationType is "Located_In"
+    override def label: Property[ConllRelation] = relationType is "Located_In"
   }
 
   object orgConstraintClassifier extends ConstrainedClassifier[ConllRawToken, ConllRelation](entityRelationDataModel, orgClassifier) {

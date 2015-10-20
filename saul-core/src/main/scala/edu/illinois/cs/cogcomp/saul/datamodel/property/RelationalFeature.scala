@@ -1,17 +1,17 @@
-package edu.illinois.cs.cogcomp.saul.datamodel.attribute
+package edu.illinois.cs.cogcomp.saul.datamodel.property
 
 import edu.illinois.cs.cogcomp.lbjava.classify.{ Classifier, FeatureVector }
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
 
-import edu.illinois.cs.cogcomp.saul.datamodel.attribute.features.DataSensitiveLBJFeature
+import edu.illinois.cs.cogcomp.saul.datamodel.property.features.DataSensitiveLBJFeature
 
 import scala.reflect.ClassTag
 
 class RelationalFeature[HEAD <: AnyRef, CHILD <: AnyRef](
   val dataModel: DataModel,
-  val fts: List[Attribute[CHILD]]
+  val fts: List[Property[CHILD]]
 )(implicit val tag: ClassTag[HEAD], val cTag: ClassTag[CHILD])
-  extends Attribute[HEAD] {
+  extends Property[HEAD] {
 
   override type S = List[_]
 
@@ -26,10 +26,10 @@ class RelationalFeature[HEAD <: AnyRef, CHILD <: AnyRef](
       )
   }
 
-  override def makeClassifierWithName(name: String): Classifier = new DataSensitiveLBJFeature {
+  override def makeClassifierWithName(__name: String): Classifier = new DataSensitiveLBJFeature {
 
     this.containingPackage = "LBP_Package"
-    this.name = name
+    this.name = __name
 
     override var datamodel = dataModel
 

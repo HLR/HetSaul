@@ -1,4 +1,4 @@
-package edu.illinois.cs.cogcomp.saulexamples.nlp.SRL
+package edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling
 
 import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{ Constituent, Relation, TextAnnotation, TreeView }
@@ -26,8 +26,7 @@ object SRLSensors {
     ta.getView(ViewNames.SRL_VERB).getRelations.toList
   }
 
-  /** Property sensor
-    */
+  /** Property sensor */
   def lemmatizer(c: Constituent): String = {
     c.getLabel
   }

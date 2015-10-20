@@ -2,30 +2,27 @@ package edu.illinois.cs.cogcomp.saul.classifier
 
 import java.net.URL
 
-import edu.illinois.cs.cogcomp.core.io.IOUtils
 import edu.illinois.cs.cogcomp.lbjava.classify.{ Classifier, TestDiscrete }
-import edu.illinois.cs.cogcomp.lbjava.learn.Learner.Parameters
 import edu.illinois.cs.cogcomp.lbjava.learn.{ StochasticGradientDescent, SparsePerceptron, SparseAveragedPerceptron, Learner }
 import edu.illinois.cs.cogcomp.lbjava.parse.Parser
 import edu.illinois.cs.cogcomp.lbjava.util.ExceptionlessOutputStream
 import edu.illinois.cs.cogcomp.saul.TestContinuous
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
-import edu.illinois.cs.cogcomp.saul.datamodel.attribute.{ Attribute, AttributeWithWindow, CombinedDiscreteAttribute, RelationalFeature }
+import edu.illinois.cs.cogcomp.saul.datamodel.property._
 import edu.illinois.cs.cogcomp.saul.lbjrelated.LBJLearnerEquivalent
 import edu.illinois.cs.cogcomp.saul.parser.LBJIteratorParserScala
 
 import scala.reflect.ClassTag
 
-abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: Parameters = new Learner.Parameters)
-                                     (implicit tag: ClassTag[T]) extends LBJLearnerEquivalent {
+abstract class Learnable[T <: AnyRef](val datamodel: DataModel)(implicit tag: ClassTag[T]) extends LBJLearnerEquivalent {
 
   def getClassNameForClassifier = this.getClass.getCanonicalName
 
   def fromData = datamodel.getNodeWithType[T].getTrainingInstances
 
-  def feature: List[Attribute[T]] = datamodel.getFeaturesOf[T].toList
+  def feature: List[Property[T]] = datamodel.getFeaturesOf[T].toList
   def algorithm: String = "SparseNetwork"
-  val featureExtractor = new CombinedDiscreteAttribute[T](this.feature)
+  val featureExtractor = new CombinedDiscreteProperty[T](this.feature)
 
   val lbpFeatures: Classifier = {
     featureExtractor.classifier
@@ -38,17 +35,18 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
 
     // TODO: do caching instead of deleting caching when finished develop
 
-    val modelDir = parameters.modelDir
-    IOUtils.mkdir(modelDir)
-    IOUtils.rm(modelDir + getClassNameForClassifier + ".lc")
-    IOUtils.rm(modelDir + getClassNameForClassifier + ".lex")
+    import scala.sys.process._
+
+    ("rm ./models/" + getClassNameForClassifier + ".lc") !
+
+    ("rm ./models/" + getClassNameForClassifier + ".lex") !
 
     // Else we re train one (if that is what user want)
     //new SparsePerceptron(0.1,0,3.5)
     if (algorithm.equals("Regression")) {
       new StochasticGradientDescent() {
         if (label != null) {
-          val oracle = Attribute.entitiesToLBJFeature(label)
+          val oracle = Property.entitiesToLBJFeature(label)
           setLabeler(oracle)
         }
 
@@ -57,8 +55,8 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
         }
 
         // Looks like we have to build the lexicon
-        lcFilePath = new URL(new URL("file:"), modelDir + getClassNameForClassifier + ".lc")
-        lexFilePath = new URL(new URL("file:"), modelDir + getClassNameForClassifier + ".lex")
+        lcFilePath = new URL(new URL("file:"), "./models/" + getClassNameForClassifier + ".lc") //new java.net.URL("file:/home/kordjam/Downloads/mylbjtest/target/classes/Pclassifier_scala.lc")
+        lexFilePath = new URL(new URL("file:"), "./models/" + getClassNameForClassifier + ".lex") //new java.net.URL("file:/home/kordjam/Downloads/mylbjtest/target/classes/Pclassifier_scala.lex")
         val out1: ExceptionlessOutputStream = ExceptionlessOutputStream.openCompressedStream(lexFilePath)
         if (lexicon == null) out1.writeInt(0)
         else lexicon.write(out1)
@@ -68,14 +66,22 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
         out2.close()
         readLexiconOnDemand = true
 
-
+        //val p: SparseAveragedPerceptron.Parameters  =
+        // new SparseAveragedPerceptron.Parameters();
+        ///p.learningRate = .1;
+        //p.thickness = 3;
+        //p.thickness = {{ 1 -> 3 : .5 }};
+        // baseLTU = new SparseAveragedPerceptron(p);
+        //setParameters(p)
+        //Thickness(3)
+        //learningRate=0.1
       }
     } else if (algorithm.equals("SparsePerceptron")) {
       new SparsePerceptron() ////
       {
         // net=network
         if (label != null) {
-          val oracle = Attribute.entitiesToLBJFeature(label)
+          val oracle = Property.entitiesToLBJFeature(label)
           setLabeler(oracle)
         }
 
@@ -84,8 +90,8 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
         }
 
         // Looks like we have to build the lexicon
-        lcFilePath = new URL(new URL("file:"), modelDir + getClassNameForClassifier + ".lc")
-        lexFilePath = new URL(new URL("file:"), modelDir + getClassNameForClassifier + ".lex")
+        lcFilePath = new URL(new URL("file:"), "./models/" + getClassNameForClassifier + ".lc") //new java.net.URL("file:/home/kordjam/Downloads/mylbjtest/target/classes/Pclassifier_scala.lc")
+        lexFilePath = new URL(new URL("file:"), "./models/" + getClassNameForClassifier + ".lex") //new java.net.URL("file:/home/kordjam/Downloads/mylbjtest/target/classes/Pclassifier_scala.lex")
         val out1: ExceptionlessOutputStream = ExceptionlessOutputStream.openCompressedStream(lexFilePath)
         if (lexicon == null) out1.writeInt(0)
         else lexicon.write(out1)
@@ -109,7 +115,7 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
     {
       // net=network
       if (label != null) {
-        val oracle = Attribute.entitiesToLBJFeature(label)
+        val oracle = Property.entitiesToLBJFeature(label)
         setLabeler(oracle)
       }
 
@@ -118,8 +124,8 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
       }
 
       // Looks like we have to build the lexicon
-      lcFilePath = new URL(new URL("file:"), modelDir + getClassNameForClassifier + ".lc")
-      lexFilePath = new URL(new URL("file:"), modelDir + getClassNameForClassifier + ".lex")
+      lcFilePath = new URL(new URL("file:"), "./models/" + getClassNameForClassifier + ".lc") //new java.net.URL("file:/home/kordjam/Downloads/mylbjtest/target/classes/Pclassifier_scala.lc")
+      lexFilePath = new URL(new URL("file:"), "./models/" + getClassNameForClassifier + ".lex") //new java.net.URL("file:/home/kordjam/Downloads/mylbjtest/target/classes/Pclassifier_scala.lex")
       val out1: ExceptionlessOutputStream = ExceptionlessOutputStream.openCompressedStream(lexFilePath)
       if (lexicon == null) out1.writeInt(0)
       else lexicon.write(out1)
@@ -215,19 +221,16 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
   }
   def chunkData(ts: List[Iterable[T]], i: Int, curr: Int, acc: (Iterable[T], Iterable[T])): (Iterable[T], Iterable[T]) = {
     ts match {
-      case head :: more => {
+      case head :: more =>
         acc match {
-          case (train, test) => {
+          case (train, test) =>
             if (i == curr) {
               // we found the test part
               chunkData(more, i, curr + 1, (train, head))
             } else {
               chunkData(more, i, curr + 1, (head ++ train, test))
             }
-          }
         }
-
-      }
       case Nil => acc
     }
   }
@@ -245,23 +248,19 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
       (groups.head, Nil) :: Nil
     } else {
       (0 until k) map {
-        i =>
-          {
-            chunkData(groups, i, 0, (Nil, Nil))
-          }
+        i => chunkData(groups, i, 0, (Nil, Nil))
       }
     }
 
     def printTestResult(result: (String, (Double, Double, Double))): Unit = {
       result match {
-        case (label, (f1, precision, recall)) => {
+        case (label, (f1, precision, recall)) =>
           println(s"  $label    $f1    $precision     $recall   ")
-        }
       }
     }
 
     val results = loops.zipWithIndex map {
-      case ((trainingSet, testingSet), idx) => {
+      case ((trainingSet, testingSet), idx) =>
         println(s"Running fold $idx")
         println(s"Learn with ${trainingSet.size}")
         println(s"Test with ${testingSet.size}")
@@ -270,7 +269,6 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
         this.learn(10, trainingSet)
         val testResult = this.test(testingSet)
         testResult
-      }
     }
 
     def sumTuple(a: (Double, Double, Double), b: (Double, Double, Double)): (Double, Double, Double) = {
@@ -286,12 +284,11 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
     results.flatten.toList.groupBy({
       tu: (String, (Double, Double, Double)) => tu._1
     }).foreach({
-      case (label, l) => {
+      case (label, l) =>
         val t = l.length
         val avg = avgTuple(l.map(_._2).reduce(sumTuple), t)
 
         printTestResult((label, avg))
-      }
     })
   }
 
@@ -299,54 +296,54 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
   /** Labels
     * @return
     */
-  def label: Attribute[T]
+  def label: Property[T]
 
-  /** A windows of attributes
+  /** A windows of properties
     * @param before always negative (or 0)
     * @param after always positive (or 0)
     */
-  def windowWithIn[U <: AnyRef](before: Int, after: Int, att: List[Attribute[T]])(implicit uTag: ClassTag[U]): Attribute[T] = {
+  def windowWithIn[U <: AnyRef](before: Int, after: Int, properties: List[Property[T]])(implicit uTag: ClassTag[U]): Property[T] = {
     val fls = datamodel.getRelatedFieldsBetween[T, U]
-    getWindowWithFilters(before, after, fls.map(e => (t: T) => e.neighborsOf(t).head), att)
+    getWindowWithFilters(before, after, fls.map(e => (t: T) => e.neighborsOf(t).head), properties)
   }
 
-  def window(before: Int, after: Int)(att: List[Attribute[T]]): Attribute[T] = {
-    getWindowWithFilters(before, after, Nil, att)
+  def window(before: Int, after: Int)(properties: List[Property[T]]): Property[T] = {
+    getWindowWithFilters(before, after, Nil, properties)
   }
 
-  private def getWindowWithFilters(before: Int, after: Int, filters: Iterable[T => Any], att: List[Attribute[T]]): Attribute[T] = {
-    new AttributeWithWindow[T](this.datamodel, before, after, filters, att)
+  private def getWindowWithFilters(before: Int, after: Int, filters: Iterable[T => Any], properties: List[Property[T]]): Property[T] = {
+    new PropertyWithWindow[T](this.datamodel, before, after, filters, properties)
   }
 
-  def using(atts: List[Attribute[T]]*): List[Attribute[T]] = {
-    atts.toList.flatten
+  def using(properties: List[Property[T]]*): List[Property[T]] = {
+    properties.toList.flatten
   }
 
   def using(l: Learner): Learner = {
     l
   }
-  def nextWithIn[U <: AnyRef](att: List[Attribute[T]])(implicit uTag: ClassTag[U]): Attribute[T] = {
-    this.windowWithIn[U](0, 1, att.toList)
+  def nextWithIn[U <: AnyRef](properties: List[Property[T]])(implicit uTag: ClassTag[U]): Property[T] = {
+    this.windowWithIn[U](0, 1, properties.toList)
   }
 
-  def prevWithIn[U <: AnyRef](att: Attribute[T]*)(implicit uTag: ClassTag[U]): Attribute[T] = {
-    this.windowWithIn[U](-1, 0, att.toList)
+  def prevWithIn[U <: AnyRef](property: Property[T]*)(implicit uTag: ClassTag[U]): Property[T] = {
+    this.windowWithIn[U](-1, 0, property.toList)
   }
 
-  def nextOf(att: List[Attribute[T]]): Attribute[T] = {
-    window(0, 1)(att)
+  def nextOf(properties: List[Property[T]]): Property[T] = {
+    window(0, 1)(properties)
   }
 
-  def prevOf(att: List[Attribute[T]]): Attribute[T] = {
-    window(0, 1)(att)
+  def prevOf(properties: List[Property[T]]): Property[T] = {
+    window(0, 1)(properties)
   }
 
-  def relationalAttribute[U <: AnyRef](implicit uTag: ClassTag[U]): Attribute[T] = {
-    val fts: List[Attribute[U]] = this.datamodel.getAllAttributeOf[U]
-    relationalAttribute[U](fts)
+  def relationalProperty[U <: AnyRef](implicit uTag: ClassTag[U]): Property[T] = {
+    val fts: List[Property[U]] = this.datamodel.getAllPropertyOf[U]
+    relationalProperty[U](fts)
   }
-  def relationalAttribute[U <: AnyRef](ls: List[Attribute[U]])(implicit uTag: ClassTag[U]): Attribute[T] = {
-    val fts = this.datamodel.getAllAttributeOf[U]
+  def relationalProperty[U <: AnyRef](ls: List[Property[U]])(implicit uTag: ClassTag[U]): Property[T] = {
+    val fts = this.datamodel.getAllPropertyOf[U]
     new RelationalFeature[T, U](this.datamodel, fts)
   }
 }

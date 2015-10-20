@@ -1,6 +1,6 @@
 package edu.illinois.cs.cogcomp.saul.datamodel.node
 
-import edu.illinois.cs.cogcomp.saul.datamodel.attribute.features.discrete.DiscreteAttribute
+import edu.illinois.cs.cogcomp.saul.datamodel.property.features.discrete.DiscreteProperty
 import edu.illinois.cs.cogcomp.saul.datamodel.edge.Edge
 
 import scala.collection.mutable.{ Map => MutableMap, LinkedHashSet => MutableSet, ArrayBuffer }
@@ -27,10 +27,10 @@ class Node[T <: AnyRef](val tag: ClassTag[T]) {
   private val orderingMap = MutableMap[Int, T]()
   private val reverseOrderingMap = MutableMap[T, Int]()
 
-  def filterNode(attribute: DiscreteAttribute[T], value: String): Node[T] = {
+  def filterNode(property: DiscreteProperty[T], value: String): Node[T] = {
     val node = new Node[T](this.tag)
     node populate collections.filter {
-      attribute.sensor(_) == value
+      property.sensor(_) == value
     }.toSeq
     node
   }
@@ -85,19 +85,17 @@ class Node[T <: AnyRef](val tag: ClassTag[T]) {
     } else {
       /** relative not equal to 0 */
       this.reverseOrderingMap.get(t) match {
-        case Some(ord) => {
+        case Some(ord) =>
           val targetOrd = ord + relativePos
           this.orderingMap.get(targetOrd) match {
-            case Some(x) => {
+            case Some(x) =>
               if (underSameParent(t, x, filters)) {
                 Some(x)
               } else {
                 None
               }
-            }
             case None => None
           }
-        }
         case _ => None
       }
     }
@@ -153,7 +151,7 @@ class Node[T <: AnyRef](val tag: ClassTag[T]) {
 
   def getWithWindow(t: T, before: Int, after: Int, filters: Iterable[T => Any]): List[Option[T]] = {
     this.reverseOrderingMap.get(t) match {
-      case Some(myOrder) => {
+      case Some(myOrder) =>
         val start = myOrder + before
         val end = myOrder + after
         val result = (start to end).flatMap(this.orderingMap.get).filter {
@@ -177,10 +175,8 @@ class Node[T <: AnyRef](val tag: ClassTag[T]) {
           val middle = result map (Some(_))
           toPrepend ::: middle ::: toAppend
         }
-      }
-      case _ => {
-        throw new Exception("Can't found order of " + t.toString)
-      }
+      case _ =>
+        throw new Exception("Can't find order of " + t.toString)
     }
   }
 }

@@ -1,11 +1,11 @@
-package edu.illinois.cs.cogcomp.saul.datamodel.attribute
+package edu.illinois.cs.cogcomp.saul.datamodel.property
 
 import edu.illinois.cs.cogcomp.lbjava.classify.{ FeatureVector, Classifier => FeatureGenerator }
 import edu.illinois.cs.cogcomp.saul.lbjrelated.LBJClassifierEquivalent
 
 import scala.reflect.ClassTag
 
-trait Attribute[T] extends LBJClassifierEquivalent {
+trait Property[T] extends LBJClassifierEquivalent {
 
   val name: String
 
@@ -28,10 +28,10 @@ trait Attribute[T] extends LBJClassifierEquivalent {
 
 }
 
-object Attribute {
+object Property {
 
-  /** Transfer a list of attributes to a lbj classifier. */
-  def entitiesToLBJFeature[T](atts: Attribute[T]): FeatureGenerator = {
+  /** Transfer a list of properties to a lbj classifier. */
+  def entitiesToLBJFeature[T](atts: Property[T]): FeatureGenerator = {
     atts.classifier
   }
 }
