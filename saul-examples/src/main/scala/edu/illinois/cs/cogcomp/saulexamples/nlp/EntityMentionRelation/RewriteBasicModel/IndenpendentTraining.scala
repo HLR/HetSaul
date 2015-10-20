@@ -31,9 +31,9 @@ object IndenpendentTraining extends App {
   orgClassifier.test(tokens.getAllInstances)
   LocClassifier.learn(it)
   LocClassifier.test(tokens.getAllInstances)
-//  workForClassifier.learn(it)
-//  workForClassifier.test()
-//  LivesInClassifier.learn(it)
-//  LivesInClassifier.test()
+  //  workForClassifier.learn(it)
+  //  workForClassifier.test()
+  //  LivesInClassifier.learn(it)
+  //  LivesInClassifier.test()
 
 }
