@@ -2,11 +2,11 @@ package edu.illinois.cs.cogcomp.saul.datamodel
 
 import edu.illinois.cs.cogcomp.saul.datamodel.attribute.features.discrete._
 import edu.illinois.cs.cogcomp.saul.datamodel.attribute.features.real._
-import edu.illinois.cs.cogcomp.saul.datamodel.attribute.{ Attribute, EvaluatedAttribute }
+import edu.illinois.cs.cogcomp.saul.datamodel.attribute.{Attribute, EvaluatedAttribute}
+import edu.illinois.cs.cogcomp.saul.datamodel.edge.{Edge, Link}
 import edu.illinois.cs.cogcomp.saul.datamodel.node.Node
-import edu.illinois.cs.cogcomp.saul.datamodel.edge.{ Edge, Link }
 
-import scala.collection.mutable.{ Map => MutableMap, ListBuffer }
+import scala.collection.mutable.{ListBuffer, Map => MutableMap}
 import scala.reflect.ClassTag
 
 trait DataModel {

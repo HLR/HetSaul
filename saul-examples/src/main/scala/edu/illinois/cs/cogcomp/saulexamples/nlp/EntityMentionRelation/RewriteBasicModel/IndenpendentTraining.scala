@@ -1,9 +1,9 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.RewriteBasicModel
 
 import edu.illinois.cs.cogcomp.saulexamples.EntityMentionRelation.reader.Conll04_ReaderNew
-import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.RewriteBasicModel.entityRelationBasicDataModel._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.RewriteBasicModel.classifiers._
-import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.classifiers.LivesInClassifier
+import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.RewriteBasicModel.entityRelationBasicDataModel._
+
 import scala.collection.JavaConversions._
 
 object IndenpendentTraining extends App {
@@ -26,14 +26,14 @@ object IndenpendentTraining extends App {
   val it = 2
   println("Indepent Training with iteration " + it)
   PersonClassifier.learn(it)
-  PersonClassifier.test()
+  PersonClassifier.test(tokens.getAllInstances)
   orgClassifier.learn(it)
-  orgClassifier.test()
+  orgClassifier.test(tokens.getAllInstances)
   LocClassifier.learn(it)
-  LocClassifier.test()
-  workForClassifier.learn(it)
-  workForClassifier.test()
-  LivesInClassifier.learn(it)
-  LivesInClassifier.test()
+  LocClassifier.test(tokens.getAllInstances)
+//  workForClassifier.learn(it)
+//  workForClassifier.test()
+//  LivesInClassifier.learn(it)
+//  LivesInClassifier.test()
 
 }
