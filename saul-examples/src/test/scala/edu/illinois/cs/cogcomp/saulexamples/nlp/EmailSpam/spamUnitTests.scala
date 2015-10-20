@@ -1,6 +1,7 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.EmailSpam
 
 import edu.illinois.cs.cogcomp.saulexamples.data.Document
+import edu.illinois.cs.cogcomp.saulexamples.nlp.EmailSpam.spamClassifiers.spamClassifier
 import org.scalatest._
 
 import scala.collection.JavaConversions._
@@ -31,11 +32,18 @@ class spamUnitTests extends FlatSpec with Matchers {
   "getNodeWithType function" should "return the right object, given a type" in {
     spamDataModel.docs should be(spamDataModel.getNodeWithType[Document])
   }
+
+  "classifier " should "overfit" in {
+      val trainData = toyDataGeneratorObject.generateToyDocuments(1)
+      spamDataModel.docs populate trainData
+      spamClassifier.learn(30)
+      spamClassifier.classifier.discreteValue(trainData.head) should be (trainData.head.getLabel)
+  }
 }
 
 object toyDataGeneratorObject {
   def generateToyDocuments(numDocs: Int): IndexedSeq[Document] = {
     val documentString = "Saul or Soul; it is the question"
-    (0 to numDocs).map(_ => new Document(documentString.split(" ").toList))
+    (0 to numDocs).map(_ => new Document(documentString.split(" ").toList, "1"/*util.Random.nextInt(2).toString */))
   }
 }
