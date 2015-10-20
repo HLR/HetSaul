@@ -4,10 +4,7 @@ import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{ Constituent,
 import edu.illinois.cs.cogcomp.core.datastructures.trees.Tree
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
 
-/** The SRL data model which contains all the entities needed to support the structured problem.
-  *
-  * @author Christos Christodoulopoulos
-  */
+/** The SRL data model which contains all the entities needed to support the structured problem. */
 object SRLDataModel extends DataModel {
   val predicate = node[Constituent]
 

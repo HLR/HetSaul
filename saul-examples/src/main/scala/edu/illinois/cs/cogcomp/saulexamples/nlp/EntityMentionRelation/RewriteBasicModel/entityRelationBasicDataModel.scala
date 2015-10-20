@@ -68,7 +68,7 @@ object entityRelationBasicDataModel extends DataModel {
       }
   }
 
-  val relPos = discreteAttributesGeneratorOf[ConllRelation]('reltokenSurface) {
+  val relPos = discretePropertiesGeneratorOf[ConllRelation]('reltokenSurface) {
     rela: ConllRelation =>
       {
         val e1 = rela.e1

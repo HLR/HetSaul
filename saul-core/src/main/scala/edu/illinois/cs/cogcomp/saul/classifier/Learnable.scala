@@ -10,22 +10,21 @@ import edu.illinois.cs.cogcomp.lbjava.parse.Parser
 import edu.illinois.cs.cogcomp.lbjava.util.ExceptionlessOutputStream
 import edu.illinois.cs.cogcomp.saul.TestContinuous
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
-import edu.illinois.cs.cogcomp.saul.datamodel.attribute.{ Attribute, AttributeWithWindow, CombinedDiscreteAttribute, RelationalFeature }
+import edu.illinois.cs.cogcomp.saul.datamodel.property.{ RelationalFeature, PropertyWithWindow, CombinedDiscreteProperty, Property }
 import edu.illinois.cs.cogcomp.saul.lbjrelated.LBJLearnerEquivalent
 import edu.illinois.cs.cogcomp.saul.parser.LBJIteratorParserScala
 
 import scala.reflect.ClassTag
 
-abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: Parameters = new Learner.Parameters)
-                                     (implicit tag: ClassTag[T]) extends LBJLearnerEquivalent {
+abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: Parameters = new Learner.Parameters)(implicit tag: ClassTag[T]) extends LBJLearnerEquivalent {
 
   def getClassNameForClassifier = this.getClass.getCanonicalName
 
   def fromData = datamodel.getNodeWithType[T].getTrainingInstances
 
-  def feature: List[Attribute[T]] = datamodel.getFeaturesOf[T].toList
+  def feature: List[Property[T]] = datamodel.getFeaturesOf[T].toList
   def algorithm: String = "SparseNetwork"
-  val featureExtractor = new CombinedDiscreteAttribute[T](this.feature)
+  val featureExtractor = new CombinedDiscreteProperty[T](this.feature)
 
   val lbpFeatures: Classifier = {
     featureExtractor.classifier
@@ -48,7 +47,7 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
     if (algorithm.equals("Regression")) {
       new StochasticGradientDescent() {
         if (label != null) {
-          val oracle = Attribute.entitiesToLBJFeature(label)
+          val oracle = Property.entitiesToLBJFeature(label)
           setLabeler(oracle)
         }
 
@@ -83,7 +82,7 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
       {
         // net=network
         if (label != null) {
-          val oracle = Attribute.entitiesToLBJFeature(label)
+          val oracle = Property.entitiesToLBJFeature(label)
           setLabeler(oracle)
         }
 
@@ -117,7 +116,7 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
     {
       // net=network
       if (label != null) {
-        val oracle = Attribute.entitiesToLBJFeature(label)
+        val oracle = Property.entitiesToLBJFeature(label)
         setLabeler(oracle)
       }
 

@@ -5,6 +5,7 @@ import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{ Constituent, Sentence, TextAnnotation }
 import edu.illinois.cs.cogcomp.core.utilities.ResourceManager
 import edu.illinois.cs.cogcomp.curator.CuratorFactory
+import edu.illinois.cs.cogcomp.saulexamples.EntityMentionRelation.reader.GazeteerReader
 import edu.illinois.cs.cogcomp.saulexamples.data.Document
 
 import scala.collection.JavaConversions._
