@@ -43,7 +43,9 @@ trait PropertySet[T <: AnyRef, V] extends Iterable[V] {
   self =>
   def property: TypedProperty[T, V]
   def underlying: InstanceSet[T]
-  val instances: Iterable[V] = underlying.instances.map(property(_))
+  lazy val instances: Iterable[V] = underlying.instances.toSeq.map(property(_))
 
   override def iterator: Iterator[V] = instances.iterator
+
+  def counts = instances.groupBy(x => x).map(p => p._1 -> p._2.size).toMap
 }
