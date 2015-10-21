@@ -1,8 +1,8 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.FeatureExamples
 
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{ Sentence, TextAnnotation }
-import edu.illinois.cs.cogcomp.core.utilities.ResourceManager
 import edu.illinois.cs.cogcomp.curator.CuratorFactory
+import edu.illinois.cs.cogcomp.nlp.pipeline.IllinoisPipelineFactory
 import edu.illinois.cs.cogcomp.saulexamples.data.{ Document, DocumentReader }
 import edu.illinois.cs.cogcomp.saulexamples.nlp.sensors
 
@@ -12,11 +12,9 @@ import scala.collection.JavaConversions._
 object featureExamplesApp {
 
   def main(args: Array[String]): Unit = {
-    val config = "./saul-examples/config/caching-curator.properties"
-    val rm = new ResourceManager(config)
-    val annotatorService = CuratorFactory.buildCuratorClient(rm)
+    //    val annotatorService = CuratorFactory.buildCuratorClient()
 
-    // val annotatorService = IllinoisPipelineFactory.buildPipeline(rm)
+    val annotatorService = IllinoisPipelineFactory.buildPipeline()
     val data: List[Document] = new DocumentReader("./data/20newsToy/train").docs.toList.slice(1, 3)
 
     val a = sensors.textCollection(data) zip data.map(x => x.getGUID) // this generates a list of strings each member is a textual content of a document
