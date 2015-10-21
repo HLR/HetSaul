@@ -12,6 +12,8 @@ class Node[T <: AnyRef](val tag: ClassTag[T]) {
   val outgoing = new ArrayBuffer[Edge[T, _]]()
   val incoming = new ArrayBuffer[Edge[_, T]]()
 
+  val joinNodes = new ArrayBuffer[JoinNode[_, _]]()
+
   private val collections = MutableSet[T]()
 
   def getAllInstances: Iterable[T] = this.collections
@@ -60,6 +62,7 @@ class Node[T <: AnyRef](val tag: ClassTag[T]) {
       this.reverseOrderingMap += (t -> order)
       outgoing.foreach(_.populateUsingFrom(t, train))
       incoming.foreach(_.populateUsingTo(t, train))
+      joinNodes.foreach(_.addFromChild(this, t, train))
     }
   }
 
@@ -177,6 +180,41 @@ class Node[T <: AnyRef](val tag: ClassTag[T]) {
         }
       case _ =>
         throw new Exception("Can't find order of " + t.toString)
+    }
+  }
+}
+
+class JoinNode[A <: AnyRef, B <: AnyRef](val na: Node[A], val nb: Node[B], matcher: (A, B) => Boolean, tag: ClassTag[(A, B)]) extends Node[(A, B)](tag) {
+
+  def addFromChild[T <: AnyRef](node: Node[T], t: T, train: Boolean = true) = {
+    node match {
+      case this.na => matchAndAddChildrenA(t.asInstanceOf[A], train)
+      case this.nb => matchAndAddChildrenB(t.asInstanceOf[B], train)
+    }
+  }
+
+  private def matchAndAddChildrenA(a: A, train: Boolean = true): Unit = {
+    val instances = if (train) nb.getTrainingInstances else nb.getTestingInstances
+    for ((a, b) <- instances.filter(matcher(a, _)).map(a -> _)) {
+      if (!contains(a -> b))
+        this addInstance (a -> b, train)
+    }
+  }
+
+  private def matchAndAddChildrenB(b: B, train: Boolean = true): Unit = {
+    val instances = if (train) na.getTrainingInstances else na.getTestingInstances
+    for ((a, b) <- instances.filter(matcher(_, b)).map(_ -> b)) {
+      if (!contains(a -> b))
+        this addInstance (a -> b, train)
+    }
+  }
+
+  override def addInstance(t: (A, B), train: Boolean): Unit = {
+    assert(matcher(t._1, t._2))
+    if (!contains(t)) {
+      super.addInstance(t, train)
+      na.addInstance(t._1, train)
+      nb.addInstance(t._2, train)
     }
   }
 }
