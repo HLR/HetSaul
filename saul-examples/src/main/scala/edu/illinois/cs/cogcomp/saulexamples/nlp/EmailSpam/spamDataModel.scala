@@ -21,7 +21,7 @@ object spamDataModel extends DataModel {
       words.sliding(2).map(_.mkString("-")).toList
   }
 
-  val spamLable = discretePropertyOf[Document]('label) {
+  val spamLabel = discretePropertyOf[Document]('label) {
     x: Document => x.getLabel
   }
 }

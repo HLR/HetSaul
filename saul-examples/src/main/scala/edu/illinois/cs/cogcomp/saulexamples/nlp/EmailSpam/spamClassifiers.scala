@@ -8,7 +8,7 @@ import edu.illinois.cs.cogcomp.saul.classifier.Learnable
 object spamClassifiers {
   object spamClassifier extends Learnable[Document](spamDataModel) {
 
-    def label: Property[Document] = spamLable is "spam"
+    def label: Property[Document] = spamLabel
     override def algorithm = "SparseNetwork"
     //override def feature = using(
     //word,phrase,containsSubPhraseMent,containsSubPhraseIng,

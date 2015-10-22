@@ -34,16 +34,16 @@ class spamUnitTests extends FlatSpec with Matchers {
   }
 
   "classifier " should "overfit" in {
-      val trainData = toyDataGeneratorObject.generateToyDocuments(1)
-      spamDataModel.docs populate trainData
-      spamClassifier.learn(30)
-      spamClassifier.classifier.discreteValue(trainData.head) should be (trainData.head.getLabel)
+    val trainData = toyDataGeneratorObject.generateToyDocuments(1)
+    spamDataModel.docs populate trainData
+    spamClassifier.learn(30)
+    spamClassifier.classifier.discreteValue(trainData.head) should be(trainData.head.getLabel)
   }
 }
 
 object toyDataGeneratorObject {
   def generateToyDocuments(numDocs: Int): IndexedSeq[Document] = {
     val documentString = "Saul or Soul; it is the question"
-    (0 to numDocs).map(_ => new Document(documentString.split(" ").toList, "1"/*util.Random.nextInt(2).toString */))
+    (0 to numDocs).map(_ => new Document(documentString.split(" ").toList, util.Random.nextInt(2).toString))
   }
 }
