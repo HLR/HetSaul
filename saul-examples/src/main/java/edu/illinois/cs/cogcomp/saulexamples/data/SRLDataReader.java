@@ -5,6 +5,7 @@ import edu.illinois.cs.cogcomp.core.datastructures.textannotation.TextAnnotation
 import edu.illinois.cs.cogcomp.nlp.corpusreaders.PropbankReader;
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLDataModel;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -17,13 +18,15 @@ public class SRLDataReader {
 	public List<TextAnnotation> textAnnotations;
 
 	public SRLDataReader(String treebankHome, String propbankHome) throws Exception {
-		reader = new PropbankReader(treebankHome, propbankHome, ViewNames.SRL_VERB, true);
+        textAnnotations = new ArrayList<>();
+		reader = new PropbankReader(treebankHome, propbankHome, new String[]{"00"}, ViewNames.SRL_VERB, true);
 	}
 
 	public void readData() {
 		while (reader.hasNext()) {
 			TextAnnotation ta = reader.next();
-			assert ta.hasView(ViewNames.SRL_VERB);
+			if (!ta.hasView(ViewNames.SRL_VERB))
+				continue;
 
 			textAnnotations.add(ta);
 		}

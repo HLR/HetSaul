@@ -1,24 +1,24 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling
 
+import edu.illinois.cs.cogcomp.saulexamples.ExamplesConfigurator
 import edu.illinois.cs.cogcomp.saulexamples.data.SRLDataReader
+import SRLClassifiers.predicateClassifier
+import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLDataModel._
 
 import scala.collection.JavaConversions._
 
-/** The main object for the SRL project. Reads in the data and initiates the training.
-  *
-  * @author Christos Christodoulopoulos
-  */
+/** The main object for the SRL project. Reads in the data and initiates the training. */
 object SRLApplication {
 
-  // TODO set these
-  val treebankHome: String = ""
-  val propbankHome: String = ""
-
   def main(args: Array[String]) {
-    import SRLDataModel._
-    val reader = new SRLDataReader(treebankHome, propbankHome)
+    val rm = new ExamplesConfigurator().getDefaultConfig
+    val reader = new SRLDataReader(
+      rm.getString(ExamplesConfigurator.TREEBANK_HOME.getFirst),
+      rm.getString(ExamplesConfigurator.PROPBANK_HOME.getFirst)
+    )
     reader.readData()
-
     textAnnotation.populate(reader.textAnnotations.toList)
+    predicateClassifier.learn(2)
+
   }
 }
