@@ -1,6 +1,6 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.EmailSpam
 
-import edu.illinois.cs.cogcomp.saulexamples.data.{ DocumentReader, Document }
+import edu.illinois.cs.cogcomp.saulexamples.data.DocumentReader
 import edu.illinois.cs.cogcomp.saulexamples.nlp.EmailSpam.spamClassifiers.spamClassifier
 
 import scala.collection.JavaConversions._
@@ -14,6 +14,6 @@ object spamApp {
     spamDataModel.docs populate trainData
     spamClassifier.learn(30)
     spamDataModel.testWith(testData)
-    spamClassifier.test()
+    spamClassifier.test(testData)
   }
 }

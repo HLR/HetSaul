@@ -28,16 +28,16 @@ to classify text documents as either Spam or Not Spam was also created.
 
 ## Conceptual Structure
 
-Each Saul program is a general purpose Scala program in which Saul DSL provides a number of high level constructs to design application programs at a high level. high level and declaratively. 
-The provided constructs are design to enable programing for the following conceptual components of each application that uses learning and inference.
+Each Saul program is a general purpose Scala program in which Saul DSL provides a number of high level constructs to design application programs at a high level and declaratively.
+The provided constructs are designed to enable programing for the following conceptual components of each application that uses learning and inference.
 
 ### Data Model: 
 The data model in Saul conceptually is represented with a graph containing nodes, edges, 
-and their properties. Defining entities with the following constructs:
+and their properties.
 
-  -`Node`: The different types of objects, for example documents, sound files, pictures, text documents, etc.
-  -`Edge`: In a graph with nodes of type `Node`, their connections can be defined with `Edge`s. 
-  -`Property`: The attributes of a node, for example a node of type `Document` can have properties 
+  -`Node`: The graph contains different types of nodes to represent various data elements i.e. objects. For example nodes can represent documents, sound files, pictures, text documents, etc.
+  -`Edge`: The `Node`s in the graph are connected to each other via `Edge`s.
+  -`Property`: The nodes can have properties, for example a node of type `Document` can have properties
   such as `Title`, `Subject`, `Author`, `Body`, etc.  
   
 #### Defining nodes
@@ -52,7 +52,7 @@ val tokens = node[ConllRawToken](
 )
 ```
 
-This line of code defines an entity of type `ConllRawToken` and names it as 'tokens' and defines a 'primary key' for it based on the original variables in the original ConllRawToken class.
+This line of code defines a node of type `ConllRawToken` and names it as 'tokens' and defines a 'primary key' for it based on the original variables in the original ConllRawToken class.
 
 #### Defining properties
 This is done via several constructs depending on the type of the feature for discrete features for example the `propertyOf` is used,

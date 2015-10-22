@@ -17,9 +17,7 @@ object IndenpendentTraining extends App {
     sentences populate trainSentences
     tokens populate trainTokens
     pairs populate trainRelations
-    testWith(trainTokens)
-    testWith(trainRelations)
-    testWith(trainSentences)
+
   }
 
   populate_ER_graph
@@ -31,9 +29,9 @@ object IndenpendentTraining extends App {
   orgClassifier.test(tokens.getAllInstances)
   LocClassifier.learn(it)
   LocClassifier.test(tokens.getAllInstances)
-  //  workForClassifier.learn(it)
-  //  workForClassifier.test()
-  //  LivesInClassifier.learn(it)
-  //  LivesInClassifier.test()
+  workForClassifier.learn(it)
+  workForClassifier.test(pairs.getAllInstances)
+  LivesInClassifier.learn(it)
+  LivesInClassifier.test(pairs.getAllInstances)
 
 }
