@@ -2,7 +2,7 @@
 [![Build Status](http://128.174.241.91:8080/buildStatus/icon?job=saul)](http://128.174.241.91:8080/job/saul)
 
 [![Travis Build Status](https://magnum.travis-ci.com/IllinoisCogComp/saul.svg?token=sh2TUxymJtwGcwzpH5oQ&branch=master)](https://magnum.travis-ci.com/IllinoisCogComp/saul)
-
+ 
 The project contains two modules. See the readme files for each module: 
 
 - Saul-Core: [The README of the core of the Saul project](saul-core/README.md)  
