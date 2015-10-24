@@ -7,23 +7,23 @@ import edu.illinois.cs.cogcomp.saulexamples.nlp.commonSensors
 
 import scala.collection.JavaConversions._
 
-object modelWithRawData extends DataModel {
+object modelWithRawData {
 
-  val rawText = node[Document]
-  val annotatedText = node[TextAnnotation]
-  val sentences = node[Sentence]
-  val rawToAnn = edge(rawText, annotatedText)
-  val textToCon = edge(annotatedText, sentences)
-  textToCon.addSensor(commonSensors.getSentences(_))
-  rawToAnn.addSensor(commonSensors.annotateWithCurator(_))
+  val model = new DataModel {
+    val rawText = node[Document]
+    val annotatedText = node[TextAnnotation]
+    val sentences = node[Sentence]
+    val rawToAnn = edge(rawText, annotatedText)
+    val textToCon = edge(annotatedText, sentences)
+    textToCon.addSensor(commonSensors.getSentences(_))
+    rawToAnn.addSensor(commonSensors.annotateWithCurator(_))
 
-  val docFeatureExample = discretePropertyOf[TextAnnotation]('doc) {
-    x: TextAnnotation => x.getNumberOfSentences.toString
+    val docFeatureExample = discretePropertyOf[TextAnnotation]('doc) {
+      x: TextAnnotation => x.getNumberOfSentences.toString
+    }
   }
-  // textToCon.addSensor(sensors.alignment:(TextAnnotation,Sentence)=>Boolean)
-}
 
-object myApp {
+  import model._
 
   def main(args: Array[String]) {
     import modelWithRawData._

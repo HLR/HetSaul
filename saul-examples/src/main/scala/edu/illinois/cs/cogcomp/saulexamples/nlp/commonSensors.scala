@@ -49,14 +49,11 @@ object commonSensors {
   }
 
   def annotateWithCurator(document: Document): TextAnnotation = {
-    val config = "./saul-examples/config/caching-curator.properties"
-    val rm = new ResourceManager(config)
-    val annotatorService = CuratorFactory.buildCuratorClient(rm)
     val content = documentContent(document)
-    processDocumentWith(annotatorService, "corpus", document.getGUID, content)
+    annotateRawWithCurator(content, document.getGUID)
   }
 
-  def annotateWithCurator2(content: String, id: String): TextAnnotation = {
+  def annotateRawWithCurator(content: String, id: String): TextAnnotation = {
     val annotatorService = CuratorFactory.buildCuratorClient()
     processDocumentWith(annotatorService, "corpus", id, content)
   }

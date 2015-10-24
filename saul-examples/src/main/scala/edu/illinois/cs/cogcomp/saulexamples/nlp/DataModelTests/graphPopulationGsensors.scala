@@ -10,10 +10,13 @@ object graphPopulationGsensors {
 
   def main(args: Array[String]): Unit = {
 
-    val dat: List[Document] = new DocumentReader("./data/20newsToy/train").docs.toList.slice(1, 3)
-    val taList = dat.map(x => commonSensors.annotateWithCurator(x))
+    val data = new DocumentReader("./data/20newsToy/train").docs.toList.slice(1, 3)
+    val taList = data.map(commonSensors.annotateWithCurator)
+
+    // populate
     modelWithSensors.document.populate(taList)
-    //The below line uses a generator sensor
+
+    // The below line uses a generator sensor
     modelWithSensors.docTosen populateWith (commonSensors.getSentences(_))
     modelWithSensors.docTosen populateWith ((x: TextAnnotation) => commonSensors.getSentences(x).headOption)
     //TODO: make the below line work, to just use the edge name and depending on the type of sensor a generator or matching edge will be called.

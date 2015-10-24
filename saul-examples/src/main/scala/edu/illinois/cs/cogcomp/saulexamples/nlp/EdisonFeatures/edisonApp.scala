@@ -23,7 +23,7 @@ object edisonApp {
 
     val documentList = documentIndexPair.map {
       case (doc, id) =>
-        commonSensors.annotateWithCurator2(doc, id)
+        commonSensors.annotateRawWithCurator(doc, id)
       //commonSensors.annotateWithPipeline(doc, id)
     }
 

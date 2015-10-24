@@ -9,9 +9,11 @@ import scala.collection.JavaConversions._
 object graphPopulationKeys {
 
   def main(args: Array[String]): Unit = {
-    val dat: List[Document] = new DocumentReader("./data/20newsToy/train").docs.toList.slice(1, 3)
-    val taList = dat.map(x => commonSensors.annotateWithCurator(x))
+    val data = new DocumentReader("./data/20newsToy/train").docs.toList.slice(1, 3)
+    val taList = data.map(x => commonSensors.annotateWithCurator(x))
     val sentenceList = taList.flatMap(x => x.sentences())
+
+    /** population */
     modelWithKeys.document populate taList
     modelWithKeys.sentence populate sentenceList
 
@@ -22,6 +24,5 @@ object graphPopulationKeys {
     println(s"x2.size = ${x2.size}")
 
     print("finished")
-
   }
 }
