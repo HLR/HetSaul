@@ -55,9 +55,11 @@ object entityRelationDataModel extends DataModel {
     token: ConllRawToken => personGazetSensor.containsAny(token).toString
   }
 
-  val wordLen = realPropertiesOf[ConllRawToken]('wordLen)(_.getLength)
+  val wordLen = property[ConllRawToken]("wordLen") {
+    token: ConllRawToken => token.getLength
+  }
 
-  val relFeature = discretePropertiesGeneratorOf[ConllRelation]('reltokenSurface) {
+  val relFeature = property[ConllRelation]("reltokenSurface") {
     token: ConllRelation =>
       "w1-word-" + token.e1.phrase :: "w2-word-" + token.e2.phrase ::
         "w1-pos-" + token.e1.POS :: "w2-pos-" + token.e2.POS ::
@@ -69,19 +71,19 @@ object entityRelationDataModel extends DataModel {
         Nil
   }
 
-  val relPos = discretePropertiesGeneratorOf[ConllRelation]('reltokenSurface) {
+  val relPos = property[ConllRelation]("reltokenSurface") {
     rela: ConllRelation =>
       val e1 = rela.e1
       val e2 = rela.e2
 
-      this.getNodeWithType[ConllRawToken].getWithWindow(e1, -2, 2, _.sentId).zipWithIndex.map({
+      this.getNodeWithType[ConllRawToken].getWithWindow(e1, -2, 2, _.sentId).zipWithIndex.map {
         case (Some(t), idx) => s"left-$idx-pos-${t.POS} "
         case (None, idx) => s"left-$idx-pos-EMPTY "
-      }) ++
-        this.getNodeWithType[ConllRawToken].getWithWindow(e2, -2, 2, _.sentId).zipWithIndex.map({
+      } ++
+        this.getNodeWithType[ConllRawToken].getWithWindow(e2, -2, 2, _.sentId).zipWithIndex.map {
           case (Some(t), idx) => s"right-$idx-pos-${t.POS} "
           case (None, idx) => s"right-$idx-pos-EMPTY} "
-        })
+        }
   }
 
   /** Labelers */

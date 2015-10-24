@@ -143,7 +143,7 @@ abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val dm: DataMo
 
   def cName: String = this.getClass.getName
   // TODO: Pick a better name
-  def lbjClassifier = dm.rangedDiscretePropertyOf[T](Symbol(cName))("*", "*") {
+  def lbjClassifier = dm.property[T](cName)("*", "*") {
     x: T => buildWithConstrain(subjectTo.createInferenceCondition[T](this.dm).convertToType[T], onClassifier)(x)
   }
 

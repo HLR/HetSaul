@@ -43,20 +43,17 @@ object entityRelationClassifiers {
       )), word, phrase, containsSubPhraseMent, containsSubPhraseIng,
       containsInPersonList, wordLen, containsInCityList
     )
-
   }
 
-  val ePipe = discretePropertiesGeneratorOf[ConllRelation]('e1pipe) {
-    rel =>
-      {
-        "e1-org: " + orgClassifier.discreteValue(rel.e1) ::
-          "e1-per: " + PersonClassifier.discreteValue(rel.e1) ::
-          "e1-loc: " + LocClassifier.discreteValue(rel.e1) ::
-          "e2-org: " + orgClassifier.discreteValue(rel.e1) ::
-          "e2-per: " + PersonClassifier.discreteValue(rel.e1) ::
-          "e2-loc: " + LocClassifier.discreteValue(rel.e1) ::
-          Nil
-      }
+  val ePipe = property[ConllRelation]("e1pipe") {
+    rel: ConllRelation =>
+      "e1-org: " + orgClassifier.discreteValue(rel.e1) ::
+        "e1-per: " + PersonClassifier.discreteValue(rel.e1) ::
+        "e1-loc: " + LocClassifier.discreteValue(rel.e1) ::
+        "e2-org: " + orgClassifier.discreteValue(rel.e1) ::
+        "e2-per: " + PersonClassifier.discreteValue(rel.e1) ::
+        "e2-loc: " + LocClassifier.discreteValue(rel.e1) ::
+        Nil
   }
 
   object workForClassifier extends Learnable[ConllRelation](entityRelationDataModel) {

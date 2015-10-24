@@ -10,15 +10,19 @@ import scala.collection.JavaConversions._
 object modelWithRawData {
 
   val model = new DataModel {
+    /** Nodes */
     val rawText = node[Document]
     val annotatedText = node[TextAnnotation]
     val sentences = node[Sentence]
+
+    /** Edges */
     val rawToAnn = edge(rawText, annotatedText)
     val textToCon = edge(annotatedText, sentences)
     textToCon.addSensor(commonSensors.getSentences(_))
     rawToAnn.addSensor(commonSensors.annotateWithCurator(_))
 
-    val docFeatureExample = discretePropertyOf[TextAnnotation]('doc) {
+    /** Properties */
+    val docFeatureExample = property[TextAnnotation]("doc") {
       x: TextAnnotation => x.getNumberOfSentences.toString
     }
   }
