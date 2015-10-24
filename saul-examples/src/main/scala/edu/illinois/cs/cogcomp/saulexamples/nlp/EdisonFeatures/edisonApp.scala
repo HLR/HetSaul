@@ -1,7 +1,9 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.EdisonFeatures
 
+import edu.illinois.cs.cogcomp.core.datastructures.textannotation.TextAnnotation
 import edu.illinois.cs.cogcomp.curator.CuratorFactory
 import edu.illinois.cs.cogcomp.nlp.pipeline.IllinoisPipelineFactory
+import edu.illinois.cs.cogcomp.nlp.utilities.BasicTextAnnotationBuilder
 import edu.illinois.cs.cogcomp.saulexamples.data.{ Document, DocumentReader }
 import edu.illinois.cs.cogcomp.saulexamples.nlp.commonSensors
 
@@ -78,5 +80,29 @@ object edisonApp {
     println(sentenceContentFromDoc.toSet == sentencesContentFromCons.toSet)
     println(docContentFromSentence.toSet == docContentFromCons.toSet)
     println(consContentFromSentence.toSet == consContentFromDocs.toSet)
+  }
+}
+
+object toyDataGenerator {
+  val documentString = "Saul or Soul; that is the question"
+  def generateToyDocuments(numDocs: Int): IndexedSeq[Document] = {
+    (1 to numDocs).map(_ => new Document(documentString.split(" ").toList, util.Random.nextInt(2).toString))
+  }
+
+  def generateToyTextAnnotation(numDocs: Int): List[TextAnnotation] = {
+    (1 to numDocs).map { _ =>
+      val numSentences = 5
+      val documentsTokenized = for (i <- 1 to numSentences)
+        yield documentString.split(" ")
+      val a = BasicTextAnnotationBuilder.createTextAnnotationFromTokens(documentsTokenized)
+      println(a.getAvailableViews)
+      // TODO: add sentences
+      println(a.sentences().size())
+      a
+    }.toList
+  }
+
+  def main(args: Array[String]): Unit = {
+    generateToyTextAnnotation(3)
   }
 }

@@ -1,19 +1,20 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.EdisonFeatures
 
-import edu.illinois.cs.cogcomp.saulexamples.nlp.EmailSpam.toyDataGenerator
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{ TextAnnotation, Sentence }
 import edu.illinois.cs.cogcomp.saulexamples.nlp.commonSensors
 import org.scalatest._
 
-class EdisonFeaturesUnitTest extends FlatSpec with Matchers {
+import scala.collection.JavaConversions._
 
-  import edisonDataModel._
+class EdisonFeaturesUnitTest extends FlatSpec with Matchers {
 
   val documentList: List[TextAnnotation] = toyDataGenerator.generateToyTextAnnotation(3)
 
-  val sentenceList: List[Sentence] = documentList.map(_.sentences()).flatten
+  val sentenceList = documentList.flatMap(_.sentences())
 
   val constituentList = sentenceList.map(_.getSentenceConstituent)
+
+  import edisonDataModel._
 
   /** instantiating nodes */
   documents.populate(documentList)
@@ -68,3 +69,4 @@ class EdisonFeaturesUnitTest extends FlatSpec with Matchers {
     consContentFromSentence.toSet should be(consContentFromDocs.toSet)
   }
 }
+
