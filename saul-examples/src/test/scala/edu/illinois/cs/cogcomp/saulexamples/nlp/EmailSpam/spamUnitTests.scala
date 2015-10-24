@@ -6,7 +6,7 @@ import org.scalatest._
 
 import scala.collection.JavaConversions._
 
-class spamUnitTests extends FlatSpec with Matchers {
+class SpamUnitTests extends FlatSpec with Matchers {
   /** testing population of collections inside `Node` */
   "spamDataModel.doc" should "have correct number of objects in docs by adding in collection " +
     "from Node" in {

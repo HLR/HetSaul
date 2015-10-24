@@ -19,21 +19,15 @@ object edisonDataModel extends DataModel {
     x: Constituent => x.getLabel
   }
 
-  val constituentAddress = property[Constituent]("address") {
+  val constituentContent = property[Constituent]("consContent") {
     x: Constituent => x.getSpan.toString
   }
 
-  val constituentViewName = property[Constituent]("constituentViewName") {
-    x: Constituent => x.getViewName
+  val documentContent = property[TextAnnotation]("docContent") {
+    x: TextAnnotation => x.toString
   }
 
-  val relationViewName = property[Relation]("relationVeiwName") {
-    x: Relation => x.getSource.getViewName
-  }
-  val docNumSentences = property[TextAnnotation]("doc") {
-    x: TextAnnotation => x.getNumberOfSentences.toString
-  }
-  val sentenceContent = property[Sentence]("sentnce") {
+  val sentenceContent = property[Sentence]("sentenceContent") {
     x: Sentence => x.getText
   }
 

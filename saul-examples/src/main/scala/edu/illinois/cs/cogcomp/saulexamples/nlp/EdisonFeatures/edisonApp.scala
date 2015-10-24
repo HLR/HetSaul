@@ -17,14 +17,13 @@ object edisonApp {
 
     val data: List[Document] = new DocumentReader("./data/20newsToy/train").docs.toList.slice(1, 3)
 
-    println(data.size)
-
     /** this generates a list of strings each member is a textual content of a document */
     val documentIndexPair = commonSensors.textCollection(data).zip(data.map(_.getGUID))
 
     val documentList = documentIndexPair.map {
-      case (doc, idx) =>
-        commonSensors.annotateWithPipeline(doc, idx)
+      case (doc, id) =>
+        commonSensors.annotateWithCurator2(doc, id)
+      //commonSensors.annotateWithPipeline(doc, id)
     }
 
     val sentenceList = documentList.flatMap(_.sentences())
@@ -45,7 +44,7 @@ object edisonApp {
 
     docToCons.populateWith(commonSensors.textAnnotationConstituentAlignment(_, _))
 
-    /** query nodes */
+    /** query edges */
     val sentencesQueriedFromDocs = docToSen.forward.neighborsOf(documentList.head)
 
     val docsQueriedFromSentences = docToSen.backward.neighborsOf(sentenceList.head)
@@ -58,12 +57,27 @@ object edisonApp {
 
     val docsQueriesFromCons = docToCons.backward.neighborsOf(constituentList.head)
 
-    println(sentencesQueriedFromDocs.mkString == sentencesQueriesFromCons.mkString)
+    println(sentencesQueriedFromDocs.map(_.toString).toSet == consQueriesFromDocs.map(_.toString).toSet)
 
-    println(consQueriesFromDocs.mkString == consQueriesFromSentences.mkString)
+    println(sentencesQueriesFromCons.map(_.toString).toSet == consQueriesFromSentences.map(_.toString).toSet)
 
-    println(docsQueriedFromSentences.mkString == docsQueriesFromCons.mkString)
+    println(docsQueriedFromSentences.map(_.toString).toSet == docsQueriesFromCons.map(_.toString).toSet)
 
-    // TODO(khashab2): add unit tests for these examples
+    /** querty properties */
+    val sentenceContentFromDoc = docToSen.to().prop(sentenceContent)
+
+    val sentencesContentFromCons = senToCons.from().prop(sentenceContent)
+
+    val docContentFromSentence = docToSen.from().prop(documentContent)
+
+    val docContentFromCons = docToCons.from().prop(documentContent)
+
+    val consContentFromSentence = senToCons.to().prop(constituentContent)
+
+    val consContentFromDocs = docToCons.to().prop(constituentContent)
+
+    println(sentenceContentFromDoc.toSet == sentencesContentFromCons.toSet)
+    println(docContentFromSentence.toSet == docContentFromCons.toSet)
+    println(consContentFromSentence.toSet == consContentFromDocs.toSet)
   }
 }

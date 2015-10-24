@@ -16,13 +16,8 @@ object entityRelationDataModel extends DataModel {
   val sentences = node[ConllRawSentence]
 
   val pairedRelations = node[ConllRelation]
-  //'e1id -> ((t: ConllRelation) => String.valueOf(t.sentId) + ":" + String.valueOf(t.wordId1)), // String.valueOf(t.sentId)+ ":" + String.valueOf(t.wordId1)),
-  //'e2id -> ((t: ConllRelation) => String.valueOf(t.sentId) + ":" + String.valueOf(t.wordId2))
 
-  // val RelationToToken = oneToManyRelationOf[ConllRelation,ConllRawToken]('contain)(('sid,'sid))
-
-  /** Access method definitions */
-
+  /** Edge definitions */
   val RelationToPer = edge(tokens, pairedRelations, 'e1id)
   //('sid === 'sid, 'e1id === 'wordid) //TODO check the runtime problem with the new edge implementation
   val RelationToOrg = edge(tokens, pairedRelations, 'e2id)
@@ -30,7 +25,6 @@ object entityRelationDataModel extends DataModel {
   val tokenContainsInSentence = edge(tokens, pairedRelations, 'sid) //('sid === 'sid)//TODO check the runtime problem with the new edge implementation
 
   /** Properties */
-
   val pos = discretePropertiesGeneratorOf[ConllRawToken]('pos) {
     t: ConllRawToken => t.POS :: Nil
   }

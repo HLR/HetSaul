@@ -26,5 +26,4 @@ object modelWithKeys extends DataModel {
   /** Edge Types */
   val docTosen = edge(document, sentence, 'dTos)
   docTosen.populateWith((d, s) => d.getId == s.getSentenceConstituent.getTextAnnotation.getId)
-
 }

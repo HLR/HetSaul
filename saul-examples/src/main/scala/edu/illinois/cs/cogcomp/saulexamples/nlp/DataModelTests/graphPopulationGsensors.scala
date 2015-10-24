@@ -28,6 +28,5 @@ object graphPopulationGsensors {
     println(s"x2.size = ${x2.size}")
 
     print("finished")
-
   }
 }

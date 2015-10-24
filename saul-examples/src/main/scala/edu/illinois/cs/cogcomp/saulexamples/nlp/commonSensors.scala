@@ -56,6 +56,11 @@ object commonSensors {
     processDocumentWith(annotatorService, "corpus", document.getGUID, content)
   }
 
+  def annotateWithCurator2(content: String, id: String): TextAnnotation = {
+    val annotatorService = CuratorFactory.buildCuratorClient()
+    processDocumentWith(annotatorService, "corpus", id, content)
+  }
+
   def annotateWithPipeline(content: String, id: String): TextAnnotation = {
     val annotatorService = IllinoisPipelineFactory.buildPipeline()
     processDocumentWith(annotatorService, "corpus", id, content)

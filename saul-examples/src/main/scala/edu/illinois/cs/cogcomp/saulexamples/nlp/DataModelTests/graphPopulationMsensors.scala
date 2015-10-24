@@ -1,8 +1,5 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.DataModelTests
 
-/** Created by Parisa on 10/2/15.
-  */
-
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{ Sentence, TextAnnotation }
 import edu.illinois.cs.cogcomp.saulexamples.data.{ Document, DocumentReader }
 import edu.illinois.cs.cogcomp.saulexamples.nlp.commonSensors
@@ -30,5 +27,4 @@ object graphPopulationMsensors {
 
     print("finished")
   }
-
 }
