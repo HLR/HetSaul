@@ -1,6 +1,5 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.EdisonFeatures
 
-import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{ Constituent, Sentence, TextAnnotation }
 import edu.illinois.cs.cogcomp.curator.CuratorFactory
 import edu.illinois.cs.cogcomp.nlp.pipeline.IllinoisPipelineFactory
 import edu.illinois.cs.cogcomp.saulexamples.data.{ Document, DocumentReader }
