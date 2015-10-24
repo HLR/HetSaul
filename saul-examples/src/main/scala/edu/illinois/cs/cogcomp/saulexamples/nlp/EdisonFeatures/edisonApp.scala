@@ -1,0 +1,69 @@
+package edu.illinois.cs.cogcomp.saulexamples.nlp.EdisonFeatures
+
+import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{ Constituent, Sentence, TextAnnotation }
+import edu.illinois.cs.cogcomp.curator.CuratorFactory
+import edu.illinois.cs.cogcomp.nlp.pipeline.IllinoisPipelineFactory
+import edu.illinois.cs.cogcomp.saulexamples.data.{ Document, DocumentReader }
+import edu.illinois.cs.cogcomp.saulexamples.nlp.commonSensors
+
+import scala.collection.JavaConversions._
+
+/** We populate the data and use features in the application below. */
+object edisonApp {
+
+  def main(args: Array[String]): Unit = {
+
+    import edisonDataModel._
+
+    val data: List[Document] = new DocumentReader("./data/20newsToy/train").docs.toList.slice(1, 3)
+
+    println(data.size)
+
+    /** this generates a list of strings each member is a textual content of a document */
+    val documentIndexPair = commonSensors.textCollection(data).zip(data.map(_.getGUID))
+
+    val documentList = documentIndexPair.map {
+      case (doc, idx) =>
+        commonSensors.annotateWithPipeline(doc, idx)
+    }
+
+    val sentenceList = documentList.flatMap(_.sentences())
+
+    val constituentList = sentenceList.map(_.getSentenceConstituent)
+
+    /** instantiating nodes */
+    documents.populate(documentList)
+
+    sentences.populate(sentenceList)
+
+    constituents.populate(constituentList)
+
+    /** instantiating edges */
+    docToSen.populateWith(commonSensors.textAnnotationSentenceAlignment(_, _))
+
+    senToCons.populateWith(commonSensors.sentenceConstituentAlignment(_, _))
+
+    docToCons.populateWith(commonSensors.textAnnotationConstituentAlignment(_, _))
+
+    /** query nodes */
+    val sentencesQueriedFromDocs = docToSen.forward.neighborsOf(documentList.head)
+
+    val docsQueriedFromSentences = docToSen.backward.neighborsOf(sentenceList.head)
+
+    val consQueriesFromSentences = senToCons.forward.neighborsOf(sentenceList.head)
+
+    val sentencesQueriesFromCons = senToCons.backward.neighborsOf(constituentList.head)
+
+    val consQueriesFromDocs = docToCons.forward.neighborsOf(documentList.head)
+
+    val docsQueriesFromCons = docToCons.backward.neighborsOf(constituentList.head)
+
+    println(sentencesQueriedFromDocs.mkString == sentencesQueriesFromCons.mkString)
+
+    println(consQueriesFromDocs.mkString == consQueriesFromSentences.mkString)
+
+    println(docsQueriedFromSentences.mkString == docsQueriesFromCons.mkString)
+
+    // TODO(khashab2): add unit tests for these examples
+  }
+}
