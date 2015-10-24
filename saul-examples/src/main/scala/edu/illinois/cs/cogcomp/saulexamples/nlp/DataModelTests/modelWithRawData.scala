@@ -3,7 +3,7 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp.DataModelTests
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{ Sentence, TextAnnotation }
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
 import edu.illinois.cs.cogcomp.saulexamples.data.{ Document, DocumentReader }
-import edu.illinois.cs.cogcomp.saulexamples.nlp.sensors
+import edu.illinois.cs.cogcomp.saulexamples.nlp.commonSensors
 
 import scala.collection.JavaConversions._
 
@@ -14,8 +14,8 @@ object modelWithRawData extends DataModel {
   val sentences = node[Sentence]
   val rawToAnn = edge(rawText, annotatedText)
   val textToCon = edge(annotatedText, sentences)
-  textToCon.addSensor(sensors.f(_))
-  rawToAnn.addSensor(sensors.curator(_))
+  textToCon.addSensor(commonSensors.getSentences(_))
+  rawToAnn.addSensor(commonSensors.annotateWithCurator(_))
 
   val docFeatureExample = discretePropertyOf[TextAnnotation]('doc) {
     x: TextAnnotation => x.getNumberOfSentences.toString

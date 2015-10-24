@@ -11,9 +11,6 @@ import scala.util.Random
 object entityRelationDataModel extends DataModel {
 
   /** Entity Definitions */
-  val citygazet: GazeteerReader = new GazeteerReader("./data/EntityMentionRelation/known_city.lst", "Gaz:City", true)
-  val persongazet: GazeteerReader = new GazeteerReader("./data/EntityMentionRelation/known_maleFirst.lst", "Gaz:Person", true)
-  persongazet.addFile("./data/EntityMentionRelation/known_femaleFirst.lst", true)
   val tokens = node[ConllRawToken]
 
   val sentences = node[ConllRawSentence]
@@ -55,12 +52,13 @@ object entityRelationDataModel extends DataModel {
     _.getWords(false).exists(_.contains("ing")).toString
   }
 
+  import entityRelationSensors._
   val containsInCityList = discretePropertyOf[ConllRawToken]('containsInCityList) {
-    citygazet.isContainedIn(_).toString
+    cityGazetSensor.isContainedIn(_).toString
   }
 
   val containsInPersonList = discretePropertyOf[ConllRawToken]('containsInCityList) {
-    persongazet.containsAny(_).toString
+    personGazetSensor.containsAny(_).toString
   }
 
   val wordLen = realPropertiesOf[ConllRawToken]('wordLen)(_.getLength)
@@ -70,8 +68,8 @@ object entityRelationDataModel extends DataModel {
       {
         "w1-word-" + token.e1.phrase :: "w2-word-" + token.e2.phrase ::
           "w1-pos-" + token.e1.POS :: "w2-pos-" + token.e2.POS ::
-          "w1-city-" + citygazet.isContainedIn(token.e1) :: "w2-city-" + citygazet.isContainedIn(token.e2) ::
-          "w1-per-" + persongazet.containsAny(token.e1) :: "w2-per-" + persongazet.containsAny(token.e2) ::
+          "w1-city-" + cityGazetSensor.isContainedIn(token.e1) :: "w2-city-" + cityGazetSensor.isContainedIn(token.e2) ::
+          "w1-per-" + personGazetSensor.containsAny(token.e1) :: "w2-per-" + personGazetSensor.containsAny(token.e2) ::
           "w1-ment-" + token.e1.getWords(false).exists(_.contains("ing")) :: "w2-ment-" + token.e2.getWords(false).exists(_.contains("ing")) ::
           "w1-ing-" + token.e1.getWords(false).exists(_.contains("ing")) :: "w2-ing-" + token.e2.getWords(false).exists(_.contains("ing")) ::
           //        "w1Typ"+token.e1.entType :: "w2Typ"+token.e2.entType ::

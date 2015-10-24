@@ -25,7 +25,6 @@ class DocumentStructureTest extends FlatSpec with Matchers {
       e.addSensor((d, s) => s.idx == idx)
       e
     })
-
   }
 
   case class Token(pos: Int, str: String, sidx: Int)

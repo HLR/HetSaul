@@ -2,7 +2,7 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.RewriteBa
 
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
 import edu.illinois.cs.cogcomp.saulexamples.EntityMentionRelation.datastruct.{ ConllRawSentence, ConllRawToken, ConllRelation }
-import edu.illinois.cs.cogcomp.saulexamples.nlp.sensors._
+import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.entityRelationSensors
 
 object entityRelationBasicDataModel extends DataModel {
 
@@ -42,6 +42,8 @@ object entityRelationBasicDataModel extends DataModel {
   val containsSubPhraseIng = property[ConllRawToken]("containsSubPhraseIng") {
     t: ConllRawToken => t.getWords(false).exists(_.contains("ing")).toString
   }
+
+  import entityRelationSensors._
 
   val containsInCityList = property[ConllRawToken]("containsInCityList") {
     t: ConllRawToken => cityGazetSensor.isContainedIn(t).toString
