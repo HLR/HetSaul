@@ -12,14 +12,14 @@ object modelWithKeys extends DataModel {
   val sentence = node[Sentence]
 
   /** Property Types */
-  val label = discretePropertyOf[Constituent]('label) {
-    _.getLabel
+  val label = property[Constituent]("label") {
+    x: Constituent => x.getLabel
   }
 
-  val docFeatureExample = discretePropertyOf[TextAnnotation]('doc) {
+  val docFeatureExample = property[TextAnnotation]("doc") {
     x: TextAnnotation => x.getNumberOfSentences.toString
   }
-  val sentenceFeatureExample = discretePropertyOf[Sentence]('sentence) {
+  val sentenceFeatureExample = property[Sentence]("sentence") {
     x: Sentence => x.getText
   }
 

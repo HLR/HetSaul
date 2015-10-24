@@ -9,13 +9,16 @@ import org.scalatest._
 import scala.collection.JavaConversions._
 
 class SpamUnitTests extends FlatSpec with Matchers {
+
+  import spamDataModel._
+
   /** testing population of collections inside `Node` */
   "spamDataModel.doc" should "have correct number of objects in docs by adding in collection " +
     "from Node" in {
       val data1 = toyDataGenerator.generateToyDocuments(1)
-      val oldSize = spamDataModel.docs.getAllInstances.toList.size
-      spamDataModel.docs.populate(data1)
-      val newSize = spamDataModel.docs.getAllInstances.toList.size
+      val oldSize = docs.getAllInstances.toList.size
+      docs.populate(data1)
+      val newSize = docs.getAllInstances.toList.size
       (newSize - oldSize) should be(data1.length)
     }
 
@@ -24,20 +27,20 @@ class SpamUnitTests extends FlatSpec with Matchers {
     "from Node, multiple times " in {
       val data1 = toyDataGenerator.generateToyDocuments(2)
       val data2 = toyDataGenerator.generateToyDocuments(5)
-      val oldSize = spamDataModel.docs.getAllInstances.toList.size
-      spamDataModel.docs.populate(data1)
-      spamDataModel.docs.populate(data2)
-      val newSize = spamDataModel.docs.getAllInstances.toList.size
+      val oldSize = docs.getAllInstances.toList.size
+      docs.populate(data1)
+      docs.populate(data2)
+      val newSize = docs.getAllInstances.toList.size
       (newSize - oldSize) should be(data1.length + data2.length)
     }
 
   "getNodeWithType function" should "return the right object, given a type" in {
-    spamDataModel.docs should be(spamDataModel.getNodeWithType[Document])
+    docs should be(spamDataModel.getNodeWithType[Document])
   }
 
   "classifier " should "overfit" in {
     val trainData = toyDataGenerator.generateToyDocuments(1)
-    spamDataModel.docs populate trainData
+    docs populate trainData
     spamClassifier.learn(30)
     spamClassifier.classifier.discreteValue(trainData.head) should be(trainData.head.getLabel)
   }

@@ -4,9 +4,9 @@ import edu.illinois.cs.cogcomp.saul.classifier.{ ConstrainedClassifier, Learnabl
 import edu.illinois.cs.cogcomp.saul.constraint.ConstraintTypeConversion._
 import edu.illinois.cs.cogcomp.saul.datamodel.property.Property
 import edu.illinois.cs.cogcomp.saulexamples.EntityMentionRelation.datastruct.{ ConllRawSentence, ConllRawToken, ConllRelation }
-import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.constrains._
+import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.entityRelationConstraints._
 
-object classifiers {
+object entityRelationClassifiers {
 
   import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.entityRelationDataModel._
   // TODO : Write the type conversion

@@ -1,11 +1,11 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.trainingparadigm
 
-import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.classifiers._
+import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.entityRelationClassifiers._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.entityRelationDataModel
 
 /** Created by haowu on 5/6/15.
   */
-object IndenpendentTraining {
+object indenpendentTraining {
 
   val it = 5
 

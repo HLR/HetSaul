@@ -6,25 +6,25 @@ import edu.illinois.cs.cogcomp.saul.datamodel.property.Property
 import edu.illinois.cs.cogcomp.saulexamples.EntityMentionRelation.datastruct.{ ConllRawToken, ConllRelation }
 import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.RewriteBasicModel.entityRelationBasicDataModel._
 
-object classifiers {
+object entityRelationClassifiers {
 
   object orgClassifier extends Learnable[ConllRawToken](entityRelationBasicDataModel) {
     def label: Property[ConllRawToken] = entityType is "Org"
     override def feature = using(word)
   }
 
-  object PersonClassifier extends Learnable[ConllRawToken](entityRelationBasicDataModel) {
+  object personClassifier extends Learnable[ConllRawToken](entityRelationBasicDataModel) {
     def label: Property[ConllRawToken] = entityType is "Peop"
   }
 
-  object LocClassifier extends Learnable[ConllRawToken](entityRelationBasicDataModel) {
+  object locationClassifier extends Learnable[ConllRawToken](entityRelationBasicDataModel) {
     def label: Property[ConllRawToken] = entityType is "Loc"
   }
 
-  object workForClassifier extends Learnable[ConllRelation](entityRelationBasicDataModel) {
+  object worksForClassifier extends Learnable[ConllRelation](entityRelationBasicDataModel) {
     override def label: Property[ConllRelation] = relationType is "Work_For"
   }
-  object LivesInClassifier extends Learnable[ConllRelation](entityRelationBasicDataModel) {
+  object livesInClassifier extends Learnable[ConllRelation](entityRelationBasicDataModel) {
     override def label: Property[ConllRelation] = relationType is "Live_In"
   }
 }

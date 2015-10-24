@@ -1,14 +1,14 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.trainingparadigm
 
 import edu.illinois.cs.cogcomp.saulexamples.EntityMentionRelation.datastruct.{ ConllRawToken, ConllRelation }
-import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.classifiers._
+import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.entityRelationClassifiers._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.entityRelationDataModel
 import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.entityRelationDataModel._
 import edu.illinois.cs.cogcomp.saul.classifier.JointTrain
 
 /** Created by Parisa on 5/6/15.
   */
-object JoinTraining {
+object joinTraining {
 
   def trainJoint(preTrainIteration: Int, jointTrainIteration: Int): Unit = {
     println("Joint Training with Pretraint " + preTrainIteration)
