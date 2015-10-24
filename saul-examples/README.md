@@ -63,7 +63,7 @@ This line of code defines an entity of type `ConllRawToken` and names it as `tok
 This is done via the `property` function, 
 
 ```scala
-val pos = property[ConllRawToken]("token") {
+val pos = property[ConllRawToken]("pos") {
    (t: ConllRawToken) => t.POS 
 }
   ``` 
