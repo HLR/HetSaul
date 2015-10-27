@@ -27,7 +27,7 @@ object modelWithSensors extends DataModel {
   }
 
   /** Edge Types */
-  val docTosen = edge(document, sentence, 'dTos)
-  val SenToCons = edge(document, constituent, 'tToc)
+  val docTosen = edge(document, sentence)
+  val SenToCons = edge(document, constituent)
 }
 

@@ -32,11 +32,11 @@ object edisonDataModel extends DataModel {
   }
 
   /** Edge Types */
-  val docToSen = edge(documents, sentences, 'docToSen)
+  val docToSen = edge(documents, sentences)
 
-  val senToCons = edge(sentences, constituents, 'senToCons)
+  val senToCons = edge(sentences, constituents)
 
-  val docToCons = edge(documents, constituents, 'senToCons)
+  val docToCons = edge(documents, constituents)
 
-  val consToCons = edge(constituents, constituents, 'consToCons)
+  val consToCons = edge(constituents, constituents)
 }
