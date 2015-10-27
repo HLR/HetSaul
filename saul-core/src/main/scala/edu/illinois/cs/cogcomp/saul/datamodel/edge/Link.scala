@@ -19,7 +19,7 @@ class Link[A <: AnyRef, B <: AnyRef](val from: Node[A], val to: Node[B], val nam
 
 trait Edge[T <: AnyRef, U <: AnyRef] {
   def forward: Link[T, U]
-  def backward: Link[U, T],
+  def backward: Link[U, T]
   def matchers: ArrayBuffer[(T, U) => Boolean]
 
   def from = forward.from
@@ -94,7 +94,7 @@ trait Edge[T <: AnyRef, U <: AnyRef] {
 case class AsymmetricEdge[T <: AnyRef, U <: AnyRef](val forward: Link[T, U], val backward: Link[U, T],
                                       ms: Seq[(T, U) => Boolean] = Seq.empty[(T, U) => Boolean])
   extends Edge[T,U] {
-  def matchers = {
+  val matchers = {
     val m = ArrayBuffer.empty[(T, U) => Boolean]
     m ++= ms
     m
@@ -108,7 +108,7 @@ case class SymmetricEdge[T <: AnyRef](link: Link[T, T],
   extends Edge[T,T] {
   def forward = link
   def backward = link
-  def matchers = {
+  val matchers = {
     val m = ArrayBuffer.empty[(T, T) => Boolean]
     m ++= ms
     m
