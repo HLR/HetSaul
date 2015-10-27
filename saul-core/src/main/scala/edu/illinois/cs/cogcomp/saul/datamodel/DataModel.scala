@@ -4,7 +4,7 @@ import edu.illinois.cs.cogcomp.saul.datamodel.property.features.discrete._
 import edu.illinois.cs.cogcomp.saul.datamodel.property.features.real._
 import edu.illinois.cs.cogcomp.saul.datamodel.property.{ EvaluatedProperty, Property }
 import edu.illinois.cs.cogcomp.saul.datamodel.node.{ JoinNode, Node }
-import edu.illinois.cs.cogcomp.saul.datamodel.edge.{ Edge, Link }
+import edu.illinois.cs.cogcomp.saul.datamodel.edge.{SymmetricEdge, AsymmetricEdge, Edge, Link}
 
 import scala.collection.mutable.{ ListBuffer, Map => MutableMap }
 import scala.reflect.ClassTag
@@ -130,9 +130,19 @@ trait DataModel {
 
   /** edges */
   def edge[A <: AnyRef, B <: AnyRef](a: Node[A], b: Node[B], name: Symbol = 'default): Edge[A, B] = {
-    val e = Edge(new Link(a, b, Some(name)), new Link(b, a, Some(Symbol("-" + name.name))))
+    val e = AsymmetricEdge(new Link(a, b, Some(name)), new Link(b, a, Some(Symbol("-" + name.name))))
     a.outgoing += e
     b.incoming += e
+    EDGES += e
+    e
+  }
+
+  def symmEdge[A <: AnyRef](a: Node[A], b: Node[A], name: Symbol = 'default): Edge[A, A] = {
+    val e = SymmetricEdge(new Link(a, b, Some(name)))
+    a.incoming += e
+    a.outgoing += e
+    b.incoming += e
+    b.outgoing += e
     EDGES += e
     e
   }
