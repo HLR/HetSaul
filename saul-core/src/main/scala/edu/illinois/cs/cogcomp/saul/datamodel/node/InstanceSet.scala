@@ -1,8 +1,9 @@
 package edu.illinois.cs.cogcomp.saul.datamodel.node
 
 import edu.illinois.cs.cogcomp.saul.datamodel.edge.Edge
+import edu.illinois.cs.cogcomp.saul.datamodel.property.{ TypedProperty, Property }
 
-trait InstanceSet[T <: AnyRef] {
+trait InstanceSet[T <: AnyRef] extends Iterable[T] {
   self =>
   def instances: Iterable[T]
   def node: Node[T]
@@ -10,16 +11,22 @@ trait InstanceSet[T <: AnyRef] {
   def ~>[U <: AnyRef](edge: Edge[T, U]): InstanceSet[U] = {
     assert(node == edge.forward.from)
     new InstanceSet[U] {
-      override def node: Node[U] = edge.forward.to
-      override def instances: Iterable[U] = self.instances.flatMap(t => edge.forward.neighborsOf(t))
+      val node: Node[U] = edge.forward.to
+      val instances: Iterable[U] = self.instances.flatMap(t => edge.forward.neighborsOf(t))
     }
   }
 
-  def filter(pred: T => Boolean) = new InstanceSet[T] {
-    override def instances: Iterable[T] = self.instances.filter(pred)
-    override def node: Node[T] = self.node
+  override def filter(pred: T => Boolean) = new InstanceSet[T] {
+    val node: Node[T] = self.node
+    val instances: Iterable[T] = self.instances.filter(pred)
   }
 
+  def prop[V](p: TypedProperty[T, V]) = new PropertySet[T, V] {
+    val property: TypedProperty[T, V] = p
+    val underlying: InstanceSet[T] = self
+  }
+
+  override def iterator: Iterator[T] = instances.iterator
 }
 
 case class BasicSet[T <: AnyRef](node: Node[T], instances: Iterable[T]) extends InstanceSet[T]
@@ -29,6 +36,16 @@ case class NodeSet[T <: AnyRef](node: Node[T]) extends InstanceSet[T] {
 }
 
 case class SingletonSet[T <: AnyRef](node: Node[T], t: T) extends InstanceSet[T] {
-  override def instances: Iterable[T] = Set(t)
+  val instances: Iterable[T] = Set(t)
 }
 
+trait PropertySet[T <: AnyRef, V] extends Iterable[V] {
+  self =>
+  def property: TypedProperty[T, V]
+  def underlying: InstanceSet[T]
+  lazy val instances: Iterable[V] = underlying.instances.toSeq.map(property(_))
+
+  override def iterator: Iterator[V] = instances.iterator
+
+  def counts = instances.groupBy(x => x).map(p => p._1 -> p._2.size).toMap
+}
