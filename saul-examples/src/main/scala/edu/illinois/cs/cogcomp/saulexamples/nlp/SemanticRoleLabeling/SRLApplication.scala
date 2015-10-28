@@ -19,6 +19,5 @@ object SRLApplication {
     reader.readData()
     textAnnotation.populate(reader.textAnnotations.toList)
     predicateClassifier.learn(2)
-
   }
 }

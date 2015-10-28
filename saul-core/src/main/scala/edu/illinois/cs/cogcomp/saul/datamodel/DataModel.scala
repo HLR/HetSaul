@@ -147,100 +147,18 @@ trait DataModel {
 
   case class PropertyDefinition(ty: PropertyType, name: Symbol)
 
-  /** Discrete feature without range, same as discrete SpamLabel in lbjava */
-  def discretePropertyOf[T <: AnyRef](name: Symbol)(f: T => String)(implicit tag: ClassTag[T]): DiscreteProperty[T] = {
-    val a = new DiscreteProperty[T](name.toString, f, None)
-    PROPERTIES += a
-    a
-  }
-
-  /** Discrete feature with range, same as discrete{"spam", "ham"} SpamLabel in lbjava */
-  def rangedDiscretePropertyOf[T <: AnyRef](name: Symbol)(range: String*)(f: T => String)(implicit tag: ClassTag[T]): DiscreteProperty[T] = {
-    val r = range.toList
-    val a = new DiscreteProperty[T](name.toString, f, Some(r))
-    PROPERTIES += a
-    a
-  }
-
-  /** Discrete array feature with range, same as discrete[] SpamLabel in lbjava */
-  def discretePropertiesArrayOf[T <: AnyRef](name: Symbol)(f: T => List[String])(implicit tag: ClassTag[T]): DiscreteArrayProperty[T] = {
-    val a = new DiscreteArrayProperty[T](name.toString, f)
-    PROPERTIES += a
-    a
-  }
-
-  /** Discrete sensor feature with range, same as discrete% name in lbjava */
-  def discretePropertiesGeneratorOf[T <: AnyRef](name: Symbol)(f: T => List[String])(implicit tag: ClassTag[T]): DiscreteGenProperty[T] = {
-    val a = new DiscreteGenProperty[T](name.toString, f)
-    PROPERTIES += a
-    a
-  }
-
-  /** Discrete sensor feature with range, same as real name in lbjava */
-  def realPropertiesOf[T <: AnyRef](name: Symbol)(f: T => Double)(implicit tag: ClassTag[T]): RealProperty[T] = {
-    val a = new RealProperty[T](name.toString, f)
-    PROPERTIES += a
-    a
-  }
-
-  /** Discrete sensor feature with range, same as real[] name in lbjava */
-  def realPropertiesArrayOf[T <: AnyRef](name: Symbol)(f: T => List[Double])(implicit tag: ClassTag[T]): RealArrayProperty[T] = {
-    val a = new RealArrayProperty[T](name.toString, f)
-    PROPERTIES += a
-    a
-  }
-
-  /** Discrete sensor feature with range, same as real% name in lbjava */
-  def realPropertiesGeneratorOf[T <: AnyRef](name: Symbol)(f: T => List[Double])(implicit tag: ClassTag[T]): RealGenProperty[T] = {
-    val a = new RealGenProperty[T](name.toString, f)
-    PROPERTIES += a
-    a
-  }
-
-  /** Discrete sensor feature with range, same as real name in lbjava */
-  def intPropertyOf[T <: AnyRef](name: Symbol)(f: T => Int)(implicit tag: ClassTag[T]): RealProperty[T] = {
-    val newf: T => Double = { t => f(t).toDouble }
-    val a = new RealProperty[T](name.toString, newf)
-    PROPERTIES += a
-    a
-  }
-
-  /** Discrete sensor feature with range, same as real[] name in lbjava */
-  def intPropertiesArrayOf[T <: AnyRef](name: Symbol)(f: T => List[Int])(implicit tag: ClassTag[T]): RealArrayProperty[T] = {
-    val newf: T => List[Double] = { t => f(t).map(_.toDouble) }
-    val a = new RealArrayProperty[T](name.toString, newf)
-    PROPERTIES += a
-    a
-  }
-
-  /** Discrete sensor feature with range, same as real% name in lbjava */
-  def intPropertiesGeneratorOf[T <: AnyRef](name: Symbol)(f: T => List[Int])(implicit tag: ClassTag[T]): RealGenProperty[T] = {
-    val newf: T => List[Double] = { t => f(t).map(_.toDouble) }
-    val a = new RealGenProperty[T](name.toString, newf)
-    PROPERTIES += a
-    a
-  }
-
-  def booleanProperyOf[T <: AnyRef](name: Symbol)(f: T => Boolean)(implicit tag: ClassTag[T]): BooleanProperty[T] = {
-    val a = new BooleanProperty[T](name.toString, f)
-    PROPERTIES += a
-    a
-  }
-
   class PropertyApply[T <: AnyRef] private[DataModel] (name: String, ordered: Boolean) {
 
     def this(name: String) {
       this(name, false)
     }
 
-    // used to be "booleanAttributeOf"
     def apply(f: T => Boolean)(implicit tag: ClassTag[T]): BooleanProperty[T] = {
       val a = new BooleanProperty[T](name, f)
       PROPERTIES += a
       a
     }
 
-    // used ot be "intAttributesGeneratorOf", and "intAttributesArrayOf"
     def apply(f: T => List[Int])(implicit tag: ClassTag[T], d: DummyImplicit): RealPropertyCollection[T] = {
       val newf: T => List[Double] = { t => f(t).map(_.toDouble) }
       val a = if (ordered) {
@@ -252,7 +170,7 @@ trait DataModel {
       a
     }
 
-    // used to be "intAttributeOf"
+    /** Discrete sensor feature with range, same as real name in lbjava */
     def apply(f: T => Int)(implicit tag: ClassTag[T], d1: DummyImplicit, d2: DummyImplicit): RealProperty[T] = {
       val newf: T => Double = { t => f(t).toDouble }
       val a = new RealProperty[T](name, newf)
@@ -260,7 +178,7 @@ trait DataModel {
       a
     }
 
-    // used to be "realAttributesGeneratorOf", and "realAttributesArrayOf"
+    /** Discrete sensor feature with range, same as real% and real[] in lbjava */
     def apply(f: T => List[Double])(implicit tag: ClassTag[T], d1: DummyImplicit, d2: DummyImplicit,
       d3: DummyImplicit): RealCollectionProperty[T] = {
       val a = new RealCollectionProperty[T](name, f, ordered)
@@ -268,7 +186,7 @@ trait DataModel {
       a
     }
 
-    // used to be called "realAttributeOf"
+    /** Discrete sensor feature with range, same as real name in lbjava */
     def apply(f: T => Double)(implicit tag: ClassTag[T], d1: DummyImplicit, d2: DummyImplicit, d3: DummyImplicit,
       d4: DummyImplicit): RealProperty[T] = {
       val a = new RealProperty[T](name, f)
@@ -276,7 +194,7 @@ trait DataModel {
       a
     }
 
-    // used to be called "discreteAttributeOf"
+    /** Discrete feature without range, same as discrete SpamLabel in lbjava */
     def apply(f: T => String)(implicit tag: ClassTag[T], d1: DummyImplicit, d2: DummyImplicit, d3: DummyImplicit,
       d4: DummyImplicit, d5: DummyImplicit): DiscreteProperty[T] = {
       val a = new DiscreteProperty[T](name, f, None)
@@ -284,7 +202,7 @@ trait DataModel {
       a
     }
 
-    // used to be called "discreteAttributesArrayOf", and "discreteAttributesGeneratorOf"
+    /** Discrete array feature with range, same as discrete[] and discrete% in lbjava */
     def apply(f: T => List[String])(implicit tag: ClassTag[T], d1: DummyImplicit, d2: DummyImplicit, d3: DummyImplicit,
       d4: DummyImplicit, d5: DummyImplicit, d6: DummyImplicit): DiscreteCollectionProperty[T] = {
       val a = if (ordered) {
@@ -296,7 +214,7 @@ trait DataModel {
       a
     }
 
-    // used to be called "rangedDiscreteAttributeOf"
+    /** Discrete feature with range, same as discrete{"spam", "ham"} SpamLabel in lbjava */
     def apply(range: String*)(f: T => String)(implicit tag: ClassTag[T], d1: DummyImplicit, d2: DummyImplicit, d3: DummyImplicit,
       d4: DummyImplicit, d5: DummyImplicit, d6: DummyImplicit,
       d7: DummyImplicit): DiscreteProperty[T] = {
@@ -306,6 +224,7 @@ trait DataModel {
       a
     }
   }
+
   def property[T <: AnyRef](name: String) = new PropertyApply[T](name)
   def property[T <: AnyRef](name: String, ordered: Boolean) = new PropertyApply[T](name, ordered)
 }

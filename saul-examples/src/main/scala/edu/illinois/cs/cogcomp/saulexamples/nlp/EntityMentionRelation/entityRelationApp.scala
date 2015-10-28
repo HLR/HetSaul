@@ -1,19 +1,19 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation
 
 import edu.illinois.cs.cogcomp.saulexamples.EntityMentionRelation.datastruct.{ ConllRawToken, ConllRelation }
-import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.classifiers._
+import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.entityRelationClassifiers._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.entityRelationDataModel._
 import edu.illinois.cs.cogcomp.saul.classifier.JointTrain
 
 /** Experiment workspace for playing with language feature. */
 
-object MyConfiguration {
+object myConfiguration {
   val iterations = 20
   val pipeLine = true
   val fold = 4
 }
 
-object runnableExample {
+object entityRelationApp {
 
   def trainIndepedent(it: Int): Unit = {
     println("Indepent Training with iteration " + it)
@@ -68,17 +68,17 @@ object runnableExample {
     workForClassifier.forget()
   }
 
-  val pipeLine = MyConfiguration.pipeLine
+  val pipeLine = myConfiguration.pipeLine
 
   def main(args: Array[String]) {
 
-    val fold = MyConfiguration.fold
+    val fold = myConfiguration.fold
 
     if (pipeLine) {
       println("using pipeline feature")
     }
 
-    val it = MyConfiguration.iterations
+    val it = myConfiguration.iterations
 
     forgotEverything()
     entityRelationDataModel.read(fold)
@@ -249,5 +249,4 @@ object runnableExample {
     //    JointTrain(SomeExampleDataModel, List(PerConstraintClassifier,orgConstraintClassifier,P_O_relationClassifier))
 
   }
-
 }

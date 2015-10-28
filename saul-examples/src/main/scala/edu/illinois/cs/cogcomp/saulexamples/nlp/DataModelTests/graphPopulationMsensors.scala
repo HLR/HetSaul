@@ -1,24 +1,21 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.DataModelTests
 
-/** Created by Parisa on 10/2/15.
-  */
-
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{ Sentence, TextAnnotation }
 import edu.illinois.cs.cogcomp.saulexamples.data.{ Document, DocumentReader }
-import edu.illinois.cs.cogcomp.saulexamples.nlp.sensors
+import edu.illinois.cs.cogcomp.saulexamples.nlp.commonSensors
 
 import scala.collection.JavaConversions._
 
 object graphPopulationMsensors {
   def main(args: Array[String]): Unit = {
 
-    val dat: List[Document] = new DocumentReader("./data/20newsToy/train").docs.toList.slice(0, 2)
-    val taList = dat.map(x => sensors.curator(x))
-    val sentenceList = taList.flatMap(x => x.sentences())
+    val data = new DocumentReader("./data/20newsToy/train").docs.toList.slice(0, 2)
+    val taList = data.map(commonSensors.annotateWithCurator)
+    val sentenceList = taList.flatMap(_.sentences())
 
     modelWithSensors.document populate taList
     modelWithSensors.sentence.populate(sentenceList)
-    modelWithSensors.docTosen populateWith (sensors.alignment: (TextAnnotation, Sentence) => Boolean)
+    modelWithSensors.docTosen populateWith (commonSensors.textAnnotationSentenceAlignment _)
 
     val taa = modelWithSensors.document.getAllInstances
     val sen = modelWithSensors.sentence.getAllInstances
@@ -30,5 +27,4 @@ object graphPopulationMsensors {
 
     print("finished")
   }
-
 }

@@ -2,7 +2,7 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation
 
 import edu.illinois.cs.cogcomp.saulexamples.EntityMentionRelation.datastruct.{ ConllRawSentence, ConllRawToken, ConllRelation }
 import edu.illinois.cs.cogcomp.saulexamples.EntityMentionRelation.reader.{ GazeteerReader, Conll04_ReaderNew }
-import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.classifiers.PersonClassifier
+import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.entityRelationClassifiers.PersonClassifier
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
 import scala.collection.mutable.{ Map => MutableMap }
 import scala.collection.JavaConversions._
@@ -11,21 +11,13 @@ import scala.util.Random
 object entityRelationDataModel extends DataModel {
 
   /** Entity Definitions */
-  val citygazet: GazeteerReader = new GazeteerReader("./data/EntityMentionRelation/known_city.lst", "Gaz:City", true)
-  val persongazet: GazeteerReader = new GazeteerReader("./data/EntityMentionRelation/known_maleFirst.lst", "Gaz:Person", true)
-  persongazet.addFile("./data/EntityMentionRelation/known_femaleFirst.lst", true)
   val tokens = node[ConllRawToken]
 
   val sentences = node[ConllRawSentence]
 
   val pairedRelations = node[ConllRelation]
-  //'e1id -> ((t: ConllRelation) => String.valueOf(t.sentId) + ":" + String.valueOf(t.wordId1)), // String.valueOf(t.sentId)+ ":" + String.valueOf(t.wordId1)),
-  //'e2id -> ((t: ConllRelation) => String.valueOf(t.sentId) + ":" + String.valueOf(t.wordId2))
 
-  // val RelationToToken = oneToManyRelationOf[ConllRelation,ConllRawToken]('contain)(('sid,'sid))
-
-  /** Access method definitions */
-
+  /** Edge definitions */
   val RelationToPer = edge(tokens, pairedRelations, 'e1id)
   //('sid === 'sid, 'e1id === 'wordid) //TODO check the runtime problem with the new edge implementation
   val RelationToOrg = edge(tokens, pairedRelations, 'e2id)
@@ -33,76 +25,73 @@ object entityRelationDataModel extends DataModel {
   val tokenContainsInSentence = edge(tokens, pairedRelations, 'sid) //('sid === 'sid)//TODO check the runtime problem with the new edge implementation
 
   /** Properties */
-
-  val pos = discretePropertiesGeneratorOf[ConllRawToken]('pos) {
+  val pos = property[ConllRawToken]("pos") {
     t: ConllRawToken => t.POS :: Nil
   }
-  val word = discretePropertiesGeneratorOf[ConllRawToken]('word) {
+  val word = property[ConllRawToken]("word") {
     t: ConllRawToken => t.getWords(false).toList
   }
-  val phrase = discretePropertiesGeneratorOf[ConllRawToken]('phrase) {
+  val phrase = property[ConllRawToken]("phrase") {
     t: ConllRawToken => t.phrase :: Nil
   }
 
-  val tokenSurface = discretePropertyOf[ConllRawToken]('tokenSurface) {
-    _.getWords(false).toList.mkString(" ")
+  val tokenSurface = property[ConllRawToken]("tokenSurface") {
+    token: ConllRawToken => token.getWords(false).toList.mkString(" ")
   }
-  val containsSubPhraseMent = discretePropertyOf[ConllRawToken]('containsSubPhraseMent) {
-    _.getWords(false).exists(_.contains("ment")).toString
-  }
-
-  val containsSubPhraseIng = discretePropertyOf[ConllRawToken]('containsSubPhraseIng) {
-    _.getWords(false).exists(_.contains("ing")).toString
+  val containsSubPhraseMent = property[ConllRawToken]("containsSubPhraseMent") {
+    token: ConllRawToken => token.getWords(false).exists(_.contains("ment")).toString
   }
 
-  val containsInCityList = discretePropertyOf[ConllRawToken]('containsInCityList) {
-    citygazet.isContainedIn(_).toString
+  val containsSubPhraseIng = property[ConllRawToken]("containsSubPhraseIng") {
+    token: ConllRawToken => token.getWords(false).exists(_.contains("ing")).toString
   }
 
-  val containsInPersonList = discretePropertyOf[ConllRawToken]('containsInCityList) {
-    persongazet.containsAny(_).toString
+  import entityRelationSensors._
+  val containsInCityList = property[ConllRawToken]("containsInCityList") {
+    token: ConllRawToken => cityGazetSensor.isContainedIn(token).toString
   }
 
-  val wordLen = realPropertiesOf[ConllRawToken]('wordLen)(_.getLength)
+  val containsInPersonList = property[ConllRawToken]("containsInCityList") {
+    token: ConllRawToken => personGazetSensor.containsAny(token).toString
+  }
 
-  val relFeature = discretePropertiesGeneratorOf[ConllRelation]('reltokenSurface) {
+  val wordLen = property[ConllRawToken]("wordLen") {
+    token: ConllRawToken => token.getLength
+  }
+
+  val relFeature = property[ConllRelation]("reltokenSurface") {
     token: ConllRelation =>
-      {
-        "w1-word-" + token.e1.phrase :: "w2-word-" + token.e2.phrase ::
-          "w1-pos-" + token.e1.POS :: "w2-pos-" + token.e2.POS ::
-          "w1-city-" + citygazet.isContainedIn(token.e1) :: "w2-city-" + citygazet.isContainedIn(token.e2) ::
-          "w1-per-" + persongazet.containsAny(token.e1) :: "w2-per-" + persongazet.containsAny(token.e2) ::
-          "w1-ment-" + token.e1.getWords(false).exists(_.contains("ing")) :: "w2-ment-" + token.e2.getWords(false).exists(_.contains("ing")) ::
-          "w1-ing-" + token.e1.getWords(false).exists(_.contains("ing")) :: "w2-ing-" + token.e2.getWords(false).exists(_.contains("ing")) ::
-          //        "w1Typ"+token.e1.entType :: "w2Typ"+token.e2.entType ::
-          Nil
-      }
+      "w1-word-" + token.e1.phrase :: "w2-word-" + token.e2.phrase ::
+        "w1-pos-" + token.e1.POS :: "w2-pos-" + token.e2.POS ::
+        "w1-city-" + cityGazetSensor.isContainedIn(token.e1) :: "w2-city-" + cityGazetSensor.isContainedIn(token.e2) ::
+        "w1-per-" + personGazetSensor.containsAny(token.e1) :: "w2-per-" + personGazetSensor.containsAny(token.e2) ::
+        "w1-ment-" + token.e1.getWords(false).exists(_.contains("ing")) :: "w2-ment-" + token.e2.getWords(false).exists(_.contains("ing")) ::
+        "w1-ing-" + token.e1.getWords(false).exists(_.contains("ing")) :: "w2-ing-" + token.e2.getWords(false).exists(_.contains("ing")) ::
+        //        "w1Typ"+token.e1.entType :: "w2Typ"+token.e2.entType ::
+        Nil
   }
 
-  val relPos = discretePropertiesGeneratorOf[ConllRelation]('reltokenSurface) {
+  val relPos = property[ConllRelation]("reltokenSurface") {
     rela: ConllRelation =>
-      {
-        val e1 = rela.e1
-        val e2 = rela.e2
+      val e1 = rela.e1
+      val e2 = rela.e2
 
-        this.getNodeWithType[ConllRawToken].getWithWindow(e1, -2, 2, _.sentId).zipWithIndex.map({
-          case (Some(t), idx) => s"left-$idx-pos-${t.POS} "
-          case (None, idx) => s"left-$idx-pos-EMPTY "
-        }) ++
-          this.getNodeWithType[ConllRawToken].getWithWindow(e2, -2, 2, _.sentId).zipWithIndex.map({
-            case (Some(t), idx) => s"right-$idx-pos-${t.POS} "
-            case (None, idx) => s"right-$idx-pos-EMPTY} "
-          })
-
-      }
+      this.getNodeWithType[ConllRawToken].getWithWindow(e1, -2, 2, _.sentId).zipWithIndex.map {
+        case (Some(t), idx) => s"left-$idx-pos-${t.POS} "
+        case (None, idx) => s"left-$idx-pos-EMPTY "
+      } ++
+        this.getNodeWithType[ConllRawToken].getWithWindow(e2, -2, 2, _.sentId).zipWithIndex.map {
+          case (Some(t), idx) => s"right-$idx-pos-${t.POS} "
+          case (None, idx) => s"right-$idx-pos-EMPTY} "
+        }
   }
 
   /** Labelers */
-  val entityType = discretePropertyOf[ConllRawToken]('entityType) {
+  val entityType = property[ConllRawToken]("entityType") {
     t: ConllRawToken => t.entType
   }
 
-  val relationType = discretePropertyOf[ConllRelation]('relationType) {
+  val relationType = property[ConllRelation]("relationType") {
     r: ConllRelation => r.relType
   }
 
@@ -137,21 +126,19 @@ object entityRelationDataModel extends DataModel {
 
     val blankRelation = trainSentences.flatMap {
       sent =>
-        {
-          val zipped = Random.shuffle(sent.sentTokens.toList).zip(Random.shuffle(sent.sentTokens.toList))
-          val relationInSent = sent.relations
-          val filteredZip = zipped.filterNot({ case (e1, e2) => relationInSent.exists({ r => (r.e1 == e1) && (r.e2 == e2) }) })
-          filteredZip.map({
-            case (e1, e2) =>
-              val ret = new ConllRelation
-              ret.e1 = e1
-              ret.e2 = e2
-              ret.relType = "?"
-              ret.wordId1 = e1.wordId
-              ret.wordId2 = e2.wordId
-              ret.sentId = sent.sentId
-              ret
-          })
+        val zipped = Random.shuffle(sent.sentTokens.toList).zip(Random.shuffle(sent.sentTokens.toList))
+        val relationInSent = sent.relations
+        val filteredZip = zipped.filterNot({ case (e1, e2) => relationInSent.exists({ r => (r.e1 == e1) && (r.e2 == e2) }) })
+        filteredZip.map {
+          case (e1, e2) =>
+            val ret = new ConllRelation
+            ret.e1 = e1
+            ret.e2 = e2
+            ret.relType = "?"
+            ret.wordId1 = e1.wordId
+            ret.wordId2 = e2.wordId
+            ret.sentId = sent.sentId
+            ret
         }
     }
 

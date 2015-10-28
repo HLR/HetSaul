@@ -2,7 +2,7 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.RewriteBa
 
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
 import edu.illinois.cs.cogcomp.saulexamples.EntityMentionRelation.datastruct.{ ConllRawSentence, ConllRawToken, ConllRelation }
-import edu.illinois.cs.cogcomp.saulexamples.nlp.sensors._
+import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.entityRelationSensors
 
 object entityRelationBasicDataModel extends DataModel {
 
@@ -43,6 +43,8 @@ object entityRelationBasicDataModel extends DataModel {
     t: ConllRawToken => t.getWords(false).exists(_.contains("ing")).toString
   }
 
+  import entityRelationSensors._
+
   val containsInCityList = property[ConllRawToken]("containsInCityList") {
     t: ConllRawToken => cityGazetSensor.isContainedIn(t).toString
   }
@@ -68,21 +70,19 @@ object entityRelationBasicDataModel extends DataModel {
       }
   }
 
-  val relPos = discretePropertiesGeneratorOf[ConllRelation]('reltokenSurface) {
+  val relPos = property[ConllRelation]("reltokenSurface") {
     rela: ConllRelation =>
-      {
-        val e1 = rela.e1
-        val e2 = rela.e2
+      val e1 = rela.e1
+      val e2 = rela.e2
 
-        this.getNodeWithType[ConllRawToken].getWithWindow(e1, -2, 2, _.sentId).zipWithIndex.map({
-          case (Some(t), idx) => s"left-$idx-pos-${t.POS} "
-          case (None, idx) => s"left-$idx-pos-EMPTY "
-        }) ++
-          this.getNodeWithType[ConllRawToken].getWithWindow(e2, -2, 2, _.sentId).zipWithIndex.map({
-            case (Some(t), idx) => s"right-$idx-pos-${t.POS} "
-            case (None, idx) => s"right-$idx-pos-EMPTY} "
-          })
-      }
+      this.getNodeWithType[ConllRawToken].getWithWindow(e1, -2, 2, _.sentId).zipWithIndex.map {
+        case (Some(t), idx) => s"left-$idx-pos-${t.POS} "
+        case (None, idx) => s"left-$idx-pos-EMPTY "
+      } ++
+        this.getNodeWithType[ConllRawToken].getWithWindow(e2, -2, 2, _.sentId).zipWithIndex.map {
+          case (Some(t), idx) => s"right-$idx-pos-${t.POS} "
+          case (None, idx) => s"right-$idx-pos-EMPTY} "
+        }
   }
 
   /** Labeler Properties  */
