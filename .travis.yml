@@ -5,3 +5,6 @@ scala:
 
 script:
    - sbt ++$TRAVIS_SCALA_VERSION test
+
+jdk:
+  - oraclejdk8
