@@ -1,6 +1,6 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.trainingparadigm
 
-import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.classifiers._
+import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.entityRelationClassifiers._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.entityRelationDataModel
 
 /** Created by Parisa on 5/20/15.

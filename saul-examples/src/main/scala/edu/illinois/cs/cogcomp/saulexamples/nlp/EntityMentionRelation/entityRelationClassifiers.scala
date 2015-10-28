@@ -4,9 +4,9 @@ import edu.illinois.cs.cogcomp.saul.classifier.{ ConstrainedClassifier, Learnabl
 import edu.illinois.cs.cogcomp.saul.constraint.ConstraintTypeConversion._
 import edu.illinois.cs.cogcomp.saul.datamodel.property.Property
 import edu.illinois.cs.cogcomp.saulexamples.EntityMentionRelation.datastruct.{ ConllRawSentence, ConllRawToken, ConllRelation }
-import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.constrains._
+import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.entityRelationConstraints._
 
-object classifiers {
+object entityRelationClassifiers {
 
   import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.entityRelationDataModel._
   // TODO : Write the type conversion
@@ -43,20 +43,17 @@ object classifiers {
       )), word, phrase, containsSubPhraseMent, containsSubPhraseIng,
       containsInPersonList, wordLen, containsInCityList
     )
-
   }
 
-  val ePipe = discretePropertiesGeneratorOf[ConllRelation]('e1pipe) {
-    rel =>
-      {
-        "e1-org: " + orgClassifier.discreteValue(rel.e1) ::
-          "e1-per: " + PersonClassifier.discreteValue(rel.e1) ::
-          "e1-loc: " + LocClassifier.discreteValue(rel.e1) ::
-          "e2-org: " + orgClassifier.discreteValue(rel.e1) ::
-          "e2-per: " + PersonClassifier.discreteValue(rel.e1) ::
-          "e2-loc: " + LocClassifier.discreteValue(rel.e1) ::
-          Nil
-      }
+  val ePipe = property[ConllRelation]("e1pipe") {
+    rel: ConllRelation =>
+      "e1-org: " + orgClassifier.discreteValue(rel.e1) ::
+        "e1-per: " + PersonClassifier.discreteValue(rel.e1) ::
+        "e1-loc: " + LocClassifier.discreteValue(rel.e1) ::
+        "e2-org: " + orgClassifier.discreteValue(rel.e1) ::
+        "e2-per: " + PersonClassifier.discreteValue(rel.e1) ::
+        "e2-loc: " + LocClassifier.discreteValue(rel.e1) ::
+        Nil
   }
 
   object workForClassifier extends Learnable[ConllRelation](entityRelationDataModel) {

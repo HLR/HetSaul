@@ -3,27 +3,31 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp.DataModelTests
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{ Sentence, TextAnnotation }
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
 import edu.illinois.cs.cogcomp.saulexamples.data.{ Document, DocumentReader }
-import edu.illinois.cs.cogcomp.saulexamples.nlp.sensors
+import edu.illinois.cs.cogcomp.saulexamples.nlp.commonSensors
 
 import scala.collection.JavaConversions._
 
-object modelWithRawData extends DataModel {
+object modelWithRawData {
 
-  val rawText = node[Document]
-  val annotatedText = node[TextAnnotation]
-  val sentences = node[Sentence]
-  val rawToAnn = edge(rawText, annotatedText)
-  val textToCon = edge(annotatedText, sentences)
-  textToCon.addSensor(sensors.f(_))
-  rawToAnn.addSensor(sensors.curator(_))
+  val model = new DataModel {
+    /** Nodes */
+    val rawText = node[Document]
+    val annotatedText = node[TextAnnotation]
+    val sentences = node[Sentence]
 
-  val docFeatureExample = discretePropertyOf[TextAnnotation]('doc) {
-    x: TextAnnotation => x.getNumberOfSentences.toString
+    /** Edges */
+    val rawToAnn = edge(rawText, annotatedText)
+    val textToCon = edge(annotatedText, sentences)
+    textToCon.addSensor(commonSensors.getSentences(_))
+    rawToAnn.addSensor(commonSensors.annotateWithCurator(_))
+
+    /** Properties */
+    val docFeatureExample = property[TextAnnotation]("doc") {
+      x: TextAnnotation => x.getNumberOfSentences.toString
+    }
   }
-  // textToCon.addSensor(sensors.alignment:(TextAnnotation,Sentence)=>Boolean)
-}
 
-object myApp {
+  import model._
 
   def main(args: Array[String]) {
     import modelWithRawData._
