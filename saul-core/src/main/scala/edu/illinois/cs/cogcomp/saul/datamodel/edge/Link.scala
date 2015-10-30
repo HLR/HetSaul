@@ -17,8 +17,11 @@ class Link[A <: AnyRef, B <: AnyRef](val from: Node[A], val to: Node[B], val nam
   def addSensor(f: A => Iterable[B]) = sensors += f
 }
 
-case class Edge[T <: AnyRef, U <: AnyRef](forward: Link[T, U], backward: Link[U, T],
-  matchers: ArrayBuffer[(T, U) => Boolean] = ArrayBuffer.empty[(T, U) => Boolean]) {
+trait Edge[T <: AnyRef, U <: AnyRef] {
+  def forward: Link[T, U]
+  def backward: Link[U, T]
+  def matchers: ArrayBuffer[(T, U) => Boolean]
+
   def from = forward.from
   def to = forward.to
   def +=(t: T, u: U) = {
@@ -49,7 +52,7 @@ case class Edge[T <: AnyRef, U <: AnyRef](forward: Link[T, U], backward: Link[U,
   ) =
     for (t <- from; u <- to; if (sensor(t, u))) this += (t, u)
 
-  def unary_- = Edge(backward, forward, matchers.map(f => (u: U, t: T) => f(t, u)))
+  def unary_- : Edge[U, T]
 
   def links = forward.index.map((p) => p._2.map(b => p._1 -> b)).flatten.toSeq
 
@@ -86,4 +89,30 @@ case class Edge[T <: AnyRef, U <: AnyRef](forward: Link[T, U], backward: Link[U,
     })
     matchers.foreach(f => populateWith(f, to = Seq(u)))
   }
+}
+
+case class AsymmetricEdge[T <: AnyRef, U <: AnyRef](val forward: Link[T, U], val backward: Link[U, T],
+                                      ms: Seq[(T, U) => Boolean] = Seq.empty[(T, U) => Boolean])
+  extends Edge[T,U] {
+  val matchers = {
+    val m = ArrayBuffer.empty[(T, U) => Boolean]
+    m ++= ms
+    m
+  }
+
+  override def unary_- : Edge[U, T] = AsymmetricEdge(backward, forward, matchers.map(f => (u: U, t: T) => f(t, u)))
+}
+
+case class SymmetricEdge[T <: AnyRef](link: Link[T, T],
+                                      ms: Seq[(T, T) => Boolean] = Seq.empty[(T, T) => Boolean])
+  extends Edge[T,T] {
+  def forward = link
+  def backward = link
+  val matchers = {
+    val m = ArrayBuffer.empty[(T, T) => Boolean]
+    m ++= ms
+    m
+  }
+
+  override def unary_- = this
 }

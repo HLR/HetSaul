@@ -6,17 +6,23 @@ In this package two application examples in Saul are described.
 The list of the examples is listed bellow. To see more details on each example, click on its link to 
 visit its README file. 
 
-1. [Set Cover](src/main/scala/edu/illinois/cs/cogcomp/saulexamples/setcover/README.md): The Set Cover problem which is a classical constraint programming 
+1. [Set Cover](src/main/scala/edu/illinois/cs/cogcomp/saulexamples/setcover/README.md): 
+The Set Cover problem which is a classical constraint programming 
 problem. This example shows declarative first order constraint programming in Saul. The constraints 
 are propositionalized and form an integer linear program (ILP) which are solved using Gurobi as our backend solver.
  Note that there is no training/learning involved in this example. 
  
-2. [Entity-Relation Extraction](src/main/scala/edu/illinois/cs/cogcomp/saulexamples/nlp/EntityMentionRelation/README.md): The entity-relation extraction task through 
+2. [Entity-Relation Extraction](src/main/scala/edu/illinois/cs/cogcomp/saulexamples/nlp/EntityMentionRelation/README.md): 
+The entity-relation extraction task through 
 which designing various training and prediction configurations are exemplified. 
 One can see how local, global and pipeline configurations are designed, used and evaluated in Saul.
 
-3. [Spam Classification](src/main/scala/edu/illinois/cs/cogcomp/saulexamples/nlp/EmailSpam/README.md): A third example which is a binary classification task 
+3. [Spam Classification](src/main/scala/edu/illinois/cs/cogcomp/saulexamples/nlp/EmailSpam/README.md): 
+A third example which is a binary classification task 
 to classify text documents as either Spam or Not Spam was also created.
+
+4. [Semantic Role Labeling](src/main/scala/edu/illinois/cs/cogcomp/saulexamples/nlp/README.md): 
+a task in natural language processing consisting of the detection of the semantic arguments associated with the predicate or verb of a sentence and their classification into their specific roles.
 
 * Note: Examples are under active development. 
 
@@ -28,59 +34,69 @@ to classify text documents as either Spam or Not Spam was also created.
 
 ## Conceptual Structure
 
-Each Saul program is a general purpose Scala program in which Saul DSL provides a number of high level constructs to design application programs at a high level and declaratively.
-The provided constructs are designed to enable programing for the following conceptual components of each application that uses learning and inference.
+Each Saul program is a general purpose Scala program in which Saul DSL provides a number of high level 
+constructs to design application programs at a high level. high level and declaratively. 
+The provided constructs are design to enable programing for the following conceptual 
+components of each application that uses learning and inference.
 
 ### Data Model: 
 The data model in Saul conceptually is represented with a graph containing nodes, edges, 
-and their properties.
+and their properties. Defining entities with the following constructs:
 
-  -`Node`: The graph contains different types of nodes to represent various data elements i.e. objects. For example nodes can represent documents, sound files, pictures, text documents, etc.
-  -`Edge`: The `Node`s in the graph are connected to each other via `Edge`s.
-  -`Property`: The nodes can have properties, for example a node of type `Document` can have properties
+  - `Node`: The different types of objects, for example documents, sound files, pictures, text documents, etc.
+  - `Edge`: In a graph with nodes of type `Node`, their connections can be defined with `Edge`s. 
+  - `Property`: The attributes of a node, for example a node of type `Document` can have properties 
   such as `Title`, `Subject`, `Author`, `Body`, etc.  
   
 #### Defining nodes
 
-This is done using the `node` function,
+This is done using the `node` function, 
 
 ```scala
-val tokens = node[ConllRawToken](
-  PrimaryKey = {
-     t : ConllRawToken => String.valueOf(t.sentId) + ":" +String.valueOf(t.wordId)
-  }
-)
+val tokens = node[ConllRawToken]
+val relations = node[ConllRawRelation]
 ```
 
-This line of code defines a node of type `ConllRawToken` and names it as 'tokens' and defines a 'primary key' for it based on the original variables in the original ConllRawToken class.
+This line of code defines an entity of type `ConllRawToken` and names it as `tokens`.
 
 #### Defining properties
-This is done via several constructs depending on the type of the feature for discrete features for example the `propertyOf` is used,
+This is done via the `property` function, 
 
 ```scala
-val pos = propertyOf[ConllRawToken]('pos) {
-   (t: ConllRawToken) => t.POS :: Nil
+val pos = property[ConllRawToken]("pos") {
+   (t: ConllRawToken) => t.POS 
 }
-  ```
-This line of code defines a feature vector that is generated using the pos-tag of the original class of the entitiy that this property is assigned to (that is ConllRawToken class). The type of the feature is discrete. 
-The list of possibilities for other types of feature functions are listed in:  `edu.illinois.cs.cogcomp.lfs.data_model.properties.features._`. 
+  ``` 
+  
+In this definition `"pos"` is the name of the property and it can be chosen arbitrarily. The definition 
+inside `{ .... }` is  the definition of a sensor which given an object of type `ConllRawToken`
+generates an output property value (in this case, using the POS tag of an object of type `ConllRawToken`). 
+
+
 
 #### Defining edges 
 
-This is done via several constructs depending on the type of the relationships (see Saul paper). For example for 1:n relations, 
-"oneToManyRelationOf" is used,
+This is done via several constructs depending on the type of the relationships. Here is an example definition, 
 
 ```scala
-val RelationToPer = edge[ConllRelation,ConllRawToken]('containE1)('sid === 'sid, 'e1id === 'wordid)
+val tokenSentenceEdge = edge(tokens, relations)
 ```
 
-Each pair of token (with original class: ConllRelation) contains two tokens (with original type ConllRawToken) and those two tokens are found using the keys of the contained tokens. 
+This definition creates edges between the two `Node`s we defined previously. 
+
+### Instantiation Data Model 
+TODO 
+
+### Graph Queries 
+TODO
 
 ### Classifiers
 Here are the basic types essential for using classifiers. 
 
-  - `Label`: The "category" of the one object. For example, in a classification task, the category of one text  document can be related to its topic, e.g. Sport, politics, etc. 
-  - `Features`: A set of properties of object that is used for the classifiers to be trained based on those, for example the set of words that occur in a document can be used as feature s of that document (Bag of words). 
+  - `Label`: The "category" of the one object. For example, in a classification task, the category 
+  of one text  document can be related to its topic, e.g. Sport, politics, etc. 
+  - `Features`: A set of properties of object that is used for the classifiers to be trained based on 
+  those, for example the set of words that occur in a document can be used as feature s of that document (Bag of words). 
   - `Parameters`: Variables used to fine tune the classifier. It differs from one type of classification method to another. 
 
 A classifier can be defined in the following way: 
@@ -130,7 +146,7 @@ The following is the usual construct in the application program:
 
 ```scala
 
-object EXAMPLEapp {
+object exampleApp {
   def main(args: Array[String]): Unit = {
     val TrainData: List[Post] = new ExampleDataReader("PathToTrainData").VariableOfdata.toList
     val TestData: List[Post] = new ExampleDataReader("data/20news/20news.test.shuffled").VariableOfDate.toList

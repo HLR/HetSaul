@@ -1,19 +1,15 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.EmailSpam
 
-import edu.illinois.cs.cogcomp.lbjava.learn.SparseAveragedPerceptron
-import edu.illinois.cs.cogcomp.saul.datamodel.property.Property
+import edu.illinois.cs.cogcomp.saul.classifier.Learnable
+import edu.illinois.cs.cogcomp.saul.constraint.ConstraintTypeConversion._
 import edu.illinois.cs.cogcomp.saulexamples.data.Document
 import edu.illinois.cs.cogcomp.saulexamples.nlp.EmailSpam.spamDataModel._
-import edu.illinois.cs.cogcomp.saul.classifier.Learnable
-
 object spamClassifiers {
-  val parameters = new SparseAveragedPerceptron.Parameters()
-  parameters.modelDir = "model"
-  object spamClassifier extends Learnable[Document](spamDataModel, parameters) {
+  object spamClassifier extends Learnable[Document](spamDataModel) {
 
-    def label: Property[Document] = spamLabel
+    def label = spamLabel
     override def algorithm = "SparseNetwork"
-    //override def feature = using(
+    override def feature = using(wordFeature)
     //word,phrase,containsSubPhraseMent,containsSubPhraseIng,
     // containsInPersonList,wordLen,containsInCityList
     // )

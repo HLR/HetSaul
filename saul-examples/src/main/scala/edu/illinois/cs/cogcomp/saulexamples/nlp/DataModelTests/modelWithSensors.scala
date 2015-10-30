@@ -14,20 +14,20 @@ object modelWithSensors extends DataModel {
   val constituent = node[Constituent]
 
   /** Property Types */
-  val label = discretePropertyOf[Constituent]('label) {
-    x => x.getLabel
+  val label = property[Constituent]("label") {
+    x: Constituent => x.getLabel
   }
 
-  val docFeatureExample = discretePropertyOf[TextAnnotation]('doc) {
+  val docFeatureExample = property[TextAnnotation]("doc") {
     x: TextAnnotation => x.getNumberOfSentences.toString
   }
-  val sentenceFeatureExample = discretePropertyOf[Sentence]('sentnce) {
+
+  val sentenceFeatureExample = property[Sentence]("sentnce") {
     x: Sentence => x.getText
   }
 
   /** Edge Types */
-  val docTosen = edge(document, sentence, 'dTos)
-  val SenToCons = edge(document, constituent, 'tToc)
-
+  val docTosen = edge(document, sentence)
+  val SenToCons = edge(document, constituent)
 }
 

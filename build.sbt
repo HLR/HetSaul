@@ -23,9 +23,7 @@ lazy val saulCore = (project in file("saul-core")).
   settings(
     name := "saul",
     libraryDependencies ++= Seq(
-      "de.bwaldvogel" % "liblinear" % "1.94",
-      "net.sf.squirrel-sql.thirdparty.non-maven" % "java-cup" % "11a",
-      "org.dmilne" % "weka-wrapper" % "0.0.1"
+      "edu.illinois.cs.cogcomp" % "LBJava" % "1.1.1"
     )
   )
 
@@ -37,8 +35,8 @@ lazy val saulExamples = (project in file("saul-examples")).
     libraryDependencies ++= Seq(
       // slf4j is required by both annotators (Curator, Pipeline)
       "org.slf4j" % "slf4j-simple" % "1.7.7",
-      "edu.illinois.cs.cogcomp" % "illinois-nlp-pipeline" % "0.1.9" exclude("edu.illinois.cs.cogcomp", "LBJava"),
+      "edu.illinois.cs.cogcomp" % "illinois-nlp-pipeline" % "0.1.9",
       "edu.illinois.cs.cogcomp" % "illinois-curator" % "3.0.0",
-      "edu.illinois.cs.cogcomp" % "edison" % "3.0.0" exclude("edu.illinois.cs.cogcomp", "LBJava")
+      "edu.illinois.cs.cogcomp" % "edison" % "3.0.0"
     )
   ).dependsOn(saulCore).aggregate(saulCore)

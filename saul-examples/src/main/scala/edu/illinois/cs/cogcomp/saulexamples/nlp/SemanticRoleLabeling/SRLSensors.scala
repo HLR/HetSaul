@@ -26,6 +26,10 @@ object SRLSensors {
     ta.getView(ViewNames.SRL_VERB).getRelations.toList
   }
 
+  def textAnnotationToTokens(ta:TextAnnotation):List[Constituent]={
+    ta.getView(ViewNames.TOKENS).getConstituents.toList
+  }
+
   /** Property sensor */
   def lemmatizer(c: Constituent): String = {
     c.getLabel

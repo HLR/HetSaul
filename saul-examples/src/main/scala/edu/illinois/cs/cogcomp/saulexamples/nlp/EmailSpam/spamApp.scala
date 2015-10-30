@@ -7,7 +7,7 @@ import scala.collection.JavaConversions._
 
 object spamApp {
 
-  def main(args: Array[String]): Unit = {
+  def main(args: Array[String]) = {
     /** Defining the data and specifying it's location  */
     val trainData = new DocumentReader("./data/EmailSpam/train").docs.toList
     val testData = new DocumentReader("./data/EmailSpam/test").docs.toList

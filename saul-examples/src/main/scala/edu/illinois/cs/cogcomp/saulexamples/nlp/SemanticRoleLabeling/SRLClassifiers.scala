@@ -9,7 +9,7 @@ import edu.illinois.cs.cogcomp.saulexamples.ExamplesConfigurator
 object SRLClassifiers {
   //TODO This needs to be overriden by the user; change it to be dynamic
   val parameters = new SparseAveragedPerceptron.Parameters()
-  parameters.modelDir = new ExamplesConfigurator().getDefaultConfig.getString(ExamplesConfigurator.MODELS_DIR.getFirst)
+  //  parameters.modelDir = new ExamplesConfigurator().getDefaultConfig.getString(ExamplesConfigurator.MODELS_DIR.getFirst)
   object predicateClassifier extends Learnable[Constituent](SRLDataModel, parameters) {
 
     //TODO These are not used during Learner's initialization

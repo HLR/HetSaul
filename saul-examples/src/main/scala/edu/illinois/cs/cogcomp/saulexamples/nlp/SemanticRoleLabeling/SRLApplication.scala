@@ -1,8 +1,9 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling
 
+import edu.illinois.cs.cogcomp.core.datastructures.textannotation.Constituent
 import edu.illinois.cs.cogcomp.saulexamples.ExamplesConfigurator
 import edu.illinois.cs.cogcomp.saulexamples.data.SRLDataReader
-import SRLClassifiers.predicateClassifier
+import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLClassifiers.predicateClassifier
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLDataModel._
 
 import scala.collection.JavaConversions._
@@ -17,8 +18,16 @@ object SRLApplication {
       rm.getString(ExamplesConfigurator.PROPBANK_HOME.getFirst)
     )
     reader.readData()
-    textAnnotation.populate(reader.textAnnotations.toList)
-    predicateClassifier.learn(2)
+    sentences.populate(reader.textAnnotations.toList)
 
+    //From now on we populate the test collections
+
+    val predicateCandidates=tokens().filter((x:Constituent)=> (tokens(x) prop posTag).head.startsWith("VB"))
+
+    predicates.populate(predicateCandidates, train = false)
+    //checks we have all trees
+    //sentences().filter((x:TextAnnotation) => (sentences(x)~> sentencesToTrees).isEmpty)
+
+    predicateClassifier.learn(2)
   }
 }

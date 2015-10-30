@@ -38,7 +38,7 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
     // TODO: do caching instead of deleting caching when finished develop
     // TODO: define default paramters
 
-    val modelDir = parameters.modelDir
+    val modelDir = "models"
     IOUtils.mkdir(modelDir)
     IOUtils.rm(modelDir + getClassNameForClassifier + ".lc")
     IOUtils.rm(modelDir + getClassNameForClassifier + ".lex")
@@ -147,7 +147,6 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
       //Thickness(3)
       //learningRate=0.1
     }
-
   }
 
   def learn(iteration: Int): Unit = {
@@ -155,7 +154,7 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
   }
 
   def learn(iteration: Int, data: Iterable[T]): Unit = {
-    println("Learn with" + data.size)
+    println("Learnable: Learn with data of size" + data.size)
     val crTokenTest = new LBJIteratorParserScala[T](data)
     crTokenTest.reset()
 
@@ -163,7 +162,6 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
 
       val v = crTokenTest.next
       if (v == null) {
-
         if (remainingIteration > 0) {
           crTokenTest.reset()
           learnAll(crTokenTest, remainingIteration - 1)
