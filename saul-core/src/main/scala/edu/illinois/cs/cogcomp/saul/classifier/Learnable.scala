@@ -38,7 +38,7 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
     // TODO: do caching instead of deleting caching when finished develop
     // TODO: define default paramters
 
-    val modelDir = "models"
+    val modelDir = "models/"
     IOUtils.mkdir(modelDir)
     IOUtils.rm(modelDir + getClassNameForClassifier + ".lc")
     IOUtils.rm(modelDir + getClassNameForClassifier + ".lex")
