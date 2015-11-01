@@ -22,7 +22,7 @@ object SRLApplication {
 
     //From now on we populate the test collections
 
-    val predicateCandidates=tokens().filter((x:Constituent)=> (tokens(x) prop posTag).head.startsWith("VB"))
+    val predicateCandidates = tokens().filter((x: Constituent) => (tokens(x) prop posTag).head.startsWith("VB"))
 
     predicates.populate(predicateCandidates, train = false)
     //checks we have all trees

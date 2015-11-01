@@ -18,7 +18,7 @@ object SRLDataModel extends DataModel {
   val trees = node[Tree[String]]
 
   val tokens = node[Constituent]
-  
+
   val sentencesToRelations = edge(sentences, relations)
 
   sentencesToRelations.addSensor(SRLSensors.textAnnotationToRelation _)
@@ -29,13 +29,12 @@ object SRLDataModel extends DataModel {
 
   val relationsToArguments = edge(relations, arguments)
   relationsToArguments.addSensor(SRLSensors.relToArgument _)
-  
+
   val relationsToPredicates = edge(relations, predicates)
   relationsToPredicates.addSensor(SRLSensors.relToPredicate _)
 
   val sentencesToTokens = edge(sentences, tokens)
   sentencesToTokens.addSensor(SRLSensors.textAnnotationToTokens _)
-
 
   //TODO This is what I think the properties should look like
   //  val lemma = property(predicate)
@@ -45,8 +44,7 @@ object SRLDataModel extends DataModel {
   val predicateLabel = property[Constituent]("p") {
     x: Constituent => x.getLabel
   }
-  val posTag =property[Constituent]("pos")
-  {
-    x: Constituent=> { x.getTextAnnotation.getView(ViewNames.POS).getConstituentsCovering(x).get(0).getLabel}
+  val posTag = property[Constituent]("pos") {
+    x: Constituent => { x.getTextAnnotation.getView(ViewNames.POS).getConstituentsCovering(x).get(0).getLabel }
   }
 }
