@@ -16,6 +16,7 @@ object graphQueries extends App {
   }
 
   import model._
+  val f= ((token() ~> t2s).node == sentence) // this can be called from a java program
   println((token() ~> t2s).node == sentence)
   println((token() ~> t2s).node == sentence)
   println((token() ~> t2s ~> -t2s).node == token)
