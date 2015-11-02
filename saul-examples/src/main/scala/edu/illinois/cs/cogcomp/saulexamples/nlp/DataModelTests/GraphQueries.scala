@@ -1,7 +1,6 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.DataModelTests
 
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
-import edu.illinois.cs.cogcomp.saul.datamodel.node.NodeSet
 
 object graphQueries extends App {
 
@@ -17,7 +16,7 @@ object graphQueries extends App {
   }
 
   import model._
-
+  println((token() ~> t2s).node == sentence)
   println((token() ~> t2s).node == sentence)
   println((token() ~> t2s ~> -t2s).node == token)
   println("---")

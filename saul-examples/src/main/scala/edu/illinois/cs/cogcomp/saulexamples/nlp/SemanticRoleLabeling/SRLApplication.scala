@@ -25,8 +25,6 @@ object SRLApplication {
     val predicateCandidates = tokens().filter((x: Constituent) => (tokens(x) prop posTag).head.startsWith("VB"))
 
     predicates.populate(predicateCandidates, train = false)
-    //checks we have all trees
-    //sentences().filter((x:TextAnnotation) => (sentences(x)~> sentencesToTrees).isEmpty)
 
     predicateClassifier.learn(2)
   }
