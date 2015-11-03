@@ -53,6 +53,7 @@ object toyDataGenerator {
     (1 to numDocs).map(_ => new Document(documentString.split(" ").toList, util.Random.nextInt(2).toString))
   }
 
+  /** Generate toy instances that have the same labels */
   def generateToyDocumentsSingleLabel(numDocs: Int): IndexedSeq[Document] = {
     val label = util.Random.nextInt(2).toString
     (1 to numDocs).map(_ => new Document(documentString.split(" ").toList, label))
