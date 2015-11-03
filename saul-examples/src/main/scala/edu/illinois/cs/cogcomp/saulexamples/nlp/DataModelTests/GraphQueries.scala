@@ -16,7 +16,22 @@ object graphQueries extends App {
   }
 
   import model._
-  val f = ((token() ~> t2s).node == sentence) // this can be called from a java program
+
+  def f: Boolean = {
+
+    val model1 = new DataModel {
+      val token = node[String]
+      val sentence = node[String]
+      val document = node[String]
+      val corpus = node[String]
+
+      val t2s = edge(token, sentence, 't2s)
+      val s2d = edge(sentence, document, 's2d)
+      val d2c = edge(document, corpus, 'd2c)
+    }
+    val s = ((model1.token() ~> model1.t2s).node == model1.sentence)
+    return ((model1.token() ~> model1.t2s).node == model1.sentence)
+  } // this can be called from a java program
   println((token() ~> t2s).node == sentence)
   println((token() ~> t2s).node == sentence)
   println((token() ~> t2s ~> -t2s).node == token)

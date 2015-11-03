@@ -4,7 +4,7 @@ import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
 import org.scalatest.{ FlatSpec, Matchers }
 class contextualFeaturesTest extends FlatSpec with Matchers {
 
-  object TestGraph extends DataModel {
+  class TestGraphC extends DataModel {
     val firstNames = node[String]
     val lastNames = node[String]
     val name = edge(firstNames, lastNames, 'names)
@@ -16,13 +16,13 @@ class contextualFeaturesTest extends FlatSpec with Matchers {
     name.populateWith(_.charAt(0) == _.charAt(0))
 
   }
-
+  val graphObject = new TestGraphC()
   "finding the nodes in a window in the neighbohood" should "find the neighbors in a window" in {
-    import TestGraph._
-    getNodeWithType[String].getWithWindow(firstNames.getAllInstances.head, 0, 1).toSet should be(Set(Some("Dave"), Some("John")))
-    firstNames.getWithWindow(firstNames.getAllInstances.head, -2, 2).toSet should be(Set(None, Some("Dave"), Some("John"), Some("Mark")))
-    lastNames.getWithWindow(lastNames.getAllInstances.head, -2, 2).toSet should be(Set(None, Some("Dell"), Some("Jacobs"), Some("Maron")))
-
+    graphObject.getNodeWithType[String].getWithWindow(graphObject.firstNames.getAllInstances.head, 0, 1).toSet should be(Set(Some("Dave"), Some("John")))
+    graphObject.firstNames.getWithWindow(graphObject.firstNames.getAllInstances.head, -2, 2).toSet should be(Set(None, Some("Dave"), Some("John"), Some("Mark")))
+    graphObject.lastNames.getWithWindow(graphObject.lastNames.getAllInstances.head, -2, 2).toSet should be(Set(None, Some("Dell"), Some("Jacobs"), Some("Maron")))
+    val query2 = graphObject.lastNames() prop graphObject.prefix
+    query2.toSet should be(Set("a", "e"))
   }
 
 }
