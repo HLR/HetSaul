@@ -39,12 +39,10 @@ class SpamUnitTests extends FlatSpec with Matchers {
   }
 
   "classifier " should "overfit" in {
-    val trainData = toyDataGenerator.generateToyDocuments(1)
+    val trainData = toyDataGenerator.generateToyDocumentsSingleLabel(10)
     docs populate trainData
     spamClassifier.learn(30)
     spamClassifier.classifier.discreteValue(trainData.head) should be(trainData.head.getLabel)
-    //spamClassifier.classifier.discreteValue(trainData.head) should (be("1") or be("0"))
-    //trainData.head.getLabel should (be("1") or be("0"))
   }
 }
 
@@ -52,6 +50,12 @@ object toyDataGenerator {
   val documentString = "Saul or Soul; that is the question"
   def generateToyDocuments(numDocs: Int): IndexedSeq[Document] = {
     (1 to numDocs).map(_ => new Document(documentString.split(" ").toList, util.Random.nextInt(2).toString))
+  }
+
+  /** Generate toy instances that have the same labels */
+  def generateToyDocumentsSingleLabel(numDocs: Int): IndexedSeq[Document] = {
+    val label = util.Random.nextInt(2).toString
+    (1 to numDocs).map(_ => new Document(documentString.split(" ").toList, label))
   }
 
   def generateToyTextAnnotation(numDocs: Int): IndexedSeq[TextAnnotation] = {
