@@ -18,7 +18,6 @@ object graphQueries extends App {
   import model._
 
   println((token() ~> t2s).node == sentence)
-  println((token() ~> t2s).node == sentence)
   println((token() ~> t2s ~> -t2s).node == token)
   println("---")
   println((token() ~> t2s ~> s2d).node == document)
