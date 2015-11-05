@@ -45,6 +45,6 @@ object SRLDataModel extends DataModel {
     x: Constituent => x.getLabel
   }
   val posTag = property[Constituent]("pos") {
-    x: Constituent => { x.getTextAnnotation.getView(ViewNames.POS).getConstituentsCovering(x).get(0).getLabel }
+    x: Constituent => x.getTextAnnotation.getView(ViewNames.POS).getConstituentsCovering(x).get(0).getLabel
   }
 }
