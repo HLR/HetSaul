@@ -1,8 +1,8 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.DataModelTests
 
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
-
 import scala.collection.JavaConverters._
+
 object graphForFex extends DataModel {
   val firstNames = node[String]
   val lastNames = node[String]
