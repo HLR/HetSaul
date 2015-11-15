@@ -22,7 +22,7 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
 
   def fromData = datamodel.getNodeWithType[T].getTrainingInstances
 
-  def feature: List[Property[T]] = datamodel.getFeaturesOf[T].toList
+  def feature: List[Property[T]] = datamodel.getPropertiesForType[T].toList
   def algorithm: String = "SparseNetwork"
   val featureExtractor = new CombinedDiscreteProperty[T](this.feature)
 
@@ -339,11 +339,11 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
   }
 
   def relationalProperty[U <: AnyRef](implicit uTag: ClassTag[U]): Property[T] = {
-    val fts: List[Property[U]] = this.datamodel.getAllPropertyOf[U]
+    val fts: List[Property[U]] = this.datamodel.getPropertiesForType[U]
     relationalProperty[U](fts)
   }
   def relationalProperty[U <: AnyRef](ls: List[Property[U]])(implicit uTag: ClassTag[U]): Property[T] = {
-    val fts = this.datamodel.getAllPropertyOf[U]
+    val fts = this.datamodel.getPropertiesForType[U]
     new RelationalFeature[T, U](this.datamodel, fts)
   }
 }
