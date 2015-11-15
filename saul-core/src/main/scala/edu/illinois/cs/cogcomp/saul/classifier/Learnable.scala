@@ -322,6 +322,7 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
   def using(l: Learner): Learner = {
     l
   }
+
   def nextWithIn[U <: AnyRef](properties: List[Property[T]])(implicit uTag: ClassTag[U]): Property[T] = {
     this.windowWithIn[U](0, 1, properties.toList)
   }
@@ -342,6 +343,7 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
     val fts: List[Property[U]] = this.datamodel.getPropertiesForType[U]
     relationalProperty[U](fts)
   }
+
   def relationalProperty[U <: AnyRef](ls: List[Property[U]])(implicit uTag: ClassTag[U]): Property[T] = {
     val fts = this.datamodel.getPropertiesForType[U]
     new RelationalFeature[T, U](this.datamodel, fts)
