@@ -1,5 +1,6 @@
 package edu.illinois.cs.cogcomp.saul.datamodel.edge
 
+import edu.illinois.cs.cogcomp.lbjava.util.{ExceptionlessInputStream, ExceptionlessOutputStream}
 import edu.illinois.cs.cogcomp.saul.datamodel.node.Node
 
 import scala.collection.mutable
@@ -7,6 +8,8 @@ import scala.collection.mutable.ArrayBuffer
 
 class Link[A <: AnyRef, B <: AnyRef](val from: Node[A], val to: Node[B], val name: Option[Symbol]) {
   val index = new mutable.HashMap[A, mutable.LinkedHashSet[B]]
+  val indexWithId = new mutable.HashMap[Int, mutable.LinkedHashSet[Int]]
+
   def neighborsOf(t: A): Iterable[B] = index.getOrElse(t, Seq.empty)
   def +=(a: A, b: B) = index.getOrElseUpdate(a, new mutable.LinkedHashSet) += b
   def ++=(a: A, bs: Iterable[B]) = index.getOrElseUpdate(a, new mutable.LinkedHashSet) ++= bs
@@ -15,6 +18,44 @@ class Link[A <: AnyRef, B <: AnyRef](val from: Node[A], val to: Node[B], val nam
   val sensors = new ArrayBuffer[A => Iterable[B]]()
 
   def addSensor(f: A => Iterable[B]) = sensors += f
+
+  def deriveIndexWithId() = {
+    index.foreach {
+      case (fromInstance, toInstances) =>
+        val fromId = from.reverseOrderingMap(fromInstance)
+        val toIds = toInstances.map(to.reverseOrderingMap(_))
+        indexWithId.put(fromId, toIds)
+    }
+  }
+
+  def writeIndexWithId(out: ExceptionlessOutputStream) = {
+    out.writeInt(indexWithId.size)
+    indexWithId.foreach {
+      case (fromId, toIds) =>
+        out.writeInt(fromId)
+        out.writeInt(toIds.size)
+        toIds.foreach {
+          case toId =>
+            out.writeInt(toId)
+        }
+    }
+  }
+
+  def loadIndexWithId(in: ExceptionlessInputStream) = {
+    val indexWithIdSize = in.readInt()
+    (0 until indexWithIdSize).foreach {
+      _ =>
+        val fromId = in.readInt()
+        val toIdsSize = in.readInt()
+        val toIds = new mutable.LinkedHashSet[Int]()
+        (0 until toIdsSize).foreach {
+          _ =>
+            val toId = in.readInt()
+            toIds.add(toId)
+        }
+        indexWithId.put(fromId, toIds)
+    }
+  }
 }
 
 trait Edge[T <: AnyRef, U <: AnyRef] {
@@ -88,6 +129,21 @@ trait Edge[T <: AnyRef, U <: AnyRef] {
       }
     })
     matchers.foreach(f => populateWith(f, to = Seq(u)))
+  }
+
+  def deriveIndexWithIds() = {
+    forward.deriveIndexWithId()
+    backward.deriveIndexWithId()
+  }
+
+  def writeIndexWithIds(out: ExceptionlessOutputStream) = {
+    forward.writeIndexWithId(out)
+    backward.writeIndexWithId(out)
+  }
+
+  def loadIndexWithIds(in: ExceptionlessInputStream) = {
+    forward.loadIndexWithId(in)
+    backward.loadIndexWithId(in)
   }
 }
 
