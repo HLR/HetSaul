@@ -23,6 +23,7 @@ object indenpendentTraining extends App {
   }
 
   populate_ER_graph
+
   val it = 2
   println("Indepent Training with iteration " + it)
   personClassifier.learn(it)
