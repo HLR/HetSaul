@@ -2,7 +2,7 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.RewriteBa
 
 import edu.illinois.cs.cogcomp.saul.classifier.Learnable
 
-object independent_training {
+object independent_train {
   def apply[T <: AnyRef](c: List[Learnable[T]]) =
     c.foreach((x: Learnable[T]) => x.learn(10))
 }

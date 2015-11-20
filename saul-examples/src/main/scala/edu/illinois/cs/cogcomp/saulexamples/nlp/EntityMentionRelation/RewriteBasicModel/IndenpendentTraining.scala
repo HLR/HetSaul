@@ -25,6 +25,6 @@ object IndependentTraining extends App {
 
   populate_ER_graph
 
-  independent_training(List(personClassifier, orgClassifier, locationClassifier))
+  independent_train(List(personClassifier, orgClassifier, locationClassifier))
   independent_test(List(personClassifier, orgClassifier, locationClassifier))
 }
