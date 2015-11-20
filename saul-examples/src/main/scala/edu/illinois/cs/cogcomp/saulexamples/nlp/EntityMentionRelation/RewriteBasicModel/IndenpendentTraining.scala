@@ -6,7 +6,8 @@ import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.RewriteBas
 
 import scala.collection.JavaConversions._
 
-object indenpendentTraining extends App {
+
+object IndenpendentTraining extends App {
 
   def populate_ER_graph = {
     val reader = new Conll04_ReaderNew("./data/EntityMentionRelation/conll04.corp", "Token")
@@ -17,24 +18,13 @@ object indenpendentTraining extends App {
     sentences populate trainSentences
     tokens populate trainTokens
     pairs populate trainRelations
+
     testWith(trainTokens)
     testWith(trainRelations)
     testWith(trainSentences)
-  }
+ }
 
   populate_ER_graph
-
-  val it = 2
-  println("Indepent Training with iteration " + it)
-  personClassifier.learn(it)
-  personClassifier.test(tokens.getAllInstances)
-  orgClassifier.learn(it)
-  orgClassifier.test(tokens.getAllInstances)
-  locationClassifier.learn(it)
-  locationClassifier.test(tokens.getAllInstances)
-  //  workForClassifier.learn(it)
-  //  workForClassifier.test()
-  //  LivesInClassifier.learn(it)
-  //  LivesInClassifier.test()
-
+  independent_training(List(personClassifier, orgClassifier, locationClassifier))
+  independent_test(List(personClassifier, orgClassifier, locationClassifier))
 }
