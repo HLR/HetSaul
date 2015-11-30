@@ -5,7 +5,9 @@ import edu.illinois.cs.cogcomp.saul.datamodel.property.features.real._
 import edu.illinois.cs.cogcomp.saul.datamodel.property.{ EvaluatedProperty, Property }
 import edu.illinois.cs.cogcomp.saul.datamodel.node.{ JoinNode, Node }
 import edu.illinois.cs.cogcomp.saul.datamodel.edge.{ SymmetricEdge, AsymmetricEdge, Edge, Link }
+import spray.json._
 
+import scala.collection.immutable.HashMap
 import scala.collection.mutable.{ ListBuffer, Map => MutableMap }
 import scala.reflect.ClassTag
 
@@ -221,5 +223,58 @@ trait DataModel {
 
   def property[T <: AnyRef](name: String) = new PropertyApply[T](name)
   def property[T <: AnyRef](name: String, ordered: Boolean) = new PropertyApply[T](name, ordered)
+
+  def extractJSON = {
+    import dataModelJsonProtocol._
+    val json = this.toJson
+    println(json)
+  }
+
+}
+//TODO: add property into protocol, improve with scala reflection API
+object dataModelJsonProtocol extends DefaultJsonProtocol {
+
+  implicit object dataModelJsonFormat extends RootJsonFormat[DataModel] {
+
+    def write(model: DataModel): JsObject = {
+      val declaredFields = model.getClass.getFields.toList
+
+      val nodeFields = declaredFields
+        .filter(_.getType.getName eq "edu.illinois.cs.cogcomp.saul.datamodel.node.Node")
+      val nodes = nodeFields.map(f => f.getName)
+      val objectToName = new HashMap[Node[_], String]
+      nodeFields foreach { field =>
+        objectToName.updated(field.get(model).asInstanceOf[Node[_]], field.getName)
+      }
+
+      def edges = declaredFields
+        .filter(_.getType.getName eq "edu.illinois.cs.cogcomp.saul.datamodel.edge.Edge")
+        .map(field => {
+          val link = field.get(model).asInstanceOf[Edge[Node[_], Node[_]]]
+          (
+            field.getName,
+            objectToName.apply(link.forward.from),
+            objectToName.apply(link.forward.to)
+          )
+        })
+
+      JsObject(
+        "model" -> JsString(model.getClass.getDeclaringClass.getName),
+        "nodes" -> JsArray(nodes.map(s => JsString(s))),
+        "edges" -> JsArray(edges.map(e =>
+          JsObject(
+            "name" -> JsString(e._1),
+            "source" -> JsString(e._2),
+            "target" -> JsString(e._3)
+          )))
+      )
+    }
+
+    //TODO: implement full deserialization with scala reflection API
+    def read(value: JsValue) = {
+      this.getClass.getDeclaringClass
+        .getConstructor().newInstance().asInstanceOf[DataModel]
+    }
+  }
 }
 

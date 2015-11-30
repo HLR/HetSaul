@@ -23,7 +23,8 @@ lazy val saulCore = (project in file("saul-core")).
   settings(
     name := "saul",
     libraryDependencies ++= Seq(
-      "edu.illinois.cs.cogcomp" % "LBJava" % "1.1.1"
+      "edu.illinois.cs.cogcomp" % "LBJava" % "1.1.1",
+      "io.spray" %%  "spray-json" % "1.3.2"
     )
   )
 
@@ -56,4 +57,4 @@ lazy val saulWebapp = (project in file("saul-webapp")).
     ),
     resolvers += "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases",
     routesGenerator := InjectedRoutesGenerator
-  ).dependsOn(saulCore).aggregate(saulCore)
+  ).dependsOn(saulCore, saulExamples).aggregate(saulCore)
