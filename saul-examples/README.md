@@ -82,10 +82,31 @@ This is done via several constructs depending on the type of the relationships. 
 val tokenSentenceEdge = edge(tokens, relations)
 ```
 
-This definition creates edges between the two `Node`s we defined previously. 
+This definition creates edges between the two `Node`s we defined previously.
+
+#### Sensors
+   ##### Sensors for properties
+
+   As mentioned above in the body of property definition an arbitrary sensor can be called.
+   `(t: ConllRawToken) => t.POS`
+   This will return a primitive data type i.e. String, real, etc.
+
+   ##### Sensors for edges
+
+   Defining the sensors on edges is a very important step to make the whole graph and the necessary connections.
+   Conceptually there are two types of sensors:
+   1) Generators : They get nodes of type `T` and generated nodes of type `U`, and during the generation establish an automatic connection between the instances of type `T` to the instances of type `U`.
+    See this example which adds a generating sensor to an edge:
+    `e2.addSensor((s: String) => s.toUpperCase)`
+
+   2) Matching : They get nodes of type `T` and type `U` and evaluate a boolean expression over every pair, if the expression is true a connection will be established.
+   See this example which adds a matching sensor to an edge:
+
+   `e1.addSensor(_.charAt(0) == _.charAt(0))`
+
 
 ### Instantiation Data Model 
-TODO 
+TODO
 
 ### Graph Queries 
 TODO
