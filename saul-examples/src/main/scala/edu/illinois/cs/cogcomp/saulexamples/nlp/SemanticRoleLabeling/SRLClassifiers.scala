@@ -1,10 +1,9 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling
 
-import edu.illinois.cs.cogcomp.core.datastructures.textannotation.Constituent
+import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{ Relation, Constituent }
 import edu.illinois.cs.cogcomp.lbjava.learn.SparseAveragedPerceptron
 import edu.illinois.cs.cogcomp.saul.classifier.Learnable
 import edu.illinois.cs.cogcomp.saul.datamodel.property.Property
-import edu.illinois.cs.cogcomp.saulexamples.ExamplesConfigurator
 
 object SRLClassifiers {
   //TODO This needs to be overriden by the user; change it to be dynamic
@@ -13,7 +12,20 @@ object SRLClassifiers {
   object predicateClassifier extends Learnable[Constituent](SRLDataModel, parameters) {
 
     //TODO These are not used during Learner's initialization
-    def label: Property[Constituent] = SRLDataModel.predicateLabel
+    def label: Property[Constituent] = SRLDataModel.isPredicate
     override def algorithm = "SparseNetwork"
   }
+
+  object argumentClassifier extends Learnable[Constituent](SRLDataModel, parameters) {
+    def label = SRLDataModel.isArgument
+  }
+
+  object predicateSenseClassifier extends Learnable[Constituent](SRLDataModel, parameters) {
+    def label = SRLDataModel.predicateSense
+  }
+
+  object relationClassifier extends Learnable[Relation](SRLDataModel, parameters) {
+    def label = SRLDataModel.argumentLabel
+  }
+
 }
