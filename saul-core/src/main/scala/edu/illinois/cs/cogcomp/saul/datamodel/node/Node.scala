@@ -1,7 +1,7 @@
 package edu.illinois.cs.cogcomp.saul.datamodel.node
 
 import edu.illinois.cs.cogcomp.lbjava.classify.FeatureVector
-import edu.illinois.cs.cogcomp.lbjava.util.{ExceptionlessInputStream, ExceptionlessOutputStream}
+import edu.illinois.cs.cogcomp.lbjava.util.{ ExceptionlessInputStream, ExceptionlessOutputStream }
 import edu.illinois.cs.cogcomp.saul.datamodel.property.Property
 import edu.illinois.cs.cogcomp.saul.datamodel.property.features.discrete.DiscreteProperty
 import edu.illinois.cs.cogcomp.saul.datamodel.edge.Edge
