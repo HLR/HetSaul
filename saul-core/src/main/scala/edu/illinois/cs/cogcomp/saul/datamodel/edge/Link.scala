@@ -92,8 +92,8 @@ trait Edge[T <: AnyRef, U <: AnyRef] {
 }
 
 case class AsymmetricEdge[T <: AnyRef, U <: AnyRef](val forward: Link[T, U], val backward: Link[U, T],
-                                      ms: Seq[(T, U) => Boolean] = Seq.empty[(T, U) => Boolean])
-  extends Edge[T,U] {
+  ms: Seq[(T, U) => Boolean] = Seq.empty[(T, U) => Boolean])
+  extends Edge[T, U] {
   val matchers = {
     val m = ArrayBuffer.empty[(T, U) => Boolean]
     m ++= ms
@@ -103,9 +103,11 @@ case class AsymmetricEdge[T <: AnyRef, U <: AnyRef](val forward: Link[T, U], val
   override def unary_- : Edge[U, T] = AsymmetricEdge(backward, forward, matchers.map(f => (u: U, t: T) => f(t, u)))
 }
 
-case class SymmetricEdge[T <: AnyRef](link: Link[T, T],
-                                      ms: Seq[(T, T) => Boolean] = Seq.empty[(T, T) => Boolean])
-  extends Edge[T,T] {
+case class SymmetricEdge[T <: AnyRef](
+  link: Link[T, T],
+  ms: Seq[(T, T) => Boolean] = Seq.empty[(T, T) => Boolean]
+)
+  extends Edge[T, T] {
   def forward = link
   def backward = link
   val matchers = {

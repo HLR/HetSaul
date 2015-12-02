@@ -27,23 +27,7 @@ trait DataModel {
     }).toList
   }
 
-  // TODO: keep one of the following three functions
-  def getAllPropertiesOf[T <: AnyRef](implicit tag: ClassTag[T]): Seq[Property[T]] = {
-    // TODO: implement this
-    getAllFeatures[T]
-  }
-
-  def getAllFeatures[T](implicit tag: ClassTag[T]): Seq[Property[T]] = {
-    this.PROPERTIES.filter(_.tag.equals(tag)).map(_.asInstanceOf[Property[T]])
-  }
-
-  // TODO: create lbj feature classifier.
-  def getFeaturesOf[T](implicit tag: ClassTag[T]): Seq[Property[T]] = {
-    this.getAllFeatures[T]
-  }
-
-  /** Functions for internal usages. */
-  def getAllPropertyOf[T <: AnyRef](implicit tag: ClassTag[T]): List[Property[T]] = {
+  def getPropertiesForType[T <: AnyRef](implicit tag: ClassTag[T]): List[Property[T]] = {
     this.PROPERTIES.filter(a => a.tag.equals(tag)).map(_.asInstanceOf[Property[T]]).toList
   }
 

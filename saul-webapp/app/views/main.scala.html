@@ -1,0 +1,61 @@
+@(title: String)(content: Html)
+
+<!DOCTYPE html>
+
+<html lang="en">
+    <head>
+        <title>@title</title>
+        <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/main.css")">
+        <link rel="shortcut icon" type="image/png" href="@routes.Assets.versioned("images/favicon.png")">
+        <script src="@routes.Assets.versioned("javascripts/hello.js")" type="text/javascript"></script>
+        <link rel="stylesheet" media="screen" href="@routes.WebJarAssets.at(WebJarAssets.locate("bootstrap.min.css"))">
+        <script src="@routes.WebJarAssets.at(WebJarAssets.locate("jquery.min.js"))"></script>
+        <script src="@routes.WebJarAssets.at(WebJarAssets.locate("js/bootstrap.min.js"))"></script>
+    </head>
+    <body>
+        <div class="page-header">
+            <h1 style="text-align: center">Saul<small> Declarative Learning-Based Programming</small></h1>
+            <nav class="navbar navbar-default" role="navigation">
+                <div class="container-fluid">
+                    <div class="navbar-header">
+                        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+                            <span class="sr-only">Toggle navigation</span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </button>
+                        <a class="navbar-brand" href="/">Menu</a>
+                    </div>
+                    <div class="nav-collapse">
+                        <ul class="nav navbar-nav">
+                            <li><a href="">Write code!</a></li>
+                            <li><a href="">How it works</a></li>
+                            <li><a href="">About</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+
+            <div class="panel-body" style="float : left ;width: 50%">
+                <div class="form-group">
+                    <textarea class="form-control" rows="18" id="code"></textarea>
+                </div>
+                <div style="text-align: center">
+                    <button type="compile" class="btn btn-default">Compile</button>
+                    <button type="stop" class="btn btn-default">Stop</button>
+                </div>
+            </div>
+
+            <div class="panel-body" style="float : right ;width: 50%">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Data Model Graph</h3>
+                    </div>
+                    <div class="panel-body" style="height: 335px; text-align: center">
+                        Data Model Graph Visualization Here!
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

@@ -1,7 +1,6 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.DataModelTests
 
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
-import edu.illinois.cs.cogcomp.saul.datamodel.node.NodeSet
 
 object graphQueries extends App {
 
@@ -11,9 +10,9 @@ object graphQueries extends App {
     val document = node[String]
     val corpus = node[String]
 
-    val t2s = edge(token, sentence, 't2s)
-    val s2d = edge(sentence, document, 's2d)
-    val d2c = edge(document, corpus, 'd2c)
+    val t2s = edge(token, sentence)
+    val s2d = edge(sentence, document)
+    val d2c = edge(document, corpus)
   }
 
   import model._

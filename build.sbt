@@ -37,6 +37,23 @@ lazy val saulExamples = (project in file("saul-examples")).
       "org.slf4j" % "slf4j-simple" % "1.7.7",
       "edu.illinois.cs.cogcomp" % "illinois-nlp-pipeline" % "0.1.9",
       "edu.illinois.cs.cogcomp" % "illinois-curator" % "3.0.0",
-      "edu.illinois.cs.cogcomp" % "edison" % "3.0.0"
+      "edu.illinois.cs.cogcomp" % "illinois-edison" % "3.0.0"
     )
+  ).dependsOn(saulCore).aggregate(saulCore)
+
+lazy val saulWebapp = (project in file("saul-webapp")).
+  enablePlugins(PlayScala).
+  settings(commonSettings: _*).
+  settings(
+    name := "saul-webapp",
+    libraryDependencies ++= Seq(
+      "org.webjars" %% "webjars-play" % "2.4.0-1",
+      "org.webjars" % "bootstrap" % "3.1.1-2",
+      jdbc,
+      cache,
+      ws,
+      specs2 % Test
+    ),
+    resolvers += "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases",
+    routesGenerator := InjectedRoutesGenerator
   ).dependsOn(saulCore).aggregate(saulCore)
