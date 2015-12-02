@@ -47,6 +47,8 @@ lazy val saulWebapp = (project in file("saul-webapp")).
   settings(
     name := "saul-webapp",
     libraryDependencies ++= Seq(
+      "org.webjars" %% "webjars-play" % "2.4.0-1",
+      "org.webjars" % "bootstrap" % "3.1.1-2",
       jdbc,
       cache,
       ws,
