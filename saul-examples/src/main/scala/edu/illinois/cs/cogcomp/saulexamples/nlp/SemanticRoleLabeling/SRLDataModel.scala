@@ -1,6 +1,6 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling
 
-import edu.illinois.cs.cogcomp.core.datastructures.{IntPair, Pair, ViewNames}
+import edu.illinois.cs.cogcomp.core.datastructures.{ IntPair, Pair, ViewNames }
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{ Constituent, Relation, TextAnnotation }
 import edu.illinois.cs.cogcomp.core.datastructures.trees.Tree
 import edu.illinois.cs.cogcomp.nlp.corpusreaders.CoNLLColumnFormatReader
@@ -59,7 +59,7 @@ object SRLDataModel extends DataModel {
   val posTag = property[Constituent]("pos") {
     x: Constituent => x.getTextAnnotation.getView(ViewNames.POS).getConstituentsCovering(x).get(0).getLabel
   }
-  val address = property[Constituent]("add"){
+  val address = property[Constituent]("add") {
     x: Constituent => x.getTextAnnotation.getCorpusId + ":" + x.getTextAnnotation.getId + ":" + x.getSpan
   }
 }

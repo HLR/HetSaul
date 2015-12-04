@@ -1,8 +1,8 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling
 
-import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{Constituent, Relation, TextAnnotation, TreeView}
+import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{ Constituent, Relation, TextAnnotation, TreeView }
 import edu.illinois.cs.cogcomp.core.datastructures.trees.Tree
-import edu.illinois.cs.cogcomp.core.datastructures.{IntPair, Pair, ViewNames}
+import edu.illinois.cs.cogcomp.core.datastructures.{ IntPair, Pair, ViewNames }
 import edu.illinois.cs.cogcomp.nlp.utilities.ParseUtils
 
 import scala.collection.JavaConversions._

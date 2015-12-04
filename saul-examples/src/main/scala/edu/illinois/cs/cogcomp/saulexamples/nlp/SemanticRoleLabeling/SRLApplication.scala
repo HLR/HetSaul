@@ -1,7 +1,7 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling
 
 import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
-import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{Constituent, Relation}
+import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{ Constituent, Relation }
 import edu.illinois.cs.cogcomp.saulexamples.ExamplesConfigurator
 import edu.illinois.cs.cogcomp.saulexamples.data.SRLDataReader
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLClassifiers._
@@ -36,7 +36,7 @@ object SRLApplication {
     predicateClassifier.crossValidation(3)
     predicateSenseClassifier.learn(5)
 
-  //  val argumentCandidates= trees().filter(x => x.
+    //  val argumentCandidates= trees().filter(x => x.
     val argumentCandidates = tokens().filter((x: Constituent) => (tokens(x) prop posTag).head.startsWith("NN")).map(c => c.cloneForNewView(ViewNames.SRL_VERB))
 
     arguments.populate(argumentCandidates, train = false)
