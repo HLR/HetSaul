@@ -19,23 +19,29 @@ object SRLApplication {
       rm.getString(ExamplesConfigurator.PROPBANK_HOME.getFirst)
     )
     reader.readData()
+
+    // Here we populate everything
+
     sentences.populate(reader.textAnnotations.toList)
 
     //From now on we populate the test collections
 
     val predicateCandidates = tokens().filter((x: Constituent) => (tokens(x) prop posTag).head.startsWith("VB")).map(c => c.cloneForNewView(ViewNames.SRL_VERB))
 
-    predicates.populate(predicateCandidates, train = false)
+    val negativeCandidates = predicates(predicateCandidates).filterNot((cand: Constituent) => (predicates() prop address).contains((predicates(cand) prop address).head))
+
+    predicates.populate(negativeCandidates)
 
     predicateClassifier.learn(2)
+    predicateClassifier.crossValidation(3)
     predicateSenseClassifier.learn(5)
 
+    //  val argumentCandidates= trees().filter(x => x.
     val argumentCandidates = tokens().filter((x: Constituent) => (tokens(x) prop posTag).head.startsWith("NN")).map(c => c.cloneForNewView(ViewNames.SRL_VERB))
 
     arguments.populate(argumentCandidates, train = false)
     argumentClassifier.learn(4)
 
-    //TODO filter based on syntactic properties
     val relationCandidates = for { x <- predicates(); y <- arguments() } yield new Relation("candidate", x, y, 0.0)
 
     relations.populate(relationCandidates, train = false)
