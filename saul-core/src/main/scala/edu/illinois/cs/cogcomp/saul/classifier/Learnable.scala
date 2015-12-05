@@ -1,16 +1,17 @@
 package edu.illinois.cs.cogcomp.saul.classifier
 
+import java.io.File
 import java.net.URL
 
 import edu.illinois.cs.cogcomp.core.io.IOUtils
-import edu.illinois.cs.cogcomp.lbjava.classify.{ Classifier, TestDiscrete }
+import edu.illinois.cs.cogcomp.lbjava.classify.{ Classifier, FeatureVector, TestDiscrete }
 import edu.illinois.cs.cogcomp.lbjava.learn.Learner.Parameters
-import edu.illinois.cs.cogcomp.lbjava.learn.{ StochasticGradientDescent, SparsePerceptron, SparseAveragedPerceptron, Learner }
+import edu.illinois.cs.cogcomp.lbjava.learn.{ Learner, SparseAveragedPerceptron, SparsePerceptron, StochasticGradientDescent }
 import edu.illinois.cs.cogcomp.lbjava.parse.Parser
 import edu.illinois.cs.cogcomp.lbjava.util.ExceptionlessOutputStream
 import edu.illinois.cs.cogcomp.saul.TestContinuous
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
-import edu.illinois.cs.cogcomp.saul.datamodel.property.{ RelationalFeature, PropertyWithWindow, CombinedDiscreteProperty, Property }
+import edu.illinois.cs.cogcomp.saul.datamodel.property.{ CombinedDiscreteProperty, Property, PropertyWithWindow, RelationalFeature }
 import edu.illinois.cs.cogcomp.saul.lbjrelated.LBJLearnerEquivalent
 import edu.illinois.cs.cogcomp.saul.parser.LBJIteratorParserScala
 
@@ -20,7 +21,10 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
 
   def getClassNameForClassifier = this.getClass.getCanonicalName
 
-  def fromData = datamodel.getNodeWithType[T].getTrainingInstances
+  val targetNode = datamodel.getNodeWithType[T]
+  def fromData = targetNode.getTrainingInstances
+
+  val useCache = false // Whether to use derived values
 
   def feature: List[Property[T]] = datamodel.getPropertiesForType[T].toList
   def algorithm: String = "SparseNetwork"
@@ -149,8 +153,20 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
     }
   }
 
-  def learn(iteration: Int): Unit = {
-    learn(iteration, this.fromData)
+  def learn(iteration: Int, filePath: String = datamodel.defaultDIFilePath): Unit = {
+    if (useCache) {
+      if (!datamodel.hasDerivedInstances) {
+        if (new File(filePath).exists()) {
+          datamodel.load(filePath)
+        } else {
+          datamodel.deriveInstances()
+          datamodel.write(filePath)
+        }
+      }
+      learnWithDerivedInstances(iteration, targetNode.derivedInstances.values)
+    } else {
+      learn(iteration, this.fromData)
+    }
   }
 
   def learn(iteration: Int, data: Iterable[T]): Unit = {
@@ -175,6 +191,30 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
       println("BIAS:" + classifier.asInstanceOf[StochasticGradientDescent].getParameters)
     }
     learnAll(crTokenTest, iteration)
+    classifier.doneLearning()
+  }
+
+  def learnWithDerivedInstances(numIterations: Int, featureVectors: Iterable[FeatureVector]): Unit = {
+    val propertyNameSet = feature.map(_.name).toSet
+    (0 until numIterations).foreach {
+      _ =>
+        featureVectors.foreach {
+          fullFeatureVector =>
+            val featureVector = new FeatureVector()
+            val numFeatures = fullFeatureVector.size()
+            (0 until numFeatures).foreach {
+              featureIndex =>
+                val feature = fullFeatureVector.getFeature(featureIndex)
+                val propertyName = feature.getGeneratingClassifier
+                if (label != null && label.name.equals(propertyName)) {
+                  featureVector.addLabel(feature)
+                } else if (propertyNameSet.contains(propertyName)) {
+                  featureVector.addFeature(feature)
+                }
+            }
+            classifier.learn(featureVector)
+        }
+    }
     classifier.doneLearning()
   }
 
