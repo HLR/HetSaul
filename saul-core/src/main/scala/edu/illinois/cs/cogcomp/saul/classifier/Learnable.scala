@@ -18,23 +18,15 @@ import edu.illinois.cs.cogcomp.saul.parser.LBJIteratorParserScala
 import scala.reflect.ClassTag
 
 abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: Parameters = new Learner.Parameters)(implicit tag: ClassTag[T]) extends LBJLearnerEquivalent {
-
-  def getClassNameForClassifier = this.getClass.getCanonicalName
-
+  val useCache = false // Whether to use derived values
   val targetNode = datamodel.getNodeWithType[T]
   def fromData = targetNode.getTrainingInstances
-
-  val useCache = false // Whether to use derived values
-
-  def feature: List[Property[T]] = datamodel.getPropertiesForType[T].toList
-  def algorithm: String = "SparseNetwork"
-  val featureExtractor = new CombinedDiscreteProperty[T](this.feature)
-
-  val lbpFeatures: Classifier = {
-    featureExtractor.classifier
-  }
+  def getClassNameForClassifier = this.getClass.getCanonicalName
+  def feature = datamodel.getPropertiesForType[T]
+  def algorithm = "SparseNetwork"
 
   val classifier: Learner = {
+    val lbpFeatures = new CombinedDiscreteProperty[T](this.feature.filterNot(_ == label)).classifier
 
     // TODO: if we found a learned model in disk
     // Then we load the model
@@ -83,7 +75,7 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
         //learningRate=0.1
       }
     } else if (algorithm.equals("SparsePerceptron")) {
-      new SparsePerceptron() ////
+      new SparsePerceptron()
       {
         // net=network
         if (label != null) {
@@ -117,7 +109,7 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
         //Thickness(3)
         //learningRate=0.1
       }
-    } else new SparseNetworkLBP() // new SparsePerceptron()////
+    } else new SparseNetworkLBP() // new SparsePerceptron()
     {
       // net=network
       if (label != null) {
@@ -170,7 +162,7 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
   }
 
   def learn(iteration: Int, data: Iterable[T]): Unit = {
-    println("Learnable: Learn with data of size" + data.size)
+    println("Learnable: Learn with data of size " + data.size)
     val crTokenTest = new LBJIteratorParserScala[T](data)
     crTokenTest.reset()
 
