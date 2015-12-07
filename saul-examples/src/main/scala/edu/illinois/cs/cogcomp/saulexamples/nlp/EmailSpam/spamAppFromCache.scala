@@ -1,20 +1,21 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.EmailSpam
 
+import edu.illinois.cs.cogcomp.core.io.IOUtils
 import edu.illinois.cs.cogcomp.saulexamples.data.DocumentReader
 import edu.illinois.cs.cogcomp.saulexamples.nlp.EmailSpam.spamClassifiers.spamClassifierWithCache
 
 import scala.collection.JavaConversions._
 
-object spamAppWithCache {
-
-  def main(args: Array[String]): Unit = {
-    /** Defining the data and specifying it's location  */
-    val trainData = new DocumentReader("./data/EmailSpam/train").docs.toList
+/** Testing the functionality of the cache. [[edu.illinois.cs.cogcomp.saulexamples.nlp.EmailSpam.spamAppWithCache]]
+  * produces the temporary model file need for this App to run.
+  *
+  * @author Christos Christodoulopoulos
+  */
+object spamAppFromCache {
+  def main(args: Array[String]) {
     val testData = new DocumentReader("./data/EmailSpam/test").docs.toList
-    spamDataModel.docs populate trainData
-    spamDataModel.deriveInstances()
-    spamDataModel.write("models/temp.model")
 
+    spamDataModel.load("models/temp.model")
     spamClassifierWithCache.learn(30)
     spamClassifierWithCache.learn(30)
     spamDataModel.testWith(testData)
