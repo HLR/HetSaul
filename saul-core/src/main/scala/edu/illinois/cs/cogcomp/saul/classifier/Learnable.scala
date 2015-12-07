@@ -75,8 +75,7 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
         //learningRate=0.1
       }
     } else if (algorithm.equals("SparsePerceptron")) {
-      new SparsePerceptron()
-      {
+      new SparsePerceptron() {
         // net=network
         if (label != null) {
           val oracle = Property.entitiesToLBJFeature(label)
