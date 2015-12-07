@@ -54,7 +54,7 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
         if (lexicon == null) lexFile.writeInt(0)
         else lexicon.write(lexFile)
         lexFile.close()
-        val lcFile: ExceptionlessOutputStream = ExceptionlessOutputStream.openCompressedStream(lcFilePath)
+        val lcFile = ExceptionlessOutputStream.openCompressedStream(lcFilePath)
         write(lcFile)
         lcFile.close()
         readLexiconOnDemand = true
@@ -87,7 +87,7 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
         if (lexicon == null) lexFile.writeInt(0)
         else lexicon.write(lexFile)
         lexFile.close()
-        val lcFile: ExceptionlessOutputStream = ExceptionlessOutputStream.openCompressedStream(lcFilePath)
+        val lcFile = ExceptionlessOutputStream.openCompressedStream(lcFilePath)
         write(lcFile)
         lcFile.close()
         readLexiconOnDemand = true
@@ -102,8 +102,7 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
         //Thickness(3)
         //learningRate=0.1
       }
-    } else new SparseNetworkLBP()
-    {
+    } else new SparseNetworkLBP() {
       if (label != null) {
         val oracle = Property.entitiesToLBJFeature(label)
         setLabeler(oracle)
@@ -116,11 +115,11 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
       // we build the lexicon
       lcFilePath = new URL(new URL("file:"), modelDir + getClassNameForClassifier + ".lc")
       lexFilePath = new URL(new URL("file:"), modelDir + getClassNameForClassifier + ".lex")
-      val lexFile: ExceptionlessOutputStream = ExceptionlessOutputStream.openCompressedStream(lexFilePath)
+      val lexFile = ExceptionlessOutputStream.openCompressedStream(lexFilePath)
       if (lexicon == null) lexFile.writeInt(0)
       else lexicon.write(lexFile)
       lexFile.close()
-      val lcFile: ExceptionlessOutputStream = ExceptionlessOutputStream.openCompressedStream(lcFilePath)
+      val lcFile = ExceptionlessOutputStream.openCompressedStream(lcFilePath)
       write(lcFile)
       lcFile.close()
       readLexiconOnDemand = true
@@ -219,7 +218,7 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
     testReader.reset()
     val tester = TestDiscrete.testDiscrete(classifier, classifier.getLabeler, testReader)
     tester.printPerformance(System.out)
-    val ret = tester.getLabels.map{
+    val ret = tester.getLabels.map {
       label => (label, (tester.getF1(label), tester.getPrecision(label), tester.getRecall(label)))
     }
 
