@@ -2,8 +2,8 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.RewriteBa
 
 import edu.illinois.cs.cogcomp.saul.classifier.trainingParadigms._
 import edu.illinois.cs.cogcomp.saulexamples.EntityMentionRelation.reader.Conll04_ReaderNew
-import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.RewriteBasicModel.entityRelationClassifiers._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.RewriteBasicModel.entityRelationBasicDataModel._
+import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.RewriteBasicModel.entityRelationClassifiers._
 
 import scala.collection.JavaConversions._
 
@@ -21,7 +21,7 @@ object IndependentERTraining extends App {
   }
 
   populate_ER_graph
-  forgetAll(personClassifier, orgClassifier, locationClassifier, worksForClassifier,livesInClassifier)
- // independent_train(personClassifier, orgClassifier, locationClassifier, worksForClassifier, livesInClassifier)
-  independent_test(entityRelationBasicDataModel, personClassifier, orgClassifier, locationClassifier, worksForClassifier, livesInClassifier)
+  forgetAll(personClassifier, orgClassifier, locationClassifier, worksForClassifier, livesInClassifier)
+  // independent_train(personClassifier, orgClassifier, locationClassifier, worksForClassifier, livesInClassifier)
+  independent_test(entityRelationBasicDataModel, personClassifier, orgClassifier, locationClassifier)
 }

@@ -58,3 +58,4 @@ lazy val saulWebapp = (project in file("saul-webapp")).
     resolvers += "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases",
     routesGenerator := InjectedRoutesGenerator
   ).dependsOn(saulCore).aggregate(saulCore)
+

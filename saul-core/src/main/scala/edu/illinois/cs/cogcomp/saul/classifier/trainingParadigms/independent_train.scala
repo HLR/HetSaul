@@ -11,12 +11,19 @@ object independent_train {
 }
 
 object independent_test {
-  def apply(dm : DataModel, c: Learnable[_]*)(implicit t:ClassTag[_]*) =
+  def apply[T <: AnyRef](dm: DataModel, c: Learnable[T]*)(implicit t: ClassTag[T]) = {
+    c.foreach {
 
-    c.foreach( (x: Learnable[_]) => (x: Learnable[_]) => x.test(dm.getNodeWithType[_].getAllInstances))
+      case x: Learnable[T] =>
+        {
+          val typedx = x.asInstanceOf[Learnable[T]]
+          typedx.test(dm.getNodeWithType[T].getAllInstances)
+        }
+    }
+  }
 }
 object forgetAll {
-  def apply(c: Learnable[_]*): Unit ={
+  def apply(c: Learnable[_]*): Unit = {
     c.foreach((x: Learnable[_]) => x.forget())
   }
 }
