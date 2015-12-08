@@ -11,3 +11,4 @@ target/
 .projectFilesBackup
 *.class
 annotation-cache/
+/config

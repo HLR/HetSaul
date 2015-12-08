@@ -21,7 +21,7 @@ object IndependentERTraining extends App {
   }
 
   populate_ER_graph
-  forgetAll(List(personClassifier, orgClassifier, locationClassifier))
-  independent_train(List(personClassifier, orgClassifier, locationClassifier))
-  independent_test(List(personClassifier, orgClassifier, locationClassifier),entityRelationBasicDataModel)
+  forgetAll(personClassifier, orgClassifier, locationClassifier, worksForClassifier,livesInClassifier)
+ // independent_train(personClassifier, orgClassifier, locationClassifier, worksForClassifier, livesInClassifier)
+  independent_test(entityRelationBasicDataModel, personClassifier, orgClassifier, locationClassifier, worksForClassifier, livesInClassifier)
 }
