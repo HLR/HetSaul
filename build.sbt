@@ -36,9 +36,7 @@ lazy val saulExamples = (project in file("saul-examples")).
     name := "saul-examples",
     javaOptions += "-Xmx6g",
     libraryDependencies ++= Seq(
-      // slf4j is required by both annotators (Curator, Pipeline)
-      "org.slf4j" % "slf4j-simple" % "1.7.7",
-      "edu.illinois.cs.cogcomp" % "illinois-nlp-pipeline" % "0.1.9",
+      "edu.illinois.cs.cogcomp" % "illinois-nlp-pipeline" % "0.1.14",
       "edu.illinois.cs.cogcomp" % "illinois-curator" % cogcompNLPVersion,
       "edu.illinois.cs.cogcomp" % "illinois-edison" % cogcompNLPVersion
     )

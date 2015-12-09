@@ -15,8 +15,8 @@ object SRLApplication {
   def main(args: Array[String]) {
     val rm = new ExamplesConfigurator().getDefaultConfig
     val reader = new SRLDataReader(
-      rm.getString(ExamplesConfigurator.TREEBANK_HOME.getFirst),
-      rm.getString(ExamplesConfigurator.PROPBANK_HOME.getFirst)
+      rm.getString(ExamplesConfigurator.TREEBANK_HOME.key),
+      rm.getString(ExamplesConfigurator.PROPBANK_HOME.key)
     )
     reader.readData()
 
