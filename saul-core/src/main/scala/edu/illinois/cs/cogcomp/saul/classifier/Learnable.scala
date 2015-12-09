@@ -20,7 +20,7 @@ import scala.reflect.ClassTag
 abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: Parameters = new Learner.Parameters)(implicit tag: ClassTag[T]) extends LBJLearnerEquivalent {
 
   def getClassNameForClassifier = this.getClass.getCanonicalName
-
+   type n=T
   val targetNode = datamodel.getNodeWithType[T]
   def fromData = targetNode.getTrainingInstances
 
