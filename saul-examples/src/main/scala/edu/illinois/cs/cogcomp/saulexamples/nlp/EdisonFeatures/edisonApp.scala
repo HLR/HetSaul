@@ -1,9 +1,7 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.EdisonFeatures
 
+import edu.illinois.cs.cogcomp.annotation.BasicTextAnnotationBuilder
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.TextAnnotation
-import edu.illinois.cs.cogcomp.curator.CuratorFactory
-import edu.illinois.cs.cogcomp.nlp.pipeline.IllinoisPipelineFactory
-import edu.illinois.cs.cogcomp.nlp.utilities.BasicTextAnnotationBuilder
 import edu.illinois.cs.cogcomp.saulexamples.data.{ Document, DocumentReader }
 import edu.illinois.cs.cogcomp.saulexamples.nlp.commonSensors
 

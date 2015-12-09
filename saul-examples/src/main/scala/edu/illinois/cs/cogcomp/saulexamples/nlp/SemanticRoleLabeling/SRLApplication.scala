@@ -1,7 +1,7 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling
 
-import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
-import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{ Constituent, Relation }
+import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{Constituent, Relation}
+import edu.illinois.cs.cogcomp.core.datastructures.{IntPair, ViewNames}
 import edu.illinois.cs.cogcomp.saulexamples.ExamplesConfigurator
 import edu.illinois.cs.cogcomp.saulexamples.data.SRLDataReader
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLClassifiers._
@@ -21,32 +21,48 @@ object SRLApplication {
     reader.readData()
 
     // Here we populate everything
-
     sentences.populate(reader.textAnnotations.toList)
 
-    //From now on we populate the test collections
+    // Generate predicate candidates by extracting all verb tokens
+    val predicateCandidates = tokens()
+      .filter((x: Constituent) => (tokens(x) prop posTag).head.startsWith("VB"))
+      .map(c => c.cloneForNewView(ViewNames.SRL_VERB))
+    // Remove the true predicates from the list of candidates (since they have a different label)
+    val negativePredicateCandidates = predicates(predicateCandidates)
+      .filterNot(cand => (predicates() prop address).contains((predicates(cand) prop address).head))
 
-    val predicateCandidates = tokens().filter((x: Constituent) => (tokens(x) prop posTag).head.startsWith("VB")).map(c => c.cloneForNewView(ViewNames.SRL_VERB))
-
-    val negativeCandidates = predicates(predicateCandidates).filterNot((cand: Constituent) => (predicates() prop address).contains((predicates(cand) prop address).head))
-
-    predicates.populate(negativeCandidates)
+    predicates.populate(negativePredicateCandidates)
 
     predicateClassifier.learn(2)
     predicateClassifier.crossValidation(3)
     predicateSenseClassifier.learn(5)
 
-    //  val argumentCandidates= trees().filter(x => x.
-    val argumentCandidates = tokens().filter((x: Constituent) => (tokens(x) prop posTag).head.startsWith("NN")).map(c => c.cloneForNewView(ViewNames.SRL_VERB))
+    // Exclude argument candidates (trees) that contain a predicate
+    // First we need to get the list of predicates that are relevant to each tree
+    val treePredicates = trees() ~> -sentencesToTrees ~> sentencesToRelations ~> relationsToPredicates
+    // Now we need to filter the trees based on whether they contain a predicate
+    val treeCandidates = trees().filterNot(tree => {
+      treePredicates.exists(pred => {
+        // Containment relationship
+          val treeSpan: IntPair = tree.getLabel.getSpan
+          val predSpan: IntPair = pred.getSpan
+          treeSpan.getFirst <= predSpan.getFirst && treeSpan.getSecond >= predSpan.getSecond
+        })
+    })
+    // Finally we need to convert the trees to argument phrases
+    val argumentCandidates = treeCandidates.map(tree => tree.getLabel)
+    // We also need to remove the true arguments
+    val negativeArgumentCandidates = arguments(argumentCandidates)
+      .filterNot(cand => (arguments() prop address).contains((arguments(cand) prop address).head))
 
-    arguments.populate(argumentCandidates, train = false)
+    arguments.populate(negativeArgumentCandidates)
     argumentClassifier.learn(4)
+    argumentClassifier.crossValidation(3)
 
     val relationCandidates = for { x <- predicates(); y <- arguments() } yield new Relation("candidate", x, y, 0.0)
 
     relations.populate(relationCandidates, train = false)
-
     relationClassifier.learn(3)
-
+    relationClassifier.crossValidation(3)
   }
 }

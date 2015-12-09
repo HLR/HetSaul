@@ -1,7 +1,7 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling
 
-import edu.illinois.cs.cogcomp.core.datastructures.{ IntPair, Pair, ViewNames }
-import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{ Constituent, Relation, TextAnnotation }
+import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
+import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{Constituent, Relation, TextAnnotation}
 import edu.illinois.cs.cogcomp.core.datastructures.trees.Tree
 import edu.illinois.cs.cogcomp.nlp.corpusreaders.CoNLLColumnFormatReader
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
@@ -16,7 +16,7 @@ object SRLDataModel extends DataModel {
 
   val sentences = node[TextAnnotation]
 
-  val trees = node[Tree[Pair[String, IntPair]]]
+  val trees = node[Tree[Constituent]]
 
   val tokens = node[Constituent]
 
@@ -37,11 +37,6 @@ object SRLDataModel extends DataModel {
   val sentencesToTokens = edge(sentences, tokens)
   sentencesToTokens.addSensor(SRLSensors.textAnnotationToTokens _)
 
-  //TODO This is what I think the properties should look like
-  //  val lemma = property(predicate)
-  //  lemma.use(SRLSensors.lemmatizer _)
-  // SRL Properties
-
   val isPredicate = property[Constituent]("p") {
     x: Constituent => x.getLabel.equals("Predicate")
   }
@@ -59,6 +54,7 @@ object SRLDataModel extends DataModel {
   val posTag = property[Constituent]("pos") {
     x: Constituent => x.getTextAnnotation.getView(ViewNames.POS).getConstituentsCovering(x).get(0).getLabel
   }
+
   val address = property[Constituent]("add") {
     x: Constituent => x.getTextAnnotation.getCorpusId + ":" + x.getTextAnnotation.getId + ":" + x.getSpan
   }

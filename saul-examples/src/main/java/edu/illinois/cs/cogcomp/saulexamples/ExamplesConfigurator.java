@@ -1,8 +1,8 @@
 package edu.illinois.cs.cogcomp.saulexamples;
 
 import edu.illinois.cs.cogcomp.core.datastructures.Pair;
-import edu.illinois.cs.cogcomp.core.utilities.Configurator;
-import edu.illinois.cs.cogcomp.core.utilities.ResourceManager;
+import edu.illinois.cs.cogcomp.core.utilities.configuration.Configurator;
+import edu.illinois.cs.cogcomp.core.utilities.configuration.ResourceManager;
 
 import java.util.Properties;
 
