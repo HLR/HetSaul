@@ -18,28 +18,16 @@ import edu.illinois.cs.cogcomp.saul.parser.LBJIteratorParserScala
 import scala.reflect.ClassTag
 
 abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: Parameters = new Learner.Parameters)(implicit tag: ClassTag[T]) extends LBJLearnerEquivalent {
-
-  def getClassNameForClassifier = this.getClass.getCanonicalName
-   type n=T
+  val useCache = false // Whether to use derived values
   val targetNode = datamodel.getNodeWithType[T]
   def fromData = targetNode.getTrainingInstances
-
-  val useCache = false // Whether to use derived values
-
-  def feature: List[Property[T]] = datamodel.getPropertiesForType[T].toList
-  def algorithm: String = "SparseNetwork"
-  val featureExtractor = new CombinedDiscreteProperty[T](this.feature)
-
-  val lbpFeatures: Classifier = {
-    featureExtractor.classifier
-  }
+  def getClassNameForClassifier = this.getClass.getCanonicalName
+  def feature = datamodel.getPropertiesForType[T]
+  def algorithm = "SparseNetwork"
 
   val classifier: Learner = {
+    val lbpFeatures = new CombinedDiscreteProperty[T](this.feature.filterNot(_ == label)).classifier
 
-    // TODO: if we found a learned model in disk
-    // Then we load the model
-
-    // TODO: do caching instead of deleting caching when finished develop
     // TODO: define default paramters
 
     val modelDir = "models/"
@@ -47,7 +35,6 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
     IOUtils.rm(modelDir + getClassNameForClassifier + ".lc")
     IOUtils.rm(modelDir + getClassNameForClassifier + ".lex")
 
-    // Else we re train one (if that is what user want)
     //new SparsePerceptron(0.1,0,3.5)
     if (algorithm.equals("Regression")) {
       new StochasticGradientDescent() {
@@ -63,13 +50,13 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
         // Looks like we have to build the lexicon
         lcFilePath = new URL(new URL("file:"), modelDir + getClassNameForClassifier + ".lc")
         lexFilePath = new URL(new URL("file:"), modelDir + getClassNameForClassifier + ".lex")
-        val out1: ExceptionlessOutputStream = ExceptionlessOutputStream.openCompressedStream(lexFilePath)
-        if (lexicon == null) out1.writeInt(0)
-        else lexicon.write(out1)
-        out1.close()
-        val out2: ExceptionlessOutputStream = ExceptionlessOutputStream.openCompressedStream(lcFilePath)
-        write(out2)
-        out2.close()
+        val lexFile = ExceptionlessOutputStream.openCompressedStream(lexFilePath)
+        if (lexicon == null) lexFile.writeInt(0)
+        else lexicon.write(lexFile)
+        lexFile.close()
+        val lcFile = ExceptionlessOutputStream.openCompressedStream(lcFilePath)
+        write(lcFile)
+        lcFile.close()
         readLexiconOnDemand = true
 
         //val p: SparseAveragedPerceptron.Parameters  =
@@ -83,9 +70,7 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
         //learningRate=0.1
       }
     } else if (algorithm.equals("SparsePerceptron")) {
-      new SparsePerceptron() ////
-      {
-        // net=network
+      new SparsePerceptron() {
         if (label != null) {
           val oracle = Property.entitiesToLBJFeature(label)
           setLabeler(oracle)
@@ -95,16 +80,16 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
           setExtractor(lbpFeatures)
         }
 
-        // Looks like we have to build the lexicon
+        // we build the lexicon
         lcFilePath = new URL(new URL("file:"), modelDir + getClassNameForClassifier + ".lc")
         lexFilePath = new URL(new URL("file:"), modelDir + getClassNameForClassifier + ".lex")
-        val out1: ExceptionlessOutputStream = ExceptionlessOutputStream.openCompressedStream(lexFilePath)
-        if (lexicon == null) out1.writeInt(0)
-        else lexicon.write(out1)
-        out1.close()
-        val out2: ExceptionlessOutputStream = ExceptionlessOutputStream.openCompressedStream(lcFilePath)
-        write(out2)
-        out2.close()
+        val lexFile = ExceptionlessOutputStream.openCompressedStream(lexFilePath)
+        if (lexicon == null) lexFile.writeInt(0)
+        else lexicon.write(lexFile)
+        lexFile.close()
+        val lcFile = ExceptionlessOutputStream.openCompressedStream(lcFilePath)
+        write(lcFile)
+        lcFile.close()
         readLexiconOnDemand = true
 
         //val p: SparseAveragedPerceptron.Parameters  =
@@ -117,9 +102,7 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
         //Thickness(3)
         //learningRate=0.1
       }
-    } else new SparseNetworkLBP() // new SparsePerceptron()////
-    {
-      // net=network
+    } else new SparseNetworkLBP() {
       if (label != null) {
         val oracle = Property.entitiesToLBJFeature(label)
         setLabeler(oracle)
@@ -129,16 +112,16 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
         setExtractor(lbpFeatures)
       }
 
-      // Looks like we have to build the lexicon
+      // we build the lexicon
       lcFilePath = new URL(new URL("file:"), modelDir + getClassNameForClassifier + ".lc")
       lexFilePath = new URL(new URL("file:"), modelDir + getClassNameForClassifier + ".lex")
-      val out1: ExceptionlessOutputStream = ExceptionlessOutputStream.openCompressedStream(lexFilePath)
-      if (lexicon == null) out1.writeInt(0)
-      else lexicon.write(out1)
-      out1.close()
-      val out2: ExceptionlessOutputStream = ExceptionlessOutputStream.openCompressedStream(lcFilePath)
-      write(out2)
-      out2.close()
+      val lexFile = ExceptionlessOutputStream.openCompressedStream(lexFilePath)
+      if (lexicon == null) lexFile.writeInt(0)
+      else lexicon.write(lexFile)
+      lexFile.close()
+      val lcFile = ExceptionlessOutputStream.openCompressedStream(lcFilePath)
+      write(lcFile)
+      lcFile.close()
       readLexiconOnDemand = true
 
       val p: SparseAveragedPerceptron.Parameters =
@@ -170,7 +153,7 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
   }
 
   def learn(iteration: Int, data: Iterable[T]): Unit = {
-    println("Learnable: Learn with data of size" + data.size)
+    println("Learnable: Learn with data of size " + data.size)
     val crTokenTest = new LBJIteratorParserScala[T](data)
     crTokenTest.reset()
 
@@ -235,9 +218,9 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
     testReader.reset()
     val tester = TestDiscrete.testDiscrete(classifier, classifier.getLabeler, testReader)
     tester.printPerformance(System.out)
-    val ret = tester.getLabels.map({
+    val ret = tester.getLabels.map {
       label => (label, (tester.getF1(label), tester.getPrecision(label), tester.getRecall(label)))
-    })
+    }
 
     ret.toList
   }
@@ -246,6 +229,7 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
     val data = this.datamodel.getNodeWithType[T].getTestingInstances
     testContinuos(data)
   }
+
   def testContinuos(testData: Iterable[T]): Unit = {
     println()
     val testReader = new LBJIteratorParserScala[T](testData)
@@ -259,6 +243,7 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
 
     //ret toList
   }
+
   def chunkData(ts: List[Iterable[T]], i: Int, curr: Int, acc: (Iterable[T], Iterable[T])): (Iterable[T], Iterable[T]) = {
     ts match {
       case head :: more =>

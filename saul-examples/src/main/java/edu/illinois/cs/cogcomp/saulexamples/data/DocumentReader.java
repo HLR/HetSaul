@@ -34,7 +34,7 @@ public class DocumentReader implements Parser {
             System.err.println(directory + " is not a directory!");
             System.exit(-1);
         }
-        
+
         files = new ArrayList<>();
         for (File f : d.listFiles()) {
             if (f.isDirectory()) {
@@ -45,7 +45,8 @@ public class DocumentReader implements Parser {
         currentFileId = 0;
     }
       for (File f: files){
-        String[] split = f.getPath().split(File.separator);
+          String splitter = File.separator.replace("\\","\\\\");
+          String[] split = f.getPath().split(splitter);
 
         String label = split[split.length - 2];
 
