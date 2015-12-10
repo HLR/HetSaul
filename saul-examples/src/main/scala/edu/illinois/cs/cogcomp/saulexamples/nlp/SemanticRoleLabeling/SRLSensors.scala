@@ -1,7 +1,7 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling
 
 import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
-import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{Constituent, Relation, TextAnnotation, TreeView}
+import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{ Constituent, Relation, TextAnnotation, TreeView }
 import edu.illinois.cs.cogcomp.core.datastructures.trees.Tree
 
 import scala.collection.JavaConversions._
@@ -33,5 +33,21 @@ object SRLSensors {
   /** Property sensor */
   def lemmatizer(c: Constituent): String = {
     c.getLabel
+  }
+
+  /** Returns all the subtrees that are suitable arguments:
+    * It excludes punctuations and traces (which have a 0-length span)
+    * @param currentSubTrees A list of already defined subtrees
+    * @return The `currentSubTrees` list augmented all their subtrees
+    */
+  def getSubtreeArguments(currentSubTrees: List[Tree[Constituent]]): List[Tree[Constituent]] = {
+    val filtered = currentSubTrees.filterNot { sTree =>
+      val constituent: Constituent = sTree.getLabel
+      constituent.getSurfaceForm.matches("\\p{P}") || (constituent.getSpan.getFirst == constituent.getSpan.getSecond)
+    }
+    filtered ++ filtered.flatMap { tree =>
+      if (!tree.isRoot && tree.getChildren.size() == 1) List()
+      else getSubtreeArguments(tree.getChildren.toList)
+    }
   }
 }
