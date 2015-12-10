@@ -1,6 +1,6 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.EmailSpam
 
-import edu.illinois.cs.cogcomp.nlp.utilities.BasicTextAnnotationBuilder
+import edu.illinois.cs.cogcomp.annotation.BasicTextAnnotationBuilder
 import edu.illinois.cs.cogcomp.saulexamples.data.Document
 import edu.illinois.cs.cogcomp.saulexamples.nlp.EmailSpam.spamClassifiers.spamClassifier
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.TextAnnotation
