@@ -6,6 +6,8 @@ import edu.illinois.cs.cogcomp.core.datastructures.trees.Tree
 import edu.illinois.cs.cogcomp.nlp.corpusreaders.CoNLLColumnFormatReader
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
 
+import edu.illinois.cs.cogcomp.saulexamples.nlp.commonSensors
+
 /** The SRL data model which contains all the entities needed to support the structured problem. */
 object SRLDataModel extends DataModel {
   val predicates = node[Constituent]
@@ -37,7 +39,7 @@ object SRLDataModel extends DataModel {
   relationsToPredicates.addSensor(SRLSensors.relToPredicate _)
 
   val sentencesToTokens = edge(sentences, tokens)
-  sentencesToTokens.addSensor(SRLSensors.textAnnotationToTokens _)
+  sentencesToTokens.addSensor(commonSensors.textAnnotationToTokens _)
 
   val isPredicate = property[Constituent]("p") {
     x: Constituent => x.getLabel.equals("Predicate")
