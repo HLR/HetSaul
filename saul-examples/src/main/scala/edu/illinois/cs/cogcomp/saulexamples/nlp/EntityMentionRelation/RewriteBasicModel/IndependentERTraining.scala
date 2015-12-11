@@ -10,6 +10,7 @@ import scala.collection.JavaConversions._
 object IndependentERTraining extends App {
 
   def populate_ER_graph = {
+
     val reader = new Conll04_ReaderNew("./data/EntityMentionRelation/conll04.corp", "Token")
     val trainSentences = reader.sentences.toList
     val trainTokens = trainSentences.flatMap(_.sentTokens).slice(0, 20)

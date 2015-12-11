@@ -28,16 +28,4 @@ object spamClassifiers {
     override val useCache = true
   }
 
-  object spamClassifierOnNode extends Learnable[Document](spamDataModel) {
-
-    def label = spamLabel
-    override def algorithm = "SparseNetwork"
-    override def feature = using(wordFeature)
-    //word,phrase,containsSubPhraseMent,containsSubPhraseIng,
-    // containsInPersonList,wordLen,containsInCityList
-    // )
-
-    override val useCache = true
-  }
-
 }
