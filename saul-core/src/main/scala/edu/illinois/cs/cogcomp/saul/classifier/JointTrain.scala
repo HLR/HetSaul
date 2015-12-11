@@ -90,7 +90,6 @@ object JointTrain {
 
                 val oracle = typedC.onClassifier.getLabeler
 
-
                 typedC.getCandidates(h) foreach {
                   x =>
                     {
