@@ -14,6 +14,8 @@ object SRLDataModel extends DataModel {
 
   val relations = node[Relation]
 
+  //val onTheFlyRelationNode= join(predicates, arguments)
+
   val sentences = node[TextAnnotation]
 
   val trees = node[Tree[Constituent]]

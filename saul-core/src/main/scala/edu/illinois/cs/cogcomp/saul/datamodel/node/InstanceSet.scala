@@ -1,7 +1,7 @@
 package edu.illinois.cs.cogcomp.saul.datamodel.node
 
 import edu.illinois.cs.cogcomp.saul.datamodel.edge.Edge
-import edu.illinois.cs.cogcomp.saul.datamodel.property.{ TypedProperty, Property }
+import edu.illinois.cs.cogcomp.saul.datamodel.property.TypedProperty
 
 trait InstanceSet[T <: AnyRef] extends Iterable[T] {
   self =>

@@ -75,11 +75,11 @@ object entityRelationBasicDataModel extends DataModel {
       val e1 = rela.e1
       val e2 = rela.e2
 
-      this.getNodeWithType[ConllRawToken].getWithWindow(e1, -2, 2, _.sentId).zipWithIndex.map {
+      this.tokens.getWithWindow(e1, -2, 2, _.sentId).zipWithIndex.map {
         case (Some(t), idx) => s"left-$idx-pos-${t.POS} "
         case (None, idx) => s"left-$idx-pos-EMPTY "
       } ++
-        this.getNodeWithType[ConllRawToken].getWithWindow(e2, -2, 2, _.sentId).zipWithIndex.map {
+        this.tokens.getWithWindow(e2, -2, 2, _.sentId).zipWithIndex.map {
           case (Some(t), idx) => s"right-$idx-pos-${t.POS} "
           case (None, idx) => s"right-$idx-pos-EMPTY} "
         }

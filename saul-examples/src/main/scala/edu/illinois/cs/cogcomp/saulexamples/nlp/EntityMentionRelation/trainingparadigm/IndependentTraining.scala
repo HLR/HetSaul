@@ -5,7 +5,7 @@ import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.entityRela
 
 /** Created by haowu on 5/6/15.
   */
-object indenpendentTraining {
+object IndependentTraining {
 
   val it = 5
 

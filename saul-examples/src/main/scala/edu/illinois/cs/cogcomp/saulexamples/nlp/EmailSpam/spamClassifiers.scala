@@ -27,4 +27,5 @@ object spamClassifiers {
 
     override val useCache = true
   }
+
 }
