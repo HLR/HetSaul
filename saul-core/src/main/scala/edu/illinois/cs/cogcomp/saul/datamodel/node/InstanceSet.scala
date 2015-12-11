@@ -3,8 +3,6 @@ package edu.illinois.cs.cogcomp.saul.datamodel.node
 import edu.illinois.cs.cogcomp.saul.datamodel.edge.Edge
 import edu.illinois.cs.cogcomp.saul.datamodel.property.TypedProperty
 
-import scala.reflect.ClassTag
-
 trait InstanceSet[T <: AnyRef] extends Iterable[T] {
   self =>
   def instances: Iterable[T]
@@ -33,8 +31,7 @@ trait InstanceSet[T <: AnyRef] extends Iterable[T] {
 
 case class BasicSet[T <: AnyRef](node: Node[T], instances: Iterable[T]) extends InstanceSet[T]
 
-case class NodeSet[T <: AnyRef](node: Node[T])(implicit tType:ClassTag[T]) extends InstanceSet[T] {
-  type n= T
+case class NodeSet[T <: AnyRef](node: Node[T]) extends InstanceSet[T] {
   override def instances: Iterable[T] = node.getAllInstances
 }
 

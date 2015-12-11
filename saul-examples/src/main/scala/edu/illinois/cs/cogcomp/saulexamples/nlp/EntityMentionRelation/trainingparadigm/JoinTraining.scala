@@ -8,7 +8,7 @@ import edu.illinois.cs.cogcomp.saul.classifier.JointTrain
 
 /** Created by Parisa on 5/6/15.
   */
-object joinTraining {
+object JoinTraining {
 
   def trainJoint(preTrainIteration: Int, jointTrainIteration: Int): Unit = {
     println("Joint Training with Pretraint " + preTrainIteration)

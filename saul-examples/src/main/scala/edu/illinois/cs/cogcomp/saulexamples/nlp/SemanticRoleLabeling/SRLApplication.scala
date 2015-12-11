@@ -24,12 +24,11 @@ object SRLApplication {
     sentences.populate(reader.textAnnotations.toList)
 
     // Generate predicate candidates by extracting all verb tokens
-    val predicateCandidates = tokens()
-      .filter((x: Constituent) => (tokens(x) prop posTag).head.startsWith("VB"))
+    val predicateCandidates = tokens().filter((x: Constituent) => posTag(x).startsWith("VB"))
       .map(c => c.cloneForNewView(ViewNames.SRL_VERB))
     // Remove the true predicates from the list of candidates (since they have a different label)
     val negativePredicateCandidates = predicates(predicateCandidates)
-      .filterNot(cand => (predicates() prop address).contains((predicates(cand) prop address).head))
+      .filterNot(cand => (predicates() prop address).contains(address(cand)))
 
     predicates.populate(negativePredicateCandidates)
 
@@ -59,6 +58,7 @@ object SRLApplication {
       .filterNot(cand => (arguments() prop address).contains((arguments(cand) prop address).head))
 
     arguments.populate(negativeArgumentCandidates)
+
     argumentClassifier.learn(4)
     argumentClassifier.crossValidation(3)
 

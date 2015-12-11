@@ -4,14 +4,14 @@ import java.io.File
 import java.net.URL
 
 import edu.illinois.cs.cogcomp.core.io.IOUtils
-import edu.illinois.cs.cogcomp.lbjava.classify.{ Classifier, FeatureVector, TestDiscrete }
+import edu.illinois.cs.cogcomp.lbjava.classify.{FeatureVector, TestDiscrete}
 import edu.illinois.cs.cogcomp.lbjava.learn.Learner.Parameters
-import edu.illinois.cs.cogcomp.lbjava.learn.{ Learner, SparseAveragedPerceptron, SparsePerceptron, StochasticGradientDescent }
+import edu.illinois.cs.cogcomp.lbjava.learn.{Learner, SparseAveragedPerceptron, SparsePerceptron, StochasticGradientDescent}
 import edu.illinois.cs.cogcomp.lbjava.parse.Parser
 import edu.illinois.cs.cogcomp.lbjava.util.ExceptionlessOutputStream
 import edu.illinois.cs.cogcomp.saul.TestContinuous
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
-import edu.illinois.cs.cogcomp.saul.datamodel.property.{ CombinedDiscreteProperty, Property, PropertyWithWindow, RelationalFeature }
+import edu.illinois.cs.cogcomp.saul.datamodel.property.{CombinedDiscreteProperty, Property, PropertyWithWindow, RelationalFeature}
 import edu.illinois.cs.cogcomp.saul.lbjrelated.LBJLearnerEquivalent
 import edu.illinois.cs.cogcomp.saul.parser.LBJIteratorParserScala
 
@@ -149,6 +149,7 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
       learnWithDerivedInstances(iteration, targetNode.derivedInstances.values)
     } else {
       learn(iteration, this.fromData)
+
     }
   }
 
@@ -160,6 +161,7 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
     def learnAll(crTokenTest: Parser, remainingIteration: Int): Unit = {
 
       val v = crTokenTest.next
+      println("token", remainingIteration)
       if (v == null) {
         if (remainingIteration > 0) {
           crTokenTest.reset()
@@ -373,4 +375,5 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
     val fts = this.datamodel.getPropertiesForType[U]
     new RelationalFeature[T, U](this.datamodel, fts)
   }
+
 }

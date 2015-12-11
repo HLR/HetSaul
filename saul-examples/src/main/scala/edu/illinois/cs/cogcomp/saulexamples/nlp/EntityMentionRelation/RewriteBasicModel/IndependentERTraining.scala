@@ -23,6 +23,7 @@ object IndependentERTraining extends App {
   populate_ER_graph
   personClassifier.learn(10,tokens())
   forgetAll(personClassifier, orgClassifier, locationClassifier, worksForClassifier, livesInClassifier)
- // independent_train((personClassifier,tokens()), (orgClassifier, tokens()), (locationClassifier, tokens()), (worksForClassifier, pairs()), (livesInClassifier, pairs()))
+  //TODO revise this when the below functions can handle various types of nodes
+  independent_train((personClassifier,tokens()), (orgClassifier, tokens()), (locationClassifier, tokens()))
   independent_test( (personClassifier, tokens()), (orgClassifier,tokens()), (locationClassifier, tokens()))
 }
