@@ -16,6 +16,7 @@ import edu.illinois.cs.cogcomp.saul.lbjrelated.LBJLearnerEquivalent
 import edu.illinois.cs.cogcomp.saul.parser.LBJIteratorParserScala
 
 import scala.reflect.ClassTag
+import scala.util.Random
 
 abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: Parameters = new Learner.Parameters)(implicit tag: ClassTag[T]) extends LBJLearnerEquivalent {
   val useCache = false // Whether to use derived values
@@ -161,7 +162,7 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
     def learnAll(crTokenTest: Parser, remainingIteration: Int): Unit = {
 
       val v = crTokenTest.next
-      println("token", remainingIteration)
+     // println("token", remainingIteration)
       if (v == null) {
         if (remainingIteration > 0) {
           crTokenTest.reset()
@@ -264,8 +265,8 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
 
   /** Run k fold cross validation. */
   def crossValidation(k: Int) = {
-    val allData = this.fromData
-
+    val allData1 = this.fromData
+    val allData = Random.shuffle(allData1)
     println(s"Running cross validation on ${allData.size} data   ")
 
     val groupSize = Math.ceil(allData.size / k).toInt
