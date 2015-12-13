@@ -10,22 +10,19 @@ object POSDataModel extends DataModel {
 
   val tokens = node[Constituent]
 
-  val constituentAfter = edge(tokens, tokens)
-  constituentAfter.addSensor{
-  	x: Constituent =>   
-		val consAfter = x.getView.getConstituents.toList.filter(cons => cons.getStartSpan >= x.getEndSpan )
-		if ( !consAfter.isEmpty )  consAfter.minBy(_.getEndSpan)
-		else x	
-  }
+  import POSTTaggerSensors._
 
+  val constituentAfter = edge(tokens, tokens)
+  constituentAfter.addSensor( getConstituentAfter _ )
 
   val constituentBefore = edge(tokens, tokens)
-  constituentBefore.addSensor{
-  	x: Constituent =>   
-		val consBefore = x.getView.getConstituents.toList.filter(cons => cons.getEndSpan <= x.getStartSpan )
-		if ( !consBefore.isEmpty )  consBefore.maxBy(_.getEndSpan)
-		else x	
-  }
+  constituentBefore.addSensor( getConstituentBefore _ )
+
+  val constituentTwoAfter = edge(tokens, tokens)
+  constituentTwoAfter.addSensor( getConstituentTwoAfter _ )
+
+  val constituentTwoBefore = edge(tokens, tokens)
+  constituentTwoBefore.addSensor( getConstituentTwoBefore _ )
 
   val posLabel = property[Constituent]("label") {
     x: Constituent => x.getTextAnnotation.getView(ViewNames.POS).getConstituentsCovering(x).get(0).getLabel
