@@ -18,8 +18,8 @@ object POSClassifiers {
 
   object POSTaggerKnown extends Learnable[Constituent](POSDataModel) {
     def label = posLabel
-    override def feature = using(List(wordForm, baselineLabel, labelTwoBefore, labelOneBefore, 
-	    labelOneAfter, labelTwoAfter, L2bL1b, L1bL1a, L1aL2a)) 
+    override def feature = using(List(wordForm, baselineLabel, labelTwoBefore, labelOneBefore,
+      labelOneAfter, labelTwoAfter, L2bL1b, L1bL1a, L1aL2a))
     override def algorithm = "SparseNetwork"
   }
 

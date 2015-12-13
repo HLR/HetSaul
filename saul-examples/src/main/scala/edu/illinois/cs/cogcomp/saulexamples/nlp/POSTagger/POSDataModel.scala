@@ -13,16 +13,16 @@ object POSDataModel extends DataModel {
   import POSTTaggerSensors._
 
   val constituentAfter = edge(tokens, tokens)
-  constituentAfter.addSensor( getConstituentAfter _ )
+  constituentAfter.addSensor(getConstituentAfter _)
 
   val constituentBefore = edge(tokens, tokens)
-  constituentBefore.addSensor( getConstituentBefore _ )
+  constituentBefore.addSensor(getConstituentBefore _)
 
   val constituentTwoAfter = edge(tokens, tokens)
-  constituentTwoAfter.addSensor( getConstituentTwoAfter _ )
+  constituentTwoAfter.addSensor(getConstituentTwoAfter _)
 
   val constituentTwoBefore = edge(tokens, tokens)
-  constituentTwoBefore.addSensor( getConstituentTwoBefore _ )
+  constituentTwoBefore.addSensor(getConstituentTwoBefore _)
 
   val posLabel = property[Constituent]("label") {
     x: Constituent => x.getTextAnnotation.getView(ViewNames.POS).getConstituentsCovering(x).get(0).getLabel
@@ -45,45 +45,49 @@ object POSDataModel extends DataModel {
     x: Constituent => ""
   }
 
-  val labelOneBefore = property[Constituent]("labelOneBefore") { 
-    x: Constituent =>  (tokens(x) ~> constituentBefore).head	   
-    ""
+  val labelOneBefore = property[Constituent]("labelOneBefore") {
+    x: Constituent =>
+      (tokens(x) ~> constituentBefore).head
+      ""
   }
 
-  val labelTwoBefore = property[Constituent]("labelTwoBefore") { 
-    x: Constituent =>  (tokens(x) ~> constituentTwoBefore).head
-  	""
+  val labelTwoBefore = property[Constituent]("labelTwoBefore") {
+    x: Constituent =>
+      (tokens(x) ~> constituentTwoBefore).head
+      ""
   }
 
-  val labelOneAfter = property[Constituent]("labelOneAfter") { 
-    x: Constituent =>  (tokens(x) ~> constituentAfter).head
-    "" 
+  val labelOneAfter = property[Constituent]("labelOneAfter") {
+    x: Constituent =>
+      (tokens(x) ~> constituentAfter).head
+      ""
   }
 
-  val labelTwoAfter = property[Constituent]("labelTwoAfter") { 
-    x: Constituent =>  (tokens(x) ~> constituentTwoAfter).head
-  	""
+  val labelTwoAfter = property[Constituent]("labelTwoAfter") {
+    x: Constituent =>
+      (tokens(x) ~> constituentTwoAfter).head
+      ""
   }
 
-  val L2bL1b = property[Constituent]("label2beforeLabel1beforeConjunction") { 
-    x: Constituent => 
-	    val before = (tokens(x) ~> constituentBefore).head
-	    val twoBefore = (tokens(x) ~> constituentTwoBefore).head
-	    ""
+  val L2bL1b = property[Constituent]("label2beforeLabel1beforeConjunction") {
+    x: Constituent =>
+      val before = (tokens(x) ~> constituentBefore).head
+      val twoBefore = (tokens(x) ~> constituentTwoBefore).head
+      ""
   }
 
-  val L1bL1a = property[Constituent]("label1beforeLabel1afterConjunction") { 
-  	x: Constituent => 
-	    val before = (tokens(x) ~> constituentBefore).head
-	    val after = (tokens(x) ~> constituentAfter).head
-	    ""
+  val L1bL1a = property[Constituent]("label1beforeLabel1afterConjunction") {
+    x: Constituent =>
+      val before = (tokens(x) ~> constituentBefore).head
+      val after = (tokens(x) ~> constituentAfter).head
+      ""
   }
 
-  val L1aL2a = property[Constituent]("labelfterLabel2AfterConjunction") { 
-  x: Constituent =>
-	    val after = (tokens(x) ~> constituentAfter).head
-	    val twoAfter = (tokens(x) ~> constituentTwoAfter).head
-	    ""
+  val L1aL2a = property[Constituent]("labelfterLabel2AfterConjunction") {
+    x: Constituent =>
+      val after = (tokens(x) ~> constituentAfter).head
+      val twoAfter = (tokens(x) ~> constituentTwoAfter).head
+      ""
   }
 
 }
