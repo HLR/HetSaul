@@ -46,34 +46,44 @@ object POSDataModel extends DataModel {
   }
 
   val labelOneBefore = property[Constituent]("labelOneBefore") { 
-    x: Constituent => 
-	    val allCons = 	x.getView.getConstituents.toList.filter(cons => cons.getEndSpan <= x.getStartSpan ).maxBy(_.getEndSpan)
-
+    x: Constituent =>  (tokens(x) ~> constituentBefore).head	   
     ""
-}
+  }
 
   val labelTwoBefore = property[Constituent]("labelTwoBefore") { 
-    x: Constituent => ""
+    x: Constituent =>  (tokens(x) ~> constituentTwoBefore).head
+  	""
   }
 
   val labelOneAfter = property[Constituent]("labelOneAfter") { 
-    x: Constituent => ""
+    x: Constituent =>  (tokens(x) ~> constituentAfter).head
+    "" 
   }
 
   val labelTwoAfter = property[Constituent]("labelTwoAfter") { 
-    x: Constituent => ""
+    x: Constituent =>  (tokens(x) ~> constituentTwoAfter).head
+  	""
   }
 
   val L2bL1b = property[Constituent]("label2beforeLabel1beforeConjunction") { 
-    x: Constituent => ""
+    x: Constituent => 
+	    val before = (tokens(x) ~> constituentBefore).head
+	    val twoBefore = (tokens(x) ~> constituentTwoBefore).head
+	    ""
   }
 
   val L1bL1a = property[Constituent]("label1beforeLabel1afterConjunction") { 
-  	x: Constituent => ""
+  	x: Constituent => 
+	    val before = (tokens(x) ~> constituentBefore).head
+	    val after = (tokens(x) ~> constituentAfter).head
+	    ""
   }
 
   val L1aL2a = property[Constituent]("labelfterLabel2AfterConjunction") { 
-  x: Constituent => ""
+  x: Constituent =>
+	    val after = (tokens(x) ~> constituentAfter).head
+	    val twoAfter = (tokens(x) ~> constituentTwoAfter).head
+	    ""
   }
 
 }
