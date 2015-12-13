@@ -11,11 +11,11 @@ object POSTaggerApp {
   def main(args: Array[String]) {
     val trainDataReader = new PennTreebankPOSReader("train")
 
-    trainDataReader.readFile("./data/POSTagger/POS/00-18.br")
+    trainDataReader.readFile("./data/POS/00-18.br")
     val trainData = trainDataReader.getTextAnnotations.flatMap(commonSensors.textAnnotationToTokens)
 
     val testDataReader = new PennTreebankPOSReader("test")
-    testDataReader.readFile("./data/POSTagger/POS/22-24.br")
+    testDataReader.readFile("./data/POS/22-24.br")
     val testData = testDataReader.getTextAnnotations.flatMap(commonSensors.textAnnotationToTokens)
 
     POSDataModel.tokens populate trainData
