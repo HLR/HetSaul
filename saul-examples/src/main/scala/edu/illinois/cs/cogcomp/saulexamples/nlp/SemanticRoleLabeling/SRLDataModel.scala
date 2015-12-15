@@ -24,21 +24,20 @@ object SRLDataModel extends DataModel {
 
   val tokens = node[Constituent]
 
-  val sentencesToRelations = edge(sentences, relations)
-
-  sentencesToRelations.addSensor(SRLSensors.textAnnotationToRelation _)
 
   val sentencesToTrees = edge(sentences, trees)
-  //TODO PARSE_GOLD is only good for training; for testing we need PARSE_STANFORD or PARSE_CHARNIAK
-  sentencesToTrees.addSensor(SRLSensors.textAnnotationToTree _)
-
-  val relationsToArguments = edge(relations, arguments)
-  relationsToArguments.addSensor(SRLSensors.relToArgument _)
-
-  val relationsToPredicates = edge(relations, predicates)
-  relationsToPredicates.addSensor(SRLSensors.relToPredicate _)
-
   val sentencesToTokens = edge(sentences, tokens)
+
+  val sentencesToRelations = edge(sentences, relations)
+  val relationsToPredicates = edge(relations, predicates)
+  val relationsToArguments = edge(relations, arguments)
+
+ //TODO PARSE_GOLD is only good for training; for testing we need PARSE_STANFORD or PARSE_CHARNIAK
+
+  sentencesToRelations.addSensor(SRLSensors.textAnnotationToRelation _)
+  sentencesToTrees.addSensor(SRLSensors.textAnnotationToTree _)
+  relationsToArguments.addSensor(SRLSensors.relToArgument _)
+  relationsToPredicates.addSensor(SRLSensors.relToPredicate _)
   sentencesToTokens.addSensor(commonSensors.textAnnotationToTokens _)
 
   val isPredicate = property[Constituent]("p") {

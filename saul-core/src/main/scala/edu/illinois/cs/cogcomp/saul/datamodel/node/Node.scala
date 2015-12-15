@@ -56,25 +56,63 @@ class Node[T <: AnyRef](val tag: ClassTag[T]) {
   }
 
   def contains(t: T): Boolean = collections(t)
-
-  def addInstance(t: T, train: Boolean = true) = {
-    if (!contains(t)) {
+/**
+*
+* @param withChain equal to 0 populates only one node,
+*                  equal to 1 populates only the edges,
+*                  equal to 2 populates both node and related edges
+*/
+  def addInstance(t: T, train: Boolean = true, withChain: Int = 2) = {
+     if (!contains(t)) {
       val order = incrementCount()
-      if (train) this.trainingSet += t else this.testingSet += t
-      this.collections += t
-      this.orderingMap += (order -> t)
-      this.reverseOrderingMap += (t -> order)
-      outgoing.foreach(_.populateUsingFrom(t, train))
-      incoming.foreach(_.populateUsingTo(t, train))
-      joinNodes.foreach(_.addFromChild(this, t, train))
+      withChain match {
+        case 0 => {
+          if (train) this.trainingSet += t else this.testingSet += t
+          this.collections += t
+          this.orderingMap += (order -> t)
+          this.reverseOrderingMap += (t -> order)
+        }
+        case 1 => {
+          outgoing.foreach(_.populateUsingFrom(t, train))
+          incoming.foreach(_.populateUsingTo(t, train))
+          joinNodes.foreach(_.addFromChild(this, t, train))
+        }
+        case 2 => {
+          if (train) this.trainingSet += t else this.testingSet += t
+          this.collections += t
+          this.orderingMap += (order -> t)
+          this.reverseOrderingMap += (t -> order)
+          outgoing.foreach(_.populateUsingFrom(t, train))
+          incoming.foreach(_.populateUsingTo(t, train))
+          joinNodes.foreach(_.addFromChild(this, t, train))
+
+        }
+        case _ => "Error: the withChain parameter should be a integer in 0:2"
+
+      }
     }
   }
+  def removeInstance(t: T, train: Boolean = true) = {
+    if (contains(t)) {
+      val order = decreaseCount()
+      if (train) this.trainingSet -= t else this.testingSet -= t
+          this.collections -= t
+          this.orderingMap -= (order)
+          this.reverseOrderingMap -= (t)
+        //  outgoing.foreach(_.populateUsingFrom(t, train))
+        //  incoming.foreach(_.populateUsingTo(t, train))
+        //  joinNodes.foreach(_.addFromChild(this, t, train))
 
-  /** Operator for adding a sequence of T into my table. */
-  def populate(ts: Iterable[T], train: Boolean = true) = {
-    ts.foreach(addInstance(_, train))
+
+    }
   }
-
+  /** Operator for adding a sequence of T into my table. */
+  def populate(ts: Iterable[T], train: Boolean = true, withChain: Int = 2) = {
+    ts.foreach(addInstance(_, train, withChain))
+  }
+  def un_populate(ts: Iterable[T], train: Boolean = true) = {
+    ts.foreach(removeInstance(_, train))
+  }
   /** Relational operators */
   val nodeOfTypeT = this
 
@@ -250,7 +288,7 @@ class JoinNode[A <: AnyRef, B <: AnyRef](val na: Node[A], val nb: Node[B], match
     }
   }
 
-  override def addInstance(t: (A, B), train: Boolean): Unit = {
+  override def addInstance(t: (A, B), train: Boolean, withChain: Int): Unit = {
     assert(matcher(t._1, t._2))
     if (!contains(t)) {
       super.addInstance(t, train)
