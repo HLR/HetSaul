@@ -1,13 +1,13 @@
 package edu.illinois.cs.cogcomp.saul.datamodel
 
-import edu.illinois.cs.cogcomp.lbjava.util.{ExceptionlessInputStream, ExceptionlessOutputStream}
-import edu.illinois.cs.cogcomp.saul.datamodel.edge.{AsymmetricEdge, Edge, Link, SymmetricEdge}
-import edu.illinois.cs.cogcomp.saul.datamodel.node.{JoinNode, Node}
+import edu.illinois.cs.cogcomp.lbjava.util.{ ExceptionlessInputStream, ExceptionlessOutputStream }
+import edu.illinois.cs.cogcomp.saul.datamodel.edge.{ AsymmetricEdge, Edge, Link, SymmetricEdge }
+import edu.illinois.cs.cogcomp.saul.datamodel.node.{ JoinNode, Node }
 import edu.illinois.cs.cogcomp.saul.datamodel.property.features.discrete._
 import edu.illinois.cs.cogcomp.saul.datamodel.property.features.real._
-import edu.illinois.cs.cogcomp.saul.datamodel.property.{EvaluatedProperty, Property}
+import edu.illinois.cs.cogcomp.saul.datamodel.property.{ EvaluatedProperty, Property }
 
-import scala.collection.mutable.{ListBuffer, Map => MutableMap}
+import scala.collection.mutable.{ ListBuffer, Map => MutableMap }
 import scala.reflect.ClassTag
 
 trait DataModel {
@@ -222,7 +222,7 @@ trait DataModel {
 
   def property[T <: AnyRef](name: String) = new PropertyApply[T](name)
   def property[T <: AnyRef](name: String, ordered: Boolean) = new PropertyApply[T](name, ordered)
-  def property[T](name:String, x: Node[T])=new PropertyApply[T](name)
+  def property[T](name: String, x: Node[T]) = new PropertyApply[T](name)
 
   var hasDerivedInstances = false
 
