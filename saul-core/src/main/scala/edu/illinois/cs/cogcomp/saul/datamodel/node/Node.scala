@@ -56,14 +56,12 @@ class Node[T <: AnyRef](val tag: ClassTag[T]) {
   }
 
   def contains(t: T): Boolean = collections(t)
-/**
-*
-* @param withChain equal to 0 populates only one node,
-*                  equal to 1 populates only the edges,
-*                  equal to 2 populates both node and related edges
-*/
+  /** @param withChain equal to 0 populates only one node,
+    *                  equal to 1 populates only the edges,
+    *                  equal to 2 populates both node and related edges
+    */
   def addInstance(t: T, train: Boolean = true, withChain: Int = 2) = {
-     if (!contains(t)) {
+    if (!contains(t)) {
       val order = incrementCount()
       withChain match {
         case 0 => {
@@ -96,13 +94,12 @@ class Node[T <: AnyRef](val tag: ClassTag[T]) {
     if (contains(t)) {
       val order = decreaseCount()
       if (train) this.trainingSet -= t else this.testingSet -= t
-          this.collections -= t
-          this.orderingMap -= (order)
-          this.reverseOrderingMap -= (t)
-        //  outgoing.foreach(_.populateUsingFrom(t, train))
-        //  incoming.foreach(_.populateUsingTo(t, train))
-        //  joinNodes.foreach(_.addFromChild(this, t, train))
-
+      this.collections -= t
+      this.orderingMap -= (order)
+      this.reverseOrderingMap -= (t)
+      //  outgoing.foreach(_.populateUsingFrom(t, train))
+      //  incoming.foreach(_.populateUsingTo(t, train))
+      //  joinNodes.foreach(_.addFromChild(this, t, train))
 
     }
   }

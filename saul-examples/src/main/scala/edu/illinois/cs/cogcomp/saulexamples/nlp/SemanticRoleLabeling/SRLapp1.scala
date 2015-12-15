@@ -8,9 +8,8 @@ import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLDataMode
 import scala.collection.JavaConversions._
 import scala.util.Random
 
-/**
- * Created by Parisa on 12/11/15.
- */
+/** Created by Parisa on 12/11/15.
+  */
 object SRLapp1 extends App {
 
   populateGraphwithTextAnnotation(SRLDataModel, SRLDataModel.sentences)
@@ -21,7 +20,6 @@ object SRLapp1 extends App {
   // Remove the true predicates from the list of candidates (since they have a different label)
   val negativePredicateCandidates = predicates(predicateCandidates)
     .filterNot(cand => (predicates() prop address).contains(address(cand)))
-
 
   predicates.populate(negativePredicateCandidates)
   Random.shuffle(predicates().toList)

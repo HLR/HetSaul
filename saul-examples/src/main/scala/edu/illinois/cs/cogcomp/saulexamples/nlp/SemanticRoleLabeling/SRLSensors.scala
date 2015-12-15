@@ -13,7 +13,7 @@ object SRLSensors {
   }
 
   def relToArgument(rel: Relation): Constituent = {
-    rel.getTarget.cloneForNewViewWithDestinationLabel(ViewNames.SRL_VERB,"Argument")
+    rel.getTarget.cloneForNewViewWithDestinationLabel(ViewNames.SRL_VERB, "Argument")
   }
 
   def textAnnotationToTree(ta: TextAnnotation): Tree[Constituent] = {

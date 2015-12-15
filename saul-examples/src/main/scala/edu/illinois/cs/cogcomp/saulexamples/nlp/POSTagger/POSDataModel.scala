@@ -15,9 +15,9 @@ object POSDataModel extends DataModel {
 
   val previousTag = property[Constituent]("pTag") {
     x: Constituent =>
-    {
-      "tagValue" + POSClassifier.classifier.discreteValue(tokens.getWithWindow(x, -1, 0))
-    }
+      {
+        "tagValue" + POSClassifier.classifier.discreteValue(tokens.getWithWindow(x, -1, 0))
+      }
     // this feature in theory should give us the pos tag of the previous word,
   }
   val wordFormFeature = property[Constituent]("wordForm") {
