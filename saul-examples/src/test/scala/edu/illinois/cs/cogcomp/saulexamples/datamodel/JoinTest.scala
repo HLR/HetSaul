@@ -1,7 +1,7 @@
 package edu.illinois.cs.cogcomp.saulexamples.datamodel
 
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
-import org.scalatest.{ Matchers, FlatSpec }
+import org.scalatest.{FlatSpec, Matchers}
 
 class JoinTest extends FlatSpec with Matchers {
 
@@ -10,6 +10,9 @@ class JoinTest extends FlatSpec with Matchers {
       val na = node[String]
       val nb = node[String]
       val nj = join(na, nb)(_.charAt(0) == _.charAt(0))
+      val pj= property[String]("pj", na){
+        x: String => ""
+      }
     }
 
     import TestObject._
