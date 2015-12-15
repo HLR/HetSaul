@@ -53,8 +53,8 @@ object SRLapp3 extends App {
 
   //  generate all candidate relations based on candidate arguments and predicates
   val relationCandidates2 = for {
-    x <- predicates().slice(0, 10)
-    y <- arguments().slice(0, 10)
+    x <- predicates()
+    y <- arguments()
     if !(y.getSpan.getFirst <= x.getSpan.getFirst && y.getSpan.getSecond >= x.getSpan.getSecond)
   } yield new Relation("candidate", x, y, 0.0)
 
@@ -72,7 +72,7 @@ object SRLapp3 extends App {
   // filter the positive relations
   val positiveRelationCandidates = relations(relationCandidates2).
     filter(cand => ((relations() ~> relationsToArguments prop address).contains(relations(cand) ~> relationsToArguments prop address)) &&
-      ((relations() ~> relationsToPredicates prop address).contains(relations(cand) ~> relationsToPredicates prop address)) && argumentLabel(cand).equals("candidate"))
+      ((relations() ~> relationsToPredicates prop address).contains(relations(cand) ~> relationsToPredicates prop address)))
   println("positive relation candidates:" + positiveRelationCandidates.size)
   relations.un_populate(positiveRelationCandidates, train = false)
   println("all relations number after un_population:" + SRLDataModel.relations().size)

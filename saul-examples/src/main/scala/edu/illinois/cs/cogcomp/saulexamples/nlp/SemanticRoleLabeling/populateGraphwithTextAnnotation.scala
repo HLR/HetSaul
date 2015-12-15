@@ -20,7 +20,7 @@ object populateGraphwithTextAnnotation extends App {
     reader.readData()
 
     // Here we populate everything
-    x.populate(reader.textAnnotations.toList)
+    x.populate(reader.textAnnotations.toList.slice(0,5))
     print("size  ", sentences().size)
   }
 
