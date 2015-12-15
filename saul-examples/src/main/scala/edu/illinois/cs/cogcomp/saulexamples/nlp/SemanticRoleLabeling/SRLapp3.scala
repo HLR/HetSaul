@@ -46,10 +46,19 @@ object SRLapp3 extends App{
   arguments.populate(negativeArgumentCandidates)
 
   //generate all candidate relations based on candidate arguments and predicates
-  val relationCandidates = for { x <- predicates(); y <- arguments() } yield new Relation("candidate", x, y, 0.0)
+//  val relationCandidates = for { x <- predicates().slice(0,100); y <- arguments().slice(0,100)
+//                                 }
+//  yield new Relation("candidate", x, y, 0.0)
+
+  val relationCandidates2 = for { x <- predicates().slice(0,100)
+                                  y <- arguments().slice(0,100)
+                                   if !(arguments(y) prop address).contains(predicates(x) prop address)
+                                 }   yield new Relation("candidate", x, y, 0.0)
+
+  println("reduced by =", relationCandidates.toList.size - relationCandidates2.toList.size)
 
   // filter the positive relations
-  val negativeRelationCandidates = relations(relationCandidates).
+  val negativeRelationCandidates = relations(relationCandidates2).
     filterNot(cand => ((relations() ~> relationsToArguments prop address ).contains(relations(cand) ~> relationsToArguments prop address)) &&
     ((relations() ~> relationsToPredicates prop address ).contains(relations(cand) ~> relationsToPredicates prop address)))
 
