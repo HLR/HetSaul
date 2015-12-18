@@ -281,14 +281,14 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
     }
 
     def printTestResult(result: (String, (Double, Double, Double))): Unit = {
-      var ftemp=0.0
-      var ptemp=0.0
-      var rtemp=0.0
+      var ftemp = 0.0
+      var ptemp = 0.0
+      var rtemp = 0.0
       result match {
         case (label, (f1, precision, recall)) => {
-          if (!f1.isNaN ) {ftemp=f1}
-          if (!precision.isNaN ) {ptemp=precision}
-          if (!recall.isNaN) {rtemp=recall}
+          if (!f1.isNaN) { ftemp = f1 }
+          if (!precision.isNaN) { ptemp = precision }
+          if (!recall.isNaN) { rtemp = recall }
           println(f"  $label%9s    $ftemp%1.3f    $ptemp%1.3f     $rtemp%1.3f   ")
         }
       }
