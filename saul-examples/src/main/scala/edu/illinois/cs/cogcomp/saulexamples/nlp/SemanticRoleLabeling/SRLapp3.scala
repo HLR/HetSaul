@@ -1,7 +1,7 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling
 
-import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{ Relation, Constituent }
-import edu.illinois.cs.cogcomp.core.datastructures.{ IntPair, ViewNames }
+import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{Constituent, Relation}
+import edu.illinois.cs.cogcomp.core.datastructures.{IntPair, ViewNames}
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLClassifiers.relationClassifier
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLDataModel._
 
@@ -52,37 +52,24 @@ object SRLapp3 extends App {
   println("pred number after re-population:" + SRLDataModel.predicates().size)
   println("pred number after re-population:" + (SRLDataModel.relations() ~> relationsToPredicates).size)
 
+
   //  generate all candidate relations based on candidate arguments and predicates
   val relationCandidates4 = for {
     x <- predicates()
     y <- arguments()
-    // print ("hi")
-    //   if !(y.getSpan.getFirst <= x.getSpan.getFirst && y.getSpan.getSecond >= x.getSpan.getSecond)
-  } yield new Relation("candidate", x, y, 0.0)
+    if (!(y.getSpan.getFirst <= x.getSpan.getFirst && y.getSpan.getSecond >= x.getSpan.getSecond) )
+  } yield new Relation("candidate", x.cloneForNewView(x.getViewName), y.cloneForNewView(y.getViewName), 0.0)
 
-  println("all relations number after population:" + SRLDataModel.relations().size)
-  println("arg number after re-population:" + SRLDataModel.arguments().size)
-  println("arg number after re-population:" + (SRLDataModel.relations() ~> relationsToArguments).size)
-  println("pred number after re-population:" + SRLDataModel.predicates().size)
-  println("pred number after re-population:" + (SRLDataModel.relations() ~> relationsToPredicates).size)
+  println("relation candidates:" + relationCandidates4.size)
+  val a= relations() ~> relationsToArguments prop address
+  val b= relations() ~> relationsToPredicates prop address
 
-  //val a= relations() ~> relationsToArguments prop address
-  //val b= relations() ~> relationsToPredicates prop address
-  // println("relation candidates:" + relationCandidates2.size)
-  //val negativeRelations = relationCandidates2.filterNot(cand => (a.contains(cand.getTarget.getSpan)) && b.contains(cand.getSource.getSpan))
+  val negativeRelationCandidates = relationCandidates4.filterNot(cand => (a.contains(address(cand.getTarget))) && b.contains(address(cand.getSource)))
 
-  //relations.populate(negativeRelations)
+  relations.populate(negativeRelationCandidates)
+    println("negative relation candidates:" + negativeRelationCandidates.size)
+    println("all relations number after population:" + SRLDataModel.relations().size)
 
-  //println("reduced by =", (relationCandidates.toList.size - relationCandidates2.toList.size))
-
-  // filter the positive relations
-  //  val positiveRelationCandidates = relations(relationCandidates2).
-  //    filter(cand => ((relations() ~> relationsToArguments prop address).contains(relations(cand) ~> relationsToArguments prop address)) &&
-  //      ((relations() ~> relationsToPredicates prop address).contains(relations(cand) ~> relationsToPredicates prop address)))
-  //  println("positive relation candidates:" + positiveRelationCandidates.size)
-  //  relations.un_populate(positiveRelationCandidates, train = false)
-  //  println("all relations number after un_population:" + SRLDataModel.relations().size)
-  //
   relationClassifier.crossValidation(3)
 
 }
