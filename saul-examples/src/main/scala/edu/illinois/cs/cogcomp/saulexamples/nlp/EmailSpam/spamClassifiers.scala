@@ -7,25 +7,15 @@ import edu.illinois.cs.cogcomp.saulexamples.nlp.EmailSpam.spamDataModel._
 
 object spamClassifiers {
   object spamClassifier extends Learnable[Document](spamDataModel) {
-
     def label = spamLabel
     override def algorithm = "SparseNetwork"
     override def feature = using(wordFeature)
-    //word,phrase,containsSubPhraseMent,containsSubPhraseIng,
-    // containsInPersonList,wordLen,containsInCityList
-    // )
   }
 
   object spamClassifierWithCache extends Learnable[Document](spamDataModel) {
-
     def label = spamLabel
     override def algorithm = "SparseNetwork"
     override def feature = using(wordFeature)
-    //word,phrase,containsSubPhraseMent,containsSubPhraseIng,
-    // containsInPersonList,wordLen,containsInCityList
-    // )
-
     override val useCache = true
   }
-
 }

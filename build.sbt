@@ -1,4 +1,4 @@
-val cogcompNLPVersion = "3.0.10"
+val cogcompNLPVersion = "3.0.12"
 val cogcompPipelineVersion = "0.1.14"
 
 lazy val root = (project in file(".")).

@@ -8,9 +8,8 @@ import scala.collection.JavaConversions._
 
 object POSTaggerApp {
 
-  def main(args: Array[String]) {
+  def main(args: Array[String]): Unit = {
     val trainDataReader = new PennTreebankPOSReader("train")
-
     trainDataReader.readFile("./data/POS/00-18.br")
     val trainData = trainDataReader.getTextAnnotations.flatMap(commonSensors.textAnnotationToTokens)
 
@@ -24,5 +23,23 @@ object POSTaggerApp {
     POSDataModel.testWith(testData)
 
     POSClassifier.test(testData)
+  }
+}
+
+object POSTaggerBaselineApp {
+  def main(args: Array[String]): Unit = {
+    val trainDataReader = new PennTreebankPOSReader("train")
+    trainDataReader.readFile("./data/POS/00-18_small.br")
+    val trainData = trainDataReader.getTextAnnotations.flatMap(commonSensors.textAnnotationToTokens)
+
+    POSDataModel.tokens populate trainData
+
+    //val a = BaselineLabel.classifier.discreteValue("The")
+    //println(a)
+
+    BaselineLabel.learn(1)
+    //POSDataModel.testWith(trainData)
+
+    //BaselineLabel.test(trainData)
   }
 }

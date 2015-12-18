@@ -8,13 +8,13 @@ import scala.collection.JavaConversions._
 object POSTTaggerSensors {
   def getConstituentAfter(x: Constituent): Constituent = {
     val consAfter = x.getView.getConstituents.toList.filter(cons => cons.getStartSpan >= x.getEndSpan)
-    if (!consAfter.isEmpty) consAfter.minBy(_.getEndSpan)
+    if (consAfter.nonEmpty) consAfter.minBy(_.getEndSpan)
     else x
   }
 
   def getConstituentBefore(x: Constituent): Constituent = {
     val consBefore = x.getView.getConstituents.toList.filter(cons => cons.getEndSpan <= x.getStartSpan)
-    if (!consBefore.isEmpty) consBefore.maxBy(_.getEndSpan)
+    if (consBefore.nonEmpty) consBefore.maxBy(_.getEndSpan)
     else x
   }
 

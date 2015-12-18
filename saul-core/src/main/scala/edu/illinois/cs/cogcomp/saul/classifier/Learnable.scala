@@ -18,112 +18,33 @@ import edu.illinois.cs.cogcomp.saul.parser.LBJIteratorParserScala
 import scala.reflect.ClassTag
 
 abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: Parameters = new Learner.Parameters)(implicit tag: ClassTag[T]) extends LBJLearnerEquivalent {
-  val useCache = false // Whether to use derived values
+  val useCache = false
+  // Whether to use derived values
   val targetNode = datamodel.getNodeWithType[T]
+
   def fromData = targetNode.getTrainingInstances
+
   def getClassNameForClassifier = this.getClass.getCanonicalName
-  def feature = datamodel.getPropertiesForType[T]
+
   def algorithm = "SparseNetwork"
 
+  def feature = datamodel.getPropertiesForType[T]
+
+  /** filter out the label from the features */
+  val lbpFeatures = if (label != null) new CombinedDiscreteProperty[T](this.feature.filterNot(_ == label)).classifier
+  else new CombinedDiscreteProperty[T](this.feature).classifier
+
   val classifier: Learner = {
-    val lbpFeatures = new CombinedDiscreteProperty[T](this.feature.filterNot(_ == label)).classifier
-
-    // TODO: define default paramters
-
-    val modelDir = "models/"
-    IOUtils.mkdir(modelDir)
-    IOUtils.rm(modelDir + getClassNameForClassifier + ".lc")
-    IOUtils.rm(modelDir + getClassNameForClassifier + ".lex")
-
     //new SparsePerceptron(0.1,0,3.5)
     if (algorithm.equals("Regression")) {
       new StochasticGradientDescent() {
-        if (label != null) {
-          val oracle = Property.entitiesToLBJFeature(label)
-          setLabeler(oracle)
-        }
-
-        if (feature != null) {
-          setExtractor(lbpFeatures)
-        }
-
-        // Looks like we have to build the lexicon
-        lcFilePath = new URL(new URL("file:"), modelDir + getClassNameForClassifier + ".lc")
-        lexFilePath = new URL(new URL("file:"), modelDir + getClassNameForClassifier + ".lex")
-        val lexFile = ExceptionlessOutputStream.openCompressedStream(lexFilePath)
-        if (lexicon == null) lexFile.writeInt(0)
-        else lexicon.write(lexFile)
-        lexFile.close()
-        val lcFile = ExceptionlessOutputStream.openCompressedStream(lcFilePath)
-        write(lcFile)
-        lcFile.close()
         readLexiconOnDemand = true
-
-        //val p: SparseAveragedPerceptron.Parameters  =
-        // new SparseAveragedPerceptron.Parameters();
-        ///p.learningRate = .1;
-        //p.thickness = 3;
-        //p.thickness = {{ 1 -> 3 : .5 }};
-        // baseLTU = new SparseAveragedPerceptron(p);
-        //setParameters(p)
-        //Thickness(3)
-        //learningRate=0.1
       }
     } else if (algorithm.equals("SparsePerceptron")) {
       new SparsePerceptron() {
-        if (label != null) {
-          val oracle = Property.entitiesToLBJFeature(label)
-          setLabeler(oracle)
-        }
-
-        if (feature != null) {
-          setExtractor(lbpFeatures)
-        }
-
-        // we build the lexicon
-        lcFilePath = new URL(new URL("file:"), modelDir + getClassNameForClassifier + ".lc")
-        lexFilePath = new URL(new URL("file:"), modelDir + getClassNameForClassifier + ".lex")
-        val lexFile = ExceptionlessOutputStream.openCompressedStream(lexFilePath)
-        if (lexicon == null) lexFile.writeInt(0)
-        else lexicon.write(lexFile)
-        lexFile.close()
-        val lcFile = ExceptionlessOutputStream.openCompressedStream(lcFilePath)
-        write(lcFile)
-        lcFile.close()
         readLexiconOnDemand = true
-
-        //val p: SparseAveragedPerceptron.Parameters  =
-        // new SparseAveragedPerceptron.Parameters();
-        ///p.learningRate = .1;
-        //p.thickness = 3;
-        //p.thickness = {{ 1 -> 3 : .5 }};
-        // baseLTU = new SparseAveragedPerceptron(p);
-        //setParameters(p)
-        //Thickness(3)
-        //learningRate=0.1
       }
     } else new SparseNetworkLBP() {
-      if (label != null) {
-        val oracle = Property.entitiesToLBJFeature(label)
-        setLabeler(oracle)
-      }
-
-      if (feature != null) {
-        setExtractor(lbpFeatures)
-      }
-
-      // we build the lexicon
-      lcFilePath = new URL(new URL("file:"), modelDir + getClassNameForClassifier + ".lc")
-      lexFilePath = new URL(new URL("file:"), modelDir + getClassNameForClassifier + ".lex")
-      val lexFile = ExceptionlessOutputStream.openCompressedStream(lexFilePath)
-      if (lexicon == null) lexFile.writeInt(0)
-      else lexicon.write(lexFile)
-      lexFile.close()
-      val lcFile = ExceptionlessOutputStream.openCompressedStream(lcFilePath)
-      write(lcFile)
-      lcFile.close()
-      readLexiconOnDemand = true
-
       val p: SparseAveragedPerceptron.Parameters =
         new SparseAveragedPerceptron.Parameters()
       p.learningRate = .1
@@ -133,7 +54,49 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
       //setParameters(p)
       //Thickness(3)
       //learningRate=0.1
+
+      readLexiconOnDemand = true
+
+      /** Set path information for models */
+      val modelDir = "models/"
+      IOUtils.mkdir(modelDir)
+      IOUtils.rm(modelDir + getClassNameForClassifier + ".lc")
+      IOUtils.rm(modelDir + getClassNameForClassifier + ".lex")
+      val lcFilePath2 = new URL(new URL("file:"), modelDir + getClassNameForClassifier + ".lc")
+      val lexFilePath2 = new URL(new URL("file:"), modelDir + getClassNameForClassifier + ".lex")
+      //lcFilePath = lcFilePath2
+      //lexFilePath = lexFilePath2
+      //classifier.setModelLocation(lcFilePath2)
+      //classifier.setLexiconLocation(lexFilePath2)
+      //classifier.readLexiconOnDemand(lexFilePath2)
+      setModelLocation(lcFilePath2)
+      setLexiconLocation(lexFilePath2)
+      readLexiconOnDemand(lexFilePath2)
+      val lexFile = ExceptionlessOutputStream.openCompressedStream(lexFilePath2)
+      //if (classifier.getLexicon == null) lexFile.writeInt(0)
+//      if (getLexicon == null) lexFile.writeInt(0)
+      if (lexicon == null) lexFile.writeInt(0)
+      else lexicon.write(lexFile)
+      //else classifier.getLexicon.write(lexFile)
+      lexFile.close()
+      val lcFile = ExceptionlessOutputStream.openCompressedStream(lcFilePath2)
+      println("lcFile")
+      println(lcFile)
+      //classifier.write(lcFile)
+      write(lcFile)
+      lcFile.close()
     }
+  }
+
+  if (feature != null) {
+    println(s"Setting the feature extractors to be ${lbpFeatures}")
+    classifier.setExtractor(lbpFeatures)
+  }
+
+  if (label != null) {
+    val oracle = Property.entitiesToLBJFeature(label)
+    println(s"Setting the labeler to be $oracle")
+    classifier.setLabeler(oracle)
   }
 
   def learn(iteration: Int, filePath: String = datamodel.defaultDIFilePath): Unit = {
@@ -149,7 +112,6 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
       learnWithDerivedInstances(iteration, targetNode.derivedInstances.values)
     } else {
       learn(iteration, this.fromData)
-
     }
   }
 
@@ -168,13 +130,16 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
           learnAll(crTokenTest, remainingIteration - 1)
         }
       } else {
+        println(v)
         classifier.learn(v)
         learnAll(crTokenTest, remainingIteration)
       }
     }
+
     if (algorithm.equals("Regression")) {
       println("BIAS:" + classifier.asInstanceOf[StochasticGradientDescent].getParameters)
     }
+
     learnAll(crTokenTest, iteration)
     classifier.doneLearning()
   }
