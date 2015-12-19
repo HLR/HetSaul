@@ -26,59 +26,14 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
 
   def getClassNameForClassifier = this.getClass.getCanonicalName
 
-  def algorithm = "SparseNetwork"
-
   def feature = datamodel.getPropertiesForType[T]
 
   /** filter out the label from the features */
   val lbpFeatures = if (label != null) new CombinedDiscreteProperty[T](this.feature.filterNot(_ == label)).classifier
   else new CombinedDiscreteProperty[T](this.feature).classifier
 
-  val classifier: Learner = {
-    //new SparsePerceptron(0.1,0,3.5)
-    if (algorithm.equals("Regression")) {
-      new StochasticGradientDescent() {
-        readLexiconOnDemand = true
-      }
-    } else if (algorithm.equals("SparsePerceptron")) {
-      new SparsePerceptron() {
-        readLexiconOnDemand = true
-      }
-    } else new SparseNetworkLBP() {
-      val p: SparseAveragedPerceptron.Parameters =
-        new SparseAveragedPerceptron.Parameters()
-      p.learningRate = .1
-      p.thickness = 3
-      //p.thickness = {{ 1 -> 3 : .5 }};
-      baseLTU = new SparseAveragedPerceptron(p)
-      //setParameters(p)
-      //Thickness(3)
-      //learningRate=0.1
-
-      /** Set path information for models */
-      readLexiconOnDemand = true
-      val modelDir = "models/"
-      IOUtils.mkdir(modelDir)
-      IOUtils.rm(modelDir + getClassNameForClassifier + ".lc")
-      IOUtils.rm(modelDir + getClassNameForClassifier + ".lex")
-      val lcFilePath2 = new URL(new URL("file:"), modelDir + getClassNameForClassifier + ".lc")
-      val lexFilePath2 = new URL(new URL("file:"), modelDir + getClassNameForClassifier + ".lex")
-      this.setModelLocation(lcFilePath2)
-      this.setLexiconLocation(lexFilePath2)
-      readLexiconOnDemand(lexFilePath2)
-      val lexFile = ExceptionlessOutputStream.openCompressedStream(lexFilePath2)
-      if (lexicon == null) lexFile.writeInt(0)
-      else lexicon.write(lexFile)
-      lexFile.close()
-      val lcFile = ExceptionlessOutputStream.openCompressedStream(lcFilePath2)
-      println("lcFile")
-      println(lcFile)
-      this.write(lcFile)
-      lcFile.close()
-    }
-  }
-
-/*  classifier.setReadLexiconOnDemand()
+  val classifier: Learner
+  classifier.readLexiconOnDemand = true
   val modelDir = "models/"
   IOUtils.mkdir(modelDir)
   IOUtils.rm(modelDir + getClassNameForClassifier + ".lc")
@@ -87,20 +42,18 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
   val lexFilePath2 = new URL(new URL("file:"), modelDir + getClassNameForClassifier + ".lex")
   classifier.setModelLocation(lcFilePath2)
   classifier.setLexiconLocation(lexFilePath2)
-
   val lexFile = ExceptionlessOutputStream.openCompressedStream(lexFilePath2)
-  val lexicon = classifier.getCurrentLexicon
-  if (lexicon == null) lexFile.writeInt(0)
-  else lexicon.write(lexFile)
+  if (classifier.getCurrentLexicon == null) lexFile.writeInt(0)
+  else classifier.getCurrentLexicon.write(lexFile)
   lexFile.close()
   val lcFile = ExceptionlessOutputStream.openCompressedStream(lcFilePath2)
   println("lcFile")
   println(lcFile)
   classifier.write(lcFile)
-  lcFile.close()*/
+  lcFile.close()
 
   if (feature != null) {
-    println(s"Setting the feature extractors to be ${lbpFeatures}")
+    println(s"Setting the feature extractors to be $lbpFeatures")
     classifier.setExtractor(lbpFeatures)
   }
 
@@ -145,10 +98,6 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
         classifier.learn(v)
         learnAll(crTokenTest, remainingIteration)
       }
-    }
-
-    if (algorithm.equals("Regression")) {
-      println("BIAS:" + classifier.asInstanceOf[StochasticGradientDescent].getParameters)
     }
 
     learnAll(crTokenTest, iteration)

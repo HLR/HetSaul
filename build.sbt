@@ -27,7 +27,7 @@ lazy val saulCore = (project in file("saul-core")).
   settings(
     name := "saul",
     libraryDependencies ++= Seq(
-      "edu.illinois.cs.cogcomp" % "LBJava" % "1.2.1"
+      "edu.illinois.cs.cogcomp" % "LBJava" % "1.2.2"
     )
   )
 
