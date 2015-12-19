@@ -22,9 +22,14 @@ object SRLDataModel extends DataModel {
 
   val trees = node[Tree[Constituent]]
 
+  val stringTree = node[Tree[String]]
+
   val tokens = node[Constituent]
 
   val sentencesToTrees = edge(sentences, trees)
+
+  val sentencesTostringTree = edge(sentences, stringTree)
+
   val sentencesToTokens = edge(sentences, tokens)
 
   val sentencesToRelations = edge(sentences, relations)
@@ -38,6 +43,7 @@ object SRLDataModel extends DataModel {
   relationsToArguments.addSensor(SRLSensors.relToArgument _)
   relationsToPredicates.addSensor(SRLSensors.relToPredicate _)
   sentencesToTokens.addSensor(commonSensors.textAnnotationToTokens _)
+  sentencesTostringTree.addSensor(SRLSensors.textAnnotationToStringTree _)
 
   val isPredicate = property[Constituent]("p") {
     x: Constituent => x.getLabel.equals("Predicate")

@@ -39,7 +39,8 @@ lazy val saulExamples = (project in file("saul-examples")).
     libraryDependencies ++= Seq(
       "edu.illinois.cs.cogcomp" % "illinois-nlp-pipeline" % cogcompPipelineVersion,
       "edu.illinois.cs.cogcomp" % "illinois-curator" % cogcompNLPVersion,
-      "edu.illinois.cs.cogcomp" % "illinois-edison" % cogcompNLPVersion
+      "edu.illinois.cs.cogcomp" % "illinois-edison" % cogcompNLPVersion,
+      "edu.illinois.cs.cogcomp" % "illinois-srl"  % "5.1.7"
     )
   ).dependsOn(saulCore).aggregate(saulCore)
 

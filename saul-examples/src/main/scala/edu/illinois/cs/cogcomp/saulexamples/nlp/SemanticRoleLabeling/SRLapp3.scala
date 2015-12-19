@@ -2,6 +2,7 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling
 
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{ Constituent, Relation }
 import edu.illinois.cs.cogcomp.core.datastructures.{ IntPair, ViewNames }
+import edu.illinois.cs.cogcomp.saulexamples.data.XuPalmerCandidateGenerator
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLClassifiers.relationClassifier
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLDataModel._
 
@@ -11,7 +12,7 @@ import scala.collection.JavaConversions._
 object SRLapp3 extends App {
 
   populateGraphwithTextAnnotation(SRLDataModel, SRLDataModel.sentences)
-
+  val t = new XuPalmerCandidateGenerator(null)
   // Generate predicate candidates by extracting all verb tokens
   val predicateCandidates = tokens().filter((x: Constituent) => posTag(x).startsWith("VB"))
     .map(c => c.cloneForNewView(ViewNames.SRL_VERB))
@@ -20,6 +21,18 @@ object SRLapp3 extends App {
     .filterNot(cand => (predicates() prop address).contains(address(cand)))
 
   predicates.populate(negativePredicateCandidates)
+  // val ee= (sentences(predicates().head.getTextAnnotation)~> sentencesTostringTree).head
+  // t.generateSaulCandidates(predicates().head,
+  val XuPalmerCandidateArgs = predicates().flatMap(
+
+    (x =>
+
+      {
+        val p = t.generateSaulCandidates(x, (sentences(x.getTextAnnotation) ~> sentencesTostringTree).head)
+        p.map(y => new Relation("candidate", x.cloneForNewView(x.getViewName), y.cloneForNewView(y.getViewName), 0.0))
+      })
+
+  )
 
   // Exclude argument candidates (trees) that contain predicates
   val treeCandidates = trees().flatMap { tree =>
@@ -53,20 +66,21 @@ object SRLapp3 extends App {
   println("pred number after re-population:" + (SRLDataModel.relations() ~> relationsToPredicates).size)
 
   //  generate all candidate relations based on candidate arguments and predicates
-  val relationCandidates4 = for {
-    x <- predicates()
-    y <- arguments()
-    if (!(y.getSpan.getFirst <= x.getSpan.getFirst && y.getSpan.getSecond >= x.getSpan.getSecond))
-  } yield new Relation("candidate", x.cloneForNewView(x.getViewName), y.cloneForNewView(y.getViewName), 0.0)
+  //  val relationCandidates4 = for {
+  //    x <- predicates()
+  //    y <- arguments()
+  //    if (!(y.getSpan.getFirst <= x.getSpan.getFirst && y.getSpan.getSecond >= x.getSpan.getSecond))
+  //  } yield new Relation("candidate", x.cloneForNewView(x.getViewName), y.cloneForNewView(y.getViewName), 0.0)
 
-  println("relation candidates:" + relationCandidates4.size)
+  //  println("relation candidates:" + relationCandidates4.size)
   val a = relations() ~> relationsToArguments prop address
   val b = relations() ~> relationsToPredicates prop address
 
-  val negativeRelationCandidates = relationCandidates4.filterNot(cand => (a.contains(address(cand.getTarget))) && b.contains(address(cand.getSource)))
+  //  val negativeRelationCandidates = relationCandidates4.filterNot(cand => (a.contains(address(cand.getTarget))) && b.contains(address(cand.getSource)))
+  val negativePalmerCandidates = XuPalmerCandidateArgs.filterNot(cand => (a.contains(address(cand.getTarget))) && b.contains(address(cand.getSource)))
 
-  relations.populate(negativeRelationCandidates)
-  println("negative relation candidates:" + negativeRelationCandidates.size)
+  // relations.populate(negativeRelationCandidates)
+  //  println("negative relation candidates:" + negativeRelationCandidates.size)
   println("all relations number after population:" + SRLDataModel.relations().size)
 
   relationClassifier.crossValidation(3)

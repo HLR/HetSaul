@@ -21,6 +21,11 @@ object SRLSensors {
     val parseViewName: String = ViewNames.PARSE_GOLD
     ta.getView(parseViewName).asInstanceOf[TreeView].getConstituentTree(0)
   }
+  def textAnnotationToStringTree(ta: TextAnnotation): Tree[String] = {
+    // We assume that there is only 1 sentence per TextAnnotation
+    val parseViewName: String = ViewNames.PARSE_GOLD
+    ta.getView(parseViewName).asInstanceOf[TreeView].getTree(0)
+  }
 
   def textAnnotationToRelation(ta: TextAnnotation): List[Relation] = {
     ta.getView(ViewNames.SRL_VERB).getRelations.toList
