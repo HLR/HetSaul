@@ -32,8 +32,11 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
   val lbpFeatures = if (label != null) new CombinedDiscreteProperty[T](this.feature.filterNot(_ == label)).classifier
   else new CombinedDiscreteProperty[T](this.feature).classifier
 
+  /** classifier need to be defined by the user */
   val classifier: Learner
-  classifier.readLexiconOnDemand = true
+
+  /** specifications of the classifier and its model files  */
+  classifier.setReadLexiconOnDemand()
   val modelDir = "models/"
   IOUtils.mkdir(modelDir)
   IOUtils.rm(modelDir + getClassNameForClassifier + ".lc")
