@@ -55,38 +55,49 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
       //Thickness(3)
       //learningRate=0.1
 
-      readLexiconOnDemand = true
-
       /** Set path information for models */
+      readLexiconOnDemand = true
       val modelDir = "models/"
       IOUtils.mkdir(modelDir)
       IOUtils.rm(modelDir + getClassNameForClassifier + ".lc")
       IOUtils.rm(modelDir + getClassNameForClassifier + ".lex")
       val lcFilePath2 = new URL(new URL("file:"), modelDir + getClassNameForClassifier + ".lc")
       val lexFilePath2 = new URL(new URL("file:"), modelDir + getClassNameForClassifier + ".lex")
-      //lcFilePath = lcFilePath2
-      //lexFilePath = lexFilePath2
-      //classifier.setModelLocation(lcFilePath2)
-      //classifier.setLexiconLocation(lexFilePath2)
-      //classifier.readLexiconOnDemand(lexFilePath2)
-      setModelLocation(lcFilePath2)
-      setLexiconLocation(lexFilePath2)
+      this.setModelLocation(lcFilePath2)
+      this.setLexiconLocation(lexFilePath2)
       readLexiconOnDemand(lexFilePath2)
       val lexFile = ExceptionlessOutputStream.openCompressedStream(lexFilePath2)
-      //if (classifier.getLexicon == null) lexFile.writeInt(0)
-//      if (getLexicon == null) lexFile.writeInt(0)
       if (lexicon == null) lexFile.writeInt(0)
       else lexicon.write(lexFile)
-      //else classifier.getLexicon.write(lexFile)
       lexFile.close()
       val lcFile = ExceptionlessOutputStream.openCompressedStream(lcFilePath2)
       println("lcFile")
       println(lcFile)
-      //classifier.write(lcFile)
-      write(lcFile)
+      this.write(lcFile)
       lcFile.close()
     }
   }
+
+/*  classifier.setReadLexiconOnDemand()
+  val modelDir = "models/"
+  IOUtils.mkdir(modelDir)
+  IOUtils.rm(modelDir + getClassNameForClassifier + ".lc")
+  IOUtils.rm(modelDir + getClassNameForClassifier + ".lex")
+  val lcFilePath2 = new URL(new URL("file:"), modelDir + getClassNameForClassifier + ".lc")
+  val lexFilePath2 = new URL(new URL("file:"), modelDir + getClassNameForClassifier + ".lex")
+  classifier.setModelLocation(lcFilePath2)
+  classifier.setLexiconLocation(lexFilePath2)
+
+  val lexFile = ExceptionlessOutputStream.openCompressedStream(lexFilePath2)
+  val lexicon = classifier.getCurrentLexicon
+  if (lexicon == null) lexFile.writeInt(0)
+  else lexicon.write(lexFile)
+  lexFile.close()
+  val lcFile = ExceptionlessOutputStream.openCompressedStream(lcFilePath2)
+  println("lcFile")
+  println(lcFile)
+  classifier.write(lcFile)
+  lcFile.close()*/
 
   if (feature != null) {
     println(s"Setting the feature extractors to be ${lbpFeatures}")
