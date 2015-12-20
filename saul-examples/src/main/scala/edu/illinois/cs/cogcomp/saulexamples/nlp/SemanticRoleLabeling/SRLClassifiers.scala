@@ -1,8 +1,8 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling
 
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{ Relation, Constituent }
-import edu.illinois.cs.cogcomp.lbjava.learn.SparseAveragedPerceptron
-import edu.illinois.cs.cogcomp.saul.classifier.{ SparseNetworkLBP, Learnable }
+import edu.illinois.cs.cogcomp.lbjava.learn.{SparseNetworkLearner, SparseAveragedPerceptron}
+import edu.illinois.cs.cogcomp.saul.classifier.Learnable
 import edu.illinois.cs.cogcomp.saul.datamodel.property.Property
 
 object SRLClassifiers {
@@ -12,22 +12,21 @@ object SRLClassifiers {
   object predicateClassifier extends Learnable[Constituent](SRLDataModel, parameters) {
     //TODO These are not used during Learner's initialization
     def label: Property[Constituent] = SRLDataModel.isPredicate
-    override val classifier = new SparseNetworkLBP()
+    override lazy val classifier = new SparseNetworkLearner()
   }
 
   object argumentClassifier extends Learnable[Constituent](SRLDataModel, parameters) {
     def label = SRLDataModel.isArgument
-    override val classifier = new SparseNetworkLBP()
+    override lazy val classifier = new SparseNetworkLearner()
   }
 
   object predicateSenseClassifier extends Learnable[Constituent](SRLDataModel, parameters) {
     def label = SRLDataModel.predicateSense
-    override val classifier = new SparseNetworkLBP()
+    override lazy val classifier = new SparseNetworkLearner()
   }
 
   object relationClassifier extends Learnable[Relation](SRLDataModel, parameters) {
     def label = SRLDataModel.argumentLabel
-    override val classifier = new SparseNetworkLBP()
+    override lazy val classifier = new SparseNetworkLearner()
   }
-
 }

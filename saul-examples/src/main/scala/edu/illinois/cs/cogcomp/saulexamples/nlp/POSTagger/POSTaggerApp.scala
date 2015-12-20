@@ -1,6 +1,9 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.POSTagger
 
+import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
 import edu.illinois.cs.cogcomp.nlp.corpusreaders.PennTreebankPOSReader
+import edu.illinois.cs.cogcomp.saulexamples.nlp.EdisonFeatures.toyDataGenerator
+import edu.illinois.cs.cogcomp.saulexamples.nlp.EmailSpam.spamClassifiers.spamClassifier
 import edu.illinois.cs.cogcomp.saulexamples.nlp.POSTagger.POSClassifiers._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.commonSensors
 
@@ -37,7 +40,17 @@ object POSTaggerBaselineApp {
     //val a = BaselineLabel.classifier.discreteValue("The")
     //println(a)
 
-    BaselineLabel.learn(1)
+    val sampleInput = toyDataGenerator.generateToyTextAnnotation(1).head.getView(ViewNames.TOKENS).getConstituents.head
+    println("Sample input = " + sampleInput)
+
+//    val extractor = BaselineLabel.classifier.getExtractor
+//    println(s"extractor = $extractor")
+//    println(extractor.discreteValue(sampleInput))
+
+//    BaselineLabel.learn(1)
+//    BaselineLabel.classifier
+
+//    println(BaselineLabel.classifier.classify(sampleInput))
     //POSDataModel.testWith(trainData)
 
     //BaselineLabel.test(trainData)

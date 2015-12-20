@@ -4,7 +4,7 @@ import java.io.File
 import java.net.URL
 
 import edu.illinois.cs.cogcomp.core.io.IOUtils
-import edu.illinois.cs.cogcomp.lbjava.classify.{ FeatureVector, TestDiscrete }
+import edu.illinois.cs.cogcomp.lbjava.classify.{Classifier, FeatureVector, TestDiscrete}
 import edu.illinois.cs.cogcomp.lbjava.learn.Learner.Parameters
 import edu.illinois.cs.cogcomp.lbjava.learn.{ Learner, SparseAveragedPerceptron, SparsePerceptron, StochasticGradientDescent }
 import edu.illinois.cs.cogcomp.lbjava.parse.Parser
@@ -26,11 +26,18 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
 
   def getClassNameForClassifier = this.getClass.getCanonicalName
 
-  def feature = datamodel.getPropertiesForType[T]
+  def feature: List[Property[T]] = datamodel.getPropertiesForType[T]
 
   /** filter out the label from the features */
-  val lbpFeatures = if (label != null) new CombinedDiscreteProperty[T](this.feature.filterNot(_ == label)).classifier
-  else new CombinedDiscreteProperty[T](this.feature).classifier
+  val combinedProperty = if (label != null) new CombinedDiscreteProperty[T](this.feature.filterNot(_.name == label.name))
+  else new CombinedDiscreteProperty[T](this.feature)
+  //combinedProperty.makeClassifierWithName("")
+  val lbpFeatures = combinedProperty.makeClassifierWithName("") //combinedProperty.classifier
+
+  val filteredFreatures = this.feature.filterNot(_.name == label.name)
+
+  println(s"filteredFreatures = $filteredFreatures")
+  println(s"lbpFeatures = $lbpFeatures")
 
   /** classifier need to be defined by the user */
   val classifier: Learner
@@ -57,12 +64,14 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
 
   if (feature != null) {
     println(s"Setting the feature extractors to be $lbpFeatures")
+    println(s"List of available features are ${this.feature} ")
     classifier.setExtractor(lbpFeatures)
   }
 
   if (label != null) {
     val oracle = Property.entitiesToLBJFeature(label)
     println(s"Setting the labeler to be $oracle")
+    println(s"Labels are $label with name ${label.name}")
     classifier.setLabeler(oracle)
   }
 
@@ -90,14 +99,14 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
     def learnAll(crTokenTest: Parser, remainingIteration: Int): Unit = {
 
       val v = crTokenTest.next
-      println("token", remainingIteration)
+      //println("token", remainingIteration)
       if (v == null) {
         if (remainingIteration > 0) {
           crTokenTest.reset()
           learnAll(crTokenTest, remainingIteration - 1)
         }
       } else {
-        println(v)
+        println("learn with " + v)
         classifier.learn(v)
         learnAll(crTokenTest, remainingIteration)
       }
@@ -109,8 +118,7 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
 
   def learnWithDerivedInstances(numIterations: Int, featureVectors: Iterable[FeatureVector]): Unit = {
     val propertyNameSet = feature.map(_.name).toSet
-    (0 until numIterations).foreach {
-      _ =>
+    (0 until numIterations).foreach { _ =>
         featureVectors.foreach {
           fullFeatureVector =>
             val featureVector = new FeatureVector()

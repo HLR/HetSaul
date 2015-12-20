@@ -6,14 +6,13 @@ import edu.illinois.cs.cogcomp.saulexamples.data.Document
 import scala.collection.JavaConversions._
 
 object spamDataModel extends DataModel {
-
   val docs = node[Document]
 
-  val wordFeature = property[Document]("wordF") {
+  val wordFeature = property[Document]("wordFeatures") {
     x: Document => x.getWords.toList
   }
 
-  val bigramFeature = property[Document]("bigram") {
+  val bigramFeature = property[Document]("bigramFeatures") {
     x: Document =>
       val words = x.getWords.toList
 
