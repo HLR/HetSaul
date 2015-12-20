@@ -8,6 +8,7 @@ import edu.illinois.cs.cogcomp.saulexamples.nlp.EdisonFeatures.toyDataGenerator
 import edu.illinois.cs.cogcomp.saulexamples.nlp.EmailSpam.spamClassifiers.spamClassifier
 import edu.illinois.cs.cogcomp.saulexamples.nlp.POSTagger.POSClassifiers._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.commonSensors
+import edu.illinois.cs.cogcomp.saul.conversions.LBPConversion._
 
 import scala.collection.JavaConversions._
 
@@ -64,7 +65,10 @@ object POSTaggerBaselineApp {
     //    println(s"extractor = $extractor")
     //    println(extractor.discreteValue(sampleInput))
 
-    BaselineLabel.learn(1)
-    BaselineLabel.test(testData)
+    BaselineClassifier.learn(1)
+    BaselineClassifier.test(testData)
+
+    val sampleInput = toyDataGenerator.generateToyTextAnnotation(1).head.getView(ViewNames.TOKENS).getConstituents.get(1)
+    println(BaselineClassifier.classifier.discreteValue(sampleInput))
   }
 }

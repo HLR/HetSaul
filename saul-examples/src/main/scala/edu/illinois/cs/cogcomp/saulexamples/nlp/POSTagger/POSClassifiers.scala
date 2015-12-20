@@ -31,7 +31,7 @@ object POSClassifiers {
     override lazy val classifier = new SparseNetworkLearner()
   }
 
-  object BaselineLabel extends Learnable[Constituent](POSDataModel) {
+  object BaselineClassifier extends Learnable[Constituent](POSDataModel) {
     def label = posLabel
     override def feature = using(wordForm)
     override lazy val classifier = new POSBaselineLearner()
