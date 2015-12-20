@@ -37,12 +37,16 @@ object POSTaggerBaselineApp {
     trainDataReader.readFile("./data/POS/00-18_small.br")
     val trainData = trainDataReader.getTextAnnotations.flatMap(commonSensors.textAnnotationToTokens)
 
+    val testDataReader = new PennTreebankPOSReader("test")
+    testDataReader.readFile("./data/POS/22-24.br")
+    val testData = testDataReader.getTextAnnotations.flatMap(commonSensors.textAnnotationToTokens)
+
     POSDataModel.tokens populate trainData
 
     //val a = BaselineLabel.classifier.discreteValue("The")
     //println(a)
 
-//    val sampleInput = toyDataGenerator.generateToyTextAnnotation(1).head.getView(ViewNames.TOKENS).getConstituents.get(1)
+    //    val sampleInput = toyDataGenerator.generateToyTextAnnotation(1).head.getView(ViewNames.TOKENS).getConstituents.get(1)
     /*val sampleInput = trainData.toList.head
     println("Sample input = " + sampleInput)
 
@@ -61,6 +65,6 @@ object POSTaggerBaselineApp {
     //    println(extractor.discreteValue(sampleInput))
 
     BaselineLabel.learn(1)
-    BaselineLabel.test(trainData)
+    BaselineLabel.test(testData)
   }
 }
