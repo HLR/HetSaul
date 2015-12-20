@@ -30,10 +30,12 @@ case class CombinedDiscreteProperty[T <: AnyRef](
 
       def classify(instance: AnyRef): FeatureVector = {
 
+        //        println("attributes => ")
+        //        println(atts)
+
         val t: T = instance.asInstanceOf[T]
         val featureVector = new FeatureVector()
         atts.foreach(_.addToFeatureVector(t, featureVector))
-
         featureVector
       }
 

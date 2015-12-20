@@ -20,16 +20,15 @@ object POSTTaggerSensors {
 
   def getConstituentTwoAfter(x: Constituent): Constituent = {
     val consAfter = x.getView.getConstituents.toList.filter(cons => cons.getStartSpan >= x.getEndSpan)
-    if (consAfter.size >= 2) consAfter.minBy(_.getEndSpan)
-    else if (consAfter.size == 1) consAfter.head
+    if (consAfter.size == 1) consAfter.head
+    else if (consAfter.size >= 2) consAfter.sortBy(_.getEndSpan).get(1)
     else x
   }
 
   def getConstituentTwoBefore(x: Constituent): Constituent = {
     val consBefore = x.getView.getConstituents.toList.filter(cons => cons.getEndSpan <= x.getStartSpan)
-    if (consBefore.size >= 2) consBefore.maxBy(_.getEndSpan)
-    else if (consBefore.size == 1) consBefore.head
+    if (consBefore.size == 1) consBefore.head
+    else if (consBefore.size >= 2) consBefore.sortBy(-_.getEndSpan).get(1)
     else x
   }
-
 }

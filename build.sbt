@@ -13,6 +13,7 @@ lazy val commonSettings = Seq(
     Resolver.mavenLocal,
     "CogcompSoftware" at "http://cogcomp.cs.illinois.edu/m2repo/"
   ),
+  javaOptions ++= List("-Xmx7g", "-XX:-UseGCOverheadLimit"),
   libraryDependencies ++= Seq(
     "edu.illinois.cs.cogcomp" % "illinois-core-utilities" % cogcompNLPVersion withSources,
     "com.gurobi" % "gurobi" % "6.0",
@@ -27,7 +28,7 @@ lazy val saulCore = (project in file("saul-core")).
   settings(
     name := "saul",
     libraryDependencies ++= Seq(
-      "edu.illinois.cs.cogcomp" % "LBJava" % "1.2.1"
+      "edu.illinois.cs.cogcomp" % "LBJava" % "1.2.2"
     )
   )
 
@@ -35,7 +36,6 @@ lazy val saulExamples = (project in file("saul-examples")).
   settings(commonSettings: _*).
   settings(
     name := "saul-examples",
-    javaOptions += "-Xmx6g",
     libraryDependencies ++= Seq(
       "edu.illinois.cs.cogcomp" % "illinois-nlp-pipeline" % cogcompPipelineVersion,
       "edu.illinois.cs.cogcomp" % "illinois-curator" % cogcompNLPVersion,

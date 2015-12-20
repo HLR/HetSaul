@@ -18,8 +18,9 @@ import edu.illinois.cs.cogcomp.saul.parser.LBJIteratorParserScala
 import scala.reflect.ClassTag
 
 abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: Parameters = new Learner.Parameters)(implicit tag: ClassTag[T]) extends LBJLearnerEquivalent {
+  /** Whether to use caching */
   val useCache = false
-  // Whether to use derived values
+
   val targetNode = datamodel.getNodeWithType[T]
 
   var isTraining = false
@@ -31,10 +32,10 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
   def feature: List[Property[T]] = datamodel.getPropertiesForType[T]
 
   /** filter out the label from the features */
-  val combinedProperties = if (label != null) new CombinedDiscreteProperty[T](this.feature.filterNot(_.name == label.name))
+  def combinedProperties = if (label != null) new CombinedDiscreteProperty[T](this.feature.filterNot(_.name == label.name))
   else new CombinedDiscreteProperty[T](this.feature)
   //combinedProperty.makeClassifierWithName("")
-  val lbpFeatures = combinedProperties.makeClassifierWithName("") //combinedProperty.classifier
+  def lbpFeatures = combinedProperties.makeClassifierWithName("") //combinedProperty.classifier
 
   //  val filteredFreatures = this.feature.filterNot(_.name == label.name)
   //
@@ -59,8 +60,6 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
   else classifier.getCurrentLexicon.write(lexFile)
   lexFile.close()
   val lcFile = ExceptionlessOutputStream.openCompressedStream(lcFilePath2)
-  println("lcFile")
-  println(lcFile)
   classifier.write(lcFile)
   lcFile.close()
 
@@ -72,7 +71,7 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
 
   if (label != null) {
     val oracle = Property.entitiesToLBJFeature(label)
-    println(s"Setting the labeler to be $oracle")
+    println(s"Setting the labeler to be '$oracle'")
     println(s"Labels are $label with name ${label.name}")
     classifier.setLabeler(oracle)
   }
@@ -92,6 +91,7 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
     } else {
       learn(iteration, this.fromData)
     }
+    isTraining = false
   }
 
   def learn(iteration: Int, data: Iterable[T]): Unit = {
@@ -142,6 +142,7 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
       }
     }
     classifier.doneLearning()
+    isTraining = false
   }
 
   def forget() = this.classifier.forget()
@@ -260,10 +261,7 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
     })
   }
 
-  /** User defines the following parts */
-  /** Labels
-    * @return
-    */
+  /** Label property foor users classifier */
   def label: Property[T]
 
   /** A windows of properties
@@ -285,10 +283,6 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
 
   def using(properties: List[Property[T]]*): List[Property[T]] = {
     properties.toList.flatten
-  }
-
-  def using(l: Learner): Learner = {
-    l
   }
 
   def nextWithIn[U <: AnyRef](properties: List[Property[T]])(implicit uTag: ClassTag[U]): Property[T] = {
@@ -316,5 +310,4 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
     val fts = this.datamodel.getPropertiesForType[U]
     new RelationalFeature[T, U](this.datamodel, fts)
   }
-
 }

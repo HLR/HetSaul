@@ -94,7 +94,6 @@ trait DataModel {
   }
 
   def testWith[T <: AnyRef](coll: Seq[T])(implicit tag: ClassTag[T]) = {
-    println("Adding for type" + tag.toString)
     //getNodeWithType[T].addToTest(coll)
   }
 

@@ -21,8 +21,8 @@ object POSClassifiers {
 
   object POSTaggerKnown extends Learnable[Constituent](POSDataModel) {
     def label = POSLabel
-    override def feature = using(wordForm, labelOrBaseline, labelTwoBefore, labelOneBefore,
-      labelOneAfter, labelTwoAfter, L2bL1b, L1bL1a, L1aL2a)
+    override def feature = using(wordForm, labelOrBaseline, labelTwoBefore) //, labelOneBefore,
+    //          labelOneAfter, labelTwoAfter, L2bL1b, L1bL1a, L1aL2a)
     override lazy val classifier = new SparseNetworkLearner {
       val p = new SparseAveragedPerceptron.Parameters()
       p.learningRate = .1
@@ -40,5 +40,11 @@ object POSClassifiers {
     def label = POSLabel
     override def feature = using(wordForm)
     override lazy val classifier = new POSBaselineLearner()
+  }
+
+  object MikheevClassifier extends Learnable[Constituent](POSDataModel) {
+    def label = POSLabel
+    override def feature = using(wordForm)
+    override lazy val classifier = new MikheevLearner
   }
 }

@@ -41,13 +41,11 @@ object POSDataModel extends DataModel {
       }
   }
 
-  val labelOrBaseline = property[Constituent]("baselineLabel") {
+  val labelOrBaseline = property[Constituent]("labelOrBaseline") {
     x: Constituent =>
       if (POSTaggerKnown.isTraining) {
-        println(" >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> training ")
         POSLabel(x)
       } else {
-        println(" <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< testing  ")
         BaselineClassifier.classifier.discreteValue(x)
       }
   }
@@ -64,10 +62,13 @@ object POSDataModel extends DataModel {
   val labelTwoBefore = property[Constituent]("labelTwoBefore") {
     x: Constituent =>
       val cons = (tokens(x) ~> constituentTwoBefore).head
-      if (POSTaggerKnown.isTraining)
+      if (POSTaggerKnown.isTraining) {
+        println("Training ")
         POSLabel(cons)
-      else
+      } else {
+        println("testing ")
         POSTaggerKnown.classifier.discreteValue(cons)
+      }
   }
 
   val labelOneAfter = property[Constituent]("labelOneAfter") {
