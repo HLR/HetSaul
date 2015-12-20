@@ -29,16 +29,15 @@ object POSDataModel extends DataModel {
   }
 
   val wordForm = property[Constituent]("wordForm") {
-    x: Constituent => x.toString
-/*      val wordFormLabel = x.getTextAnnotation.getView(ViewNames.TOKENS).getConstituentsCovering(x).get(0).getLabel
-      println(wordFormLabel)
+    x: Constituent =>
+      val wordFormLabel = x.toString
       if (wordFormLabel.length == 1 && "([{".indexOf(wordFormLabel) != -1) {
         "-LRB-"
       } else if (wordFormLabel.length == 1 && ")]}".indexOf(wordFormLabel) != -1) {
         "-RRB-"
       } else {
         wordFormLabel
-      }*/
+      }
   }
 
   val baselineLabel = property[Constituent]("baselineLabel") {
