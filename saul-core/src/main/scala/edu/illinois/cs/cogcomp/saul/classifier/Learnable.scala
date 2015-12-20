@@ -106,7 +106,7 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
           learnAll(crTokenTest, remainingIteration - 1)
         }
       } else {
-//        println("learn with " + v)
+        //        println("learn with " + v)
         classifier.learn(v)
         learnAll(crTokenTest, remainingIteration)
       }

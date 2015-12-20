@@ -16,10 +16,10 @@ object spamApp {
     spamClassifier.learn(30)
     spamDataModel.testWith(testData)
     spamClassifier.test(testData)
-//    println(spamClassifier.classifier.discreteValue(toyDataGenerator.generateToyDocuments(1).head))
-//
-//        val extractor = spamClassifier.classifier.getExtractor
-//        println(s"extractor = $extractor")
-//        println(extractor.discreteValue(toyDataGenerator.generateToyDocuments(1).head))
+    //    println(spamClassifier.classifier.discreteValue(toyDataGenerator.generateToyDocuments(1).head))
+    //
+    //        val extractor = spamClassifier.classifier.getExtractor
+    //        println(s"extractor = $extractor")
+    //        println(extractor.discreteValue(toyDataGenerator.generateToyDocuments(1).head))
   }
 }
