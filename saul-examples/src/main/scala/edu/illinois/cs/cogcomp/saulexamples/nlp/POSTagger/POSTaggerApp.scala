@@ -1,14 +1,10 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.POSTagger
 
 import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
-import edu.illinois.cs.cogcomp.core.datastructures.textannotation.Constituent
 import edu.illinois.cs.cogcomp.nlp.corpusreaders.PennTreebankPOSReader
-import edu.illinois.cs.cogcomp.saul.datamodel.property.{ Property, CombinedDiscreteProperty }
 import edu.illinois.cs.cogcomp.saulexamples.nlp.EdisonFeatures.toyDataGenerator
-import edu.illinois.cs.cogcomp.saulexamples.nlp.EmailSpam.spamClassifiers.spamClassifier
 import edu.illinois.cs.cogcomp.saulexamples.nlp.POSTagger.POSClassifiers._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.commonSensors
-import edu.illinois.cs.cogcomp.saul.conversions.LBPConversion._
 
 import scala.collection.JavaConversions._
 

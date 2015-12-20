@@ -22,6 +22,8 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
   // Whether to use derived values
   val targetNode = datamodel.getNodeWithType[T]
 
+  var isTraining = false
+
   def fromData = targetNode.getTrainingInstances
 
   def getClassNameForClassifier = this.getClass.getCanonicalName
@@ -29,15 +31,15 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
   def feature: List[Property[T]] = datamodel.getPropertiesForType[T]
 
   /** filter out the label from the features */
-  val combinedProperty = if (label != null) new CombinedDiscreteProperty[T](this.feature.filterNot(_.name == label.name))
+  val combinedProperties = if (label != null) new CombinedDiscreteProperty[T](this.feature.filterNot(_.name == label.name))
   else new CombinedDiscreteProperty[T](this.feature)
   //combinedProperty.makeClassifierWithName("")
-  val lbpFeatures = combinedProperty.makeClassifierWithName("") //combinedProperty.classifier
+  val lbpFeatures = combinedProperties.makeClassifierWithName("") //combinedProperty.classifier
 
-  val filteredFreatures = this.feature.filterNot(_.name == label.name)
-
-  println(s"filteredFreatures = $filteredFreatures")
-  println(s"lbpFeatures = $lbpFeatures")
+  //  val filteredFreatures = this.feature.filterNot(_.name == label.name)
+  //
+  //  println(s"filteredFreatures = $filteredFreatures")
+  //  println(s"lbpFeatures = $lbpFeatures")
 
   /** classifier need to be defined by the user */
   val classifier: Learner
@@ -76,6 +78,7 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
   }
 
   def learn(iteration: Int, filePath: String = datamodel.defaultDIFilePath): Unit = {
+    isTraining = true
     if (useCache) {
       if (!datamodel.hasDerivedInstances) {
         if (new File(filePath).exists()) {
@@ -93,6 +96,7 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
 
   def learn(iteration: Int, data: Iterable[T]): Unit = {
     println("Learnable: Learn with data of size " + data.size)
+    isTraining = true
     val crTokenTest = new LBJIteratorParserScala[T](data)
     crTokenTest.reset()
 
@@ -117,6 +121,7 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
   }
 
   def learnWithDerivedInstances(numIterations: Int, featureVectors: Iterable[FeatureVector]): Unit = {
+    isTraining = true
     val propertyNameSet = feature.map(_.name).toSet
     (0 until numIterations).foreach { _ =>
       featureVectors.foreach {
@@ -142,6 +147,7 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
   def forget() = this.classifier.forget()
 
   def test(): List[(String, (Double, Double, Double))] = {
+    isTraining = false
     val data = this.datamodel.getNodeWithType[T].getTestingInstances
     test(data)
   }
@@ -151,24 +157,23 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
     * @return List of (label, (f1,precision,recall))
     */
   def test(testData: Iterable[T]): List[(String, (Double, Double, Double))] = {
-    println()
+    isTraining = false
     val testReader = new LBJIteratorParserScala[T](testData)
     testReader.reset()
     val tester = TestDiscrete.testDiscrete(classifier, classifier.getLabeler, testReader)
     tester.printPerformance(System.out)
-    val ret = tester.getLabels.map {
-      label => (label, (tester.getF1(label), tester.getPrecision(label), tester.getRecall(label)))
-    }
-
+    val ret = tester.getLabels.map { label => (label, (tester.getF1(label), tester.getPrecision(label), tester.getRecall(label))) }
     ret.toList
   }
 
   def testContinuos(): Unit = {
+    isTraining = false
     val data = this.datamodel.getNodeWithType[T].getTestingInstances
     testContinuos(data)
   }
 
   def testContinuos(testData: Iterable[T]): Unit = {
+    isTraining = false
     println()
     val testReader = new LBJIteratorParserScala[T](testData)
     //    println("Here is the test!")

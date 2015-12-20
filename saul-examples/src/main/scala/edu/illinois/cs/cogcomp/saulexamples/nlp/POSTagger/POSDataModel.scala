@@ -3,7 +3,7 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp.POSTagger
 import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.Constituent
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
-import edu.illinois.cs.cogcomp.saulexamples.nlp.POSTagger.POSClassifiers.{POSTaggerKnown, BaselineClassifier}
+import edu.illinois.cs.cogcomp.saulexamples.nlp.POSTagger.POSClassifiers.{ POSTaggerKnown, BaselineClassifier }
 
 import scala.collection.JavaConversions._
 
@@ -43,10 +43,13 @@ object POSDataModel extends DataModel {
 
   val labelOrBaseline = property[Constituent]("baselineLabel") {
     x: Constituent =>
-      if (POSTaggerKnown.isTraining)
-      POSLabel(x)
-    else
-      BaselineClassifier.classifier.discreteValue(x)
+      if (POSTaggerKnown.isTraining) {
+        println(" >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> training ")
+        POSLabel(x)
+      } else {
+        println(" <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< testing  ")
+        BaselineClassifier.classifier.discreteValue(x)
+      }
   }
 
   val labelOneBefore = property[Constituent]("labelOneBefore") {

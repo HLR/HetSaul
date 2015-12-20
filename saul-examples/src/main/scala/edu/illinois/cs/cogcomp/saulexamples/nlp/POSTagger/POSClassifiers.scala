@@ -2,7 +2,7 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp.POSTagger
 
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.Constituent
 import edu.illinois.cs.cogcomp.lbj.pos.POSBaselineLearner
-import edu.illinois.cs.cogcomp.lbjava.learn.SparseNetworkLearner
+import edu.illinois.cs.cogcomp.lbjava.learn.{ SparseAveragedPerceptron, SparseNetworkLearner }
 import edu.illinois.cs.cogcomp.saul.classifier.Learnable
 import edu.illinois.cs.cogcomp.saul.constraint.ConstraintTypeConversion._
 
@@ -23,7 +23,12 @@ object POSClassifiers {
     def label = POSLabel
     override def feature = using(wordForm, labelOrBaseline, labelTwoBefore, labelOneBefore,
       labelOneAfter, labelTwoAfter, L2bL1b, L1bL1a, L1aL2a)
-    override lazy val classifier = new SparseNetworkLearner()
+    override lazy val classifier = new SparseNetworkLearner {
+      val p = new SparseAveragedPerceptron.Parameters()
+      p.learningRate = .1
+      p.thickness = 2
+      baseLTU = new SparseAveragedPerceptron(p)
+    }
   }
 
   object POSTaggerUnknown extends Learnable[Constituent](POSDataModel) {
