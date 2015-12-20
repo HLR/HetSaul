@@ -46,6 +46,10 @@ case class CombinedDiscreteProperty[T <: AnyRef](
         atts.foreach(x => result.add(x.classifier))
         result
       }
+
+      override def discreteValue(example: AnyRef): String = {
+        atts.head(example.asInstanceOf[T]).asInstanceOf[String]
+      }
     }
   }
 

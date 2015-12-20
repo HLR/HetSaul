@@ -4,7 +4,7 @@ import java.io.File
 import java.net.URL
 
 import edu.illinois.cs.cogcomp.core.io.IOUtils
-import edu.illinois.cs.cogcomp.lbjava.classify.{Classifier, FeatureVector, TestDiscrete}
+import edu.illinois.cs.cogcomp.lbjava.classify.{ Classifier, FeatureVector, TestDiscrete }
 import edu.illinois.cs.cogcomp.lbjava.learn.Learner.Parameters
 import edu.illinois.cs.cogcomp.lbjava.learn.{ Learner, SparseAveragedPerceptron, SparsePerceptron, StochasticGradientDescent }
 import edu.illinois.cs.cogcomp.lbjava.parse.Parser
@@ -106,7 +106,7 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
           learnAll(crTokenTest, remainingIteration - 1)
         }
       } else {
-        println("learn with " + v)
+//        println("learn with " + v)
         classifier.learn(v)
         learnAll(crTokenTest, remainingIteration)
       }
@@ -119,22 +119,22 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
   def learnWithDerivedInstances(numIterations: Int, featureVectors: Iterable[FeatureVector]): Unit = {
     val propertyNameSet = feature.map(_.name).toSet
     (0 until numIterations).foreach { _ =>
-        featureVectors.foreach {
-          fullFeatureVector =>
-            val featureVector = new FeatureVector()
-            val numFeatures = fullFeatureVector.size()
-            (0 until numFeatures).foreach {
-              featureIndex =>
-                val feature = fullFeatureVector.getFeature(featureIndex)
-                val propertyName = feature.getGeneratingClassifier
-                if (label != null && label.name.equals(propertyName)) {
-                  featureVector.addLabel(feature)
-                } else if (propertyNameSet.contains(propertyName)) {
-                  featureVector.addFeature(feature)
-                }
-            }
-            classifier.learn(featureVector)
-        }
+      featureVectors.foreach {
+        fullFeatureVector =>
+          val featureVector = new FeatureVector()
+          val numFeatures = fullFeatureVector.size()
+          (0 until numFeatures).foreach {
+            featureIndex =>
+              val feature = fullFeatureVector.getFeature(featureIndex)
+              val propertyName = feature.getGeneratingClassifier
+              if (label != null && label.name.equals(propertyName)) {
+                featureVector.addLabel(feature)
+              } else if (propertyNameSet.contains(propertyName)) {
+                featureVector.addFeature(feature)
+              }
+          }
+          classifier.learn(featureVector)
+      }
     }
     classifier.doneLearning()
   }

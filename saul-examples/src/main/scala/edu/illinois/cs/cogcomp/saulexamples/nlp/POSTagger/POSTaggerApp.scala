@@ -1,7 +1,9 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.POSTagger
 
 import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
+import edu.illinois.cs.cogcomp.core.datastructures.textannotation.Constituent
 import edu.illinois.cs.cogcomp.nlp.corpusreaders.PennTreebankPOSReader
+import edu.illinois.cs.cogcomp.saul.datamodel.property.{Property, CombinedDiscreteProperty}
 import edu.illinois.cs.cogcomp.saulexamples.nlp.EdisonFeatures.toyDataGenerator
 import edu.illinois.cs.cogcomp.saulexamples.nlp.EmailSpam.spamClassifiers.spamClassifier
 import edu.illinois.cs.cogcomp.saulexamples.nlp.POSTagger.POSClassifiers._
@@ -40,19 +42,23 @@ object POSTaggerBaselineApp {
     //val a = BaselineLabel.classifier.discreteValue("The")
     //println(a)
 
-    val sampleInput = toyDataGenerator.generateToyTextAnnotation(1).head.getView(ViewNames.TOKENS).getConstituents.head
+ /*   val sampleInput = toyDataGenerator.generateToyTextAnnotation(1).head.getView(ViewNames.TOKENS).getConstituents.get(1)
     println("Sample input = " + sampleInput)
 
-//    val extractor = BaselineLabel.classifier.getExtractor
-//    println(s"extractor = $extractor")
-//    println(extractor.discreteValue(sampleInput))
+    val combinedProperty = new CombinedDiscreteProperty[Constituent](List(POSDataModel.wordForm))
+    val lbpFeatures = combinedProperty.makeClassifierWithName("")
+    println(s"extractor = $lbpFeatures")
+    println(lbpFeatures.classify(sampleInput))
+    println(lbpFeatures.discreteValue(sampleInput))
+*/
+     //    val prop: Property[Constituent] = POSDataModel.wordForm
+//    prop(
 
-//    BaselineLabel.learn(1)
-//    BaselineLabel.classifier
+    //    val extractor = BaselineLabel.classifier.getExtractor
+    //    println(s"extractor = $extractor")
+    //    println(extractor.discreteValue(sampleInput))
 
-//    println(BaselineLabel.classifier.classify(sampleInput))
-    //POSDataModel.testWith(trainData)
-
-    //BaselineLabel.test(trainData)
+        BaselineLabel.learn(1)
+    BaselineLabel.test(trainData)
   }
 }

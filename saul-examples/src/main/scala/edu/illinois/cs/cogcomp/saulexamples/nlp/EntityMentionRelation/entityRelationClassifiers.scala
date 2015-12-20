@@ -1,7 +1,7 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation
 
 import edu.illinois.cs.cogcomp.lbjava.learn.SparseNetworkLearner
-import edu.illinois.cs.cogcomp.saul.classifier.{ConstrainedClassifier, Learnable }
+import edu.illinois.cs.cogcomp.saul.classifier.{ ConstrainedClassifier, Learnable }
 import edu.illinois.cs.cogcomp.saul.constraint.ConstraintTypeConversion._
 import edu.illinois.cs.cogcomp.saul.datamodel.property.Property
 import edu.illinois.cs.cogcomp.saulexamples.EntityMentionRelation.datastruct.{ ConllRawSentence, ConllRawToken, ConllRelation }
