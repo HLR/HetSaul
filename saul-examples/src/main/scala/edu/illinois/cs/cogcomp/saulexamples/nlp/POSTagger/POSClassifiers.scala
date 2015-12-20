@@ -15,24 +15,24 @@ object POSClassifiers {
     * if it wasn't.
     */
   object POSClassifier extends Learnable[Constituent](POSDataModel) {
-    def label = posLabel
+    def label = POSLabel
     override lazy val classifier = new SparseNetworkLearner()
   }
 
   object POSTaggerKnown extends Learnable[Constituent](POSDataModel) {
-    def label = posLabel
-    override def feature = using(wordForm, baselineLabel, labelTwoBefore, labelOneBefore,
+    def label = POSLabel
+    override def feature = using(wordForm, labelOrBaseline, labelTwoBefore, labelOneBefore,
       labelOneAfter, labelTwoAfter, L2bL1b, L1bL1a, L1aL2a)
     override lazy val classifier = new SparseNetworkLearner()
   }
 
   object POSTaggerUnknown extends Learnable[Constituent](POSDataModel) {
-    def label = posLabel
+    def label = POSLabel
     override lazy val classifier = new SparseNetworkLearner()
   }
 
   object BaselineClassifier extends Learnable[Constituent](POSDataModel) {
-    def label = posLabel
+    def label = POSLabel
     override def feature = using(wordForm)
     override lazy val classifier = new POSBaselineLearner()
   }

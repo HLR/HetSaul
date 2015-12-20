@@ -3,7 +3,7 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp.POSTagger
 import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.Constituent
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
-import edu.illinois.cs.cogcomp.saulexamples.nlp.POSTagger.POSClassifiers.BaselineClassifier
+import edu.illinois.cs.cogcomp.saulexamples.nlp.POSTagger.POSClassifiers.{POSTaggerKnown, BaselineClassifier}
 
 import scala.collection.JavaConversions._
 
@@ -25,7 +25,7 @@ object POSDataModel extends DataModel {
   val constituentTwoBefore = edge(tokens, tokens)
   constituentTwoBefore.addSensor(getConstituentTwoBefore _)
 
-  val posLabel = property[Constituent]("label") {
+  val POSLabel = property[Constituent]("label") {
     x: Constituent => x.getTextAnnotation.getView(ViewNames.POS).getConstituentsCovering(x).get(0).getLabel
   }
 
@@ -41,44 +41,80 @@ object POSDataModel extends DataModel {
       }
   }
 
-  val baselineLabel = property[Constituent]("baselineLabel") {
-    x: Constituent => BaselineClassifier.classifier.discreteValue(x)
+  val labelOrBaseline = property[Constituent]("baselineLabel") {
+    x: Constituent =>
+      if (POSTaggerKnown.isTraining)
+      POSLabel(x)
+    else
+      BaselineClassifier.classifier.discreteValue(x)
   }
 
   val labelOneBefore = property[Constituent]("labelOneBefore") {
-    x: Constituent => (tokens(x) ~> constituentBefore).head.toString
+    x: Constituent =>
+      val cons = (tokens(x) ~> constituentBefore).head
+      if (POSTaggerKnown.isTraining)
+        POSLabel(cons)
+      else
+        POSTaggerKnown.classifier.discreteValue(cons)
   }
 
   val labelTwoBefore = property[Constituent]("labelTwoBefore") {
-    x: Constituent => (tokens(x) ~> constituentTwoBefore).head.toString
+    x: Constituent =>
+      val cons = (tokens(x) ~> constituentTwoBefore).head
+      if (POSTaggerKnown.isTraining)
+        POSLabel(cons)
+      else
+        POSTaggerKnown.classifier.discreteValue(cons)
   }
 
   val labelOneAfter = property[Constituent]("labelOneAfter") {
-    x: Constituent => (tokens(x) ~> constituentAfter).head.toString
+    x: Constituent =>
+      val cons = (tokens(x) ~> constituentAfter).head
+      if (POSTaggerKnown.isTraining)
+        POSLabel(cons)
+      else
+        POSTaggerKnown.classifier.discreteValue(cons)
   }
 
   val labelTwoAfter = property[Constituent]("labelTwoAfter") {
-    x: Constituent => (tokens(x) ~> constituentTwoAfter).head.toString
+    x: Constituent =>
+      val cons = (tokens(x) ~> constituentTwoAfter).head
+      if (POSTaggerKnown.isTraining)
+        POSLabel(cons)
+      else
+        POSTaggerKnown.classifier.discreteValue(cons)
   }
 
   val L2bL1b = property[Constituent]("label2beforeLabel1beforeConjunction") {
     x: Constituent =>
-      val before = (tokens(x) ~> constituentBefore).head
-      val twoBefore = (tokens(x) ~> constituentTwoBefore).head
-      before.toString + "-" + twoBefore.toString
+      val beforeCons = (tokens(x) ~> constituentBefore).head
+      val twoBeforeCons = (tokens(x) ~> constituentTwoBefore).head
+      val (before, twoBefore) = if (POSTaggerKnown.isTraining)
+        (POSLabel(beforeCons), POSLabel(twoBeforeCons))
+      else
+        (POSTaggerKnown.classifier.discreteValue(beforeCons), POSTaggerKnown.classifier.discreteValue(twoBeforeCons))
+      before + "-" + twoBefore
   }
 
   val L1bL1a = property[Constituent]("label1beforeLabel1afterConjunction") {
     x: Constituent =>
-      val before = (tokens(x) ~> constituentBefore).head
-      val after = (tokens(x) ~> constituentAfter).head
-      before.toString + "-" + after.toString
+      val beforeCons = (tokens(x) ~> constituentBefore).head
+      val afterCons = (tokens(x) ~> constituentAfter).head
+      val (before, after) = if (POSTaggerKnown.isTraining)
+        (POSLabel(beforeCons), POSLabel(afterCons))
+      else
+        (POSTaggerKnown.classifier.discreteValue(beforeCons), POSTaggerKnown.classifier.discreteValue(afterCons))
+      before + "-" + after
   }
 
   val L1aL2a = property[Constituent]("labelfterLabel2AfterConjunction") {
     x: Constituent =>
-      val after = (tokens(x) ~> constituentAfter).head
-      val twoAfter = (tokens(x) ~> constituentTwoAfter).head
-      after.toString + "-" + twoAfter.toString
+      val afterCons = (tokens(x) ~> constituentAfter).head
+      val twoAfterCons = (tokens(x) ~> constituentTwoAfter).head
+      val (after, twoAfter) = if (POSTaggerKnown.isTraining)
+        (POSLabel(afterCons), POSLabel(twoAfterCons))
+      else
+        (POSTaggerKnown.classifier.discreteValue(afterCons), POSTaggerKnown.classifier.discreteValue(twoAfterCons))
+      after + "-" + twoAfter
   }
 }
