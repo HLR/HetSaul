@@ -29,6 +29,7 @@ object POSClassifiers {
       p.thickness = 2
       baseLTU = new SparseAveragedPerceptron(p)
     }
+    override val loggging = true
   }
 
   object POSTaggerUnknown extends Learnable[Constituent](POSDataModel) {
@@ -41,17 +42,20 @@ object POSClassifiers {
       p.thickness = 4
       baseLTU = new SparseAveragedPerceptron(p)
     }
+    override val loggging = true
   }
 
   object BaselineClassifier extends Learnable[Constituent](POSDataModel) {
     def label = POSLabel
     override def feature = using(wordForm)
     override lazy val classifier = new POSBaselineLearner()
+    override val loggging = true
   }
 
   object MikheevClassifier extends Learnable[Constituent](POSDataModel) {
     def label = POSLabel
     override def feature = using(wordForm)
     override lazy val classifier = new MikheevLearner
+    override val loggging = true
   }
 }

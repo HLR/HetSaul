@@ -90,7 +90,12 @@ public class MikheevLearner extends POSBaselineLearner
      **/
     public void learn(Object example) {
         String form = extractor.discreteValue(example);
+
+        System.out.println("form = " + form);
+
         String label = labeler.discreteValue(example);
+
+        System.out.println("label = " + label );
 
         if (form.length() >= 5) {
             boolean allLetters = true;

@@ -66,6 +66,7 @@ object POSTaggerBaselineApp {
 
     POSDataModel.tokens populate trainData
 
+    // baseline and mikheev just count, they don't learn -- so one iteration should be enough
     BaselineClassifier.learn(1)
     BaselineClassifier.test(testData)
 

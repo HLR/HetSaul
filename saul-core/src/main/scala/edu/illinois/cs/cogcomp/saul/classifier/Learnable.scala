@@ -21,9 +21,11 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
   /** Whether to use caching */
   val useCache = false
 
-  val targetNode = datamodel.getNodeWithType[T]
+  val loggging = false
 
   var isTraining = false
+
+  val targetNode = datamodel.getNodeWithType[T]
 
   def fromData = targetNode.getTrainingInstances
 
@@ -36,11 +38,6 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
   else new CombinedDiscreteProperty[T](this.feature)
   //combinedProperty.makeClassifierWithName("")
   def lbpFeatures = combinedProperties.makeClassifierWithName("") //combinedProperty.classifier
-
-  //  val filteredFreatures = this.feature.filterNot(_.name == label.name)
-  //
-  //  println(s"filteredFreatures = $filteredFreatures")
-  //  println(s"lbpFeatures = $lbpFeatures")
 
   /** classifier need to be defined by the user */
   val classifier: Learner
@@ -64,15 +61,17 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
   lcFile.close()
 
   if (feature != null) {
-    println(s"Setting the feature extractors to be $lbpFeatures")
-    println(s"List of available features are ${this.feature} ")
+    if( loggging )
+      println(s"Setting the feature extractors to be $lbpFeatures")
     classifier.setExtractor(lbpFeatures)
   }
 
   if (label != null) {
     val oracle = Property.entitiesToLBJFeature(label)
-    println(s"Setting the labeler to be '$oracle'")
-    println(s"Labels are $label with name ${label.name}")
+    if(loggging ) {
+      println(s"Setting the labeler to be '$oracle'")
+      println(s"Labels are $label with name ${label.name}")
+    }
     classifier.setLabeler(oracle)
   }
 
@@ -95,22 +94,24 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
   }
 
   def learn(iteration: Int, data: Iterable[T]): Unit = {
-    println("Learnable: Learn with data of size " + data.size)
+    if( loggging )
+      println("Learnable: Learn with data of size " + data.size)
     isTraining = true
     val crTokenTest = new LBJIteratorParserScala[T](data)
     crTokenTest.reset()
 
     def learnAll(crTokenTest: Parser, remainingIteration: Int): Unit = {
 
+      if( loggging & remainingIteration % 10 == 1 )
+        println(s"Training: $remainingIteration iterations remain. ")
+
       val v = crTokenTest.next
-      //println("token", remainingIteration)
       if (v == null) {
         if (remainingIteration > 0) {
           crTokenTest.reset()
           learnAll(crTokenTest, remainingIteration - 1)
         }
       } else {
-        //        println("learn with " + v)
         classifier.learn(v)
         learnAll(crTokenTest, remainingIteration)
       }
@@ -177,7 +178,6 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
     isTraining = false
     println()
     val testReader = new LBJIteratorParserScala[T](testData)
-    //    println("Here is the test!")
     testReader.reset()
     val tester = new TestContinuous(classifier, classifier.getLabeler, testReader)
     // tester.printPerformance(System.out)
@@ -208,7 +208,8 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
   def crossValidation(k: Int) = {
     val allData = this.fromData
 
-    println(s"Running cross validation on ${allData.size} data   ")
+    if( loggging )
+      println(s"Running cross validation on ${allData.size} data   ")
 
     val groupSize = Math.ceil(allData.size / k).toInt
     val groups = allData.grouped(groupSize).toList
