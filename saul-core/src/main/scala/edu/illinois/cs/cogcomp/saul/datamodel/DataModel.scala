@@ -288,24 +288,21 @@ trait DataModel {
 object dataModelJsonInterface {
   def getJson(dm: DataModel): String = {
     val declaredFields = dm.getClass.getDeclaredFields
+
     val nodes = declaredFields.filter(_.getType.getSimpleName == "Node")
     val edges = declaredFields.filter(_.getType.getSimpleName == "Edge")
-    // TODO: make sure this contains only valid properties
-    val properties = declaredFields.filter(_.getType.getSimpleName.contains("Property"))
+    val properties = declaredFields.filter(_.getType.getSimpleName.contains("Property")).filterNot(_.getName.contains("$module"))
 
     import play.api.libs.json._
 
-    println("Yo ")
-    println(nodes.map(n => n.getDeclaredAnnotations.foreach(a => a.getClass.getName)))
-
     val json: JsValue = JsObject(Seq(
-      "nodes" -> JsObject(nodes.map(node => "name" -> JsString(node.getName))),
-      "edges" -> JsObject(edges.map(edge => "name" -> JsString(edge.getName))),
-      "properties" -> JsObject(properties.map(prop => "name" -> JsString(prop.getName)))
+      "nodes" -> JsArray(nodes.map(node => JsString(node.getName))),
+      "edges" -> JsArray(edges.map(edge => JsString(edge.getName))),
+      "properties" -> JsArray(properties.map(prop => JsString(prop.getName)))
     ))
 
     println(json.toString())
 
-    ""
+    json.toString()
   }
 }
