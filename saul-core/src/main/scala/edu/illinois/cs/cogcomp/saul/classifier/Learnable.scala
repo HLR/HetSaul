@@ -61,14 +61,14 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
   lcFile.close()
 
   if (feature != null) {
-    if( loggging )
+    if (loggging)
       println(s"Setting the feature extractors to be $lbpFeatures")
     classifier.setExtractor(lbpFeatures)
   }
 
   if (label != null) {
     val oracle = Property.entitiesToLBJFeature(label)
-    if(loggging ) {
+    if (loggging) {
       println(s"Setting the labeler to be '$oracle'")
       println(s"Labels are $label with name ${label.name}")
     }
@@ -94,7 +94,7 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
   }
 
   def learn(iteration: Int, data: Iterable[T]): Unit = {
-    if( loggging )
+    if (loggging)
       println("Learnable: Learn with data of size " + data.size)
     isTraining = true
     val crTokenTest = new LBJIteratorParserScala[T](data)
@@ -102,7 +102,7 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
 
     def learnAll(crTokenTest: Parser, remainingIteration: Int): Unit = {
 
-      if( loggging & remainingIteration % 10 == 1 )
+      if (loggging & remainingIteration % 10 == 1)
         println(s"Training: $remainingIteration iterations remain. ")
 
       val v = crTokenTest.next
@@ -208,7 +208,7 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
   def crossValidation(k: Int) = {
     val allData = this.fromData
 
-    if( loggging )
+    if (loggging)
       println(s"Running cross validation on ${allData.size} data   ")
 
     val groupSize = Math.ceil(allData.size / k).toInt
