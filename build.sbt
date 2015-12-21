@@ -1,3 +1,6 @@
+val cogcompNLPVersion = "3.0.10"
+val cogcompPipelineVersion = "0.1.14"
+
 lazy val root = (project in file(".")).
   aggregate(saulCore, saulExamples)
 
@@ -11,12 +14,12 @@ lazy val commonSettings = Seq(
     "CogcompSoftware" at "http://cogcomp.cs.illinois.edu/m2repo/"
   ),
   libraryDependencies ++= Seq(
-    "edu.illinois.cs.cogcomp" % "illinois-core-utilities" % "3.0.0",
+    "edu.illinois.cs.cogcomp" % "illinois-core-utilities" % cogcompNLPVersion withSources,
     "com.gurobi" % "gurobi" % "6.0",
     "org.apache.commons" % "commons-math3" % "3.0",
-    "org.scalatest" % "scalatest_2.11" % "2.2.4",
-    "com.typesafe.play" % "play_2.11" % "2.4.3"
-  )
+    "org.scalatest" % "scalatest_2.11" % "2.2.4"
+  ),
+  publishTo := Some(Resolver.sftp("CogcompSoftwareRepo", "bilbo.cs.illinois.edu", "/mounts/bilbo/disks/0/www/cogcomp/html/m2repo/"))
 )
 
 lazy val saulCore = (project in file("saul-core")).
@@ -25,7 +28,7 @@ lazy val saulCore = (project in file("saul-core")).
     name := "saul",
     libraryDependencies ++= Seq(
       "edu.illinois.cs.cogcomp" % "LBJava" % "1.1.1",
-      "io.spray" %%  "spray-json" % "1.3.2"
+      "com.typesafe.play" % "play_2.11" % "2.4.3"
     )
   )
 
@@ -35,11 +38,9 @@ lazy val saulExamples = (project in file("saul-examples")).
     name := "saul-examples",
     javaOptions += "-Xmx6g",
     libraryDependencies ++= Seq(
-      // slf4j is required by both annotators (Curator, Pipeline)
-      "org.slf4j" % "slf4j-simple" % "1.7.7",
-      "edu.illinois.cs.cogcomp" % "illinois-nlp-pipeline" % "0.1.9",
-      "edu.illinois.cs.cogcomp" % "illinois-curator" % "3.0.0",
-      "edu.illinois.cs.cogcomp" % "illinois-edison" % "3.0.0"
+      "edu.illinois.cs.cogcomp" % "illinois-nlp-pipeline" % cogcompPipelineVersion,
+      "edu.illinois.cs.cogcomp" % "illinois-curator" % cogcompNLPVersion,
+      "edu.illinois.cs.cogcomp" % "illinois-edison" % cogcompNLPVersion
     )
   ).dependsOn(saulCore).aggregate(saulCore)
 
@@ -58,4 +59,5 @@ lazy val saulWebapp = (project in file("saul-webapp")).
     ),
     resolvers += "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases",
     routesGenerator := InjectedRoutesGenerator
-  ).dependsOn(saulCore, saulExamples).aggregate(saulCore)
+  ).dependsOn(saulCore).aggregate(saulCore)
+

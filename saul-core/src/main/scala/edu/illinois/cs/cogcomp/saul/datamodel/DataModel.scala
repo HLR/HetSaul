@@ -1,6 +1,8 @@
 package edu.illinois.cs.cogcomp.saul.datamodel
 
-import edu.illinois.cs.cogcomp.saul.datamodel.edge
+import edu.illinois.cs.cogcomp.lbjava.util.{ ExceptionlessInputStream, ExceptionlessOutputStream }
+import edu.illinois.cs.cogcomp.saul.datamodel.edge.{ AsymmetricEdge, Edge, Link, SymmetricEdge }
+import edu.illinois.cs.cogcomp.saul.datamodel.node.{ JoinNode, Node }
 import edu.illinois.cs.cogcomp.saul.datamodel.property.features.discrete._
 import edu.illinois.cs.cogcomp.saul.datamodel.property.features.real._
 import edu.illinois.cs.cogcomp.saul.datamodel.property.{ EvaluatedProperty, Property }
@@ -99,7 +101,7 @@ trait DataModel {
   }
 
   /** node definitions */
-  def node[T <: A nyRef](implicit tag: ClassTag[T]): Node[T] = {
+  def node[T <: AnyRef](implicit tag: ClassTag[T]): Node[T] = {
     val n = new Node[T](tag)
     NODES += n
     n
@@ -140,7 +142,7 @@ trait DataModel {
 
   import PropertyType._
 
-  case class PropertyDefinition(propertyType: PropertyType, name: Symbol)
+  case class PropertyDefinition(ty: PropertyType, name: Symbol)
 
   class PropertyApply[T <: AnyRef] private[DataModel] (name: String, ordered: Boolean) {
 
@@ -219,8 +221,68 @@ trait DataModel {
       a
     }
   }
+
   def property[T <: AnyRef](name: String) = new PropertyApply[T](name)
   def property[T <: AnyRef](name: String, ordered: Boolean) = new PropertyApply[T](name, ordered)
+
+  var hasDerivedInstances = false
+
+  def deriveInstances() = {
+    NODES.foreach {
+      node =>
+        val relatedProperties = PROPERTIES.filter(property => property.tag.equals(node.tag)).toList
+        node.deriveInstances(relatedProperties)
+    }
+    EDGES.foreach {
+      edge =>
+        edge.deriveIndexWithIds()
+    }
+    hasDerivedInstances = true
+  }
+
+  val defaultDIFilePath = "models/" + getClass.getCanonicalName + ".di"
+
+  def write(filePath: String = defaultDIFilePath) = {
+    val out = ExceptionlessOutputStream.openCompressedStream(filePath)
+
+    out.writeInt(NODES.size)
+    NODES.zipWithIndex.foreach {
+      case (node, nodeId) =>
+        out.writeInt(nodeId)
+        node.writeDerivedInstances(out)
+    }
+
+    out.writeInt(EDGES.size)
+    EDGES.zipWithIndex.foreach {
+      case (edge, edgeId) =>
+        out.writeInt(edgeId)
+        edge.writeIndexWithIds(out)
+    }
+
+    out.close()
+  }
+
+  def load(filePath: String = defaultDIFilePath) = {
+    val in = ExceptionlessInputStream.openCompressedStream(filePath)
+
+    val nodesSize = in.readInt()
+    (0 until nodesSize).foreach {
+      _ =>
+        val nodeId = in.readInt()
+        NODES(nodeId).loadDerivedInstances(in)
+    }
+
+    val edgesSize = in.readInt()
+    (0 until edgesSize).foreach {
+      _ =>
+        val edgeId = in.readInt()
+        EDGES(edgeId).loadIndexWithIds(in)
+    }
+
+    in.close()
+
+    hasDerivedInstances = true
+  }
 }
 
 object dataModelJsonInterface {

@@ -3,7 +3,6 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp
 import edu.illinois.cs.cogcomp.annotation.AnnotatorService
 import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{ Constituent, Sentence, TextAnnotation }
-import edu.illinois.cs.cogcomp.core.utilities.ResourceManager
 import edu.illinois.cs.cogcomp.curator.CuratorFactory
 import edu.illinois.cs.cogcomp.nlp.pipeline.IllinoisPipelineFactory
 import edu.illinois.cs.cogcomp.saulexamples.data.Document
@@ -41,6 +40,10 @@ object commonSensors {
     x.getView(ViewNames.POS).getConstituents.toList
   }
 
+  def textAnnotationToTokens(ta: TextAnnotation): List[Constituent] = {
+    ta.getView(ViewNames.TOKENS).getConstituents.toList
+  }
+
   /** Annotation services */
   def processDocumentWith(annotatorService: AnnotatorService, cid: String, did: String, text: String, services: String*): TextAnnotation = {
     val ta = annotatorService.createBasicTextAnnotation(cid, did, text)
@@ -62,5 +65,6 @@ object commonSensors {
     val annotatorService = IllinoisPipelineFactory.buildPipeline()
     processDocumentWith(annotatorService, "corpus", id, content)
   }
+
 }
 

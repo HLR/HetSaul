@@ -1,9 +1,13 @@
 package edu.illinois.cs.cogcomp.saul.datamodel.node
 
+import edu.illinois.cs.cogcomp.lbjava.classify.FeatureVector
+import edu.illinois.cs.cogcomp.lbjava.util.{ ExceptionlessInputStream, ExceptionlessOutputStream }
+import edu.illinois.cs.cogcomp.saul.datamodel.property.Property
 import edu.illinois.cs.cogcomp.saul.datamodel.property.features.discrete.DiscreteProperty
 import edu.illinois.cs.cogcomp.saul.datamodel.edge.Edge
 
 import scala.collection.mutable.{ Map => MutableMap, LinkedHashSet => MutableSet, ArrayBuffer }
+import scala.collection.mutable
 import scala.reflect.ClassTag
 
 /** A Node E is an instances of base types T */
@@ -26,8 +30,8 @@ class Node[T <: AnyRef](val tag: ClassTag[T]) {
 
   def getTestingInstances: Iterable[T] = this.testingSet
 
-  private val orderingMap = MutableMap[Int, T]()
-  private val reverseOrderingMap = MutableMap[T, Int]()
+  val orderingMap = MutableMap[Int, T]()
+  val reverseOrderingMap = MutableMap[T, Int]()
 
   def filterNode(property: DiscreteProperty[T], value: String): Node[T] = {
     val node = new Node[T](this.tag)
@@ -180,6 +184,43 @@ class Node[T <: AnyRef](val tag: ClassTag[T]) {
         }
       case _ =>
         throw new Exception("Can't find order of " + t.toString)
+    }
+  }
+
+  val derivedInstances = new mutable.HashMap[Int, FeatureVector]()
+
+  def deriveInstances(properties: List[Property[_]]) = {
+    val castedProperties = properties.map(_.asInstanceOf[Property[T]])
+    orderingMap.foreach {
+      case (instanceId, instance) =>
+        val featureVector = new FeatureVector()
+        castedProperties.foreach {
+          property =>
+            property.addToFeatureVector(instance, featureVector, property.name)
+        }
+        derivedInstances.put(instanceId, featureVector)
+    }
+  }
+
+  def writeDerivedInstances(out: ExceptionlessOutputStream) = {
+    out.writeInt(count)
+    out.writeInt(derivedInstances.size)
+    derivedInstances.foreach {
+      case (id, featureVector) =>
+        out.writeInt(id)
+        featureVector.write(out)
+    }
+  }
+
+  def loadDerivedInstances(in: ExceptionlessInputStream) = {
+    count = in.readInt()
+    val instanceCount = in.readInt()
+    (0 until instanceCount).foreach {
+      lineIndex =>
+        val id = in.readInt()
+        val featureVector = new FeatureVector()
+        featureVector.read(in)
+        derivedInstances.put(id, featureVector)
     }
   }
 }

@@ -1,11 +1,11 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation
 
-import edu.illinois.cs.cogcomp.saulexamples.EntityMentionRelation.datastruct.{ ConllRawSentence, ConllRawToken, ConllRelation }
-import edu.illinois.cs.cogcomp.saulexamples.EntityMentionRelation.reader.{ GazeteerReader, Conll04_ReaderNew }
-import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.entityRelationClassifiers.PersonClassifier
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
-import scala.collection.mutable.{ Map => MutableMap }
+import edu.illinois.cs.cogcomp.saulexamples.EntityMentionRelation.datastruct.{ ConllRawSentence, ConllRawToken, ConllRelation }
+import edu.illinois.cs.cogcomp.saulexamples.EntityMentionRelation.reader.Conll04_ReaderNew
+
 import scala.collection.JavaConversions._
+import scala.collection.mutable.{ Map => MutableMap }
 import scala.util.Random
 
 object entityRelationDataModel extends DataModel {
@@ -76,11 +76,11 @@ object entityRelationDataModel extends DataModel {
       val e1 = rela.e1
       val e2 = rela.e2
 
-      this.getNodeWithType[ConllRawToken].getWithWindow(e1, -2, 2, _.sentId).zipWithIndex.map {
+      this.tokens.getWithWindow(e1, -2, 2, _.sentId).zipWithIndex.map {
         case (Some(t), idx) => s"left-$idx-pos-${t.POS} "
         case (None, idx) => s"left-$idx-pos-EMPTY "
       } ++
-        this.getNodeWithType[ConllRawToken].getWithWindow(e2, -2, 2, _.sentId).zipWithIndex.map {
+        this.tokens.getWithWindow(e2, -2, 2, _.sentId).zipWithIndex.map {
           case (Some(t), idx) => s"right-$idx-pos-${t.POS} "
           case (None, idx) => s"right-$idx-pos-EMPTY} "
         }
