@@ -6,9 +6,24 @@ import edu.illinois.cs.cogcomp.lbj.pos.POSLabeledUnknownWordParser
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
 import edu.illinois.cs.cogcomp.saulexamples.nlp.POSTagger.POSClassifiers.{ POSTaggerUnknown, POSTaggerKnown, BaselineClassifier }
 
+
 object POSDataModel extends DataModel {
 
   val tokens = node[Constituent]
+
+  val featureCacheMap = collection.mutable.HashMap[String, collection.mutable.HashMap[Constituent, String]]()
+
+  def getOrUpdate (property : String, cons: Constituent, discreteValue: () => String) : String = {
+    if (featureCacheMap.contains(property) == false)
+      featureCacheMap(property) = collection.mutable.HashMap[Constituent, String]()
+
+    featureCacheMap(property).get(cons) match {
+      case None =>
+        featureCacheMap(property)(cons) = discreteValue()
+        featureCacheMap(property)(cons)
+      case _ => featureCacheMap(property)(cons)
+    }
+  }
 
   import POSTTaggerSensors._
 
@@ -29,7 +44,7 @@ object POSDataModel extends DataModel {
   }
 
   val wordForm = property[Constituent]("wordForm") {
-    x: Constituent =>
+    x: Constituent => getOrUpdate("wordForm", x, () => {
       val wordFormLabel = x.toString
       if (wordFormLabel.length == 1 && "([{".indexOf(wordFormLabel) != -1) {
         "-LRB-"
@@ -38,16 +53,18 @@ object POSDataModel extends DataModel {
       } else {
         wordFormLabel
       }
+    })
   }
 
   val labelOrBaseline = property[Constituent]("labelOrBaseline") {
-    x: Constituent =>
+    x: Constituent => getOrUpdate("labelOrBaseline", x, () => {
       if (POSTaggerKnown.isTraining)
         POSLabel(x)
       else if (BaselineClassifier.classifier.observed(x.toString))
         BaselineClassifier.classifier.discreteValue(x)
       else
         "UNKNOWN"
+    })
   }
 
   val labelOrBaselineU = property[Constituent]("labelOrBaselineU") {
@@ -61,7 +78,7 @@ object POSDataModel extends DataModel {
   }
 
   val labelOneBefore = property[Constituent]("labelOneBefore") {
-    x: Constituent =>
+    x: Constituent => getOrUpdate("labelOneBefore", x, () => {
       val cons = (tokens(x) ~> constituentBefore).head
       // make sure the spans are different. Otherwise it is not valid
       if (cons.getSpan != x.getSpan) {
@@ -70,10 +87,11 @@ object POSDataModel extends DataModel {
         else
           POSTaggerKnown.classifier.discreteValue(cons)
       } else ""
+    })
   }
 
   val labelOneBeforeU = property[Constituent]("labelOneBeforeU") {
-    x: Constituent =>
+    x: Constituent => getOrUpdate("labelOneBeforeU", x, () => {
       val cons = (tokens(x) ~> constituentBefore).head
       // make sure the spans are different. Otherwise it is not valid
       if (cons.getSpan != x.getSpan) {
@@ -82,21 +100,22 @@ object POSDataModel extends DataModel {
         else
           POSTaggerUnknown.classifier.discreteValue(cons)
       } else ""
+    })
   }
 
   val labelTwoBefore = property[Constituent]("labelTwoBefore") {
-    x: Constituent =>
+    x: Constituent => getOrUpdate("labelTwoBefore", x, () => {
       val cons = (tokens(x) ~> constituentTwoBefore).head
       // make sure the spans are different. Otherwise it is not valid
       if (cons.getSpan != x.getSpan) {
         if (POSTaggerKnown.isTraining) {
-          //          println("Training ")
+          //          println(s"training one before for index ${tokens(x)}")
           POSLabel(cons)
         } else {
-          //          println("testing ")
           POSTaggerKnown.classifier.discreteValue(cons)
         }
       } else ""
+    })
   }
 
   val labelTwoBeforeU = property[Constituent]("labelTwoBeforeU") {
@@ -115,12 +134,13 @@ object POSDataModel extends DataModel {
   }
 
   val labelOneAfter = property[Constituent]("labelOneAfter") {
-    x: Constituent =>
+    x: Constituent => getOrUpdate("labelOneAfter", x, () => {
       val cons = (tokens(x) ~> constituentAfter).head
       // make sure the spans are different. Otherwise it is not valid
       if (cons.getSpan != x.getSpan) {
         labelOrBaseline(cons)
       } else ""
+    })
   }
 
   // TODO: same as `labelOneAfter`. Remove this?
@@ -134,12 +154,13 @@ object POSDataModel extends DataModel {
   }
 
   val labelTwoAfter = property[Constituent]("labelTwoAfter") {
-    x: Constituent =>
+    x: Constituent => getOrUpdate("labelTwoAfter", x, () => {
       val cons = (tokens(x) ~> constituentTwoAfter).head
       // make sure the spans are different. Otherwise it is not valid
       if (cons.getSpan != x.getSpan) {
         labelOrBaseline(cons)
       } else ""
+    })
   }
 
   // TODO: same as `labelTwoAfter`. Remove this?

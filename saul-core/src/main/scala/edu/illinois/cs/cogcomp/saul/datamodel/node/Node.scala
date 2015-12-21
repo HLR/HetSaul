@@ -115,7 +115,7 @@ class Node[T <: AnyRef](val tag: ClassTag[T]) {
     }
   }
 
-  def pervOf(t: T, filters: List[Symbol]): Option[T] = {
+  def prevOf(t: T, filters: List[Symbol]): Option[T] = {
     getWithWindow(t, -1, -1, Nil) match {
       case head :: more => head
       case Nil => None

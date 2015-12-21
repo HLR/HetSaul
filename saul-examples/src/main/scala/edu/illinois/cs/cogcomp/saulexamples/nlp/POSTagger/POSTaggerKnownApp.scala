@@ -19,7 +19,7 @@ object POSTaggerKnownApp {
     val trainData = trainDataReader.getTextAnnotations.flatMap(commonSensors.textAnnotationToTokens)
 
     val testDataReader = new PennTreebankPOSReader("test")
-    testDataReader.readFile("./data/POS/22-24_small.br")
+    testDataReader.readFile("../data/POS/22-24.br")
     val testData = testDataReader.getTextAnnotations.flatMap(commonSensors.textAnnotationToTokens)
 
     POSDataModel.tokens populate trainData

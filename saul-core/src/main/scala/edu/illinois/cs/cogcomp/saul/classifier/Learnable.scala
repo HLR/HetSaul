@@ -2,6 +2,7 @@ package edu.illinois.cs.cogcomp.saul.classifier
 
 import java.io.File
 import java.net.URL
+import java.time
 
 import edu.illinois.cs.cogcomp.core.io.IOUtils
 import edu.illinois.cs.cogcomp.lbjava.classify.{ Classifier, FeatureVector, TestDiscrete }
@@ -103,7 +104,7 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
     def learnAll(crTokenTest: Parser, remainingIteration: Int): Unit = {
 
       if (loggging & remainingIteration % 10 == 1)
-        println(s"Training: $remainingIteration iterations remain. ")
+        println(s"Training: $remainingIteration iterations remain. ${time.Instant.now()} ")
 
       val v = crTokenTest.next
       if (v == null) {
