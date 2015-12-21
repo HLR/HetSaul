@@ -14,15 +14,15 @@ object POSClassifiers {
     * the input word was observed during training or of POSTaggerUnknown
     * if it wasn't.
     */
-  object POSClassifier extends Learnable[Constituent](POSDataModel) {
-    def label = POSLabel
-    override lazy val classifier = new SparseNetworkLearner()
+  def POSClassifier(x: Constituent) {
+    if (BaselineClassifier.classifier.observed(x.toString)) POSTaggerKnown.classifier.discreteValue(x)
+    else POSTaggerUnknown.classifier.discreteValue(x)
   }
 
   object POSTaggerKnown extends Learnable[Constituent](POSDataModel) {
     def label = POSLabel
-    override def feature = using(wordForm, labelOrBaseline, labelTwoBefore) //, labelOneBefore,
-    //          labelOneAfter, labelTwoAfter, L2bL1b, L1bL1a, L1aL2a)
+    override def feature = using(wordForm, labelOrBaseline, labelTwoBefore, labelOneBefore,
+      labelOneAfter, labelTwoAfter, L2bL1b, L1bL1a, L1aL2a)
     override lazy val classifier = new SparseNetworkLearner {
       val p = new SparseAveragedPerceptron.Parameters()
       p.learningRate = .1
@@ -33,7 +33,14 @@ object POSClassifiers {
 
   object POSTaggerUnknown extends Learnable[Constituent](POSDataModel) {
     def label = POSLabel
-    override lazy val classifier = new SparseNetworkLearner()
+    override def feature = using(wordForm, labelOrBaselineU, labelTwoBeforeU, labelOneBeforeU,
+      labelOneAfterU, labelTwoAfterU, L2bL1bU, L1bL1aU, L1aL2aU)
+    override lazy val classifier = new SparseNetworkLearner {
+      val p = new SparseAveragedPerceptron.Parameters()
+      p.learningRate = .1
+      p.thickness = 4
+      baseLTU = new SparseAveragedPerceptron(p)
+    }
   }
 
   object BaselineClassifier extends Learnable[Constituent](POSDataModel) {

@@ -11,15 +11,15 @@ import edu.illinois.cs.cogcomp.saulexamples.nlp.commonSensors
 
 import scala.collection.JavaConversions._
 
-object POSTaggerApp {
-
+object POSTaggerKnownApp {
   def main(args: Array[String]): Unit = {
     val trainDataReader = new PennTreebankPOSReader("train")
-    trainDataReader.readFile("./data/POS/00-18_small.br")
-    val trainData = trainDataReader.getTextAnnotations.subList(0, 5).flatMap(commonSensors.textAnnotationToTokens(_).subList(0, 5))
+    trainDataReader.readFile("../data/POS/00-18.br")
+    //    val trainData = trainDataReader.getTextAnnotations.subList(0, 5).flatMap(commonSensors.textAnnotationToTokens(_).subList(0, 5))
+    val trainData = trainDataReader.getTextAnnotations.flatMap(commonSensors.textAnnotationToTokens)
 
     val testDataReader = new PennTreebankPOSReader("test")
-    testDataReader.readFile("./data/POS/22-24.br")
+    testDataReader.readFile("../data/POS/22-24.br")
     val testData = testDataReader.getTextAnnotations.flatMap(commonSensors.textAnnotationToTokens)
 
     POSDataModel.tokens populate trainData
@@ -27,19 +27,21 @@ object POSTaggerApp {
     /** preprocess the baseline */
     BaselineClassifier.learn(1)
 
-    POSTaggerKnown.learn(100)
-    //POSTaggerKnown.test(trainData)
+    POSTaggerKnown.learn(1000)
+    POSTaggerKnown.test(trainData)
+    //    POSTaggerKnown.test(testData)
   }
 }
 
 object MikheevClassifierApp {
   def main(args: Array[String]): Unit = {
     val trainDataReader = new PennTreebankPOSReader("train")
-    trainDataReader.readFile("./data/POS/00-18_small.br")
+    //    trainDataReader.readFile("../data/POS/00-18.br")
+    trainDataReader.readFile("../data/POS/00-18_small.br")
     val trainData = trainDataReader.getTextAnnotations.flatMap(commonSensors.textAnnotationToTokens)
 
     val testDataReader = new PennTreebankPOSReader("test")
-    testDataReader.readFile("./data/POS/22-24.br")
+    testDataReader.readFile("../data/POS/22-24.br")
     val testData = testDataReader.getTextAnnotations.flatMap(commonSensors.textAnnotationToTokens)
 
     POSDataModel.tokens populate trainData
@@ -55,11 +57,11 @@ object MikheevClassifierApp {
 object POSTaggerBaselineApp {
   def main(args: Array[String]): Unit = {
     val trainDataReader = new PennTreebankPOSReader("train")
-    trainDataReader.readFile("./data/POS/00-18_small.br")
+    trainDataReader.readFile("../data/POS/00-18.br")
     val trainData = trainDataReader.getTextAnnotations.flatMap(commonSensors.textAnnotationToTokens)
 
     val testDataReader = new PennTreebankPOSReader("test")
-    testDataReader.readFile("./data/POS/22-24.br")
+    testDataReader.readFile("../data/POS/22-24.br")
     val testData = testDataReader.getTextAnnotations.flatMap(commonSensors.textAnnotationToTokens)
 
     POSDataModel.tokens populate trainData
@@ -103,27 +105,23 @@ object POSTaggerTestPropertiesApp {
     POSTaggerKnown.isTraining = true
     POSTaggerKnown.learn(10)
 
-    POSTaggerKnown.isTraining = false
-
-    println(POSDataModel.labelTwoAfter(consThe) == "IN")
-
-    /*// labelOneBefore
+    // labelOneBefore
     // gold labels
     POSTaggerKnown.isTraining = true
-    println(POSDataModel.labelOneBefore(consThe) == "DT")
+    println(POSDataModel.labelOneBefore(consThe) == "")
     println(POSDataModel.labelOneBefore(consConstruction) == "DT")
     println(POSDataModel.labelOneBefore(consOf) == "NN")
     // prediction labels
     POSTaggerKnown.isTraining = false
-    println(POSDataModel.labelOneBefore(consThe) == "DT")
+    println(POSDataModel.labelOneBefore(consThe) == "")
     println(POSDataModel.labelOneBefore(consConstruction) == "DT")
     println(POSDataModel.labelOneBefore(consOf) == "NN")
 
     // labelTwoBefore
     // gold labels
     POSTaggerKnown.isTraining = true
-    println(POSDataModel.labelTwoBefore(consThe) == "DT")
-    println(POSDataModel.labelTwoBefore(consConstruction) == "DT" )
+    println(POSDataModel.labelTwoBefore(consThe) == "")
+    println(POSDataModel.labelTwoBefore(consConstruction) == "")
     println(POSDataModel.labelTwoBefore(consOf) == "DT")
     // prediction labels
     POSTaggerKnown.isTraining = false
@@ -147,12 +145,12 @@ object POSTaggerTestPropertiesApp {
     // gold labels
     POSTaggerKnown.isTraining = true
     println(POSDataModel.labelTwoAfter(consThe) == "IN")
-    println(POSDataModel.labelTwoAfter(consConstruction) == "DT" )
+    println(POSDataModel.labelTwoAfter(consConstruction) == "DT")
     println(POSDataModel.labelTwoAfter(consOf) == "NN")
     // prediction labels
     POSTaggerKnown.isTraining = false
     println(POSDataModel.labelTwoAfter(consThe) == "IN")
     println(POSDataModel.labelTwoAfter(consConstruction) == "DT")
-    println(POSDataModel.labelTwoAfter(consOf) == "NN")*/
+    println(POSDataModel.labelTwoAfter(consOf) == "NN")
   }
 }

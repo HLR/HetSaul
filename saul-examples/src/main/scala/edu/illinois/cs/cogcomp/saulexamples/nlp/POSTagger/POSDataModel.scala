@@ -2,10 +2,9 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp.POSTagger
 
 import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.Constituent
+import edu.illinois.cs.cogcomp.lbj.pos.POSLabeledUnknownWordParser
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
-import edu.illinois.cs.cogcomp.saulexamples.nlp.POSTagger.POSClassifiers.{POSTaggerUnknown, POSTaggerKnown, BaselineClassifier}
-
-import scala.collection.JavaConversions._
+import edu.illinois.cs.cogcomp.saulexamples.nlp.POSTagger.POSClassifiers.{ POSTaggerUnknown, POSTaggerKnown, BaselineClassifier }
 
 object POSDataModel extends DataModel {
 
@@ -45,84 +44,83 @@ object POSDataModel extends DataModel {
     x: Constituent =>
       if (POSTaggerKnown.isTraining)
         POSLabel(x)
-      else
+      else if (BaselineClassifier.classifier.observed(x.toString))
         BaselineClassifier.classifier.discreteValue(x)
+      else
+        "UNKNOWN"
   }
 
   val labelOrBaselineU = property[Constituent]("labelOrBaselineU") {
     x: Constituent =>
       if (POSTaggerUnknown.isTraining)
         POSLabel(x)
-      else
+      else if (BaselineClassifier.classifier.observed(x.toString))
         BaselineClassifier.classifier.discreteValue(x)
+      else
+        "UNKNOWN"
   }
 
   val labelOneBefore = property[Constituent]("labelOneBefore") {
     x: Constituent =>
       val cons = (tokens(x) ~> constituentBefore).head
       // make sure the spans are different. Otherwise it is not valid
-      if( cons.getSpan != x.getSpan ) {
+      if (cons.getSpan != x.getSpan) {
         if (POSTaggerKnown.isTraining)
           POSLabel(cons)
         else
           POSTaggerKnown.classifier.discreteValue(cons)
-      }
-      else ""
+      } else ""
   }
 
   val labelOneBeforeU = property[Constituent]("labelOneBeforeU") {
     x: Constituent =>
       val cons = (tokens(x) ~> constituentBefore).head
       // make sure the spans are different. Otherwise it is not valid
-      if( cons.getSpan != x.getSpan ) {
+      if (cons.getSpan != x.getSpan) {
         if (POSTaggerUnknown.isTraining)
           POSLabel(cons)
         else
           POSTaggerUnknown.classifier.discreteValue(cons)
-      }
-      else ""
+      } else ""
   }
 
   val labelTwoBefore = property[Constituent]("labelTwoBefore") {
     x: Constituent =>
       val cons = (tokens(x) ~> constituentTwoBefore).head
       // make sure the spans are different. Otherwise it is not valid
-      if( cons.getSpan != x.getSpan ) {
+      if (cons.getSpan != x.getSpan) {
         if (POSTaggerKnown.isTraining) {
-          println("Training ")
+          //          println("Training ")
           POSLabel(cons)
         } else {
-          println("testing ")
+          //          println("testing ")
           POSTaggerKnown.classifier.discreteValue(cons)
         }
-      }
-      else ""
+      } else ""
   }
 
   val labelTwoBeforeU = property[Constituent]("labelTwoBeforeU") {
     x: Constituent =>
       val cons = (tokens(x) ~> constituentTwoBefore).head
       // make sure the spans are different. Otherwise it is not valid
-      if( cons.getSpan != x.getSpan ) {
+      if (cons.getSpan != x.getSpan) {
         if (POSTaggerUnknown.isTraining) {
-          println("Training ")
+          //          println("Training ")
           POSLabel(cons)
         } else {
-          println("testing ")
+          //          println("testing ")
           POSTaggerUnknown.classifier.discreteValue(cons)
         }
-      }
-      else ""
+      } else ""
   }
 
   val labelOneAfter = property[Constituent]("labelOneAfter") {
     x: Constituent =>
       val cons = (tokens(x) ~> constituentAfter).head
       // make sure the spans are different. Otherwise it is not valid
-      if( cons.getSpan != x.getSpan ) {
+      if (cons.getSpan != x.getSpan) {
         labelOrBaseline(cons)
-      }
-      else ""
+      } else ""
   }
 
   // TODO: same as `labelOneAfter`. Remove this?
@@ -130,20 +128,18 @@ object POSDataModel extends DataModel {
     x: Constituent =>
       val cons = (tokens(x) ~> constituentAfter).head
       // make sure the spans are different. Otherwise it is not valid
-      if( cons.getSpan != x.getSpan ) {
+      if (cons.getSpan != x.getSpan) {
         labelOrBaseline(cons)
-      }
-      else ""
+      } else ""
   }
 
   val labelTwoAfter = property[Constituent]("labelTwoAfter") {
     x: Constituent =>
       val cons = (tokens(x) ~> constituentTwoAfter).head
       // make sure the spans are different. Otherwise it is not valid
-      if( cons.getSpan != x.getSpan ) {
+      if (cons.getSpan != x.getSpan) {
         labelOrBaseline(cons)
-      }
-      else ""
+      } else ""
   }
 
   // TODO: same as `labelTwoAfter`. Remove this?
@@ -151,10 +147,9 @@ object POSDataModel extends DataModel {
     x: Constituent =>
       val cons = (tokens(x) ~> constituentTwoAfter).head
       // make sure the spans are different. Otherwise it is not valid
-      if( cons.getSpan != x.getSpan ) {
+      if (cons.getSpan != x.getSpan) {
         labelOrBaseline(cons)
-      }
-      else ""
+      } else ""
   }
 
   val L2bL1b = property[Constituent]("label2beforeLabel1beforeConjunction") {
@@ -179,5 +174,29 @@ object POSDataModel extends DataModel {
 
   val L1aL2aU = property[Constituent]("labelfterLabel2AfterConjunctionU") {
     x: Constituent => labelOneAfterU(x) + "-" + labelTwoAfterU(x)
+  }
+
+  /** When baselineTarget has not observed the given word during
+    * training, this classifier extracts suffixes of the word of various
+    * lengths.
+    */
+  // TODO simplify this
+  val suffixFeatures = property[Constituent]("suffixFeatures") {
+    x: Constituent =>
+      x.toString
+
+      val length = x.toString.length()
+      val unknown = POSTaggerUnknown.isTraining &&
+        BaselineClassifier.classifier.observedCount(x.toString) <= POSLabeledUnknownWordParser.threshold ||
+        !POSTaggerUnknown.isTraining && BaselineClassifier.classifier.discreteValue(x).equals("UNKNOWN")
+      val (c, d) = if (unknown && length > 3 && Character.isLetter(x.toString.charAt(length - 1))) {
+        val a = x.toString.substring(length - 2).toLowerCase()
+        val b = if (length > 4 && Character.isLetter(x.toString.charAt(length - 3)))
+          x.toString.substring(length - 3).toLowerCase()
+        else ""
+        (a, b)
+      } else
+        ("", "")
+      c + "-" + d
   }
 }
