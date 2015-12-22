@@ -1,6 +1,8 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling
 
+import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.TextAnnotation
+import edu.illinois.cs.cogcomp.curator.CuratorFactory
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
 import edu.illinois.cs.cogcomp.saul.datamodel.node.Node
 import edu.illinois.cs.cogcomp.saulexamples.ExamplesConfigurator
@@ -19,8 +21,22 @@ object populateGraphwithTextAnnotation extends App {
     )
     reader.readData()
 
-    // Here we populate everything
-    x.populate(reader.textAnnotations.toList)
+    val annotatorService = CuratorFactory.buildCuratorClient()
+
+    val ta=reader.textAnnotations
+    print("all"+ta.toList.size)
+    var i=0
+    for (t<-ta)
+    {
+      println(t.getAvailableViews)
+      annotatorService.addView(t, ViewNames.LEMMA)
+      println("instance number"+ i)
+      i=i+1
+    }
+
+    // Here we populate everythingd
+    x.populate(ta.toList)
+
     print("size  ", sentences().size)
   }
 

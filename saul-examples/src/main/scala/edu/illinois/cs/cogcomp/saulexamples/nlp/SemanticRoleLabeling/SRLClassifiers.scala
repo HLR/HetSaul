@@ -1,8 +1,9 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling
 
-import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{ Relation, Constituent }
+import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{Constituent, Relation}
 import edu.illinois.cs.cogcomp.lbjava.learn.SparseAveragedPerceptron
 import edu.illinois.cs.cogcomp.saul.classifier.Learnable
+import edu.illinois.cs.cogcomp.saul.constraint.ConstraintTypeConversion._
 import edu.illinois.cs.cogcomp.saul.datamodel.property.Property
 
 object SRLClassifiers {
@@ -26,6 +27,8 @@ object SRLClassifiers {
 
   object relationClassifier extends Learnable[Relation](SRLDataModel, parameters) {
     def label = SRLDataModel.argumentLabel
+    import SRLDataModel._
+    override def feature= using(subcategorizationRelation, phraseTypeRelation, headwordRelation,syntacticFrameRelation,pathRelation)
   }
 
 }
