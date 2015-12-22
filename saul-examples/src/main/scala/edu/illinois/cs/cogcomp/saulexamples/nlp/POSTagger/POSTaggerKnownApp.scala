@@ -28,7 +28,11 @@ object POSTaggerKnownApp {
     /** preprocess the baseline */
     BaselineClassifier.learn(1)
 
-    POSTaggerKnown.learn(1000)
+    (0 until 50).foreach(_ => {
+      POSTaggerKnown.learn(1)
+      POSDataModel.featureCacheMap.clear()
+    })
+
     POSTaggerKnown.test(testData)
   }
 }

@@ -102,13 +102,12 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
     crTokenTest.reset()
 
     def learnAll(crTokenTest: Parser, remainingIteration: Int): Unit = {
-
-      if (loggging & remainingIteration % 10 == 1)
-        println(s"Training: $remainingIteration iterations remain. ${time.Instant.now()} ")
-
       val v = crTokenTest.next
       if (v == null) {
         if (remainingIteration > 0) {
+          if (loggging & remainingIteration % 10 == 1)
+            println(s"Training: $remainingIteration iterations remain. ${time.Instant.now()} ")
+
           crTokenTest.reset()
           learnAll(crTokenTest, remainingIteration - 1)
         }
