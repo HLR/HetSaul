@@ -23,15 +23,14 @@ object populateGraphwithTextAnnotation extends App {
 
     val annotatorService = CuratorFactory.buildCuratorClient()
 
-    val ta=reader.textAnnotations
-    print("all"+ta.toList.size)
-    var i=0
-    for (t<-ta)
-    {
+    val ta = reader.textAnnotations
+    print("all" + ta.toList.size)
+    var i = 0
+    for (t <- ta) {
       println(t.getAvailableViews)
       annotatorService.addView(t, ViewNames.LEMMA)
-      println("instance number"+ i)
-      i=i+1
+      println("instance number" + i)
+      i = i + 1
     }
 
     // Here we populate everythingd

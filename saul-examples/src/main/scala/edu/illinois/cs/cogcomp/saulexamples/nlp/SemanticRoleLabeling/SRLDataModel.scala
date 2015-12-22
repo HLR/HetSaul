@@ -1,7 +1,7 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling
 
 import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
-import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{Constituent, Relation, TextAnnotation}
+import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{ Constituent, Relation, TextAnnotation }
 import edu.illinois.cs.cogcomp.core.datastructures.trees.Tree
 import edu.illinois.cs.cogcomp.edison.features.FeatureUtilities
 import edu.illinois.cs.cogcomp.edison.features.factory._
@@ -44,7 +44,6 @@ object SRLDataModel extends DataModel {
   sentencesToTokens.addSensor(commonSensors.textAnnotationToTokens _)
   sentencesTostringTree.addSensor(SRLSensors.textAnnotationToStringTree _)
 
-
   val isPredicate = property[Constituent]("p") {
     x: Constituent => x.getLabel.equals("Predicate")
   }
@@ -66,74 +65,70 @@ object SRLDataModel extends DataModel {
   val address = property[Constituent]("add") {
     x: Constituent => x.getTextAnnotation.getCorpusId + ":" + x.getTextAnnotation.getId + ":" + x.getSpan
   }
-  val subcategorization = property[Constituent] ("subcat"){
-   x: Constituent => //new SubcategorizationFrame("Charniak").getFeatures(x)
-          val subcatFex = new SubcategorizationFrame(ViewNames.PARSE_CHARNIAK)
-          val discreteFeature: String = FeatureUtilities.getFeatureSet(subcatFex, x).mkString
-          discreteFeature
-   }
+  val subcategorization = property[Constituent]("subcat") {
+    x: Constituent => //new SubcategorizationFrame("Charniak").getFeatures(x)
+      val subcatFex = new SubcategorizationFrame(ViewNames.PARSE_CHARNIAK)
+      val discreteFeature: String = FeatureUtilities.getFeatureSet(subcatFex, x).mkString
+      discreteFeature
+  }
 
-   val phraseType = property[Constituent] ("phraseType") {
-     x: Constituent =>
-       val phraseType= new ParsePhraseType(ViewNames.PARSE_GOLD)
-       val discreteFeature: String = FeatureUtilities.getFeatureSet(phraseType, x).mkString
-       discreteFeature
-   }
+  val phraseType = property[Constituent]("phraseType") {
+    x: Constituent =>
+      val phraseType = new ParsePhraseType(ViewNames.PARSE_GOLD)
+      val discreteFeature: String = FeatureUtilities.getFeatureSet(phraseType, x).mkString
+      discreteFeature
+  }
 
- val headword = property[Constituent] ("head") {
-   x: Constituent =>
-     val headWordAndPos = new ParseHeadWordPOS(ViewNames.PARSE_GOLD)
-     val discreteFeature: String = FeatureUtilities.getFeatureSet(headWordAndPos, x).mkString
-     discreteFeature
- }
+  val headword = property[Constituent]("head") {
+    x: Constituent =>
+      val headWordAndPos = new ParseHeadWordPOS(ViewNames.PARSE_GOLD)
+      val discreteFeature: String = FeatureUtilities.getFeatureSet(headWordAndPos, x).mkString
+      discreteFeature
+  }
 
-val syntacticFrame = property[Constituent]("synFrame")
-{
-  x: Constituent =>
-    val syntacticFrame = new SyntacticFrame(ViewNames.PARSE_GOLD)
-    val discreteFeature: String = FeatureUtilities.getFeatureSet(syntacticFrame, x).mkString
-    discreteFeature
-}
-val path = property[Constituent]("path")
-{
-  x: Constituent =>
-    val parspath= new ParsePath(ViewNames.PARSE_GOLD)
-    val discreteFeature: String = FeatureUtilities.getFeatureSet(parspath, x).mkString
-    discreteFeature
-}
+  val syntacticFrame = property[Constituent]("synFrame") {
+    x: Constituent =>
+      val syntacticFrame = new SyntacticFrame(ViewNames.PARSE_GOLD)
+      val discreteFeature: String = FeatureUtilities.getFeatureSet(syntacticFrame, x).mkString
+      discreteFeature
+  }
+  val path = property[Constituent]("path") {
+    x: Constituent =>
+      val parspath = new ParsePath(ViewNames.PARSE_GOLD)
+      val discreteFeature: String = FeatureUtilities.getFeatureSet(parspath, x).mkString
+      discreteFeature
+  }
 
-  val subcategorizationRelation = property[Relation] ("subcat"){
+  val subcategorizationRelation = property[Relation]("subcat") {
     x: Relation => //new SubcategorizationFrame("Charniak").getFeatures(x)
       val subcatFex = new SubcategorizationFrame(ViewNames.PARSE_GOLD)
       val discreteFeature: String = FeatureUtilities.getFeatureSet(subcatFex, x.getTarget).mkString
       discreteFeature
   }
 
-  val phraseTypeRelation = property[Relation] ("phraseType") {
+  val phraseTypeRelation = property[Relation]("phraseType") {
     x: Relation =>
-      val phraseType= new ParsePhraseType(ViewNames.PARSE_GOLD)
+      val phraseType = new ParsePhraseType(ViewNames.PARSE_GOLD)
       val discreteFeature: String = FeatureUtilities.getFeatureSet(phraseType, x.getTarget).mkString
       discreteFeature
   }
 
-  val headwordRelation = property[Relation] ("head") {
+  val headwordRelation = property[Relation]("head") {
     x: Relation =>
       val headWordAndPos = new ParseHeadWordPOS(ViewNames.PARSE_GOLD)
       val discreteFeature: String = FeatureUtilities.getFeatureSet(headWordAndPos, x.getTarget).mkString
       discreteFeature
   }
 
-  val syntacticFrameRelation = property[Relation]("synFrame")
-  {
+  val syntacticFrameRelation = property[Relation]("synFrame") {
     x: Relation =>
       val syntacticFrame = new SyntacticFrame(ViewNames.PARSE_GOLD)
       val discreteFeature: String = FeatureUtilities.getFeatureSet(syntacticFrame, x.getTarget).mkString
       discreteFeature
   }
-  val pathRelation = property[Relation]("path")
-  {
+  val pathRelation = property[Relation]("path") {
     x: Relation =>
-      val parspath= new ParsePath(ViewNames.PARSE_GOLD)
+      val parspath = new ParsePath(ViewNames.PARSE_GOLD)
       val discreteFeature: String = FeatureUtilities.getFeatureSet(parspath, x.getTarget).mkString
       discreteFeature
   }
