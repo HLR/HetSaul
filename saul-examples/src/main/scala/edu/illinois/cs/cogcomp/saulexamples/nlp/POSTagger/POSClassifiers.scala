@@ -2,21 +2,25 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp.POSTagger
 
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.Constituent
 import edu.illinois.cs.cogcomp.lbj.pos.POSBaselineLearner
-import edu.illinois.cs.cogcomp.lbjava.learn.{ SparseAveragedPerceptron, SparseNetworkLearner }
+import edu.illinois.cs.cogcomp.lbjava.learn.{ Learner, SparseAveragedPerceptron, SparseNetworkLearner }
 import edu.illinois.cs.cogcomp.saul.classifier.Learnable
 import edu.illinois.cs.cogcomp.saul.constraint.ConstraintTypeConversion._
+import edu.illinois.cs.cogcomp.saul.datamodel.property.Property
 
 import edu.illinois.cs.cogcomp.saulexamples.nlp.POSTagger.POSDataModel._
 
 object POSClassifiers {
-  /** After POSTaggerKnown and POSTaggerUnknown are trained,
-    * this classifier will return the prediction of POSTaggerKnown if
-    * the input word was observed during training or of POSTaggerUnknown
-    * if it wasn't.
-    */
-  def POSClassifier(x: Constituent) {
-    if (BaselineClassifier.classifier.observed(x.toString)) POSTaggerKnown.classifier.discreteValue(x)
-    else POSTaggerUnknown.classifier.discreteValue(x)
+  /**
+   * After POSTaggerKnown and POSTaggerUnknown are trained,
+   * this classifier will return the prediction of POSTaggerKnown if
+   * the input word was observed during training or of POSTaggerUnknown
+   * if it wasn't.
+   */
+  def POSClassifier(x: Constituent): String = {
+    if (BaselineClassifier.classifier.observed(x.toString))
+      POSTaggerKnown.classifier.valueOf(x, BaselineClassifier.classifier.allowableTags(wordForm(x))).getStringValue
+    else
+      POSTaggerUnknown.classifier.valueOf(x, MikheevClassifier.classifier.allowableTags(wordForm(x))).getStringValue
   }
 
   object POSTaggerKnown extends Learnable[Constituent](POSDataModel) {

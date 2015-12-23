@@ -4,8 +4,7 @@ import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.Constituent
 import edu.illinois.cs.cogcomp.lbj.pos.POSLabeledUnknownWordParser
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
-import edu.illinois.cs.cogcomp.saulexamples.nlp.POSTagger.POSClassifiers.{ POSTaggerUnknown, POSTaggerKnown, BaselineClassifier }
-
+import edu.illinois.cs.cogcomp.saulexamples.nlp.POSTagger.POSClassifiers.{ POSTaggerUnknown, POSTaggerKnown, BaselineClassifier, MikheevClassifier }
 
 object POSDataModel extends DataModel {
 
@@ -13,7 +12,7 @@ object POSDataModel extends DataModel {
 
   val featureCacheMap = collection.mutable.HashMap[String, collection.mutable.HashMap[Constituent, String]]()
 
-  def getOrUpdate (property : String, cons: Constituent, discreteValue: () => String) : String = {
+  def getOrUpdate(property: String, cons: Constituent, discreteValue: () => String): String = {
     if (featureCacheMap.contains(property) == false)
       featureCacheMap(property) = collection.mutable.HashMap[Constituent, String]()
 
@@ -23,6 +22,20 @@ object POSDataModel extends DataModel {
         featureCacheMap(property)(cons)
       case _ => featureCacheMap(property)(cons)
     }
+  }
+
+  def getKnownResultValue(cons: Constituent): String = {
+    POSTaggerKnown.classifier.valueOf(
+      cons,
+      BaselineClassifier.classifier.allowableTags(wordForm(cons))
+    ).getStringValue
+  }
+
+  def getUnknownResultValue(cons: Constituent): String = {
+    POSTaggerUnknown.classifier.valueOf(
+      cons,
+      MikheevClassifier.classifier.allowableTags(wordForm(cons))
+    ).getStringValue
   }
 
   import POSTTaggerSensors._
@@ -44,141 +57,156 @@ object POSDataModel extends DataModel {
   }
 
   val wordForm = property[Constituent]("wordForm") {
-    x: Constituent => getOrUpdate("wordForm", x, () => {
-      val wordFormLabel = x.toString
-      if (wordFormLabel.length == 1 && "([{".indexOf(wordFormLabel) != -1) {
-        "-LRB-"
-      } else if (wordFormLabel.length == 1 && ")]}".indexOf(wordFormLabel) != -1) {
-        "-RRB-"
-      } else {
-        wordFormLabel
-      }
-    })
+    x: Constituent =>
+      getOrUpdate("wordForm", x, () => {
+        val wordFormLabel = x.toString
+        if (wordFormLabel.length == 1 && "([{".indexOf(wordFormLabel) != -1)
+          "-LRB-"
+        else if (wordFormLabel.length == 1 && ")]}".indexOf(wordFormLabel) != -1)
+          "-RRB-"
+        else wordFormLabel
+      })
   }
 
   val labelOrBaseline = property[Constituent]("labelOrBaseline") {
-    x: Constituent => getOrUpdate("labelOrBaseline", x, () => {
-      if (POSTaggerKnown.isTraining)
-        POSLabel(x)
-      else if (BaselineClassifier.classifier.observed(x.toString))
-        BaselineClassifier.classifier.discreteValue(x)
-      else
-        "UNKNOWN"
-    })
+    x: Constituent =>
+      getOrUpdate("labelOrBaseline", x, () => {
+        if (POSTaggerKnown.isTraining)
+          POSLabel(x)
+        else if (BaselineClassifier.classifier.observed(x.toString))
+          BaselineClassifier.classifier.discreteValue(x)
+        else ""
+      })
   }
 
   val labelOrBaselineU = property[Constituent]("labelOrBaselineU") {
     x: Constituent =>
-      if (POSTaggerUnknown.isTraining)
-        POSLabel(x)
-      else if (BaselineClassifier.classifier.observed(x.toString))
-        BaselineClassifier.classifier.discreteValue(x)
-      else
-        "UNKNOWN"
+      getOrUpdate("labelOrBaselineU", x, () => {
+        if (POSTaggerUnknown.isTraining)
+          POSLabel(x)
+        else if (BaselineClassifier.classifier.observed(x.toString))
+          BaselineClassifier.classifier.discreteValue(x)
+        else ""
+      })
   }
 
   val labelOneBefore = property[Constituent]("labelOneBefore") {
-    x: Constituent => getOrUpdate("labelOneBefore", x, () => {
-      val cons = (tokens(x) ~> constituentBefore).head
-      // make sure the spans are different. Otherwise it is not valid
-      if (cons.getSpan != x.getSpan) {
-        if (POSTaggerKnown.isTraining)
-          POSLabel(cons)
-        else
-          POSTaggerKnown.classifier.discreteValue(cons)
-      } else ""
-    })
+    x: Constituent =>
+      getOrUpdate("labelOneBefore", x, () => {
+        val cons = (tokens(x) ~> constituentBefore).head
+        // make sure the spans are different. Otherwise it is not valid
+        if (cons.getSpan != x.getSpan) {
+          if (POSTaggerKnown.isTraining)
+            POSLabel(cons)
+          else
+            getKnownResultValue(cons)
+          //            POSTaggerKnown.classifier.discreteValue(cons)
+        } else ""
+      })
   }
 
   val labelOneBeforeU = property[Constituent]("labelOneBeforeU") {
-    x: Constituent => getOrUpdate("labelOneBeforeU", x, () => {
-      val cons = (tokens(x) ~> constituentBefore).head
-      // make sure the spans are different. Otherwise it is not valid
-      if (cons.getSpan != x.getSpan) {
-        if (POSTaggerUnknown.isTraining)
-          POSLabel(cons)
-        else
-          POSTaggerUnknown.classifier.discreteValue(cons)
-      } else ""
-    })
+    x: Constituent =>
+      getOrUpdate("labelOneBeforeU", x, () => {
+        val cons = (tokens(x) ~> constituentBefore).head
+        // make sure the spans are different. Otherwise it is not valid
+        if (cons.getSpan != x.getSpan) {
+          if (POSTaggerUnknown.isTraining)
+            POSLabel(cons)
+          else
+            getUnknownResultValue(cons)
+          //            POSTaggerUnknown.classifier.discreteValue(cons)
+        } else ""
+      })
   }
 
   val labelTwoBefore = property[Constituent]("labelTwoBefore") {
-    x: Constituent => getOrUpdate("labelTwoBefore", x, () => {
-      val cons = (tokens(x) ~> constituentTwoBefore).head
-      // make sure the spans are different. Otherwise it is not valid
-      if (cons.getSpan != x.getSpan) {
-        if (POSTaggerKnown.isTraining) {
-          //          println(s"training one before for index ${tokens(x)}")
-          POSLabel(cons)
-        } else {
-          POSTaggerKnown.classifier.discreteValue(cons)
-        }
-      } else ""
-    })
+    x: Constituent =>
+      getOrUpdate("labelTwoBefore", x, () => {
+        val cons = (tokens(x) ~> constituentTwoBefore).head
+        // make sure the spans are different. Otherwise it is not valid
+        if (cons.getSpan != x.getSpan) {
+          if (POSTaggerKnown.isTraining) {
+            //          println(s"training one before for index ${tokens(x)}")
+            POSLabel(cons)
+          } else {
+            getKnownResultValue(cons)
+            //            POSTaggerKnown.classifier.discreteValue(cons)
+          }
+        } else ""
+      })
   }
 
   val labelTwoBeforeU = property[Constituent]("labelTwoBeforeU") {
     x: Constituent =>
-      val cons = (tokens(x) ~> constituentTwoBefore).head
-      // make sure the spans are different. Otherwise it is not valid
-      if (cons.getSpan != x.getSpan) {
-        if (POSTaggerUnknown.isTraining) {
-          //          println("Training ")
-          POSLabel(cons)
-        } else {
-          //          println("testing ")
-          POSTaggerUnknown.classifier.discreteValue(cons)
-        }
-      } else ""
+      getOrUpdate("labelTwoBeforeU", x, () => {
+        val cons = (tokens(x) ~> constituentTwoBefore).head
+        // make sure the spans are different. Otherwise it is not valid
+        if (cons.getSpan != x.getSpan) {
+          if (POSTaggerUnknown.isTraining) {
+            //          println("Training ")
+            POSLabel(cons)
+          } else {
+            //          println("testing ")
+            getUnknownResultValue(cons)
+            //            POSTaggerUnknown.classifier.discreteValue(cons)
+          }
+        } else ""
+      })
   }
 
   val labelOneAfter = property[Constituent]("labelOneAfter") {
-    x: Constituent => getOrUpdate("labelOneAfter", x, () => {
-      val cons = (tokens(x) ~> constituentAfter).head
-      // make sure the spans are different. Otherwise it is not valid
-      if (cons.getSpan != x.getSpan) {
-        labelOrBaseline(cons)
-      } else ""
-    })
+    x: Constituent =>
+      getOrUpdate("labelOneAfter", x, () => {
+        val cons = (tokens(x) ~> constituentAfter).head
+        // make sure the spans are different. Otherwise it is not valid
+        if (cons.getSpan != x.getSpan) {
+          labelOrBaseline(cons)
+        } else ""
+      })
   }
 
   // TODO: same as `labelOneAfter`. Remove this?
   val labelOneAfterU = property[Constituent]("labelOneAfterU") {
     x: Constituent =>
-      val cons = (tokens(x) ~> constituentAfter).head
-      // make sure the spans are different. Otherwise it is not valid
-      if (cons.getSpan != x.getSpan) {
-        labelOrBaseline(cons)
-      } else ""
+      getOrUpdate("labelOneAfterU", x, () => {
+        val cons = (tokens(x) ~> constituentAfter).head
+        // make sure the spans are different. Otherwise it is not valid
+        if (cons.getSpan != x.getSpan) {
+          labelOrBaseline(cons)
+        } else ""
+      })
   }
 
   val labelTwoAfter = property[Constituent]("labelTwoAfter") {
-    x: Constituent => getOrUpdate("labelTwoAfter", x, () => {
-      val cons = (tokens(x) ~> constituentTwoAfter).head
-      // make sure the spans are different. Otherwise it is not valid
-      if (cons.getSpan != x.getSpan) {
-        labelOrBaseline(cons)
-      } else ""
-    })
+    x: Constituent =>
+      getOrUpdate("labelTwoAfter", x, () => {
+        val cons = (tokens(x) ~> constituentTwoAfter).head
+        // make sure the spans are different. Otherwise it is not valid
+        if (cons.getSpan != x.getSpan) {
+          labelOrBaseline(cons)
+        } else ""
+      })
   }
 
   // TODO: same as `labelTwoAfter`. Remove this?
   val labelTwoAfterU = property[Constituent]("labelTwoAfterU") {
     x: Constituent =>
-      val cons = (tokens(x) ~> constituentTwoAfter).head
-      // make sure the spans are different. Otherwise it is not valid
-      if (cons.getSpan != x.getSpan) {
-        labelOrBaseline(cons)
-      } else ""
+      getOrUpdate("labelTwoAfterU", x, () => {
+        val cons = (tokens(x) ~> constituentTwoAfter).head
+        // make sure the spans are different. Otherwise it is not valid
+        if (cons.getSpan != x.getSpan) {
+          labelOrBaseline(cons)
+        } else ""
+      })
   }
 
   val L2bL1b = property[Constituent]("label2beforeLabel1beforeConjunction") {
-    x: Constituent => labelOneBefore(x) + "-" + labelTwoBefore(x)
+    x: Constituent => labelTwoBefore(x) + "-" + labelOneBefore(x)
   }
 
   val L2bL1bU = property[Constituent]("label2beforeLabel1beforeConjunctionU") {
-    x: Constituent => labelOneBeforeU(x) + "-" + labelTwoBeforeU(x)
+    x: Constituent => labelTwoBeforeU(x) + "-" + labelOneBeforeU(x)
   }
 
   val L1bL1a = property[Constituent]("label1beforeLabel1afterConjunction") {

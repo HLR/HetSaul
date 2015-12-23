@@ -3,8 +3,10 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp.POSTagger
 import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.Constituent
 import edu.illinois.cs.cogcomp.core.utilities.DummyTextAnnotationGenerator
+import edu.illinois.cs.cogcomp.lbj.pos.{ POSLabeledUnknownWordParser }
+import edu.illinois.cs.cogcomp.lbjava.classify.TestDiscrete
 import edu.illinois.cs.cogcomp.nlp.corpusreaders.PennTreebankPOSReader
-import edu.illinois.cs.cogcomp.saul.datamodel.property.Property
+import edu.illinois.cs.cogcomp.saul.parser.LBJIteratorParserScala
 import edu.illinois.cs.cogcomp.saulexamples.nlp.EdisonFeatures.toyDataGenerator
 import edu.illinois.cs.cogcomp.saulexamples.nlp.POSTagger.POSClassifiers._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.commonSensors
@@ -14,7 +16,7 @@ import scala.collection.JavaConversions._
 object POSTaggerKnownApp {
   def main(args: Array[String]): Unit = {
     val trainDataReader = new PennTreebankPOSReader("train")
-    trainDataReader.readFile("../data/POS/00-18.br")
+    trainDataReader.readFile("../data/POS/00-21.br")
     //    val trainData = trainDataReader.getTextAnnotations.subList(0, 5).flatMap(commonSensors.textAnnotationToTokens(_).subList(0, 5))
     val trainData = trainDataReader.getTextAnnotations.flatMap(commonSensors.textAnnotationToTokens)
 
@@ -27,13 +29,27 @@ object POSTaggerKnownApp {
 
     /** preprocess the baseline */
     BaselineClassifier.learn(1)
+    MikheevClassifier.learn(1)
+
+    val unknownTrainData = trainData.filter(x => BaselineClassifier.classifier.observedCount(x.toString) <= POSLabeledUnknownWordParser.threshold)
 
     (0 until 50).foreach(_ => {
       POSTaggerKnown.learn(1)
+      POSTaggerUnknown.learn(1, unknownTrainData)
       POSDataModel.featureCacheMap.clear()
     })
 
-    POSTaggerKnown.test(testData)
+    val tester = new TestDiscrete
+    val testReader = new LBJIteratorParserScala[Constituent](testData)
+    testReader.reset()
+
+    testReader.data.foreach(cons => {
+      val gold = POSDataModel.POSLabel(cons)
+      val predicted = POSClassifiers.POSClassifier(cons)
+      tester.reportPrediction(predicted, gold)
+    })
+
+    tester.printPerformance(System.out)
   }
 }
 
