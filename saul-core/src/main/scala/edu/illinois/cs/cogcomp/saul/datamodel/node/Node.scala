@@ -105,7 +105,10 @@ class Node[T <: AnyRef](val tag: ClassTag[T]) {
   }
   /** Operator for adding a sequence of T into my table. */
   def populate(ts: Iterable[T], train: Boolean = true, withChain: Int = 2) = {
-    ts.foreach(addInstance(_, train, withChain))
+    ts.foreach(x => {
+      addInstance(x, train, withChain)
+      println(x.toString)
+    })
   }
   def un_populate(ts: Iterable[T], train: Boolean = true) = {
     ts.foreach(removeInstance(_, train))

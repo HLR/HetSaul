@@ -1,13 +1,13 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling
 
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{ Constituent, Relation }
-import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLDataModel._
+import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLDataModel_all._
 
 /** Created by Parisa on 12/15/15.
   */
 object MWE extends App {
 
-  populateGraphwithTextAnnotation(SRLDataModel, SRLDataModel.sentences)
+  populateGraphwithTextAnnotation(SRLDataModel_all, SRLDataModel_all.sentences)
 
   println("\n" + (relations(relations().head) ~> relationsToArguments).size)
 

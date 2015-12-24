@@ -3,7 +3,7 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling
 import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.Constituent
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLClassifiers.predicateClassifier
-import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLDataModel._
+import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLDataModel_all._
 
 import scala.collection.JavaConversions._
 import scala.util.Random
@@ -12,7 +12,7 @@ import scala.util.Random
   */
 object SRLapp1 extends App {
 
-  populateGraphwithTextAnnotation(SRLDataModel, SRLDataModel.sentences)
+  populateGraphwithTextAnnotation(SRLDataModel_all, SRLDataModel_all.sentences)
 
   // Generate predicate candidates by extracting all verb tokens
   val predicateCandidates = tokens().filter((x: Constituent) => posTag(x).startsWith("VB"))

@@ -4,14 +4,14 @@ import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{ Constituent,
 import edu.illinois.cs.cogcomp.core.datastructures.{ IntPair, ViewNames }
 import edu.illinois.cs.cogcomp.saulexamples.data.XuPalmerCandidateGenerator
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLClassifiers.relationClassifier
-import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLDataModel._
+import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLDataModel_all._
 
 import scala.collection.JavaConversions._
 /** Created by Parisa on 12/11/15.
   */
 object SRLapp3 extends App {
 
-  populateGraphwithTextAnnotation(SRLDataModel, SRLDataModel.sentences)
+  populateGraphwithTextAnnotation(SRLDataModel_all, SRLDataModel_all.sentences)
   val t = new XuPalmerCandidateGenerator(null)
   // Generate predicate candidates by extracting all verb tokens
   val predicateCandidates = tokens().filter((x: Constituent) => posTag(x).startsWith("VB"))
@@ -57,13 +57,13 @@ object SRLapp3 extends App {
 
   println("negative arg candidates:" + negativeArgumentCandidates.size)
   arguments.populate(negativeArgumentCandidates)
-  println("all arg number:" + SRLDataModel.arguments().size)
+  println("all arg number:" + SRLDataModel_all.arguments().size)
 
-  println("all relations number after population:" + SRLDataModel.relations().size)
-  println("arg number after re-population:" + SRLDataModel.arguments().size)
-  println("arg number after re-population:" + (SRLDataModel.relations() ~> relationsToArguments).size)
-  println("pred number after re-population:" + SRLDataModel.predicates().size)
-  println("pred number after re-population:" + (SRLDataModel.relations() ~> relationsToPredicates).size)
+  println("all relations number after population:" + SRLDataModel_all.relations().size)
+  println("arg number after re-population:" + SRLDataModel_all.arguments().size)
+  println("arg number after re-population:" + (SRLDataModel_all.relations() ~> relationsToArguments).size)
+  println("pred number after re-population:" + SRLDataModel_all.predicates().size)
+  println("pred number after re-population:" + (SRLDataModel_all.relations() ~> relationsToPredicates).size)
 
   //  generate all candidate relations based on candidate arguments and predicates
   //  val relationCandidates4 = for {
@@ -81,7 +81,7 @@ object SRLapp3 extends App {
 
   // relations.populate(negativeRelationCandidates)
   //  println("negative relation candidates:" + negativeRelationCandidates.size)
-  println("all relations number after population:" + SRLDataModel.relations().size)
+  println("all relations number after population:" + SRLDataModel_all.relations().size)
 
   relationClassifier.crossValidation(3)
 

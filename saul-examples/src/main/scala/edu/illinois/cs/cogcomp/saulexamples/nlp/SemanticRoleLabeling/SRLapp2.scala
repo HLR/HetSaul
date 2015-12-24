@@ -2,14 +2,14 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling
 
 import edu.illinois.cs.cogcomp.core.datastructures.{ IntPair, ViewNames }
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLClassifiers.argumentClassifier
-import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLDataModel._
+import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLDataModel_all._
 
 import scala.collection.JavaConversions._
 /** Created by Parisa on 12/11/15.
   */
 object SRLapp2 extends App {
 
-  populateGraphwithTextAnnotation(SRLDataModel, SRLDataModel.sentences)
+  populateGraphwithTextAnnotation(SRLDataModel_all, SRLDataModel_all.sentences)
 
   val treeCandidates = trees().flatMap {
     tree =>

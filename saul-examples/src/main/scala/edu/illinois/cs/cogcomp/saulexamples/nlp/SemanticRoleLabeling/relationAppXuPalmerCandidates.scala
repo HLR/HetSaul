@@ -4,13 +4,13 @@ import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{ Constituent, Relation }
 import edu.illinois.cs.cogcomp.saulexamples.data.XuPalmerCandidateGenerator
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLClassifiers.relationClassifier
-import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLDataModel._
+import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLDataModel_all._
 
 import scala.collection.JavaConversions._
 /** Created by Parisa on 12/18/15.
   */
 object relationAppXuPalmerCandidates extends App {
-  populateGraphwithTextAnnotation(SRLDataModel, SRLDataModel.sentences)
+  populateGraphwithTextAnnotation(SRLDataModel_all, SRLDataModel_all.sentences)
   val t = new XuPalmerCandidateGenerator(null)
   // Generate predicate candidates by extracting all verb tokens
   val predicateCandidates = tokens().filter((x: Constituent) => posTag(x).startsWith("VB"))
@@ -24,7 +24,6 @@ object relationAppXuPalmerCandidates extends App {
   val XuPalmerCandidateArgs = predicates().flatMap(
 
     (x =>
-
       {
         val p = t.generateSaulCandidates(x, (sentences(x.getTextAnnotation) ~> sentencesTostringTree).head)
         p.map(y => new Relation("candidate", x.cloneForNewView(x.getViewName), y.cloneForNewView(y.getViewName), 0.0))
@@ -40,7 +39,7 @@ object relationAppXuPalmerCandidates extends App {
 
   relations.populate(negativePalmerCandidates)
   //  println("negative relation candidates:" + negativeRelationCandidates.size)
-  println("all relations number after population:" + SRLDataModel.relations().size)
+  println("all relations number after population:" + SRLDataModel_all.relations().size)
 
   relationClassifier.crossValidation(3)
 

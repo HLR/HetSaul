@@ -1,19 +1,17 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling
 
 import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
-import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{ Constituent, Relation, TextAnnotation, TreeView }
+import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{ Constituent, Relation, TextAnnotation }
 import edu.illinois.cs.cogcomp.core.datastructures.trees.Tree
 import edu.illinois.cs.cogcomp.edison.features.FeatureUtilities
 import edu.illinois.cs.cogcomp.edison.features.factory._
-import edu.illinois.cs.cogcomp.edison.utilities.CollinsHeadFinder
 import edu.illinois.cs.cogcomp.nlp.corpusreaders.CoNLLColumnFormatReader
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
-
+import edu.illinois.cs.cogcomp.saulexamples.nlp.commonSensors
 import scala.collection.JavaConversions._
 
-/** Created by Parisa on 12/23/15.
-  */
-object SRLDataModel extends DataModel {
+/** The SRL data model which contains all the entities needed to support the structured problem. */
+object SRLDataModel_all extends DataModel {
   val predicates = node[Constituent]
 
   val arguments = node[Constituent]
@@ -30,7 +28,7 @@ object SRLDataModel extends DataModel {
 
   val tokens = node[Constituent]
 
-  // val sentencesToTrees = edge(sentences, trees)
+  val sentencesToTrees = edge(sentences, trees)
   val sentencesTostringTree = edge(sentences, stringTree)
   val sentencesToTokens = edge(sentences, tokens)
   val sentencesToRelations = edge(sentences, relations)
@@ -40,10 +38,10 @@ object SRLDataModel extends DataModel {
   //TODO PARSE_GOLD is only good for training; for testing we need PARSE_STANFORD or PARSE_CHARNIAK
 
   sentencesToRelations.addSensor(SRLSensors.textAnnotationToRelation _)
-  //  sentencesToTrees.addSensor(SRLSensors.textAnnotationToTree _)
-  //  relationsToArguments.addSensor(SRLSensors.relToArgument _)
-  //  relationsToPredicates.addSensor(SRLSensors.relToPredicate _)
-  //  sentencesToTokens.addSensor(commonSensors.textAnnotationToTokens _)
+  sentencesToTrees.addSensor(SRLSensors.textAnnotationToTree _)
+  relationsToArguments.addSensor(SRLSensors.relToArgument _)
+  relationsToPredicates.addSensor(SRLSensors.relToPredicate _)
+  sentencesToTokens.addSensor(commonSensors.textAnnotationToTokens _)
   sentencesTostringTree.addSensor(SRLSensors.textAnnotationToStringTree _)
 
   val isPredicate = property[Constituent]("p") {
@@ -69,7 +67,7 @@ object SRLDataModel extends DataModel {
   }
   val subcategorization = property[Constituent]("subcat") {
     x: Constituent => //new SubcategorizationFrame("Charniak").getFeatures(x)
-      val subcatFex = new SubcategorizationFrame(ViewNames.PARSE_GOLD)
+      val subcatFex = new SubcategorizationFrame(ViewNames.PARSE_CHARNIAK)
       val discreteFeature: String = FeatureUtilities.getFeatureSet(subcatFex, x).mkString
       discreteFeature
   }
@@ -117,15 +115,9 @@ object SRLDataModel extends DataModel {
 
   val headwordRelation = property[Relation]("head") {
     x: Relation =>
-      val parseView = x.getTarget.getTextAnnotation.getView(ViewNames.PARSE_GOLD).asInstanceOf[TreeView]
-      val phrase = parseView.getParsePhrase(x.getTarget);
-      val head = CollinsHeadFinder.instance.getHeadWordPosition(phrase);
-      // head
-      val s = x.getTarget.getTextAnnotation.getTokensInSpan(head, head + 1).mkString
-      s
-    //val headWordAndPos = new ParseHeadWordPOS(ViewNames.PARSE_GOLD)
-    // val discreteFeature: String = FeatureUtilities.getFeatureSet(headWordAndPos, x.getTarget).mkString
-    // discreteFeature
+      val headWordAndPos = new ParseHeadWordPOS(ViewNames.PARSE_GOLD)
+      val discreteFeature: String = FeatureUtilities.getFeatureSet(headWordAndPos, x.getTarget).mkString
+      discreteFeature
   }
 
   val syntacticFrameRelation = property[Relation]("synFrame") {
@@ -140,4 +132,5 @@ object SRLDataModel extends DataModel {
       val discreteFeature: String = FeatureUtilities.getFeatureSet(parspath, x.getTarget).mkString
       discreteFeature
   }
+
 }
