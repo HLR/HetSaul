@@ -6,3 +6,10 @@
     float:right;
     width:49%;
 }
+.editor{
+    height: 400px;
+}
+
+.code{
+    display: none;
+}

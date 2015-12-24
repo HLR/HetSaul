@@ -1,5 +1,6 @@
 $(document).ready(function(){
 
+        setEditor("editor1","scala"); 
         $("#fileList").children("li").each(function(){
             installTabClickedAction($(this));
         })
@@ -14,6 +15,24 @@ $(document).ready(function(){
         });
 })
 
+var setEditor = function(editorId,mode){
+    var editor = ace.edit(editorId);
+    editor.setTheme("ace/theme/monokai");
+    changeEditorMode(editor, mode);
+    editor.focus();
+}
+
+var changeEditorMode = function(editor, mode){
+    var mode;
+    if(mode == "scala"){
+        mode = require("ace/mode/scala").Mode;
+    }
+    if(mode == "java"){
+    
+        mode = require("ace/mode/java").Mode;
+    }
+    editor.getSession().setMode(new mode());
+}
 var newFile = function(){
     var li = $("<li class='active'><a href='#'></a></li>");
     var idx = $("#fileList").children("li").size() + 1;
@@ -24,31 +43,75 @@ var newFile = function(){
     li.attr('id','fileName' + idx);
     $("#fileList").append(li);
     installTabClickedAction(li);
-    var code = $("<textarea class='form-control code active' rows='18'>");
+    var code = $("<textarea class='code active' rows='18'></textarea>");
     code.attr('id','code' + idx);
     $("#workspace").children(".active").each(function(){
-        $(this).hide();
         $(this).removeClass("active");
+        $(this).hide();
     })
     $("#workspace").append(code);
+    var editor = $("<div class='editor active' id='editor"+idx+"'></div>");
+    $("#workspace").append(editor);
+    setEditor("editor"+idx,"scala");
 }
 
+//check string end with suffix
+function endsWith(str, suffix) {
+    return str.indexOf(suffix, str.length - suffix.length) !== -1;
+}
+
+var enableEditingTabName = function(tab){
+
+    var text = tab.text();
+    var input = $("<input id='tempName' type='text' value='" + text + "' />");
+    tab.find("a").hide();
+    tab.append(input);
+
+    input.select();
+    input.blur(function() {
+        var text = $('#tempName').val();
+        var label = $('#tempName').parent().find("a");
+        var idx = tab.attr('id').slice(-1);
+        if(endsWith(text,".java")) {
+            label.text(text);
+            changeEditorMode(ace.edit("editor"+idx),"java");
+        }
+        if(endsWith(text,".scala")){
+            label.text(text);
+            changeEditorMode(ace.edit("editor"+idx),"scala");
+        }
+
+        label.show();
+        $('#tempName').remove()
+     });
+}
 var installTabClickedAction = function(tab){
     tab.click(function(){
-        $("#fileList").children(".active").each(function(){
-            $(this).removeClass("active");
+
+        if($(this).hasClass("active")){
+        
+            //edit the file name
+            enableEditingTabName($(this));
+        }
+        else{
             
-        })
+            //switch to other tabs
+            $("#fileList").children(".active").each(function(){
+                $(this).removeClass("active");
+            })
 
-        tab.addClass("active");
+            tab.addClass("active");
 
-        var codeId = "#code" + tab.attr('id').slice(-1);
-        $("#workspace").children(".active").each(function(){
-            $(this).removeClass("active");
-            $(this).hide();
-        })
-        $(codeId).addClass("active");
-        $(codeId).show();
+            var idx = tab.attr('id').slice(-1);
+            $("#workspace").children(".active").each(function(){
+                $(this).removeClass("active");
+                $(this).hide(); 
+            })
+            $("#code"+idx).addClass("active");
+            $("#editor"+idx).show();
+            $("#editor"+idx).addClass("active");
+            ace.edit("editor"+idx).focus();
+        }
     })
 }
 
@@ -56,9 +119,9 @@ var getAllFiles = function(){
     var files = {}
     $("#fileList").children("li").each(function(index){
         var idx = $(this).attr('id').slice(-1);
-        var codeId = "#code" + idx;
+        var codeId = "editor" + idx;
         var codeName = $(this).text();
-        files[codeName] = $(codeId).val();
+        files[codeName] = ace.edit(codeId).getValue();
     })
 
     return JSON.stringify(files);
@@ -85,8 +148,8 @@ var updateCode = function(){
 };
 
 var onSuccess = function(data){
-    alert(data);
+    alert(JSON.stringify(data));
 }
 var onError = function(data){
-    alert(data);
+    alert("error"+data);
 }

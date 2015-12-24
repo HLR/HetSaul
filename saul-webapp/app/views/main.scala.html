@@ -15,6 +15,10 @@
             routes.javascript.Application.updateCode
         )
         <script src="@routes.Assets.versioned("javascripts/script.js")" type="text/javascript"></script>
+        <script src="@routes.Assets.versioned("javascripts/ace/ace.js")" type="text/javascript" charset="utf-8"></script>
+        <script src="@routes.Assets.versioned("javascripts/ace/mode-scala.js")" type="text/javascript" charset="utf-8"></script>
+        <script src="@routes.Assets.versioned("javascripts/ace/mode-java.js")" type="text/javascript" charset="utf-8"></script>
+        <script src="@routes.Assets.versioned("javascripts/ace/theme-twilight.js")" type="text/javascript" charset="utf-8"></script>
     </head>
     <body>
         <div class="page-header">
@@ -47,7 +51,8 @@
                 <button class="btn btn-default" id="plusFile"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button>
                 </ul>
                 <div class="form-group" id="workspace">
-                    <textarea class="form-control code active" rows="18" id="code1"></textarea>
+                    <textarea class="code active" rows="18" id="code1"></textarea>
+                    <div id="editor1" class="editor active"></div>
                 </div>
                 <div style="text-align: center">
                     <button type="compile" class="btn btn-default" id="compileBtn">Compile</button>
