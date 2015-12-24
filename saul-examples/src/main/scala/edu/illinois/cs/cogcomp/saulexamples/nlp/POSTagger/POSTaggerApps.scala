@@ -13,7 +13,7 @@ import edu.illinois.cs.cogcomp.saulexamples.nlp.commonSensors
 
 import scala.collection.JavaConversions._
 
-object POSTaggerKnownApp {
+object POSTaggerApp {
   def main(args: Array[String]): Unit = {
     val trainDataReader = new PennTreebankPOSReader("train")
     trainDataReader.readFile("../data/POS/00-21.br")
@@ -27,7 +27,7 @@ object POSTaggerKnownApp {
     POSDataModel.tokens populate trainData
     POSDataModel.tokens.populate(testData, false)
 
-    /** preprocess the baseline */
+    /** preprocess the baseline systems */
     BaselineClassifier.learn(1)
     MikheevClassifier.learn(1)
 
@@ -95,83 +95,3 @@ object POSTaggerBaselineApp {
   }
 }
 
-object POSTaggerTestPropertiesApp {
-  def main(args: Array[String]): Unit = {
-    val dummyData = DummyTextAnnotationGenerator.generateAnnotatedTextAnnotation(Array(ViewNames.POS), false)
-    val cons = dummyData.getView(ViewNames.TOKENS).getConstituents
-    POSDataModel.tokens populate cons
-
-    println(cons)
-
-    val consThe = cons(0)
-    val consConstruction = cons(1)
-    val consOf = cons(2)
-
-    // wordForm
-    println(POSDataModel.wordForm(consThe) == "The")
-    println(POSDataModel.wordForm(consConstruction) == "construction")
-    println(POSDataModel.wordForm(consOf) == "of")
-
-    // label
-    println(POSDataModel.POSLabel(consThe) == "DT")
-    println(POSDataModel.POSLabel(consConstruction) == "NN")
-    println(POSDataModel.POSLabel(consOf) == "IN")
-
-    // label or baseline
-    BaselineClassifier.learn(1)
-    println(POSDataModel.labelOrBaseline(consThe) == "DT")
-    println(POSDataModel.labelOrBaseline(consConstruction) == "NN")
-    println(POSDataModel.labelOrBaseline(consOf) == "IN")
-
-    POSTaggerKnown.isTraining = true
-    POSTaggerKnown.learn(10)
-
-    // labelOneBefore
-    // gold labels
-    POSTaggerKnown.isTraining = true
-    println(POSDataModel.labelOneBefore(consThe) == "")
-    println(POSDataModel.labelOneBefore(consConstruction) == "DT")
-    println(POSDataModel.labelOneBefore(consOf) == "NN")
-    // prediction labels
-    POSTaggerKnown.isTraining = false
-    println(POSDataModel.labelOneBefore(consThe) == "")
-    println(POSDataModel.labelOneBefore(consConstruction) == "DT")
-    println(POSDataModel.labelOneBefore(consOf) == "NN")
-
-    // labelTwoBefore
-    // gold labels
-    POSTaggerKnown.isTraining = true
-    println(POSDataModel.labelTwoBefore(consThe) == "")
-    println(POSDataModel.labelTwoBefore(consConstruction) == "")
-    println(POSDataModel.labelTwoBefore(consOf) == "DT")
-    // prediction labels
-    POSTaggerKnown.isTraining = false
-    println(POSDataModel.labelTwoAfter(consThe) == "IN")
-    println(POSDataModel.labelTwoAfter(consConstruction) == "DT")
-    println(POSDataModel.labelTwoAfter(consOf) == "NN")
-
-    // labelOneAfter
-    // gold labels
-    POSTaggerKnown.isTraining = true
-    println(POSDataModel.labelOneAfter(consThe) == "NN")
-    println(POSDataModel.labelOneAfter(consConstruction) == "IN")
-    println(POSDataModel.labelOneAfter(consOf) == "DT")
-    // prediction labels
-    POSTaggerKnown.isTraining = false
-    println(POSDataModel.labelOneAfter(consThe) == "NN")
-    println(POSDataModel.labelOneAfter(consConstruction) == "IN")
-    println(POSDataModel.labelOneAfter(consOf) == "DT")
-
-    // labelTwoAfter
-    // gold labels
-    POSTaggerKnown.isTraining = true
-    println(POSDataModel.labelTwoAfter(consThe) == "IN")
-    println(POSDataModel.labelTwoAfter(consConstruction) == "DT")
-    println(POSDataModel.labelTwoAfter(consOf) == "NN")
-    // prediction labels
-    POSTaggerKnown.isTraining = false
-    println(POSDataModel.labelTwoAfter(consThe) == "IN")
-    println(POSDataModel.labelTwoAfter(consConstruction) == "DT")
-    println(POSDataModel.labelTwoAfter(consOf) == "NN")
-  }
-}

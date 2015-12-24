@@ -10,12 +10,11 @@ import edu.illinois.cs.cogcomp.saul.datamodel.property.Property
 import edu.illinois.cs.cogcomp.saulexamples.nlp.POSTagger.POSDataModel._
 
 object POSClassifiers {
-  /**
-   * After POSTaggerKnown and POSTaggerUnknown are trained,
-   * this classifier will return the prediction of POSTaggerKnown if
-   * the input word was observed during training or of POSTaggerUnknown
-   * if it wasn't.
-   */
+  /** After POSTaggerKnown and POSTaggerUnknown are trained,
+    * this classifier will return the prediction of POSTaggerKnown if
+    * the input word was observed during training or of POSTaggerUnknown
+    * if it wasn't.
+    */
   def POSClassifier(x: Constituent): String = {
     if (BaselineClassifier.classifier.observed(x.toString))
       POSTaggerKnown.classifier.valueOf(x, BaselineClassifier.classifier.allowableTags(wordForm(x))).getStringValue
