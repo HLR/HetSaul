@@ -2,8 +2,7 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp.ace
 
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
 
-/**
-  * @author sameer
+/** @author sameer
   * @since 12/24/15.
   */
 class ACEModel extends DataModel {
@@ -52,7 +51,6 @@ class ACEModel extends DataModel {
   mentionToLabel.addSensor((m: Mention) => m -> "O")
   relationToLabel.addSensor((m: MentionPair) => m -> "O")
   corefToLabel.addSensor((m: MentionPair) => m -> false)
-
 
 }
 
