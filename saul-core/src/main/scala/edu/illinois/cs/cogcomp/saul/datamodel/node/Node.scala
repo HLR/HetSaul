@@ -10,6 +10,10 @@ import scala.collection.mutable.{ Map => MutableMap, LinkedHashSet => MutableSet
 import scala.collection.mutable
 import scala.reflect.ClassTag
 
+trait NodeProperty[T <: AnyRef] extends Property[T] {
+  def node: Node[T]
+}
+
 /** A Node E is an instances of base types T */
 class Node[T <: AnyRef](val tag: ClassTag[T]) {
 
@@ -17,6 +21,8 @@ class Node[T <: AnyRef](val tag: ClassTag[T]) {
   val incoming = new ArrayBuffer[Edge[_, T]]()
 
   val joinNodes = new ArrayBuffer[JoinNode[_, _]]()
+
+  val properties = new ArrayBuffer[NodeProperty[T]]
 
   private val collections = MutableSet[T]()
 
