@@ -13,9 +13,10 @@ import edu.illinois.cs.cogcomp.saulexamples.nlp.commonSensors
 
 import scala.collection.JavaConversions._
 
-object Constants{
+object Constants {
   private val prefix = "../data/POS/"
   val trainData = prefix + "00-18.br"
+  val trainDataSmall = prefix + "00-18_small.br"
   val trainAndDevData = prefix + "00-21.br"
   val testData = prefix + "22-24.br"
 }
@@ -40,19 +41,17 @@ object POSTaggerApp {
 
     val unknownTrainData = trainData.filter(x => BaselineClassifier.classifier.observedCount(x.toString) <= POSLabeledUnknownWordParser.threshold)
 
-    POSTaggerKnown.learn(50)
-    POSTaggerUnknown.learn(50, unknownTrainData)
+    //    POSTaggerKnown.learn(50)
+    //    POSTaggerUnknown.learn(50, unknownTrainData)
 
-    /*
-        (0 until 50).foreach(_ => {
-          POSTaggerKnown.learn(1)
-          POSTaggerUnknown.learn(1, unknownTrainData)
-          POSDataModel.featureCacheMap.clear()
-        })
-    */
+    (0 until 50).foreach(_ => {
+      POSTaggerKnown.learn(1)
+      POSTaggerUnknown.learn(1, unknownTrainData)
+      POSDataModel.featureCacheMap.clear()
+    })
 
     POSTaggerKnown.test(testData)
-//    POSTaggerUnknown.test(testData)
+    POSTaggerUnknown.test(testData)
 
     val tester = new TestDiscrete
     val testReader = new LBJIteratorParserScala[Constituent](testData)
