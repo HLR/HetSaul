@@ -47,7 +47,7 @@ class SensorsTest extends FlatSpec with Matchers {
     n2.getAllInstances.size should be(4)
     e.links.size should be(4)
 
-    n2.getAllInstances should be(n1.getAllInstances.map(_.toUpperCase).toSet)
+    n2.getAllInstances.toSet should be(n1.getAllInstances.map(_.toUpperCase).toSet)
     e.links.forall { case (first, second) => first.toUpperCase == second } should be(right = true)
   }
 
@@ -76,9 +76,9 @@ class SensorsTest extends FlatSpec with Matchers {
     e1.links.size should be(4)
     e2.links.size should be(4)
 
-    n2.getAllInstances should be(n1.getAllInstances.map(_.toUpperCase).toSet)
+    n2.getAllInstances.toSet should be(n1.getAllInstances.map(_.toUpperCase).toSet)
     e1.links.forall { case (first, second) => first.toUpperCase == second } should be(right = true)
-    n3.getAllInstances should be(n1.getAllInstances.map(_.toLowerCase).toSet)
+    n3.getAllInstances.toSet should be(n1.getAllInstances.map(_.toLowerCase).toSet)
     e2.links.forall { case (first, second) => first.toLowerCase == second } should be(right = true)
   }
 
@@ -146,7 +146,7 @@ class SensorsTest extends FlatSpec with Matchers {
     e1.links.size should be(4)
     e2.links.size should be(3)
 
-    n3.getAllInstances should be(n2.getAllInstances.map(_.toUpperCase).toSet)
+    n3.getAllInstances.toSet should be(n2.getAllInstances.map(_.toUpperCase).toSet)
     e2.links.forall { case (first, second) => first.toUpperCase == second } should be(right = true)
   }
 
