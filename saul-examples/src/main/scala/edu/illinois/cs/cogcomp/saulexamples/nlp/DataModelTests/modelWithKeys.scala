@@ -10,16 +10,17 @@ object modelWithKeys extends DataModel {
   /** Node Types */
   val document = node[TextAnnotation]
   val sentence = node[Sentence]
+  val tokens = node[Constituent]
 
   /** Property Types */
-  val label = property[Constituent]("label") {
+  val label = property(tokens, "label") {
     x: Constituent => x.getLabel
   }
 
-  val docFeatureExample = property[TextAnnotation]("doc") {
+  val docFeatureExample = property(document, "doc") {
     x: TextAnnotation => x.getNumberOfSentences.toString
   }
-  val sentenceFeatureExample = property[Sentence]("sentence") {
+  val sentenceFeatureExample = property(sentence, "sentence") {
     x: Sentence => x.getText
   }
 

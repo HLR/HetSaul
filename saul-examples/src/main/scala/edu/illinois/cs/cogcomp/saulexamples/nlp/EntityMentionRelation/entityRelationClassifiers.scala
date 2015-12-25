@@ -45,7 +45,7 @@ object entityRelationClassifiers {
     )
   }
 
-  val ePipe = property[ConllRelation]("e1pipe") {
+  val ePipe = property[ConllRelation](pairedRelations, "e1pipe") {
     rel: ConllRelation =>
       "e1-org: " + orgClassifier.discreteValue(rel.e1) ::
         "e1-per: " + PersonClassifier.discreteValue(rel.e1) ::

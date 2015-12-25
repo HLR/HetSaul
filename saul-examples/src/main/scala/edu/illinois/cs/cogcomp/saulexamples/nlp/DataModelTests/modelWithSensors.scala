@@ -14,15 +14,15 @@ object modelWithSensors extends DataModel {
   val constituent = node[Constituent]
 
   /** Property Types */
-  val label = property[Constituent]("label") {
+  val label = property(constituent, "label") {
     x: Constituent => x.getLabel
   }
 
-  val docFeatureExample = property[TextAnnotation]("doc") {
+  val docFeatureExample = property(document, "doc") {
     x: TextAnnotation => x.getNumberOfSentences.toString
   }
 
-  val sentenceFeatureExample = property[Sentence]("sentnce") {
+  val sentenceFeatureExample = property(sentence, "sentnce") {
     x: Sentence => x.getText
   }
 

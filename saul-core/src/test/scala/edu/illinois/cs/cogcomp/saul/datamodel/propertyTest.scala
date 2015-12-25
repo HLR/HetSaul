@@ -33,52 +33,54 @@ class propertyTest extends FlatSpec with Matchers {
 
 object toyDataModel extends DataModel {
 
+  val toys = node[toyClass]
+
   // boolean
-  val booleanProperty = property[toyClass]("boolean") {
+  val booleanProperty = property(toys, "boolean") {
     x: toyClass => true
   }
 
   // List[Int]
-  val listIntPropertyArray = property[toyClass]("listInt") {
+  val listIntPropertyArray = property(toys, "listInt") {
     x: toyClass => List(1, 3)
   }
-  val listIntPropertyGenerator = property[toyClass]("listInt", ordered = true) {
+  val listIntPropertyGenerator = property(toys, "listInt", ordered = true) {
     x: toyClass => List(1, 3)
   }
 
   // Int
-  val intProperty = property[toyClass]("int") {
+  val intProperty = property(toys, "int") {
     x: toyClass => 2
   }
 
   // List[Double]
-  val listDoublePropertyArray = property[toyClass]("listDouble") {
+  val listDoublePropertyArray = property(toys, "listDouble") {
     x: toyClass => List(1.0, 2.0)
   }
-  val listDoublePropertyGenerator = property[toyClass]("listDouble", ordered = true) {
+  val listDoublePropertyGenerator = property(toys, "listDouble", ordered = true) {
     x: toyClass => List(1.0, 2.0)
   }
 
   // Double
-  val doubleProperty = property[toyClass]("double") {
+  val doubleProperty = property(toys, "double") {
     x: toyClass => 1.0
   }
 
   // List[String]
-  val listStringPropertyArray = property[toyClass]("listString") {
+  val listStringPropertyArray = property(toys, "listString") {
     x: toyClass => List("listValue")
   }
-  val listStringPropertyGenerator = property[toyClass]("listString", ordered = true) {
+  val listStringPropertyGenerator = property(toys, "listString", ordered = true) {
     x: toyClass => List("listValue")
   }
 
   // String
-  val stringProperty = property[toyClass]("string") {
+  val stringProperty = property(toys, "string") {
     x: toyClass => "value"
   }
 
   // ranged property
-  val rangedProperty = property[toyClass]("funnyRange")("string") {
+  val rangedProperty = property(toys, "funnyRange")("string") {
     x: toyClass => "ranged"
   }
 }
