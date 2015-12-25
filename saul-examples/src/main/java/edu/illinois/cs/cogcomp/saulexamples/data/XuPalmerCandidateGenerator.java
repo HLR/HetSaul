@@ -32,6 +32,7 @@ public class XuPalmerCandidateGenerator extends  ArgumentCandidateGenerator{
         public String getCandidateViewName() {
             return "XuePalmerHeuristicView";
         }
+
         public List<Constituent> generateSaulCandidates(Constituent predicate, Tree<String> tree){{
             Constituent predicateClone = predicate.cloneForNewView(this.getCandidateViewName());
             TextAnnotation ta = predicateClone.getTextAnnotation();
