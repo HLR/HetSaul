@@ -59,39 +59,39 @@ class DocumentStructureTest extends FlatSpec with Matchers {
 
   "document.populate" should "populate sentences" in {
     import TestObject._
-    docs().instances.size should be(1)
-    sents().instances.size should be(3)
-    toks().instances.size should be(23)
+    docs().size should be(1)
+    sents().size should be(3)
+    toks().size should be(23)
   }
 
   "document.populate" should "populate tokens" in {
     import TestObject._
-    toks().instances.size should be(23)
+    toks().size should be(23)
   }
 
   "document.populate" should "link sentences to docs" in {
     import TestObject._
-    (docs() ~> docToSen).instances.size should be(3)
-    (docs() ~> sent(0)).instances.size should be(1)
-    (docs() ~> sent(1)).instances.size should be(1)
-    (docs() ~> sent(2)).instances.size should be(1)
-    (docs() ~> sent(3)).instances.size should be(0)
+    (docs() ~> docToSen).size should be(3)
+    (docs() ~> sent(0)).size should be(1)
+    (docs() ~> sent(1)).size should be(1)
+    (docs() ~> sent(2)).size should be(1)
+    (docs() ~> sent(3)).size should be(0)
   }
 
   "document.populate" should "link tokens to sentences" in {
     import TestObject._
-    (sents() ~> senToTok).instances.size should be(23)
-    (docs() ~> sent(0) ~> senToTok).instances.size should be(6)
-    (docs() ~> sent(1) ~> senToTok).instances.size should be(8)
-    (docs() ~> sent(2) ~> senToTok).instances.size should be(9)
+    (sents() ~> senToTok).size should be(23)
+    (docs() ~> sent(0) ~> senToTok).size should be(6)
+    (docs() ~> sent(1) ~> senToTok).size should be(8)
+    (docs() ~> sent(2) ~> senToTok).size should be(9)
 
-    (docs() ~> sent(0) ~> pos(0)).instances should be(Set(Token(0, "Barack", 0)))
-    (docs() ~> sent(0) ~> pos(0) ~> next).instances should be(Set(Token(1, "Obama", 0)))
-    (docs() ~> sent(0) ~> pos(1) ~> prev).instances should be(Set(Token(0, "Barack", 0)))
-    (docs() ~> sent(0) ~> pos(0) ~> next ~> next ~> next).instances should be(Set(Token(3, "born", 0)))
+    (docs() ~> sent(0) ~> pos(0)) should be(Set(Token(0, "Barack", 0)))
+    (docs() ~> sent(0) ~> pos(0) ~> next) should be(Set(Token(1, "Obama", 0)))
+    (docs() ~> sent(0) ~> pos(1) ~> prev) should be(Set(Token(0, "Barack", 0)))
+    (docs() ~> sent(0) ~> pos(0) ~> next ~> next ~> next).toSet should be(Set(Token(3, "born", 0)))
 
-    (docs() ~> sent(0) ~> pos(0) ~> sameString).instances should be(Set(Token(0, "Barack", 0)))
-    (docs() ~> sent(0) ~> pos(1) ~> sameString).instances should be(Set(Token(1, "Obama", 0), Token(1, "Obama", 1)))
-    (docs() ~> sent(0) ~> pos(5) ~> sameString).instances should be(Set(Token(5, "Hawaii", 0), Token(6, "Hawaii", 1)))
+    (docs() ~> sent(0) ~> pos(0) ~> sameString) should be(Set(Token(0, "Barack", 0)))
+    (docs() ~> sent(0) ~> pos(1) ~> sameString) should be(Set(Token(1, "Obama", 0), Token(1, "Obama", 1)))
+    (docs() ~> sent(0) ~> pos(5) ~> sameString) should be(Set(Token(5, "Hawaii", 0), Token(6, "Hawaii", 1)))
   }
 }
