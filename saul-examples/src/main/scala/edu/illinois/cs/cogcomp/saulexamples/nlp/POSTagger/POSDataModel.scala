@@ -13,7 +13,7 @@ object POSDataModel extends DataModel {
   val featureCacheMap = collection.mutable.HashMap[String, collection.mutable.HashMap[Constituent, String]]()
 
   def getOrUpdate(property: String, cons: Constituent, discreteValue: () => String): String = {
-    if (featureCacheMap.contains(property) == false)
+    if (!featureCacheMap.contains(property))
       featureCacheMap(property) = collection.mutable.HashMap[Constituent, String]()
 
     featureCacheMap(property).get(cons) match {
@@ -38,7 +38,7 @@ object POSDataModel extends DataModel {
     ).getStringValue
   }
 
-  import POSTTaggerSensors._
+  import POSTaggerSensors._
 
   val constituentAfter = edge(tokens, tokens)
   constituentAfter.addSensor(getConstituentAfter _)

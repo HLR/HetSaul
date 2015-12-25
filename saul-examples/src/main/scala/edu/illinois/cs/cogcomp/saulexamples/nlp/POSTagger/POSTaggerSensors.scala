@@ -5,7 +5,7 @@ import edu.illinois.cs.cogcomp.core.datastructures.textannotation.Constituent
 
 import scala.collection.JavaConversions._
 
-object POSTTaggerSensors {
+object POSTaggerSensors {
   def getConstituentAfter(x: Constituent): Constituent = {
     val consAfter = x.getView.getConstituents.toList.filter(cons => cons.getStartSpan >= x.getEndSpan)
     if (consAfter.nonEmpty) consAfter.minBy(_.getEndSpan)

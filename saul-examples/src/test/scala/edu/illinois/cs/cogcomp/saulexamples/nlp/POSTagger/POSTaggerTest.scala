@@ -62,7 +62,7 @@ class POSTaggerTest extends FlatSpec with Matchers {
     // prediction labels
     POSTaggerKnown.isTraining = false
     POSDataModel.labelTwoAfter(consThe) should be("IN")
-    POSDataModel.labelshoul TwoAfter(consConstruction) should be("DT")
+    POSDataModel.labelTwoAfter(consConstruction) should be("DT")
     POSDataModel.labelTwoAfter(consOf) should be("NN")
 
     // labelOneAfter
