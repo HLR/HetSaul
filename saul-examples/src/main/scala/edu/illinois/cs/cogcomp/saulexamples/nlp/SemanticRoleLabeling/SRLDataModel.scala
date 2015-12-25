@@ -1,11 +1,10 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling
 
 import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
-import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{ Constituent, Relation, TextAnnotation, TreeView }
+import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{ Constituent, Relation, TextAnnotation }
 import edu.illinois.cs.cogcomp.core.datastructures.trees.Tree
 import edu.illinois.cs.cogcomp.edison.features.FeatureUtilities
 import edu.illinois.cs.cogcomp.edison.features.factory._
-import edu.illinois.cs.cogcomp.edison.utilities.CollinsHeadFinder
 import edu.illinois.cs.cogcomp.nlp.corpusreaders.CoNLLColumnFormatReader
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
 
@@ -117,15 +116,10 @@ object SRLDataModel extends DataModel {
 
   val headwordRelation = property[Relation]("head") {
     x: Relation =>
-      val parseView = x.getTarget.getTextAnnotation.getView(ViewNames.PARSE_GOLD).asInstanceOf[TreeView]
-      val phrase = parseView.getParsePhrase(x.getTarget);
-      val head = CollinsHeadFinder.instance.getHeadWordPosition(phrase);
-      // head
-      val s = x.getTarget.getTextAnnotation.getTokensInSpan(head, head + 1).mkString
-      s
-    //val headWordAndPos = new ParseHeadWordPOS(ViewNames.PARSE_GOLD)
-    // val discreteFeature: String = FeatureUtilities.getFeatureSet(headWordAndPos, x.getTarget).mkString
-    // discreteFeature
+
+      val headWordAndPos = new ParseHeadWordPOS(ViewNames.PARSE_GOLD)
+      val discreteFeature: String = FeatureUtilities.getFeatureSet(headWordAndPos, x.getTarget).mkString
+      discreteFeature
   }
 
   val syntacticFrameRelation = property[Relation]("synFrame") {

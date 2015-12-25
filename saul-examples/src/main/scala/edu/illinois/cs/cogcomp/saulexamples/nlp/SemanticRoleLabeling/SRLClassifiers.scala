@@ -25,10 +25,10 @@ object SRLClassifiers {
     def label = SRLDataModel.predicateSense
   }
 
-  object relationClassifier extends Learnable[Relation](SRLDataModel, parameters) {
+  object argumentTypeLearner extends Learnable[Relation](SRLDataModel, parameters) {
     def label = SRLDataModel.argumentLabel
     import SRLDataModel._
-    override def feature = using(subcategorizationRelation, phraseTypeRelation, headwordRelation, syntacticFrameRelation, pathRelation)
+    override def feature = using(headwordRelation) //, syntacticFrameRelation, pathRelation,subcategorizationRelation, phraseTypeRelation)
   }
 
 }

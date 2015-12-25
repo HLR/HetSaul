@@ -65,7 +65,7 @@ object SRLApplication {
     val relationCandidates = for { x <- predicates().slice(0, 5); y <- arguments().slice(0, 5) } yield new Relation("candidate", x, y, 0.0)
 
     relations.populate(relationCandidates, train = false)
-    relationClassifier.learn(3)
-    relationClassifier.crossValidation(3)
+    argumentTypeLearner.learn(3)
+    argumentTypeLearner.crossValidation(3)
   }
 }

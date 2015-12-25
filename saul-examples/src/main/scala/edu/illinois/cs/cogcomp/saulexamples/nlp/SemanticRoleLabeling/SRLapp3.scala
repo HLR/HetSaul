@@ -3,7 +3,7 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{ Constituent, Relation }
 import edu.illinois.cs.cogcomp.core.datastructures.{ IntPair, ViewNames }
 import edu.illinois.cs.cogcomp.saulexamples.data.XuPalmerCandidateGenerator
-import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLClassifiers.relationClassifier
+import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLClassifiers.argumentTypeLearner
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLDataModel_all._
 
 import scala.collection.JavaConversions._
@@ -83,6 +83,6 @@ object SRLapp3 extends App {
   //  println("negative relation candidates:" + negativeRelationCandidates.size)
   println("all relations number after population:" + SRLDataModel_all.relations().size)
 
-  relationClassifier.crossValidation(3)
+  argumentTypeLearner.crossValidation(3)
 
 }
