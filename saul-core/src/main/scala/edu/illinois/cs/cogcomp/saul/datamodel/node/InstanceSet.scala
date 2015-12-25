@@ -3,6 +3,8 @@ package edu.illinois.cs.cogcomp.saul.datamodel.node
 import edu.illinois.cs.cogcomp.saul.datamodel.edge.Edge
 import edu.illinois.cs.cogcomp.saul.datamodel.property.TypedProperty
 
+import scala.collection.mutable.ArrayBuffer
+
 trait InstanceSet[T <: AnyRef] extends Iterable[T] {
   self =>
   def instances: Iterable[T]
@@ -12,7 +14,7 @@ trait InstanceSet[T <: AnyRef] extends Iterable[T] {
     assert(node == edge.forward.from)
     new InstanceSet[U] {
       val node: Node[U] = edge.forward.to
-      val instances: Iterable[U] = self.instances.flatMap(t => edge.forward.neighborsOf(t))
+      val instances: Iterable[U] = self.instances.flatMap(t => edge.forward.neighborsOf(t)).toSet
     }
   }
 
@@ -27,6 +29,13 @@ trait InstanceSet[T <: AnyRef] extends Iterable[T] {
   }
 
   override def iterator: Iterator[T] = instances.iterator
+
+  override def hashCode(): Int = this.toSet.hashCode()
+
+  override def equals(obj: scala.Any): Boolean = obj match {
+    case s: Iterable[T] => s.toSet == this.toSet
+    case _ => super.equals(obj)
+  }
 }
 
 case class BasicSet[T <: AnyRef](node: Node[T], instances: Iterable[T]) extends InstanceSet[T]
@@ -43,9 +52,13 @@ trait PropertySet[T <: AnyRef, V] extends Iterable[V] {
   self =>
   def property: TypedProperty[T, V]
   def underlying: InstanceSet[T]
-  lazy val instances: Iterable[V] = underlying.instances.toSeq.map(property(_))
+  lazy val propValues: Iterable[V] = {
+    val ab = new ArrayBuffer[V]
+    ab ++= underlying.map(property(_))
+    ab
+  }
 
-  override def iterator: Iterator[V] = instances.iterator
+  override def iterator: Iterator[V] = propValues.iterator
 
-  def counts = instances.groupBy(x => x).map(p => p._1 -> p._2.size).toMap
+  def counts = propValues.groupBy(x => x).map(p => p._1 -> p._2.size).toMap
 }
