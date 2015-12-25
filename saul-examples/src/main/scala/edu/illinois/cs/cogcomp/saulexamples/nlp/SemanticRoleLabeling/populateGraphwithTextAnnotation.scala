@@ -83,20 +83,21 @@ object populateGraphwithTextAnnotation extends App {
 
     def addViewAndFilter(tAll: List[TextAnnotation]): List[TextAnnotation] = {
       var filteredTa = List[TextAnnotation]()
-      tAll.foreach { ta =>
-        println(ta.getAvailableViews)
-        // try {
-        annotatorService.addView(ta, ViewNames.LEMMA)
-        // annotatorService.addView(ta, ViewNames.NER_CONLL)
-        // annotatorService.addView(ta, ViewNames.SHALLOW_PARSE)
-        // annotatorService.addView(ta, ViewNames.PARSE_STANFORD)
-        val tr: Tree[String] = ParseUtils.snipNullNodes(ta.getView(ViewNames.PARSE_GOLD).asInstanceOf[TreeView].getTree(0))
-        ta.getView(ViewNames.PARSE_GOLD).asInstanceOf[TreeView].setParseTree(0, tr)
+      tAll.zipWithIndex.foreach {
+        case (ta, idx) =>
+          println("Sentence:", idx)
+          // try {
+          annotatorService.addView(ta, ViewNames.LEMMA)
+          // annotatorService.addView(ta, ViewNames.NER_CONLL)
+          // annotatorService.addView(ta, ViewNames.SHALLOW_PARSE)
+          // annotatorService.addView(ta, ViewNames.PARSE_STANFORD)
+          val tr: Tree[String] = ParseUtils.snipNullNodes(ta.getView(ViewNames.PARSE_GOLD).asInstanceOf[TreeView].getTree(0))
+          ta.getView(ViewNames.PARSE_GOLD).asInstanceOf[TreeView].setParseTree(0, tr)
 
-        val parseView = new TreeView(ViewNames.PARSE_GOLD, ta)
-        parseView.setParseTree(0, ParseUtils.snipNullNodes(ta.getView(ViewNames.PARSE_GOLD).asInstanceOf[TreeView].getTree(0)))
-        ta.addView(ViewNames.PARSE_GOLD, parseView)
-        filteredTa = ta :: filteredTa
+          val parseView = new TreeView(ViewNames.PARSE_GOLD, ta)
+          parseView.setParseTree(0, ParseUtils.snipNullNodes(ta.getView(ViewNames.PARSE_GOLD).asInstanceOf[TreeView].getTree(0)))
+          ta.addView(ViewNames.PARSE_GOLD, parseView)
+          filteredTa = ta :: filteredTa
         //        } catch {
         //          case _ => {
         //            println("skipping the annotation! ")
@@ -114,7 +115,7 @@ object populateGraphwithTextAnnotation extends App {
       rm.getString(ExamplesConfigurator.PROPBANK_HOME.key), Array("00") //, "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22")
     )
     trainReader.readData()
-
+    println("Now reading the test")
     val testReader = new SRLDataReader(
       rm.getString(ExamplesConfigurator.TREEBANK_HOME.key),
       rm.getString(ExamplesConfigurator.PROPBANK_HOME.key), Array("23")
