@@ -5,16 +5,15 @@ import java.nio.file._
 
 import edu.illinois.cs.cogcomp.nlp.tokenizer.IllinoisTokenizer
 import edu.illinois.cs.cogcomp.nlp.utility.CcgTextAnnotationBuilder
-import edu.illinois.cs.cogcomp.reader.ace2005.annotationStructure.{ACEDocument, ACEDocumentAnnotation}
-import edu.illinois.cs.cogcomp.reader.ace2005.documentReader.{AceFileProcessor, ReadACEDocuments, ReadACEAnnotation}
+import edu.illinois.cs.cogcomp.reader.ace2005.annotationStructure.{ ACEDocument, ACEDocumentAnnotation }
+import edu.illinois.cs.cogcomp.reader.ace2005.documentReader.{ AceFileProcessor, ReadACEDocuments, ReadACEAnnotation }
 import edu.illinois.cs.cogcomp.reader.commondatastructure.XMLException
 import edu.illinois.cs.cogcomp.saulexamples.nlp.ace.Types._
 
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 
-/**
-  * @author sameer
+/** @author sameer
   * @since 12/24/15.
   */
 class IllinoisReader {
@@ -36,7 +35,7 @@ class IllinoisReader {
     val aceDoc = stream.readObject().asInstanceOf[ACEDocument]
     assert(aceDoc.taList.size() == 1, path)
     val ments = readMents(aceDoc)
-    for(ta <- aceDoc.taList.map(_.getTa)) {
+    for (ta <- aceDoc.taList.map(_.getTa)) {
       val id = ta.getId
       val sents = ta.sentences().map(s => {
         val ms = ments.filter(m => m.span._1 >= s.getStartSpan && m.span._2 <= s.getEndSpan).map(m => Mention(m.span._1, m.span._2))
@@ -54,27 +53,26 @@ class IllinoisReader {
     new File(baseDir).list().map(baseDir + _).flatMap(f => read(f))
 }
 
-
 object TestACEReader extends App {
   (new IllinoisReader).readAll("/Users/sameer/Work/data/ace/ace-2005/data/cache/")
 }
 
 object AnnotateACE extends App {
 
-  def annotateAllDocument( functor: AceFileProcessor,  inputFolderStr:String, outputFolderStr:String, dtdFile: File) {
+  def annotateAllDocument(functor: AceFileProcessor, inputFolderStr: String, outputFolderStr: String, dtdFile: File) {
     val var20 = new File(inputFolderStr)
     val subFolderList = var20.listFiles().filter(f => f.getName == "nw")
 
-    for(folderIndex <- 0 until subFolderList.length) {
+    for (folderIndex <- 0 until subFolderList.length) {
       val filter = new FilenameFilter() {
-        def accept(directory:File , fileName:String ) = fileName.endsWith(".apf.xml")
+        def accept(directory: File, fileName: String) = fileName.endsWith(".apf.xml")
       };
       val subFolderEntry = subFolderList(folderIndex)
       val labelFolder = new File(subFolderEntry.getAbsolutePath() + "/adj");
       val fileList = labelFolder.listFiles(filter);
       Files.copy(Paths.get(dtdFile.getAbsolutePath), Paths.get(labelFolder.getAbsolutePath + "/" + dtdFile.getName), StandardCopyOption.REPLACE_EXISTING)
 
-      for(fileID <- 0 until fileList.length) {
+      for (fileID <- 0 until fileList.length) {
         val annotationFile = fileList(fileID).getAbsolutePath();
         System.err.println("reading ace annotation from \'" + annotationFile + "\'...");
         var annotationACE: ACEDocumentAnnotation = null;
@@ -86,8 +84,8 @@ object AnnotateACE extends App {
         }
 
         val outputFile = new File(outputFolderStr + annotationACE.id + ".ta");
-        if(!outputFile.exists()) {
-          if(annotationFile.contains("rec.games.chess.politics_20041216.1047")) {
+        if (!outputFile.exists()) {
+          if (annotationFile.contains("rec.games.chess.politics_20041216.1047")) {
             System.out.println("[DEBUG]");
           }
 
