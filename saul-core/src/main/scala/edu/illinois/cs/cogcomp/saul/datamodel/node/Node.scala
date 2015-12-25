@@ -11,16 +11,16 @@ import scala.collection.mutable
 import scala.reflect.ClassTag
 
 /** A Node E is an instances of base types T */
-class Node[T <: AnyRef](val tag: ClassTag[T]) {
+class Node[T <: AnyRef](val keyFunc: T => Any = (x: T) => x, val tag: ClassTag[T]) {
 
   val outgoing = new ArrayBuffer[Edge[T, _]]()
   val incoming = new ArrayBuffer[Edge[_, T]]()
 
   val joinNodes = new ArrayBuffer[JoinNode[_, _]]()
 
-  private val collections = MutableSet[T]()
+  private val collection = new mutable.LinkedHashMap[Any, T]()
 
-  def getAllInstances: Iterable[T] = this.collections
+  def getAllInstances: Iterable[T] = this.collection.values
 
   val trainingSet = MutableSet[T]()
 
@@ -34,8 +34,8 @@ class Node[T <: AnyRef](val tag: ClassTag[T]) {
   val reverseOrderingMap = MutableMap[T, Int]()
 
   def filterNode(property: DiscreteProperty[T], value: String): Node[T] = {
-    val node = new Node[T](this.tag)
-    node populate collections.filter {
+    val node = new Node[T](this.keyFunc, this.tag)
+    node populate collection.values.filter {
       property.sensor(_) == value
     }.toSeq
     node
@@ -55,70 +55,34 @@ class Node[T <: AnyRef](val tag: ClassTag[T]) {
     ret
   }
 
-  def contains(t: T): Boolean = collections(t)
-  /** @param withChain equal to 0 populates only one node,
-    *                  equal to 1 populates only the edges,
-    *                  equal to 2 populates both node and related edges
-    */
-  def addInstance(t: T, train: Boolean = true, withChain: Int = 2) = {
+  def contains(t: T): Boolean = collection.contains(keyFunc(t))
+
+  def addInstance(t: T, train: Boolean = true) = {
     if (!contains(t)) {
       val order = incrementCount()
-      withChain match {
-        case 0 => {
-          if (train) this.trainingSet += t else this.testingSet += t
-          this.collections += t
-          this.orderingMap += (order -> t)
-          this.reverseOrderingMap += (t -> order)
-        }
-        case 1 => {
-          outgoing.foreach(_.populateUsingFrom(t, train))
-          incoming.foreach(_.populateUsingTo(t, train))
-          joinNodes.foreach(_.addFromChild(this, t, train))
-        }
-        case 2 => {
-          if (train) this.trainingSet += t else this.testingSet += t
-          this.collections += t
-          this.orderingMap += (order -> t)
-          this.reverseOrderingMap += (t -> order)
-          outgoing.foreach(_.populateUsingFrom(t, train))
-          incoming.foreach(_.populateUsingTo(t, train))
-          joinNodes.foreach(_.addFromChild(this, t, train))
-
-        }
-        case _ => "Error: the withChain parameter should be a integer in 0:2"
-
-      }
+      if (train) this.trainingSet += t else this.testingSet += t
+      this.collection(keyFunc(t)) = t
+      this.orderingMap += (order -> t)
+      this.reverseOrderingMap += (t -> order)
+      outgoing.foreach(_.populateUsingFrom(t, train))
+      incoming.foreach(_.populateUsingTo(t, train))
+      joinNodes.foreach(_.addFromChild(this, t, train))
     }
   }
-  def removeInstance(t: T, train: Boolean = true) = {
-    if (contains(t)) {
-      val order = decreaseCount()
-      if (train) this.trainingSet -= t else this.testingSet -= t
-      this.collections -= t
-      this.orderingMap -= (order)
-      this.reverseOrderingMap -= (t)
-      //  outgoing.foreach(_.populateUsingFrom(t, train))
-      //  incoming.foreach(_.populateUsingTo(t, train))
-      //  joinNodes.foreach(_.addFromChild(this, t, train))
 
-    }
-  }
   /** Operator for adding a sequence of T into my table. */
-  def populate(ts: Iterable[T], train: Boolean = true, withChain: Int = 2) = {
-    ts.foreach(x => {
-      addInstance(x, train, withChain)
-      println(x.toString)
-    })
+  def populate(ts: Iterable[T], train: Boolean = true) = {
+    ts.foreach(addInstance(_, train))
   }
-  def un_populate(ts: Iterable[T], train: Boolean = true) = {
-    ts.foreach(removeInstance(_, train))
-  }
+
   /** Relational operators */
   val nodeOfTypeT = this
 
   def apply() = NodeSet(this)
   def apply(t: T) = SingletonSet(this, t)
   def apply(ts: Iterable[T]) = BasicSet(this, ts)
+
+  def get(k: Any) = SingletonSet(this, collection(k))
 
   def getWithRelativePosition(t: T, relativePos: Int): Option[T] = {
     getWithRelativePosition(t, relativePos, Nil)
@@ -263,7 +227,7 @@ class Node[T <: AnyRef](val tag: ClassTag[T]) {
   }
 }
 
-class JoinNode[A <: AnyRef, B <: AnyRef](val na: Node[A], val nb: Node[B], matcher: (A, B) => Boolean, tag: ClassTag[(A, B)]) extends Node[(A, B)](tag) {
+class JoinNode[A <: AnyRef, B <: AnyRef](val na: Node[A], val nb: Node[B], matcher: (A, B) => Boolean, tag: ClassTag[(A, B)]) extends Node[(A, B)](p => na.keyFunc(p._1) -> nb.keyFunc(p._2), tag) {
 
   def addFromChild[T <: AnyRef](node: Node[T], t: T, train: Boolean = true) = {
     node match {
@@ -288,7 +252,7 @@ class JoinNode[A <: AnyRef, B <: AnyRef](val na: Node[A], val nb: Node[B], match
     }
   }
 
-  override def addInstance(t: (A, B), train: Boolean, withChain: Int): Unit = {
+  override def addInstance(t: (A, B), train: Boolean): Unit = {
     assert(matcher(t._1, t._2))
     if (!contains(t)) {
       super.addInstance(t, train)
