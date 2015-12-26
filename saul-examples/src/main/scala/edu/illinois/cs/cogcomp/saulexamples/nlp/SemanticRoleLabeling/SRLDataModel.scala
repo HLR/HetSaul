@@ -134,4 +134,20 @@ object SRLDataModel extends DataModel {
       val discreteFeature: String = FeatureUtilities.getFeatureSet(parspath, x.getTarget).mkString
       discreteFeature
   }
+  val predPosTag = property[Relation]("pPos") {
+    x: Relation => x.getSource.getTextAnnotation.getView(ViewNames.POS).getConstituentsCovering(x.getSource).get(0).getLabel
+  }
+  val predLemma = property[Relation]("pLem") {
+    x: Relation =>
+      val l = x.getSource.getTextAnnotation.getView(ViewNames.LEMMA).getConstituentsCovering(x.getSource).get(0).getLabel
+      l
+  }
+  val linearPosition = property[Relation]("position") {
+    x: Relation =>
+      val linposition = new LinearPosition()
+      val discreteFeature: String = FeatureUtilities.getFeatureSet(linposition, x.getTarget).mkString
+      discreteFeature
+
+  }
+
 }

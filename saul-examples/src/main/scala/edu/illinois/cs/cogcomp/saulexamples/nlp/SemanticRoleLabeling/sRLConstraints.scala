@@ -1,7 +1,7 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling
 
 import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
-import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{Constituent, TokenLabelView, Relation, TextAnnotation}
+import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{ Constituent, TokenLabelView, Relation, TextAnnotation }
 import edu.illinois.cs.cogcomp.lbjava.infer.{ FirstOrderConstant, FirstOrderConstraint }
 import edu.illinois.cs.cogcomp.saul.classifier.ConstrainedClassifier
 import edu.illinois.cs.cogcomp.saul.constraint.ConstraintTypeConversion._
@@ -20,13 +20,12 @@ object sRLConstraints {
         (sentences(x) ~> sentencesToRelations ~> relationsToPredicates).foreach {
           y =>
             {
-              val argCandList= Xucandisates(y)
+              val argCandList = Xucandisates(y)
 
-              x.getView(ViewNames.TOKENS).asInstanceOf[TokenLabelView].getConstituents.toList.foreach{
+              x.getView(ViewNames.TOKENS).asInstanceOf[TokenLabelView].getConstituents.toList.foreach {
                 t: Constituent =>
-                  val contains= argCandList.filter( x => x.getTarget.doesConstituentCover(t))
-                  a= a &&& (contains.toList._atMost(1)
-                  ({p: Relation =>  (argumentTypeLearner on p).is("none")unary_! } ))
+                  val contains = argCandList.filter(x => x.getTarget.doesConstituentCover(t))
+                  a = a &&& (contains.toList._atMost(1)({ p: Relation => (argumentTypeLearner on p).is("none")unary_! }))
               }
             }
         }

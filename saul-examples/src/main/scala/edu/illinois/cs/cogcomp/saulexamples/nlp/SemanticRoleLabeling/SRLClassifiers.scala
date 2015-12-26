@@ -28,7 +28,7 @@ object SRLClassifiers {
   object argumentTypeLearner extends Learnable[Relation](SRLDataModel, parameters) {
     def label = SRLDataModel.argumentLabel
     import SRLDataModel._
-    override def feature = using(headwordRelation) //, syntacticFrameRelation, pathRelation,subcategorizationRelation, phraseTypeRelation)
+    override def feature = using(headwordRelation, syntacticFrameRelation, pathRelation, subcategorizationRelation, phraseTypeRelation, predPosTag, predLemma, linearPosition)
   }
 
 }

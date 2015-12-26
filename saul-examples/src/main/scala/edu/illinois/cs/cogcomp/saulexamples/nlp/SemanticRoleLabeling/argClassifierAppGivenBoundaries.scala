@@ -7,7 +7,7 @@ import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLClassifi
 object argClassifierAppGivenBoundaries extends App {
   populateGraphwithTextAnnotation(SRLDataModel, SRLDataModel.sentences)
 
-  argumentTypeLearner.learn(5)
+  argumentTypeLearner.learn(100)
   print("finished")
   argumentTypeLearner.test()
 }
