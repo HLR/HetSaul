@@ -20,7 +20,7 @@ object sRLConstraints {
         (sentences(x) ~> sentencesToRelations ~> relationsToPredicates).foreach {
           y =>
             {
-              val argCandList = Xucandisates(y)
+              val argCandList = Xucandidates(y)
 
               x.getView(ViewNames.TOKENS).asInstanceOf[TokenLabelView].getConstituents.toList.foreach {
                 t: Constituent =>

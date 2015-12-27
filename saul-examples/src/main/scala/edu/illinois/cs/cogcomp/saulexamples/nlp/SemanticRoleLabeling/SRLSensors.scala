@@ -21,6 +21,7 @@ object SRLSensors {
     val parseViewName: String = ViewNames.PARSE_GOLD
     ta.getView(parseViewName).asInstanceOf[TreeView].getConstituentTree(0)
   }
+
   def textAnnotationToStringTree(ta: TextAnnotation): Tree[String] = {
     // We assume that there is only 1 sentence per TextAnnotation
     val parseViewName: String = ViewNames.PARSE_GOLD
@@ -29,11 +30,6 @@ object SRLSensors {
 
   def textAnnotationToRelation(ta: TextAnnotation): List[Relation] = {
     ta.getView(ViewNames.SRL_VERB).getRelations.toList
-  }
-
-  /** Property sensor */
-  def lemmatizer(c: Constituent): String = {
-    c.getLabel
   }
 
   /** Returns all the subtrees that are suitable arguments:

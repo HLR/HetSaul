@@ -112,7 +112,7 @@ object populateGraphwithTextAnnotation extends App {
 
     val trainReader = new SRLDataReader(
       rm.getString(ExamplesConfigurator.TREEBANK_HOME.key),
-      rm.getString(ExamplesConfigurator.PROPBANK_HOME.key), Array("02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22")
+      rm.getString(ExamplesConfigurator.PROPBANK_HOME.key), Array("02") //, "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22")
     )
     trainReader.readData()
     println("Now reading the test")
@@ -121,13 +121,13 @@ object populateGraphwithTextAnnotation extends App {
       rm.getString(ExamplesConfigurator.PROPBANK_HOME.key), Array("23")
     )
     testReader.readData()
-    val taAll = trainReader.textAnnotations //.slice(0,5)
+    val taAll = trainReader.textAnnotations.slice(0, 5)
     println("all" + taAll.toList.size)
     val filteredTa = addViewAndFilter(taAll.toList)
     print(filteredTa.size)
     // addViewToCollection(taAll.asInstanceOf[ListBuffer[TextAnnotation]])
 
-    val testAll = testReader.textAnnotations //.slice(0,5)
+    val testAll = testReader.textAnnotations.slice(0, 5)
 
     val filteredTest = addViewAndFilter(testAll.toList)
 

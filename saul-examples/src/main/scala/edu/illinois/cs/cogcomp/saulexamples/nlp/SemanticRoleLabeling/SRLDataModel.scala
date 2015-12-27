@@ -40,8 +40,8 @@ object SRLDataModel extends DataModel {
 
   sentencesToRelations.addSensor(SRLSensors.textAnnotationToRelation _)
   //  sentencesToTrees.addSensor(SRLSensors.textAnnotationToTree _)
-  //  relationsToArguments.addSensor(SRLSensors.relToArgument _)
-  //  relationsToPredicates.addSensor(SRLSensors.relToPredicate _)
+  relationsToArguments.addSensor(SRLSensors.relToArgument _)
+  relationsToPredicates.addSensor(SRLSensors.relToPredicate _)
   //  sentencesToTokens.addSensor(commonSensors.textAnnotationToTokens _)
   sentencesTostringTree.addSensor(SRLSensors.textAnnotationToStringTree _)
 
