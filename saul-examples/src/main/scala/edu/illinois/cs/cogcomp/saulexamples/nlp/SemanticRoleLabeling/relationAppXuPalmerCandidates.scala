@@ -1,8 +1,10 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling
 
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{ Constituent, Relation }
+import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
 import edu.illinois.cs.cogcomp.saulexamples.data.XuPalmerCandidateGenerator
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLClassifiers.argumentTypeLearner
+import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLConstraintClassifiers.argTypeConstraintClassifier
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLDataModel._
 
 import scala.collection.JavaConversions._
@@ -10,7 +12,7 @@ import scala.collection.JavaConversions._
   */
 object relationAppXuPalmerCandidates extends App {
 
-  def Xucandidates(x: Constituent): Iterable[Relation] = {
+  def Xucandidates(x: Constituent,sRLDataModel: DataModel): Iterable[Relation] = {
     val p = t.generateSaulCandidates(x, (sentences(x.getTextAnnotation) ~> sentencesTostringTree).head)
     p.map(y => new Relation("candidate", x.cloneForNewView(x.getViewName), y.cloneForNewView(y.getViewName), 0.0))
   }
@@ -57,8 +59,11 @@ object relationAppXuPalmerCandidates extends App {
   //  println("negative relation candidates:" + negativeRelationCandidates.size)
   println("all relations number after population:" + SRLDataModel.relations().size)
 
-  argumentTypeLearner.learn(100)
-  print("finished")
+  argumentTypeLearner.learn(3)
+  println("Training finished")
+  println("Test multi class:")
   argumentTypeLearner.test()
+  println("Test constrained multi class:")
+  argTypeConstraintClassifier.test()
 
 }

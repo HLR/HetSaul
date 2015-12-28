@@ -7,6 +7,7 @@ import edu.illinois.cs.cogcomp.edison.features.FeatureUtilities
 import edu.illinois.cs.cogcomp.edison.features.factory._
 import edu.illinois.cs.cogcomp.nlp.corpusreaders.CoNLLColumnFormatReader
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
+import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLSensors._
 
 import scala.collection.JavaConversions._
 
@@ -38,12 +39,14 @@ object SRLDataModel extends DataModel {
 
   //TODO PARSE_GOLD is only good for training; for testing we need PARSE_STANFORD or PARSE_CHARNIAK
 
-  sentencesToRelations.addSensor(SRLSensors.textAnnotationToRelation _)
+  sentencesToRelations.addSensor(textAnnotationToRelation _)
+  sentencesToRelations.addSensor(textAnnotationToRelationMatch _)
   //  sentencesToTrees.addSensor(SRLSensors.textAnnotationToTree _)
-  relationsToArguments.addSensor(SRLSensors.relToArgument _)
-  relationsToPredicates.addSensor(SRLSensors.relToPredicate _)
+  relationsToArguments.addSensor(relToArgument _)
+  relationsToPredicates.addSensor(relToPredicate _)
+
   //  sentencesToTokens.addSensor(commonSensors.textAnnotationToTokens _)
-  sentencesTostringTree.addSensor(SRLSensors.textAnnotationToStringTree _)
+  sentencesTostringTree.addSensor(textAnnotationToStringTree _)
 
   val isPredicate = property[Constituent]("p") {
     x: Constituent => x.getLabel.equals("Predicate")
