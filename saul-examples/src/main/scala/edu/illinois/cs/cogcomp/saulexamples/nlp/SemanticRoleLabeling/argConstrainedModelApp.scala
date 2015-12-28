@@ -7,22 +7,20 @@ import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLConstrai
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLDataModel._
 
 import scala.collection.JavaConversions._
-/**
- * Created by Parisa on 12/27/15.
- */
-object argConstrainedModelApp extends App{
+/** Created by Parisa on 12/27/15.
+  */
+object argConstrainedModelApp extends App {
 
   populateGraphwithTextAnnotation(SRLDataModel, SRLDataModel.sentences)
   val t = new XuPalmerCandidateGenerator(null)
 
-
   val XuPalmerCandidateArgsTesting = predicates.getTestingInstances.flatMap(
 
     (x =>
-    {
-      val p = t.generateSaulCandidates(x, (sentences(x.getTextAnnotation) ~> sentencesTostringTree).head)
-      p.map(y => new Relation("candidate", x.cloneForNewView(x.getViewName), y.cloneForNewView(y.getViewName), 0.0))
-    })
+      {
+        val p = t.generateSaulCandidates(x, (sentences(x.getTextAnnotation) ~> sentencesTostringTree).head)
+        p.map(y => new Relation("candidate", x.cloneForNewView(x.getViewName), y.cloneForNewView(y.getViewName), 0.0))
+      })
 
   )
   val a = relations() ~> relationsToArguments prop address
@@ -33,7 +31,7 @@ object argConstrainedModelApp extends App{
 
   println("all relations number after population:" + SRLDataModel.relations().size)
 
- // argumentTypeLearner.learn(50)
+  // argumentTypeLearner.learn(50)
 
   argumentTypeLearner.test()
 

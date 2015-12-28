@@ -7,9 +7,9 @@ import edu.illinois.cs.cogcomp.core.datastructures.trees.Tree
 import scala.collection.JavaConversions._
 
 object SRLSensors {
- def sentenceToGoldPredicates(ta: TextAnnotation) : List[Constituent] = {
-   ta.getView(ViewNames.SRL_VERB).asInstanceOf[PredicateArgumentView].getPredicates.toList
- }
+  def sentenceToGoldPredicates(ta: TextAnnotation): List[Constituent] = {
+    ta.getView(ViewNames.SRL_VERB).asInstanceOf[PredicateArgumentView].getPredicates.toList
+  }
   def relToPredicate(rel: Relation): Constituent = {
     rel.getSource
   }
@@ -34,9 +34,9 @@ object SRLSensors {
     ta.getView(ViewNames.SRL_VERB).getRelations.toList
   }
   def textAnnotationToRelationMatch(ta: TextAnnotation, r: Relation): Boolean = {
-    return(ta.getCorpusId+ ":"+ta.getId).matches(r.getSource.getTextAnnotation.getCorpusId+":"+r.getSource.getTextAnnotation.getId)
+    return (ta.getCorpusId + ":" + ta.getId).matches(r.getSource.getTextAnnotation.getCorpusId + ":" + r.getSource.getTextAnnotation.getId)
 
-   // ta.getView(ViewNames.SRL_VERB).getRelations.toList
+    // ta.getView(ViewNames.SRL_VERB).getRelations.toList
   }
   /** Returns all the subtrees that are suitable arguments:
     * It excludes punctuations and traces (which have a 0-length span)

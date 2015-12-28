@@ -121,7 +121,7 @@ class LHSFirstOrderEqualityWithValueLBP(cls: Learner, t: AnyRef) {
     new FirstOrderEqualityWithVariable(true, lbjRepr, v.lbjRepr)
   }
   def isNot(v: String): FirstOrderConstraint = {
-    new FirstOrderNegation(new FirstOrderEqualityWithValue(true,lbjRepr, v))
+    new FirstOrderNegation(new FirstOrderEqualityWithValue(true, lbjRepr, v))
   }
 
   def isTrue: FirstOrderConstraint = is("true")

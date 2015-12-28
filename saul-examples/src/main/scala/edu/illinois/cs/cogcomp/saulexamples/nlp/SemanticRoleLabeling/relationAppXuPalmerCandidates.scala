@@ -12,7 +12,7 @@ import scala.collection.JavaConversions._
   */
 object relationAppXuPalmerCandidates extends App {
 
-  def Xucandidates(x: Constituent,sRLDataModel: DataModel): Iterable[Relation] = {
+  def Xucandidates(x: Constituent, sRLDataModel: DataModel): Iterable[Relation] = {
     val p = t.generateSaulCandidates(x, (sentences(x.getTextAnnotation) ~> sentencesTostringTree).head)
     p.map(y => new Relation("candidate", x.cloneForNewView(x.getViewName), y.cloneForNewView(y.getViewName), 0.0))
   }
