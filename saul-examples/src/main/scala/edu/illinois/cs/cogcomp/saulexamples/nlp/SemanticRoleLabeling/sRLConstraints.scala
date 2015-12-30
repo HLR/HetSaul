@@ -13,7 +13,8 @@ import scala.collection.JavaConversions._
 /** Created by Parisa on 12/23/15.
   */
 object sRLConstraints {
-  val noOverlap = ConstrainedClassifier.constraintOf[TextAnnotation]( // here this constituent is a sentence
+  val noOverlap = ConstrainedClassifier.constraintOf[TextAnnotation] {
+    // here this constituent is a sentence
 
     {
       var a: FirstOrderConstraint = new FirstOrderConstant(true)
@@ -31,14 +32,42 @@ object sRLConstraints {
 
               x.getView(ViewNames.TOKENS).asInstanceOf[TokenLabelView].getConstituents.toList.foreach {
                 t: Constituent =>
-                  val contains = argCandList.filter(x => x.getTarget.doesConstituentCover(t))
-                  a = a &&& (contains.toList._atMost(1)({ p: Relation => (argumentTypeLearner on p).isNot("candidate") }))
+                  {
+                    val contains = argCandList.filter(z => z.getTarget.doesConstituentCover(t))
+                    a = a &&& (contains.toList._atMost(1)({ p: Relation => (argumentTypeLearner on p).is("candidate") }))
+                  }
               }
             }
         }
       }
       a
     }
-  )
-}
+  } //end of NoOverlap constraint
 
+  val noDuplicate = ConstrainedClassifier.constraintOf[TextAnnotation] {
+    var a: FirstOrderConstraint = new FirstOrderConstant(true)
+    val t = new XuPalmerCandidateGenerator(null)
+    x: TextAnnotation => {
+      //using TextAnnotation
+      x.getView(ViewNames.SRL_VERB).asInstanceOf[PredicateArgumentView].getPredicates.foreach {
+        //using the graph
+        //(sentences(x) ~> sentencesToRelations ~> relationsToPredicates).foreach {
+        y =>
+          {
+            val argCandList = (t.generateSaulCandidates(y, (sentences(y.getTextAnnotation) ~> sentencesTostringTree).head)).
+              map(y => new Relation("candidate", y.cloneForNewView(y.getViewName), y.cloneForNewView(y.getViewName), 0.0))
+            //Xucandidates(y)
+
+            x.getView(ViewNames.TOKENS).asInstanceOf[TokenLabelView].getConstituents.toList.foreach {
+              t: Constituent =>
+                {
+                  val contains = argCandList.filter(z => z.getTarget.doesConstituentCover(t))
+                  a = a &&& (contains.toList._atMost(1)({ p: Relation => (argumentTypeLearner on p).is("candidate") }))
+                }
+            }
+          }
+      }
+    }
+    a
+  }
+}

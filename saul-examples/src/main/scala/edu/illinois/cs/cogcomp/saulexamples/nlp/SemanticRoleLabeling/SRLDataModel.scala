@@ -58,6 +58,9 @@ object SRLDataModel extends DataModel {
   val isArgument = property[Constituent]("a") {
     x: Constituent => x.getLabel.equals("Argument")
   }
+  val isArgumentXu = property[Relation]("a") {
+    x: Relation => !x.getRelationName.equals("candidate")
+  }
   val argumentLabel = property[Relation]("l") {
     r: Relation => r.getRelationName
   }

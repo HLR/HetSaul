@@ -30,5 +30,8 @@ object SRLClassifiers {
     import SRLDataModel._
     override def feature = using(headwordRelation, syntacticFrameRelation, pathRelation, subcategorizationRelation, phraseTypeRelation, predPosTag, predLemma, linearPosition)
   }
+  object argumentXuIdentifierGivenApredicate extends Learnable[Relation](SRLDataModel, parameters) {
+    def label = SRLDataModel.isArgumentXu
+  }
 
 }

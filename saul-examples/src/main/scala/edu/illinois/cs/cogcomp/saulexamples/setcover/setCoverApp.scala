@@ -8,13 +8,13 @@ import scala.collection.JavaConversions._
 object setCoverApp {
 
   val trainingData = new SetCoverSolverDataModel
-  val cities = new City("./data/SetCover/example.txt")
+  val cities = new City("../data/SetCover/example.txt")
   val ns = cities.getNeighborhoods.toList
 
   val containsStationConstrint = ConstrainedClassifier.constraintOf[City]({
     x: City =>
       val containStation = new ContainsStation()
-      x.getNeighborhoods _forAll {
+      x.getNeighborhoods._atLeast(2) {
         n: Neighborhood =>
           (containStation on n isTrue) ||| (
             n.getNeighbors _exists {

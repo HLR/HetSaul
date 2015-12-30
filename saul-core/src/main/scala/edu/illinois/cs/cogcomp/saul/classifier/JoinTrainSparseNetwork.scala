@@ -71,14 +71,17 @@ object JoinTrainSparseNetwork {
     // forall members in collection of the head (dm.t) do
 
     println("Training iteration: " + it)
+    if (it == 38)
+      println("STOP")
     if (it == 0) {
       // Done
     } else {
       val allHeads = dm.getNodeWithType[HEAD].getTrainingInstances
 
-      allHeads foreach {
-        h =>
+      allHeads.zipWithIndex.foreach {
+        case (h, idx) =>
           {
+            println("example number:" + idx)
             cls.foreach {
               case c: ConstrainedClassifier[_, HEAD] => {
 

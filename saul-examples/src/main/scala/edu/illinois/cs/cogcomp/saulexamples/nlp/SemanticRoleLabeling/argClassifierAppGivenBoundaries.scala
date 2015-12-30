@@ -10,4 +10,5 @@ object argClassifierAppGivenBoundaries extends App {
   argumentTypeLearner.learn(100)
   print("finished")
   argumentTypeLearner.test()
+
 }
