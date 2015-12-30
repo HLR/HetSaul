@@ -1,7 +1,7 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling
 
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{ TextAnnotation, Constituent, Relation }
-import edu.illinois.cs.cogcomp.saul.classifier.JoinTrainSparseNetwork
+import edu.illinois.cs.cogcomp.saul.classifier.JointTrainSparseNetwork
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
 import edu.illinois.cs.cogcomp.saulexamples.data.XuPalmerCandidateGenerator
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLClassifiers.argumentTypeLearner
@@ -70,7 +70,7 @@ object relationAppXuPalmerCandidates extends App {
 
   // argumentTypeLearner.forget()
 
-  JoinTrainSparseNetwork.train[TextAnnotation](SRLDataModel, argTypeConstraintClassifier :: Nil, 50)
+  JointTrainSparseNetwork.train[TextAnnotation](SRLDataModel, argTypeConstraintClassifier :: Nil, 50)
 
   println("Test joint learner joint prediction:")
 

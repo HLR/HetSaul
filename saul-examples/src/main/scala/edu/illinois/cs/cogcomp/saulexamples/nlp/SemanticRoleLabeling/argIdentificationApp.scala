@@ -1,8 +1,10 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling
 
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.Relation
+import edu.illinois.cs.cogcomp.saul.classifier.JointTrainSparseNetwork
 import edu.illinois.cs.cogcomp.saulexamples.data.XuPalmerCandidateGenerator
-import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLClassifiers.argumentXuIdentifierGivenApredicate
+import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLClassifiers.{ argumentTypeLearner, argumentXuIdentifierGivenApredicate }
+import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLConstraintClassifiers.{ arg_IdentifyConstraintClassifier, arg_TypeConstraintClassifier }
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLDataModel._
 
 import scala.collection.JavaConversions._
@@ -39,8 +41,35 @@ object argIdentificationApp extends App {
 
   println("all relations number after population:" + SRLDataModel.relations().size)
 
-  argumentXuIdentifierGivenApredicate.learn(100)
+  argumentXuIdentifierGivenApredicate.learn(80)
+
+  print("argument identifier test results:")
+
   argumentXuIdentifierGivenApredicate.test()
+
+  argumentTypeLearner.learn(80)
+
+  print("argument classifier test results:")
+
+  argumentTypeLearner.test()
+
+  print("argument classifier and classifier L+I model test results:")
+
+  arg_TypeConstraintClassifier.test()
+
+  print("argument identifier and classifier L+I model test results:")
+
+  arg_IdentifyConstraintClassifier.test()
+
+  JointTrainSparseNetwork.train(SRLDataModel, arg_TypeConstraintClassifier :: arg_IdentifyConstraintClassifier :: Nil, 40)
+
+  print("argument classifier and classifier IBT model test results:")
+
+  arg_TypeConstraintClassifier.test()
+
+  print("argument identifier and classifier IBT model test results:")
+
+  arg_IdentifyConstraintClassifier.test()
 
   //  argumentTypeLearner.learn(3)
   //  println("Training finished")
@@ -61,5 +90,4 @@ object argIdentificationApp extends App {
   //  println("Test joint learner independent prediction:")
   //
   //  argumentTypeLearner.test()
-
 }

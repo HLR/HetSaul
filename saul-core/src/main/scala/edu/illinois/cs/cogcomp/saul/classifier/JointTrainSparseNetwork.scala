@@ -6,7 +6,7 @@ import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
 import scala.reflect.ClassTag
 /** Created by Parisa on 5/22/15.
   */
-object JoinTrainSparseNetwork {
+object JointTrainSparseNetwork {
 
   /* def testClassifiers(cls : Classifier ,oracle : Classifier, ds : List[AnyRef]) : Unit = {
 

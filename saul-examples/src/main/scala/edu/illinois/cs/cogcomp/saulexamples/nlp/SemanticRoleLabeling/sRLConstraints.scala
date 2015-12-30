@@ -6,7 +6,7 @@ import edu.illinois.cs.cogcomp.lbjava.infer.{ FirstOrderConstant, FirstOrderCons
 import edu.illinois.cs.cogcomp.saul.classifier.ConstrainedClassifier
 import edu.illinois.cs.cogcomp.saul.constraint.ConstraintTypeConversion._
 import edu.illinois.cs.cogcomp.saulexamples.data.XuPalmerCandidateGenerator
-import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLClassifiers.argumentTypeLearner
+import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLClassifiers.{ argumentXuIdentifierGivenApredicate, predicateClassifier, argumentTypeLearner }
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLDataModel._
 
 import scala.collection.JavaConversions._
@@ -45,6 +45,7 @@ object sRLConstraints {
   } //end of NoOverlap constraint
 
   val noDuplicate = ConstrainedClassifier.constraintOf[TextAnnotation] {
+    // Predicates have atmost one argument of each type i.e. there is no two arguments of the same type for each predicate
     var a: FirstOrderConstraint = new FirstOrderConstant(true)
     val t = new XuPalmerCandidateGenerator(null)
     x: TextAnnotation => {
@@ -56,18 +57,30 @@ object sRLConstraints {
           {
             val argCandList = (t.generateSaulCandidates(y, (sentences(y.getTextAnnotation) ~> sentencesTostringTree).head)).
               map(y => new Relation("candidate", y.cloneForNewView(y.getViewName), y.cloneForNewView(y.getViewName), 0.0))
-            //Xucandidates(y)
-
-            x.getView(ViewNames.TOKENS).asInstanceOf[TokenLabelView].getConstituents.toList.foreach {
-              t: Constituent =>
-                {
-                  val contains = argCandList.filter(z => z.getTarget.doesConstituentCover(t))
-                  a = a &&& (contains.toList._atMost(1)({ p: Relation => (argumentTypeLearner on p).is("candidate") }))
-                }
-            }
+            for (t1 <- 0 until argCandList.size - 1)
+              for (t2 <- t1 + 1 until argCandList.size) {
+                a = a &&& (((argumentTypeLearner on argCandList.get(t1)) is (argumentTypeLearner on argCandList.get(t2))) unary_!)
+              }
           }
       }
+      a
     }
-    a
   }
+  val arg_IdentifierClassifier_Constraint = ConstrainedClassifier.constraintOf[Relation] {
+
+    x: Relation =>
+      {
+        (argumentXuIdentifierGivenApredicate on x isNotTrue) ==>
+          (argumentTypeLearner on x is ("candidate"))
+      }
+  }
+
+  val predArg_IdentifierClassifier_Constraint = ConstrainedClassifier.constraintOf[Relation] {
+    x: Relation =>
+      {
+        (predicateClassifier on x.getSource isTrue) &&& (argumentXuIdentifierGivenApredicate on x isTrue) ==>
+          (argumentTypeLearner on x isNot ("candidate"))
+      }
+  }
+
 }
