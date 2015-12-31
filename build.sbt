@@ -55,6 +55,7 @@ lazy val saulWebapp = (project in file("saul-webapp")).
       "org.webjars" % "bootstrap" % "3.1.1-2",
       "org.scala-lang" % "scala-compiler" % scalaVersion.value, 
       "com.twitter" %% "util-eval" % "6.30.0",
+      "edu.illinois.cs.cogcomp" % "LBJava" % "1.1.1",
       jdbc,
       cache,
       ws,
