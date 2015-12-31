@@ -3,8 +3,8 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.Relation
 import edu.illinois.cs.cogcomp.saul.classifier.JointTrainSparseNetwork
 import edu.illinois.cs.cogcomp.saulexamples.data.XuPalmerCandidateGenerator
-import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLClassifiers.{ argumentTypeLearner, argumentXuIdentifierGivenApredicate }
-import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLConstraintClassifiers.{ arg_IdentifyConstraintClassifier, arg_TypeConstraintClassifier }
+import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLClassifiersForExperiment.{ argumentTypeLearner1, argumentXuIdentifierGivenApredicate1 }
+import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLConstraintClassifiersForExperiments.{ arg_IdentifyConstraintClassifier1, arg_TypeConstraintClassifier1 }
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLDataModel._
 
 import scala.collection.JavaConversions._
@@ -41,35 +41,35 @@ object argIdentificationApp extends App {
 
   println("all relations number after population:" + SRLDataModel.relations().size)
 
-  argumentXuIdentifierGivenApredicate.learn(80)
+  argumentXuIdentifierGivenApredicate1.learn(80)
 
   print("argument identifier test results:")
 
-  argumentXuIdentifierGivenApredicate.test()
+  argumentXuIdentifierGivenApredicate1.test()
 
-  argumentTypeLearner.learn(80)
+  argumentTypeLearner1.learn(80)
 
   print("argument classifier test results:")
 
-  argumentTypeLearner.test()
+  argumentTypeLearner1.test()
 
-  print("argument classifier and classifier L+I model test results:")
+  print("argument classifier L+I model (join with identification) test results:")
 
-  arg_TypeConstraintClassifier.test()
+  arg_TypeConstraintClassifier1.test()
 
-  print("argument identifier and classifier L+I model test results:")
+  print("argument identifier L+I model (join with classifciation) test results:")
 
-  arg_IdentifyConstraintClassifier.test()
+  arg_IdentifyConstraintClassifier1.test()
 
-  JointTrainSparseNetwork.train(SRLDataModel, arg_TypeConstraintClassifier :: arg_IdentifyConstraintClassifier :: Nil, 40)
+  JointTrainSparseNetwork.train(SRLDataModel, arg_TypeConstraintClassifier1 :: arg_IdentifyConstraintClassifier1 :: Nil, 40)
 
-  print("argument classifier and classifier IBT model test results:")
+  print("argument classifier IBT model (join with identification) test results:")
 
-  arg_TypeConstraintClassifier.test()
+  arg_TypeConstraintClassifier1.test()
 
-  print("argument identifier and classifier IBT model test results:")
+  print("argument identifier IBT model (join with classification) test results:")
 
-  arg_IdentifyConstraintClassifier.test()
+  arg_IdentifyConstraintClassifier1.test()
 
   //  argumentTypeLearner.learn(3)
   //  println("Training finished")
