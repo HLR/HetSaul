@@ -5,7 +5,7 @@ import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
 
 import scala.collection.mutable.{ Map => MutableMap }
 
-class SetCoverSolverDataModel extends DataModel {
+object setCoverSolverDataModel extends DataModel {
 
   val cities = node[City]
 
@@ -16,7 +16,7 @@ class SetCoverSolverDataModel extends DataModel {
   cityContainsNeighborhoods.populateWith((c, n) => c == n.getParentCity)
 }
 
-object containsStationConstraint extends ConstrainedClassifier[Neighborhood, City](setCoverApp.trainingData, new ContainsStation()) {
+object containsStationConstraint extends ConstrainedClassifier[Neighborhood, City](setCoverSolverDataModel, new ContainsStation()) {
 
   override def subjectTo = setCoverApp.containsStationConstrint
 
