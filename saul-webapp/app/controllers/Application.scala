@@ -64,21 +64,23 @@ class Application extends Controller {
   //instance.mkString 
   }
 
-    /*
-     *    * For a given FQ classname, trick the resource finder into telling us the containing jar.
-     *       */
-      private def classPathOfClass(className: String) = {
-          val resource = className.split('.').mkString("/", "/", ".class")
-          val path = getClass.getResource(resource).getPath
-          if (path.indexOf("file:") >= 0) {
-            val indexOfFile = path.indexOf("file:") + 5
-            val indexOfSeparator = path.lastIndexOf('!')
-            List(path.substring(indexOfFile, indexOfSeparator))
-          } else {
-            require(path.endsWith(resource))
-            List(path.substring(0, path.length - resource.length + 1))
-          }
-        }
+  /*
+   *    * For a given FQ classname, trick the resource finder into telling us the containing jar.
+   *
+   *
+   * */
+   private def classPathOfClass(className: String) = {
+      val resource = className.split('.').mkString("/", "/", ".class")
+      val path = getClass.getResource(resource).getPath
+      if (path.indexOf("file:") >= 0) {
+        val indexOfFile = path.indexOf("file:") + 5
+        val indexOfSeparator = path.lastIndexOf('!')
+        List(path.substring(indexOfFile, indexOfSeparator))
+      } else {
+        require(path.endsWith(resource))
+        List(path.substring(0, path.length - resource.length + 1))
+      }
+  }
 
 
   def writeCodeToFiles(files: Map[String, String]) = {
@@ -108,7 +110,7 @@ class Application extends Controller {
     //val greenhouse = eval.apply[DataModel](code) 
     //new File("./spamDataModel.scala")
 
-    //#3
+    //#3 
     val sett = new Settings()
     sett.classpath.value = completeClasspath
     println(sett.classpath.value)
@@ -126,8 +128,6 @@ class Application extends Controller {
     run.compileSources(sourceFiles)
     
     val clazz = classLoader.loadClass(getCodePackageName(code) + "." + "spamDataModel") // load class 
-  //compiler.compile(List("spamDataModel.scala","Document.java","DocumentReader.java"))  // invoke compiler. it creates Test.class.
-
   }
     
   }
