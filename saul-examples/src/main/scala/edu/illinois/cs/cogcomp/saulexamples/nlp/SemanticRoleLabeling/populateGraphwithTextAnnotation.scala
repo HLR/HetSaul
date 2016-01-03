@@ -121,13 +121,13 @@ object populateGraphwithTextAnnotation extends App {
       rm.getString(ExamplesConfigurator.PROPBANK_HOME.key), Array("23")
     )
     testReader.readData()
-    val taAll = trainReader.textAnnotations //.slice(0, 5)
+    val taAll = trainReader.textAnnotations //.slice(0, 100)
     println("all" + taAll.toList.size)
     val filteredTa = addViewAndFilter(taAll.toList)
     print(filteredTa.size)
     // addViewToCollection(taAll.asInstanceOf[ListBuffer[TextAnnotation]])
 
-    val testAll = testReader.textAnnotations //.slice(0, 50)
+    val testAll = testReader.textAnnotations //.slice(0, 100)
 
     val filteredTest = addViewAndFilter(testAll.toList)
 

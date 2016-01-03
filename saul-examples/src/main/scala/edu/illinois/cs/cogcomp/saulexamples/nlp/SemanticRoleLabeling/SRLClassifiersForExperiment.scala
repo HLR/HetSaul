@@ -5,6 +5,7 @@ import edu.illinois.cs.cogcomp.lbjava.learn.SparseAveragedPerceptron
 import edu.illinois.cs.cogcomp.saul.classifier.Learnable
 import edu.illinois.cs.cogcomp.saul.constraint.ConstraintTypeConversion._
 import edu.illinois.cs.cogcomp.saul.datamodel.property.Property
+import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLDataModel._
 
 /** Created by Parisa on 12/30/15.
   */
@@ -33,8 +34,10 @@ object SRLClassifiersForExperiment {
     import SRLDataModel._
     override def feature = using(headwordRelation, syntacticFrameRelation, pathRelation, subcategorizationRelation, phraseTypeRelation, predPosTag, predLemma, linearPosition)
   }
+
   object argumentXuIdentifierGivenApredicate1 extends Learnable[Relation](SRLDataModel, parameters) {
     def label = SRLDataModel.isArgumentXu
+    override def feature = using(headwordRelation, syntacticFrameRelation, pathRelation, subcategorizationRelation, phraseTypeRelation, predPosTag, predLemma, linearPosition)
   }
 
 }

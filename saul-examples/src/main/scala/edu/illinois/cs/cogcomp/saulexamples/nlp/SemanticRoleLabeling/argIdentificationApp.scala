@@ -44,6 +44,8 @@ object argIdentificationApp extends App {
   argumentXuIdentifierGivenApredicate1.learn(80)
 
   print("argument identifier test results:")
+  //
+  //  argumentXuIdentifierGivenApredicate1.test()
 
   argumentXuIdentifierGivenApredicate1.test()
 
