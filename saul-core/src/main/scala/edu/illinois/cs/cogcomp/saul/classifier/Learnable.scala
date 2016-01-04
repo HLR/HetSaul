@@ -32,11 +32,11 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
     // TODO: define default paramters
 
     val modelDir = "models/"
-//    if (readflag==0) {
-      IOUtils.mkdir(modelDir)
-      IOUtils.rm(modelDir + getClassNameForClassifier + ".lc")
-      IOUtils.rm(modelDir + getClassNameForClassifier + ".lex")
-//    }
+    //    if (readflag==0) {
+    IOUtils.mkdir(modelDir)
+    IOUtils.rm(modelDir + getClassNameForClassifier + ".lc")
+    IOUtils.rm(modelDir + getClassNameForClassifier + ".lex")
+    //    }
     //new SparsePerceptron(0.1,0,3.5)
     if (algorithm.equals("Regression")) {
       new StochasticGradientDescent() {
@@ -162,11 +162,12 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
     def learnAll(crTokenTest: Parser, remainingIteration: Int): Unit = {
 
       val v = crTokenTest.next
-      println("Remaining Iterations:", remainingIteration)
+
       if (v == null) {
         if (remainingIteration > 0) {
           crTokenTest.reset()
           learnAll(crTokenTest, remainingIteration - 1)
+          println("Remaining Iterations:", remainingIteration)
         }
       } else {
         classifier.learn(v)
@@ -180,10 +181,10 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
     classifier.doneLearning()
   }
   def load(): Unit = { //TODO
-   //readflag=1
-   println("Load a model from: ", getClassNameForClassifier + ".lc")
+    //readflag=1
+    println("Load a model from: ", getClassNameForClassifier + ".lc")
   }
-  def save(): Unit ={
+  def save(): Unit = {
     classifier.save()
   }
 
