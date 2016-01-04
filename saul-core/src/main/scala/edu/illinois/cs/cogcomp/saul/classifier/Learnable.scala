@@ -71,11 +71,30 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
     lcFile.close()
   }
 
-  if (feature != null) {
-    if (loggging)
-      println(s"Setting the feature extractors to be $lbpFeatures")
-    classifier.setExtractor(lbpFeatures)
+  def setExtractor(): Unit = {
+    if (feature != null) {
+      if (loggging)
+        println(s"Setting the feature extractors to be $lbpFeatures")
+      classifier.setExtractor(lbpFeatures)
+    } else {
+      println("Warning: no features found! ")
+    }
   }
+
+  def setLabeler(): Unit = {
+    if (label != null) {
+      val oracle = Property.entitiesToLBJFeature(label)
+      if (loggging) {
+        println(s"Setting the labeler to be '$oracle'")
+        println(s"Labels are $label with name ${label.name}")
+      }
+      classifier.setLabeler(oracle)
+    }
+  }
+
+  // set paramaters for classifier
+  setExtractor()
+  setLabeler()
 
   def removeModelFiles(): Unit = {
     IOUtils.rm(lcFilePath.getPath)
@@ -84,14 +103,19 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
 
   def save(): Unit = {
     removeModelFiles()
-    classifier.save()
+    val cloneClasifier = classifier.clone().asInstanceOf[Learner]
+    val dummyClassifier = new Classifier() {
+      override def classify(o: scala.Any): FeatureVector = ???
+    }
+    cloneClasifier.setExtractor(dummyClassifier)
+    cloneClasifier.setLabeler(dummyClassifier)
+    cloneClasifier.save()
   }
 
   def load(): Unit = {
-    classifier.readLexicon(lexFilePath)
-    val lcFile2 = ExceptionlessInputStream.openCompressedStream(lcFilePath)
-    val ignoreName = lcFile2.readString()
-    classifier.readIgnoringLabelerExtractor(lcFile2)
+    classifier.read(lcFilePath.getPath, lexFilePath.getPath)
+    setExtractor()
+    setLabeler()
   }
 
   def load(lcFile: URL, lexFile: URL): Unit = {
@@ -108,15 +132,6 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
     val lcFileStream = ExceptionlessInputStream.openCompressedStream(lcFileURL)
     val ignoreName = lcFileStream.readString()
     classifier.readIgnoringLabelerExtractor(lcFileStream)
-  }
-
-  if (label != null) {
-    val oracle = Property.entitiesToLBJFeature(label)
-    if (loggging) {
-      println(s"Setting the labeler to be '$oracle'")
-      println(s"Labels are $label with name ${label.name}")
-    }
-    classifier.setLabeler(oracle)
   }
 
   def learn(iteration: Int, filePath: String = datamodel.defaultDIFilePath): Unit = {
