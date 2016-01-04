@@ -1,12 +1,13 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.EmailSpam
 
 import edu.illinois.cs.cogcomp.saulexamples.data.DocumentReader
+import edu.illinois.cs.cogcomp.saulexamples.nlp.EdisonFeatures.toyDataGenerator
 import edu.illinois.cs.cogcomp.saulexamples.nlp.EmailSpam.spamClassifiers.{ deserializedSpamClassifier, spamClassifier }
 
 import scala.collection.JavaConversions._
 
 object SpamApp {
-  def main2(args: Array[String]): Unit = {
+  def main(args: Array[String]): Unit = {
     /** Defining the data and specifying it's location  */
     val trainData = new DocumentReader("./data/EmailSpam/train").docs.toList
     val testData = new DocumentReader("./data/EmailSpam/test").docs.toList
@@ -33,5 +34,6 @@ object SpamClassifierSerialization {
     val predictionsAfterSerialization = testData.map(deserializedSpamClassifier(_))
     println(predictionsBeforeSerialization.mkString("/"))
     println(predictionsAfterSerialization.mkString("/"))
+    println(predictionsAfterSerialization.indices.forall(it => predictionsBeforeSerialization(it) == predictionsAfterSerialization(it)))
   }
 }

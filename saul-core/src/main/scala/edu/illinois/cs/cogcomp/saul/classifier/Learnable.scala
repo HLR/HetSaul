@@ -7,7 +7,7 @@ import java.time
 import edu.illinois.cs.cogcomp.core.io.IOUtils
 import edu.illinois.cs.cogcomp.lbjava.classify.{ Classifier, FeatureVector, TestDiscrete }
 import edu.illinois.cs.cogcomp.lbjava.learn.Learner.Parameters
-import edu.illinois.cs.cogcomp.lbjava.learn.{ Learner, SparseAveragedPerceptron, SparsePerceptron, StochasticGradientDescent }
+import edu.illinois.cs.cogcomp.lbjava.learn._
 import edu.illinois.cs.cogcomp.lbjava.parse.Parser
 import edu.illinois.cs.cogcomp.lbjava.util.{ ExceptionlessInputStream, ExceptionlessOutputStream }
 import edu.illinois.cs.cogcomp.saul.TestContinuous
@@ -104,7 +104,7 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
   def save(): Unit = {
     removeModelFiles()
     val cloneClasifier = classifier.clone().asInstanceOf[Learner]
-    val dummyClassifier = new DummyClassifier
+    val dummyClassifier = new SparseNetworkLearner
     cloneClasifier.setExtractor(dummyClassifier)
     cloneClasifier.setLabeler(dummyClassifier)
     cloneClasifier.save()
@@ -361,6 +361,6 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
   }
 }
 
-class DummyClassifier extends Classifier() {
-  override def classify(o: scala.Any): FeatureVector = ???
-}
+//class DummyClassifier extends Classifier() {
+//  override def classify(o: scala.Any): FeatureVector = ???
+//}

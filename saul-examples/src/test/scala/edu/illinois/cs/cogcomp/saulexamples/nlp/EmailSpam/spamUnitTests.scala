@@ -2,6 +2,7 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp.EmailSpam
 
 import edu.illinois.cs.cogcomp.annotation.BasicTextAnnotationBuilder
 import edu.illinois.cs.cogcomp.saulexamples.data.Document
+import edu.illinois.cs.cogcomp.saulexamples.nlp.EdisonFeatures.toyDataGenerator
 import edu.illinois.cs.cogcomp.saulexamples.nlp.EmailSpam.spamClassifiers.spamClassifier
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.TextAnnotation
 import org.scalatest._
@@ -46,32 +47,3 @@ class SpamUnitTests extends FlatSpec with Matchers {
   }
 }
 
-object toyDataGenerator {
-  val documentStrings = List("Saul or Soul; that is the question", "when will I graduate?")
-  def generateToyDocuments(numDocs: Int): IndexedSeq[Document] = {
-    (1 to numDocs).map {
-      val randInt = util.Random.nextInt(2)
-      _ => new Document(documentStrings(randInt).split(" ").toList, randInt.toString)
-    }
-  }
-
-  /** Generate toy instances that have the same labels */
-  def generateToyDocumentsSingleLabel(numDocs: Int): IndexedSeq[Document] = {
-    val label = util.Random.nextInt(2)
-    (1 to numDocs).map(_ => new Document(documentStrings(label).split(" ").toList, label.toString))
-  }
-
-  def generateToyTextAnnotation(numDocs: Int): IndexedSeq[TextAnnotation] = {
-    import scala.collection.JavaConversions._
-
-    (1 to numDocs).map { _ =>
-      val numSentences = 5
-      val documentsTokenized = (1 to numSentences).map(_ => documentStrings(0).split(" "))
-      BasicTextAnnotationBuilder.createTextAnnotationFromTokens(documentsTokenized)
-    }
-  }
-
-  def main(args: Array[String]): Unit = {
-    generateToyTextAnnotation(3)
-  }
-}

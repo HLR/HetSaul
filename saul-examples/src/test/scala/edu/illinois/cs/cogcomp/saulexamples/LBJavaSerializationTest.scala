@@ -1,7 +1,7 @@
 package edu.illinois.cs.cogcomp.saulexamples
 
+import edu.illinois.cs.cogcomp.saulexamples.nlp.EdisonFeatures.toyDataGenerator
 import edu.illinois.cs.cogcomp.saulexamples.nlp.EmailSpam.spamClassifiers.{ deserializedSpamClassifier, spamClassifier }
-import edu.illinois.cs.cogcomp.saulexamples.nlp.EmailSpam.toyDataGenerator
 import edu.illinois.cs.cogcomp.saulexamples.nlp.EmailSpam.spamDataModel
 
 import org.scalatest.{ Matchers, FlatSpec }
