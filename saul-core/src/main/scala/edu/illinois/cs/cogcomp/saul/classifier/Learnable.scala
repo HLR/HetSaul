@@ -9,7 +9,7 @@ import edu.illinois.cs.cogcomp.lbjava.classify.{ Classifier, FeatureVector, Test
 import edu.illinois.cs.cogcomp.lbjava.learn.Learner.Parameters
 import edu.illinois.cs.cogcomp.lbjava.learn.{ Learner, SparseAveragedPerceptron, SparsePerceptron, StochasticGradientDescent }
 import edu.illinois.cs.cogcomp.lbjava.parse.Parser
-import edu.illinois.cs.cogcomp.lbjava.util.ExceptionlessOutputStream
+import edu.illinois.cs.cogcomp.lbjava.util.{ ExceptionlessInputStream, ExceptionlessOutputStream }
 import edu.illinois.cs.cogcomp.saul.TestContinuous
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
 import edu.illinois.cs.cogcomp.saul.datamodel.property.{ CombinedDiscreteProperty, Property, PropertyWithWindow, RelationalFeature }
@@ -37,34 +37,77 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
   /** filter out the label from the features */
   def combinedProperties = if (label != null) new CombinedDiscreteProperty[T](this.feature.filterNot(_.name == label.name))
   else new CombinedDiscreteProperty[T](this.feature)
+
   //combinedProperty.makeClassifierWithName("")
   def lbpFeatures = combinedProperties.makeClassifierWithName("") //combinedProperty.classifier
 
   /** classifier need to be defined by the user */
   val classifier: Learner
 
+  /** syntactic suger to create simple calls to the function */
+  def apply(example: AnyRef): String = classifier.discreteValue(example: AnyRef)
+
   /** specifications of the classifier and its model files  */
   classifier.setReadLexiconOnDemand()
   val modelDir = "models/"
+  val lcFilePath = new URL(new URL("file:"), modelDir + getClassNameForClassifier + ".lc")
+  val lexFilePath = new URL(new URL("file:"), modelDir + getClassNameForClassifier + ".lex")
   IOUtils.mkdir(modelDir)
-  IOUtils.rm(modelDir + getClassNameForClassifier + ".lc")
-  IOUtils.rm(modelDir + getClassNameForClassifier + ".lex")
-  val lcFilePath2 = new URL(new URL("file:"), modelDir + getClassNameForClassifier + ".lc")
-  val lexFilePath2 = new URL(new URL("file:"), modelDir + getClassNameForClassifier + ".lex")
-  classifier.setModelLocation(lcFilePath2)
-  classifier.setLexiconLocation(lexFilePath2)
-  val lexFile = ExceptionlessOutputStream.openCompressedStream(lexFilePath2)
-  if (classifier.getCurrentLexicon == null) lexFile.writeInt(0)
-  else classifier.getCurrentLexicon.write(lexFile)
-  lexFile.close()
-  val lcFile = ExceptionlessOutputStream.openCompressedStream(lcFilePath2)
-  classifier.write(lcFile)
-  lcFile.close()
+  classifier.setModelLocation(lcFilePath)
+  classifier.setLexiconLocation(lexFilePath)
+
+  // create lex file if it does not exist
+  if (!IOUtils.exists(lexFilePath.getPath)) {
+    val lexFile = ExceptionlessOutputStream.openCompressedStream(lexFilePath)
+    if (classifier.getCurrentLexicon == null) lexFile.writeInt(0)
+    else classifier.getCurrentLexicon.write(lexFile)
+    lexFile.close()
+  }
+
+  // create lc file if it does not exist
+  if (!IOUtils.exists(lcFilePath.getPath)) {
+    val lcFile = ExceptionlessOutputStream.openCompressedStream(lcFilePath)
+    classifier.write(lcFile)
+    lcFile.close()
+  }
 
   if (feature != null) {
     if (loggging)
       println(s"Setting the feature extractors to be $lbpFeatures")
     classifier.setExtractor(lbpFeatures)
+  }
+
+  def removeModelFiles(): Unit = {
+    IOUtils.rm(lcFilePath.getPath)
+    IOUtils.rm(lexFilePath.getPath)
+  }
+
+  def save(): Unit = {
+    removeModelFiles()
+    classifier.save()
+  }
+
+  def load(): Unit = {
+    classifier.readLexicon(lexFilePath)
+    val lcFile2 = ExceptionlessInputStream.openCompressedStream(lcFilePath)
+    val ignoreName = lcFile2.readString()
+    classifier.readIgnoringLabelerExtractor(lcFile2)
+  }
+
+  def load(lcFile: URL, lexFile: URL): Unit = {
+    classifier.readLexicon(lexFile)
+    val lcFileStream = ExceptionlessInputStream.openCompressedStream(lcFile)
+    val ignoreName = lcFileStream.readString()
+    classifier.readIgnoringLabelerExtractor(lcFileStream)
+  }
+
+  def load(lcFile: String, lexFile: String): Unit = {
+    val lcFileURL = new URL(new URL("file:"), lcFile)
+    val lexFileURL = new URL(new URL("file:"), lexFile)
+    classifier.readLexicon(lexFileURL)
+    val lcFileStream = ExceptionlessInputStream.openCompressedStream(lcFileURL)
+    val ignoreName = lcFileStream.readString()
+    classifier.readIgnoringLabelerExtractor(lcFileStream)
   }
 
   if (label != null) {

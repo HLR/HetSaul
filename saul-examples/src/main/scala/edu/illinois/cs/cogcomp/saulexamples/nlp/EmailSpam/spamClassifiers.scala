@@ -19,4 +19,10 @@ object spamClassifiers {
     override def feature = using(wordFeature)
     override val useCache = true
   }
+
+  object deserializedSpamClassifier extends Learnable[Document](spamDataModel) {
+    def label = spamLabel
+    override lazy val classifier = new SparseNetworkLearner()
+    override def feature = using(wordFeature)
+  }
 }
