@@ -23,6 +23,6 @@ class LBJavaSerializationTest extends FlatSpec with Matchers {
 
     val predictionsAfterSerialization = testData.map(deserializedSpamClassifier(_))
 
-    predictionsAfterSerialization.indices.foreach(it => predictionsBeforeSerialization(it) should be(predictionsAfterSerialization(it)))
+    predictionsAfterSerialization.indices.forall(it => predictionsBeforeSerialization(it) == predictionsAfterSerialization(it)) should be(true)
   }
 }

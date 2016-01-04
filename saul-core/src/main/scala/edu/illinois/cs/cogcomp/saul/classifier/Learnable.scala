@@ -360,7 +360,3 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
     new RelationalFeature[T, U](this.datamodel, fts)
   }
 }
-
-//class DummyClassifier extends Classifier() {
-//  override def classify(o: scala.Any): FeatureVector = ???
-//}
