@@ -29,8 +29,8 @@ object SpamClassifierSerialization {
     println(deserializedSpamClassifier.classifier.getPrunedLexiconSize)
     deserializedSpamClassifier.load(spamClassifier.lcFilePath, spamClassifier.lexFilePath)
 
-    val predictionsBeforeSerialization = testData.map(spamClassifier.classifier.discreteValue(_))
-    val predictionsAfterSerialization = testData.map(deserializedSpamClassifier.classifier.discreteValue(_))
+    val predictionsBeforeSerialization = testData.map(spamClassifier(_))
+    val predictionsAfterSerialization = testData.map(deserializedSpamClassifier(_))
     println(predictionsBeforeSerialization.mkString("/"))
     println(predictionsAfterSerialization.mkString("/"))
   }

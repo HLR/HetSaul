@@ -104,34 +104,24 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
   def save(): Unit = {
     removeModelFiles()
     val cloneClasifier = classifier.clone().asInstanceOf[Learner]
-    val dummyClassifier = new Classifier() {
-      override def classify(o: scala.Any): FeatureVector = ???
-    }
+    val dummyClassifier = new DummyClassifier
     cloneClasifier.setExtractor(dummyClassifier)
     cloneClasifier.setLabeler(dummyClassifier)
     cloneClasifier.save()
   }
 
-  def load(): Unit = {
-    classifier.read(lcFilePath.getPath, lexFilePath.getPath)
+  def load(lcFile: String, lexFile: String): Unit = {
+    classifier.read(lcFile, lexFile)
     setExtractor()
     setLabeler()
   }
 
   def load(lcFile: URL, lexFile: URL): Unit = {
-    classifier.readLexicon(lexFile)
-    val lcFileStream = ExceptionlessInputStream.openCompressedStream(lcFile)
-    val ignoreName = lcFileStream.readString()
-    classifier.readIgnoringLabelerExtractor(lcFileStream)
+    load(lcFile.getPath, lexFile.getPath)
   }
 
-  def load(lcFile: String, lexFile: String): Unit = {
-    val lcFileURL = new URL(new URL("file:"), lcFile)
-    val lexFileURL = new URL(new URL("file:"), lexFile)
-    classifier.readLexicon(lexFileURL)
-    val lcFileStream = ExceptionlessInputStream.openCompressedStream(lcFileURL)
-    val ignoreName = lcFileStream.readString()
-    classifier.readIgnoringLabelerExtractor(lcFileStream)
+  def load(): Unit = {
+    load(lcFilePath.getPath, lexFilePath.getPath)
   }
 
   def learn(iteration: Int, filePath: String = datamodel.defaultDIFilePath): Unit = {
@@ -369,4 +359,8 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
     val fts = this.datamodel.getPropertiesForType[U]
     new RelationalFeature[T, U](this.datamodel, fts)
   }
+}
+
+class DummyClassifier extends Classifier() {
+  override def classify(o: scala.Any): FeatureVector = ???
 }

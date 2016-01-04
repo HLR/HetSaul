@@ -42,7 +42,7 @@ class SpamUnitTests extends FlatSpec with Matchers {
     val trainData = toyDataGenerator.generateToyDocuments(20)
     docs populate trainData
     spamClassifier.learn(100)
-    spamClassifier.classifier.discreteValue(trainData.head) should be(trainData.head.getLabel)
+    spamClassifier(trainData.head) should be(trainData.head.getLabel)
   }
 }
 
