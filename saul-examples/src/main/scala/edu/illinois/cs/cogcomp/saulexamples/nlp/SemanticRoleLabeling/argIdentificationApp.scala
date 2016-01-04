@@ -1,35 +1,19 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling
 
-import edu.illinois.cs.cogcomp.core.datastructures.textannotation.Relation
-import edu.illinois.cs.cogcomp.saul.classifier.JointTrainSparseNetwork
-import edu.illinois.cs.cogcomp.saulexamples.data.XuPalmerCandidateGenerator
-import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLClassifiersForExperiment.{ argumentTypeLearner1, argumentXuIdentifierGivenApredicate1 }
-import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLConstraintClassifiersForExperiments.{ arg_IdentifyConstraintClassifier1, arg_TypeConstraintClassifier1 }
+import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLClassifiersForExperiment.argumentXuIdentifierGivenApredicate1
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLDataModel._
+import edu.illinois.cs.cogcomp.saulexamples.nlp.commonSensors._
 
 import scala.collection.JavaConversions._
 
 object argIdentificationApp extends App {
+
   populateGraphwithTextAnnotation(SRLDataModel, SRLDataModel.sentences)
 
-  val t = new XuPalmerCandidateGenerator(null)
+  val XuPalmerCandidateArgsTraining = predicates.getTrainingInstances.flatMap(x => xuPalmerCandidate(x, (sentences(x.getTextAnnotation) ~> sentencesTostringTree).head))
 
-  val XuPalmerCandidateArgsTraining = predicates.getTrainingInstances.flatMap(
-    (x =>
-      {
-        val p = t.generateSaulCandidates(x, (sentences(x.getTextAnnotation) ~> sentencesTostringTree).head)
-        p.map(y => new Relation("candidate", x.cloneForNewView(x.getViewName), y.cloneForNewView(y.getViewName), 0.0))
-      })
-  )
-  val XuPalmerCandidateArgsTesting = predicates.getTestingInstances.flatMap(
+  val XuPalmerCandidateArgsTesting = predicates.getTestingInstances.flatMap(x => xuPalmerCandidate(x, (sentences(x.getTextAnnotation) ~> sentencesTostringTree).head))
 
-    (x =>
-      {
-        val p = t.generateSaulCandidates(x, (sentences(x.getTextAnnotation) ~> sentencesTostringTree).head)
-        p.map(y => new Relation("candidate", x.cloneForNewView(x.getViewName), y.cloneForNewView(y.getViewName), 0.0))
-      })
-
-  )
   val a = relations() ~> relationsToArguments prop address
   val b = relations() ~> relationsToPredicates prop address
 
@@ -41,37 +25,34 @@ object argIdentificationApp extends App {
 
   println("all relations number after population:" + SRLDataModel.relations().size)
 
-  argumentXuIdentifierGivenApredicate1.learn(80)
+  argumentXuIdentifierGivenApredicate1.learn(100)
 
   print("argument identifier test results:")
-  //
-  //  argumentXuIdentifierGivenApredicate1.test()
 
   argumentXuIdentifierGivenApredicate1.test()
 
-  argumentTypeLearner1.learn(80)
+  //  argumentTypeLearner1.learn(80)
 
-  print("argument classifier test results:")
+  //  print("argument classifier test results:")
+  //
+  //  argumentTypeLearner1.test()
+  //
+  //  print("argument classifier L+I model (join with identification) test results:")
+  //
+  //  arg_TypeConstraintClassifier1.test()
+  //
+  //  print("argument identifier L+I model (join with classifciation) test results:")
+  //
+  //  arg_IdentifyConstraintClassifier1.test()
+  //
+  //  JointTrainSparseNetwork.train(SRLDataModel, arg_TypeConstraintClassifier1 :: arg_IdentifyConstraintClassifier1 :: Nil, 40)
+  //
+  //  print("argument classifier IBT model (join with identification) test results:")
+  //arg_TypeConstraintClassifier1.test()
+  //
+  //print("argument identifier IBT model (join with classification) test results:")
 
-  argumentTypeLearner1.test()
-
-  print("argument classifier L+I model (join with identification) test results:")
-
-  arg_TypeConstraintClassifier1.test()
-
-  print("argument identifier L+I model (join with classifciation) test results:")
-
-  arg_IdentifyConstraintClassifier1.test()
-
-  JointTrainSparseNetwork.train(SRLDataModel, arg_TypeConstraintClassifier1 :: arg_IdentifyConstraintClassifier1 :: Nil, 40)
-
-  print("argument classifier IBT model (join with identification) test results:")
-
-  arg_TypeConstraintClassifier1.test()
-
-  print("argument identifier IBT model (join with classification) test results:")
-
-  arg_IdentifyConstraintClassifier1.test()
+  //  arg_IdentifyConstraintClassifier1.test()
 
   //  argumentTypeLearner.learn(3)
   //  println("Training finished")

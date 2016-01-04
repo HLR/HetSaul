@@ -7,6 +7,7 @@ import edu.illinois.cs.cogcomp.edison.features.FeatureUtilities
 import edu.illinois.cs.cogcomp.edison.features.factory._
 import edu.illinois.cs.cogcomp.nlp.corpusreaders.CoNLLColumnFormatReader
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
+import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLClassifiers.{ argumentXuIdentifierGivenApredicate, predicateClassifier }
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLSensors._
 
 import scala.collection.JavaConversions._
@@ -151,7 +152,14 @@ object SRLDataModel extends DataModel {
       val linposition = new LinearPosition()
       val discreteFeature: String = FeatureUtilities.getFeatureSet(linposition, x.getTarget).mkString
       discreteFeature
+  }
 
+  val isPredicatePrediction = property[Constituent]("isPredicatePrediction") {
+    x: Constituent => predicateClassifier.classifier.discreteValue(x)
+  }
+
+  val isArgumentPrediction = property[Relation]("isArgumentPrediction") {
+    x: Relation => argumentXuIdentifierGivenApredicate.classifier.discreteValue(x)
   }
 
 }

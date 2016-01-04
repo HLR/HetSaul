@@ -125,23 +125,8 @@ object populateGraphwithTextAnnotation extends App {
     println("all" + taAll.toList.size)
     val filteredTa = addViewAndFilter(taAll.toList)
     print(filteredTa.size)
-    // addViewToCollection(taAll.asInstanceOf[ListBuffer[TextAnnotation]])
-
     val testAll = testReader.textAnnotations //.slice(0, 100)
-
     val filteredTest = addViewAndFilter(testAll.toList)
-
-    //addViewToCollection(taAll.toList)
-    //   addViewToCollection(testAll.asInstanceOf[ListBuffer[TextAnnotation]])
-
-    //    for (t <- taAll) {
-    //      println(t.getAvailableViews)
-    //      annotatorService.addView(t, ViewNames.LEMMA)
-    //      println("instance number" + i)
-    //      if (i==90)
-    //        print("STOP")
-    //    }
-
     // Here we populate everythingd
     x.populate(filteredTa)
     x.populate(filteredTest, train = false)
