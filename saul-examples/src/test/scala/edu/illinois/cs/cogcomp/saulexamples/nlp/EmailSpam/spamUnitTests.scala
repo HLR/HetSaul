@@ -42,9 +42,8 @@ class SpamUnitTests extends FlatSpec with Matchers {
   }
 
   "classifier " should "overfit" in {
-    object DummySpamDataModel extends DataModel { val docs = node[Document] }
     val trainData = toyDataGenerator.generateToyDocuments(20)
-    DummySpamDataModel.docs populate trainData
+    spamDataModel.docs populate trainData
     spamClassifier.learn(100)
     spamClassifier(trainData.head) should be(trainData.head.getLabel)
   }
