@@ -29,7 +29,6 @@ object pipeline extends App {
   val negativePredicateTest = predicates(predicateTestCandidates)
     .filterNot(cand => (predicates() prop address).contains(address(cand)))
 
-
   predicates.populate(negativePredicateTrain)
   predicates.populate(negativePredicateTest, false)
   predicateClassifier.learn(5)
@@ -56,16 +55,17 @@ object pipeline extends App {
   argumentXuIdentifierGivenApredicate1.test()
 
   println("pipeline argIdentification")
-  val res= relations.getTestingInstances.map(x =>{
+  val res = relations.getTestingInstances.map(x => {
     print("value", isArgumentPipePrediction(x))
-    isArgumentPipePrediction(x)})
+    isArgumentPipePrediction(x)
+  })
 
-  val res1= relations.getAllInstances.map(x => isArgumentPipePrediction(x))
+  val res1 = relations.getAllInstances.map(x => isArgumentPipePrediction(x))
 
   evaluation.Test(isArgumentXu_Gth, isArgumentPipePrediction, relations)
 
   println("directly argIdentification")
-  evaluation.Test(isArgumentXu_Gth,isArgumentPrediction,relations)
+  evaluation.Test(isArgumentXu_Gth, isArgumentPrediction, relations)
 
   print("finish")
 }
