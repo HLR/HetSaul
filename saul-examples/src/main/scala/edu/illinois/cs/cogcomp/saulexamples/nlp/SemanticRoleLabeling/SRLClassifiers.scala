@@ -1,8 +1,8 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling
 
-import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{ Constituent, Relation }
+import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{Constituent, Relation}
 import edu.illinois.cs.cogcomp.lbjava.learn.SparseAveragedPerceptron
-import edu.illinois.cs.cogcomp.saul.classifier.Learnable
+import edu.illinois.cs.cogcomp.saul.classifier.{Learnable, SparseNetworkLBP}
 import edu.illinois.cs.cogcomp.saul.constraint.ConstraintTypeConversion._
 import edu.illinois.cs.cogcomp.saul.datamodel.property.Property
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLDataModel._
@@ -16,26 +16,30 @@ object SRLClassifiers {
     def label: Property[Constituent] = SRLDataModel.isPredicate_Gth
     import SRLDataModel._
     override def feature = using(posTag, subcategorization, phraseType, headword)
-    override def algorithm = "SparseNetwork"
+    override lazy val classifier = new SparseNetworkLBP
   }
 
   object argumentClassifier extends Learnable[Constituent](SRLDataModel, parameters) {
     def label = SRLDataModel.isArgument_Gth
+    override lazy val classifier = new SparseNetworkLBP
   }
 
   object predicateSenseClassifier extends Learnable[Constituent](SRLDataModel, parameters) {
     def label = SRLDataModel.predicateSense_Gth
+    override lazy val classifier = new SparseNetworkLBP
   }
 
   object argumentTypeLearner extends Learnable[Relation](SRLDataModel, parameters) {
     def label = SRLDataModel.argumentLabel_Gth
     import SRLDataModel._
     override def feature = using(headwordRelation, syntacticFrameRelation, pathRelation, subcategorizationRelation, phraseTypeRelation, predPosTag, predLemma, linearPosition)
+    override lazy val classifier = new SparseNetworkLBP
   }
 
   object argumentXuIdentifierGivenApredicate extends Learnable[Relation](SRLDataModel, parameters) {
     def label = SRLDataModel.isArgumentXu_Gth
     override def feature = using(headwordRelation, syntacticFrameRelation, pathRelation, subcategorizationRelation, phraseTypeRelation, predPosTag, predLemma, linearPosition)
+    override lazy val classifier = new SparseNetworkLBP
   }
 
 }
