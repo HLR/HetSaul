@@ -2,8 +2,7 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling
 
 import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.Constituent
-import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLClassifiers.predicateClassifier
-import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLClassifiersForExperiment.argumentXuIdentifierGivenApredicate1
+import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLClassifiersForExperiment.{argumentXuIdentifierGivenApredicate1, predicateClassifier1}
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLDataModel._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.commonSensors._
 
@@ -30,10 +29,11 @@ object pipeline extends App {
 
   predicates.populate(negativePredicateTrain)
   predicates.populate(negativePredicateTest, false)
-  predicateClassifier.learn(5)
+  predicateClassifier1.learn(5)
   //predicateClassifier.save()
   //predicateClassifier.load()
-  predicateClassifier.test()
+  predicateClassifier1.test()
+  predicateClassifier1.save()
 
   val XuPalmerCandidateArgsTraining = predicates.getTrainingInstances.flatMap(x => xuPalmerCandidate(x, (sentences(x.getTextAnnotation) ~> sentencesTostringTree).head))
 
