@@ -33,11 +33,13 @@ object SRLClassifiersForExperiment {
     def label = SRLDataModel.argumentLabel_Gth
     import SRLDataModel._
     override def feature = using(headwordRelation, syntacticFrameRelation, pathRelation, subcategorizationRelation, phraseTypeRelation, predPosTag, predLemma, linearPosition)
+    override def algorithm = "SparseNetwork"
   }
 
   object argumentXuIdentifierGivenApredicate1 extends Learnable[Relation](SRLDataModel, parameters) {
     def label = SRLDataModel.isArgumentXu_Gth
     override def feature = using(headwordRelation, syntacticFrameRelation, pathRelation, subcategorizationRelation, phraseTypeRelation, predPosTag, predLemma, linearPosition)
+    override def algorithm = "SparseNetwork"
   }
 
 }

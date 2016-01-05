@@ -7,8 +7,6 @@ import edu.illinois.cs.cogcomp.edison.features.FeatureUtilities
 import edu.illinois.cs.cogcomp.edison.features.factory._
 import edu.illinois.cs.cogcomp.nlp.corpusreaders.CoNLLColumnFormatReader
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
-import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLClassifiers.predicateClassifier
-import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLClassifiersForExperiment.argumentXuIdentifierGivenApredicate1
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLSensors._
 
 import scala.collection.JavaConversions._
@@ -155,21 +153,21 @@ object SRLDataModel extends DataModel {
       discreteFeature
   }
 
-  val isPredicatePrediction = property[Constituent]("isPredicatePrediction") {
-    x: Constituent => predicateClassifier.classifier.discreteValue(x)
-  }
-
-  val isArgumentPrediction = property[Relation]("isArgumentPrediction") {
-    x: Relation => argumentXuIdentifierGivenApredicate1.classifier.discreteValue(x)
-  }
-
-  val isArgumentPipePrediction = property[Relation]("isArgumentpipPrediction") {
-    x: Relation =>
-      predicateClassifier.classifier.discreteValue(x.getSource) match {
-        case "false" => "false"
-        case _ => argumentXuIdentifierGivenApredicate1.classifier.discreteValue(x)
-
-      }
-
-  }
+  //  val isPredicatePrediction = property[Constituent]("isPredicatePrediction") {
+  //    x: Constituent => predicateClassifier.classifier.discreteValue(x)
+  //  }
+  //
+  //  val isArgumentPrediction = property[Relation]("isArgumentPrediction") {
+  //    x: Relation => argumentXuIdentifierGivenApredicate1.classifier.discreteValue(x)
+  //  }
+  //
+  //  val isArgumentPipePrediction = property[Relation]("isArgumentpipPrediction") {
+  //    x: Relation =>
+  //      predicateClassifier.classifier.discreteValue(x.getSource) match {
+  //        case "false" => "false"
+  //        case _ => argumentXuIdentifierGivenApredicate1.classifier.discreteValue(x)
+  //
+  //      }
+  //
+  //  }
 }

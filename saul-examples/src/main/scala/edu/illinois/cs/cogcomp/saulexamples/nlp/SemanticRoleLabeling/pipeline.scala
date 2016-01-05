@@ -2,7 +2,6 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling
 
 import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.Constituent
-import edu.illinois.cs.cogcomp.saul.evaluation.evaluation
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLClassifiers.predicateClassifier
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLClassifiersForExperiment.argumentXuIdentifierGivenApredicate1
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLDataModel._
@@ -55,17 +54,17 @@ object pipeline extends App {
   argumentXuIdentifierGivenApredicate1.test()
 
   println("pipeline argIdentification")
-  val res = relations.getTestingInstances.map(x => {
-    print("value", isArgumentPipePrediction(x))
-    isArgumentPipePrediction(x)
-  })
-
-  val res1 = relations.getAllInstances.map(x => isArgumentPipePrediction(x))
-
-  evaluation.Test(isArgumentXu_Gth, isArgumentPipePrediction, relations)
-
-  println("directly argIdentification")
-  evaluation.Test(isArgumentXu_Gth, isArgumentPrediction, relations)
+  //  val res = relations.getTestingInstances.map(x => {
+  //    print("value", isArgumentPipePrediction(x))
+  //    isArgumentPipePrediction(x)
+  //  })
+  //
+  //  val res1 = relations.getAllInstances.map(x => isArgumentPipePrediction(x))
+  //
+  //  evaluation.Test(isArgumentXu_Gth, isArgumentPipePrediction, relations)
+  //
+  //  println("directly argIdentification")
+  //  evaluation.Test(isArgumentXu_Gth, isArgumentPrediction, relations)
 
   print("finish")
 }
