@@ -2,7 +2,7 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling
 
 import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.Constituent
-import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLClassifiersForExperiment.{argumentXuIdentifierGivenApredicate1, predicateClassifier1}
+import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLClassifiersForExperiment.{ argumentXuIdentifierGivenApredicate1, predicateClassifier1 }
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLDataModel._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.commonSensors._
 

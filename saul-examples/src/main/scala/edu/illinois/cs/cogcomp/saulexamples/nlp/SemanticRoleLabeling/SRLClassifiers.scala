@@ -1,8 +1,8 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling
 
-import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{Constituent, Relation}
+import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{ Constituent, Relation }
 import edu.illinois.cs.cogcomp.lbjava.learn.SparseAveragedPerceptron
-import edu.illinois.cs.cogcomp.saul.classifier.{Learnable, SparseNetworkLBP}
+import edu.illinois.cs.cogcomp.saul.classifier.{ Learnable, SparseNetworkLBP }
 import edu.illinois.cs.cogcomp.saul.constraint.ConstraintTypeConversion._
 import edu.illinois.cs.cogcomp.saul.datamodel.property.Property
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLDataModel._

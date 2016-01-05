@@ -81,7 +81,7 @@ object JointTrainSparseNetwork {
       allHeads.zipWithIndex.foreach {
         case (h, idx) =>
           {
-           // println("example number:" + idx)
+            // println("example number:" + idx)
             cls.foreach {
               case c: ConstrainedClassifier[_, HEAD] => {
 
