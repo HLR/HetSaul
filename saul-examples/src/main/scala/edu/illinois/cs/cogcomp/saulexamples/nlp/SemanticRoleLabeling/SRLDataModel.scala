@@ -1,13 +1,14 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling
 
 import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
-import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{ Constituent, Relation, TextAnnotation }
+import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{Constituent, Relation, TextAnnotation}
 import edu.illinois.cs.cogcomp.core.datastructures.trees.Tree
 import edu.illinois.cs.cogcomp.edison.features.FeatureUtilities
 import edu.illinois.cs.cogcomp.edison.features.factory._
 import edu.illinois.cs.cogcomp.nlp.corpusreaders.CoNLLColumnFormatReader
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
-import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLClassifiers.{ argumentXuIdentifierGivenApredicate, predicateClassifier }
+import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLClassifiers.predicateClassifier
+import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLClassifiersForExperiment.argumentXuIdentifierGivenApredicate1
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLSensors._
 
 import scala.collection.JavaConversions._
@@ -47,20 +48,20 @@ object SRLDataModel extends DataModel {
   relationsToPredicates.addSensor(relToPredicate _)
   sentencesTostringTree.addSensor(textAnnotationToStringTree _)
 
-  val isPredicate = property[Constituent]("p") {
+  val isPredicate_Gth = property[Constituent]("p") {
     x: Constituent => x.getLabel.equals("Predicate")
   }
-  val predicateSense = property[Constituent]("s") {
+  val predicateSense_Gth = property[Constituent]("s") {
     x: Constituent => x.getAttribute(CoNLLColumnFormatReader.SenseIdentifer)
   }
 
-  val isArgument = property[Constituent]("a") {
+  val isArgument_Gth = property[Constituent]("a") {
     x: Constituent => x.getLabel.equals("Argument")
   }
-  val isArgumentXu = property[Relation]("aX") {
+  val isArgumentXu_Gth = property[Relation]("aX") {
     x: Relation => !x.getRelationName.equals("candidate")
   }
-  val argumentLabel = property[Relation]("l") {
+  val argumentLabel_Gth = property[Relation]("l") {
     r: Relation => r.getRelationName
   }
 
@@ -159,7 +160,16 @@ object SRLDataModel extends DataModel {
   }
 
   val isArgumentPrediction = property[Relation]("isArgumentPrediction") {
-    x: Relation => argumentXuIdentifierGivenApredicate.classifier.discreteValue(x)
+    x: Relation => argumentXuIdentifierGivenApredicate1.classifier.discreteValue(x)
   }
 
+  val isArgumentPipePrediction = property[Relation]("isArgumentpipPrediction") {
+    x: Relation =>
+      predicateClassifier.classifier.discreteValue(x.getSource) match {
+        case "false" => "false"
+        case _ => argumentXuIdentifierGivenApredicate1.classifier.discreteValue(x)
+
+      }
+
+  }
 }

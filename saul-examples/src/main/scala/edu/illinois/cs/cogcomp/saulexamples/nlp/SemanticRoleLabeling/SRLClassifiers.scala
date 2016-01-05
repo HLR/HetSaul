@@ -13,28 +13,28 @@ object SRLClassifiers {
   //  parameters.modelDir = new ExamplesConfigurator().getDefaultConfig.getString(ExamplesConfigurator.MODELS_DIR.getFirst)
   object predicateClassifier extends Learnable[Constituent](SRLDataModel, parameters) {
     //TODO These are not used during Learner's initialization
-    def label: Property[Constituent] = SRLDataModel.isPredicate
+    def label: Property[Constituent] = SRLDataModel.isPredicate_Gth
     import SRLDataModel._
     override def feature = using(posTag, subcategorization, phraseType, headword)
     override def algorithm = "SparseNetwork"
   }
 
   object argumentClassifier extends Learnable[Constituent](SRLDataModel, parameters) {
-    def label = SRLDataModel.isArgument
+    def label = SRLDataModel.isArgument_Gth
   }
 
   object predicateSenseClassifier extends Learnable[Constituent](SRLDataModel, parameters) {
-    def label = SRLDataModel.predicateSense
+    def label = SRLDataModel.predicateSense_Gth
   }
 
   object argumentTypeLearner extends Learnable[Relation](SRLDataModel, parameters) {
-    def label = SRLDataModel.argumentLabel
+    def label = SRLDataModel.argumentLabel_Gth
     import SRLDataModel._
     override def feature = using(headwordRelation, syntacticFrameRelation, pathRelation, subcategorizationRelation, phraseTypeRelation, predPosTag, predLemma, linearPosition)
   }
 
   object argumentXuIdentifierGivenApredicate extends Learnable[Relation](SRLDataModel, parameters) {
-    def label = SRLDataModel.isArgumentXu
+    def label = SRLDataModel.isArgumentXu_Gth
     override def feature = using(headwordRelation, syntacticFrameRelation, pathRelation, subcategorizationRelation, phraseTypeRelation, predPosTag, predLemma, linearPosition)
   }
 
