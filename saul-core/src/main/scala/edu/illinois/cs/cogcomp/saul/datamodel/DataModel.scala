@@ -6,8 +6,10 @@ import edu.illinois.cs.cogcomp.saul.datamodel.node.{ JoinNode, Node }
 import edu.illinois.cs.cogcomp.saul.datamodel.property.features.discrete._
 import edu.illinois.cs.cogcomp.saul.datamodel.property.features.real._
 import edu.illinois.cs.cogcomp.saul.datamodel.property.{ EvaluatedProperty, Property }
+import edu.illinois.cs.cogcomp.saul.datamodel.node.{ JoinNode, Node }
+import edu.illinois.cs.cogcomp.saul.datamodel.edge.{ SymmetricEdge, AsymmetricEdge, Edge, Link }
 
-import scala.collection.mutable.{ ListBuffer, Map => MutableMap }
+import scala.collection.mutable.ListBuffer
 import scala.reflect.ClassTag
 
 trait DataModel {
@@ -286,3 +288,24 @@ trait DataModel {
   }
 }
 
+object dataModelJsonInterface {
+  def getJson(dm: DataModel): String = {
+    val declaredFields = dm.getClass.getDeclaredFields
+
+    val nodes = declaredFields.filter(_.getType.getSimpleName == "Node")
+    val edges = declaredFields.filter(_.getType.getSimpleName == "Edge")
+    val properties = declaredFields.filter(_.getType.getSimpleName.contains("Property")).filterNot(_.getName.contains("$module"))
+
+    import play.api.libs.json._
+
+    val json: JsValue = JsObject(Seq(
+      "nodes" -> JsArray(nodes.map(node => JsString(node.getName))),
+      "edges" -> JsArray(edges.map(edge => JsString(edge.getName))),
+      "properties" -> JsArray(properties.map(prop => JsString(prop.getName)))
+    ))
+
+    println(json.toString())
+
+    json.toString()
+  }
+}
