@@ -34,7 +34,7 @@ object POSDataModel extends DataModel {
   def getUnknownResultValue(cons: Constituent): String = {
     POSTaggerUnknown.classifier.valueOf(
       cons,
-      MikheevClassifier.classifier.allowableTags(wordForm(cons))
+      MikheevClassifier.classifier.allowableTags(cons)
     ).getStringValue
   }
 
