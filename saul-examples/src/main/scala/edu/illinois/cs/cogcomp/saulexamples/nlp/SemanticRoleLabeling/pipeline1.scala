@@ -10,7 +10,7 @@ import scala.collection.JavaConversions._
 
 /** Created by Parisa on 12/11/15.
   */
-object pipeline extends App {
+object pipeline1 extends App {
 
   SRLDataModel.sentencesToTokens.addSensor(textAnnotationToTokens _)
   populateGraphwithTextAnnotation(SRLDataModel, SRLDataModel.sentences)

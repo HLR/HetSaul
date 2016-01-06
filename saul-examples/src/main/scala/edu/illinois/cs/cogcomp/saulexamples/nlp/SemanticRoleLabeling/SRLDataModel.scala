@@ -1,12 +1,13 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling
 
 import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
-import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{ Constituent, Relation, TextAnnotation }
+import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{Constituent, Relation, TextAnnotation}
 import edu.illinois.cs.cogcomp.core.datastructures.trees.Tree
 import edu.illinois.cs.cogcomp.edison.features.FeatureUtilities
 import edu.illinois.cs.cogcomp.edison.features.factory._
 import edu.illinois.cs.cogcomp.nlp.corpusreaders.CoNLLColumnFormatReader
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
+import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLClassifiersForExperiment.{argumentTypeLearner1, argumentXuIdentifierGivenApredicate1, predicateClassifier1}
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLSensors._
 
 import scala.collection.JavaConversions._
@@ -152,22 +153,37 @@ object SRLDataModel extends DataModel {
       val discreteFeature: String = FeatureUtilities.getFeatureSet(linposition, x.getTarget).mkString
       discreteFeature
   }
+//Classifiers as properties
 
-  //  val isPredicatePrediction = property[Constituent]("isPredicatePrediction") {
-  //    x: Constituent => predicateClassifier.classifier.discreteValue(x)
-  //  }
-  //
-  //  val isArgumentPrediction = property[Relation]("isArgumentPrediction") {
-  //    x: Relation => argumentXuIdentifierGivenApredicate1.classifier.discreteValue(x)
-  //  }
-  //
-  //  val isArgumentPipePrediction = property[Relation]("isArgumentpipPrediction") {
-  //    x: Relation =>
-  //      predicateClassifier.classifier.discreteValue(x.getSource) match {
-  //        case "false" => "false"
-  //        case _ => argumentXuIdentifierGivenApredicate1.classifier.discreteValue(x)
-  //
-  //      }
-  //
-  //  }
-}
+    val isPredicatePrediction = property[Constituent]("isPredicatePrediction") {
+      x: Constituent => predicateClassifier1(x)
+    }
+
+    val isArgumentPrediction = property[Relation]("isArgumentPrediction") {
+      x: Relation => argumentXuIdentifierGivenApredicate1(x)
+    }
+
+    val isArgumentPipePrediction = property[Relation]("isArgumentpipPrediction") {
+      x: Relation =>
+        predicateClassifier1(x.getSource) match {
+          case "false" => "false"
+          case _ => argumentXuIdentifierGivenApredicate1(x)
+
+        }
+    }
+   val typeArgumentPrediction = property[Relation]("typeArgumentPrediction"){
+     x: Relation =>
+       argumentTypeLearner1(x)
+   }
+    val typeArgumentPipePrediction = property[Relation]("typeArgumentpipPrediction") {
+          x: Relation =>
+            val a:String= predicateClassifier1(x.getSource) match {
+              case "false" => "false"
+              case _ => argumentXuIdentifierGivenApredicate1(x)}
+            val b= a match {
+              case "false" => "false"
+              case _ => argumentTypeLearner1(x)
+            }
+            b
+        }
+    }

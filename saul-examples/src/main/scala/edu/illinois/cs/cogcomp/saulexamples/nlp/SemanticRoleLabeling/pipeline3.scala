@@ -5,7 +5,8 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling
 
 import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.Constituent
-import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLClassifiersForExperiment.argumentTypeLearner1
+import edu.illinois.cs.cogcomp.saul.evaluation.evaluation
+import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLClassifiersForExperiment.{argumentTypeLearner1, argumentXuIdentifierGivenApredicate1, predicateClassifier1}
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLDataModel._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.commonSensors._
 
@@ -16,13 +17,11 @@ object pipeline3 extends App {
   SRLDataModel.sentencesToTokens.addSensor(textAnnotationToTokens _)
   populateGraphwithTextAnnotation(SRLDataModel, SRLDataModel.sentences)
 
-  // Generate predicate candidates by extracting all verb tokens
   val predicateTrainCandidates = tokens.getTrainingInstances.filter((x: Constituent) => posTag(x).startsWith("VB"))
     .map(c => c.cloneForNewView(ViewNames.SRL_VERB))
   val predicateTestCandidates = tokens.getTestingInstances.filter((x: Constituent) => posTag(x).startsWith("VB"))
     .map(c => c.cloneForNewView(ViewNames.SRL_VERB))
 
-  // Remove the true predicates from the list of candidates (since they have a different label)
   val negativePredicateTrain = predicates(predicateTrainCandidates)
     .filterNot(cand => (predicates() prop address).contains(address(cand)))
   val negativePredicateTest = predicates(predicateTestCandidates)
@@ -30,11 +29,7 @@ object pipeline3 extends App {
 
   predicates.populate(negativePredicateTrain)
   predicates.populate(negativePredicateTest, false)
-  //predicateClassifier1.learn(100)
-  //predicateClassifier.save()
-  //predicateClassifier.load()
-  //predicateClassifier1.test()
-  //predicateClassifier1.save()
+
 
   val XuPalmerCandidateArgsTraining = predicates.getTrainingInstances.flatMap(x => xuPalmerCandidate(x, (sentences(x.getTextAnnotation) ~> sentencesTostringTree).head))
 
@@ -50,29 +45,28 @@ object pipeline3 extends App {
   relations.populate(negativePalmerTestCandidates, false)
 
   println("all relations number after population:" + SRLDataModel.relations().size)
+  print("isPredicate test results:")
+  predicateClassifier1.learn(10)
+  predicateClassifier1.save()
+  predicateClassifier1.test()
 
-  argumentTypeLearner1.learn(100)
-
-  print("argument classifier test results after 5 rounds:")
-
+  print("argument classifier test results:")
+  argumentTypeLearner1.learn(10)
   argumentTypeLearner1.test()
   argumentTypeLearner1.save()
 
-//  argumentXuIdentifierGivenApredicate1.learn(100)
-//  argumentXuIdentifierGivenApredicate1.test()
-//  argumentXuIdentifierGivenApredicate1.save()
-  //    println("pipeline argIdentification")
-  //      val res = relations.getTestingInstances.map(x => {
-  //        print("value", isArgumentPipePrediction(x))
-  //        isArgumentPipePrediction(x)
-  //      })
-  //
-  //      val res1 = relations.getAllInstances.map(x => isArgumentPipePrediction(x))
-  //
-  //      evaluation.Test(isArgumentXu_Gth, isArgumentPipePrediction, relations)
-  //
-  //      println("directly argIdentification")
-  //      evaluation.Test(isArgumentXu_Gth, isArgumentPrediction, relations)
+  println("directly argIdentification")
+  argumentXuIdentifierGivenApredicate1.learn(10)
+  argumentXuIdentifierGivenApredicate1.test()
+  argumentXuIdentifierGivenApredicate1.save()
 
-  print("finish")
+  println("pipeline argIdentification")
+  evaluation.Test(isArgumentXu_Gth, isArgumentPipePrediction, relations)
+  println("directly argIdentification")
+  evaluation.Test(isArgumentXu_Gth, isArgumentPrediction, relations)
+  println("type prediction pipline:")
+  evaluation.Test(argumentLabel_Gth, typeArgumentPipePrediction,relations)
+  println("type prediction directly from candidates:")
+  evaluation.Test(argumentLabel_Gth, typeArgumentPrediction,relations)
+  print("finish!")
 }

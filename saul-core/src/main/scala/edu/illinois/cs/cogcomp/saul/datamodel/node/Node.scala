@@ -26,9 +26,9 @@ class Node[T <: AnyRef](val keyFunc: T => Any = (x: T) => x, val tag: ClassTag[T
 
   val testingSet = MutableSet[T]()
 
-  def getTrainingInstances: Iterable[T] = this.trainingSet
+  def getTrainingInstances: Iterable[T] = this.trainingSet.toSeq
 
-  def getTestingInstances: Iterable[T] = this.testingSet
+  def getTestingInstances: Iterable[T] = this.testingSet.toSeq
 
   val orderingMap = MutableMap[Int, T]()
   val reverseOrderingMap = MutableMap[T, Int]()
