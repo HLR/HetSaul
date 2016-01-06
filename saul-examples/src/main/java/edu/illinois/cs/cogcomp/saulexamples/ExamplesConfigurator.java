@@ -12,9 +12,9 @@ import edu.illinois.cs.cogcomp.core.utilities.configuration.ResourceManager;
  * @since 10/16/15
  */
 public class ExamplesConfigurator extends Configurator {
-    public static final Property TREEBANK_HOME = new Property("treebankHome", "./data/treebank");
-    public static final Property PROPBANK_HOME = new Property("propbankHome","./data/propbank");
-	public static final Property MODELS_DIR = new Property("modelsDir", "./models/");
+    public static final Property TREEBANK_HOME = new Property("treebankHome", "../data/treebank");
+    public static final Property PROPBANK_HOME = new Property("propbankHome","../data/propbank");
+	public static final Property MODELS_DIR = new Property("modelsDir", "../models/");
 
     @Override
     public ResourceManager getDefaultConfig() {

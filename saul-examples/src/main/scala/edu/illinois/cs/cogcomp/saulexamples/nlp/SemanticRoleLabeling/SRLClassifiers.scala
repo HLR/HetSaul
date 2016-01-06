@@ -21,7 +21,9 @@ object SRLClassifiers {
 
   object argumentClassifier extends Learnable[Constituent](SRLDataModel, parameters) {
     def label = SRLDataModel.isArgument_Gth
-    override lazy val classifier = new SparseNetworkLBP
+    override lazy val classifier = new SparseNetworkLBP {
+
+    }
   }
 
   object predicateSenseClassifier extends Learnable[Constituent](SRLDataModel, parameters) {
