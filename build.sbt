@@ -28,7 +28,7 @@ lazy val saulCore = (project in file("saul-core")).
     name := "saul",
     libraryDependencies ++= Seq(
       "edu.illinois.cs.cogcomp" % "LBJava" % "1.2.2",
-      "com.typesafe.play" % "play_2.11" % "2.4.3"
+      "com.typesafe.play" % "play_2.11" % "2.4.3" exclude("ch.qos.logback", "logback-classic")
     )
   )
 
