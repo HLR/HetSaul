@@ -232,20 +232,25 @@ object POSDataModel extends DataModel {
   // TODO simplify this
   val suffixFeatures = property[Constituent]("suffixFeatures") {
     x: Constituent =>
-      x.toString
+      val word = x.toString
+      val length = word.length
+      val unknown = (POSTaggerUnknown.isTraining &&
+        BaselineClassifier.classifier.observedCount(word) <= POSLabeledUnknownWordParser.threshold) ||
+        (!POSTaggerUnknown.isTraining && BaselineClassifier.classifier.discreteValue(x).equals("UNKNOWN"))
 
-      val length = x.toString.length()
-      val unknown = POSTaggerUnknown.isTraining &&
-        BaselineClassifier.classifier.observedCount(x.toString) <= POSLabeledUnknownWordParser.threshold ||
-        !POSTaggerUnknown.isTraining && BaselineClassifier.classifier.discreteValue(x).equals("UNKNOWN")
-      val (c, d) = if (unknown && length > 3 && Character.isLetter(x.toString.charAt(length - 1))) {
-        val a = x.toString.substring(length - 2).toLowerCase()
-        val b = if (length > 4 && Character.isLetter(x.toString.charAt(length - 3)))
-          x.toString.substring(length - 3).toLowerCase()
+      val (r, s, t) = if (unknown && length > 3 && Character.isLetter(word.charAt(length - 1))) {
+        val a = word.substring(length - 1).toLowerCase()
+
+        val b = if (Character.isLetter(word.charAt(length - 2))) word.substring(length - 2).toLowerCase()
         else ""
-        (a, b)
-      } else
-        ("", "")
-      c + "-" + d
+
+        val c = if (length > 4 && Character.isLetter(word.charAt(length - 3)))
+          word.substring(length - 3).toLowerCase()
+        else ""
+
+        (a, b, c)
+      } else ("", "", "")
+
+      r + "-" + s + "-" + t
   }
 }

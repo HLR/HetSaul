@@ -35,23 +35,21 @@ object POSTaggerApp {
     POSDataModel.tokens populate trainData
     POSDataModel.tokens.populate(testData, train = false)
 
-    /** preprocess the baseline systems */
+    /** pre-process the baseline systems */
     BaselineClassifier.learn(1)
     MikheevClassifier.learn(1)
 
     val unknownTrainData = trainData.filter(x => BaselineClassifier.classifier.observedCount(x.toString) <= POSLabeledUnknownWordParser.threshold)
 
-    //    POSTaggerKnown.learn(50)
-    //    POSTaggerUnknown.learn(50, unknownTrainData)
-
-    (0 until 50).foreach(_ => {
+    (0 until 50).foreach(iter => {
+      println(s"Training POS Tagger iteration $iter out of 50")
       POSTaggerKnown.learn(1)
       POSTaggerUnknown.learn(1, unknownTrainData)
       POSDataModel.featureCacheMap.clear()
     })
 
-    POSTaggerKnown.test(testData)
-    POSTaggerUnknown.test(testData)
+//    POSTaggerKnown.test(testData)
+//    POSTaggerUnknown.test(testData)
 
     val tester = new TestDiscrete
     val testReader = new LBJIteratorParserScala[Constituent](testData)

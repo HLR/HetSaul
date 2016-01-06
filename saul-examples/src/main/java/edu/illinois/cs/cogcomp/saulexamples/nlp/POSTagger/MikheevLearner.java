@@ -182,51 +182,51 @@ public class MikheevLearner extends POSBaselineLearner
      **/
     public Set<String> allowableTags(Constituent word) {
 
-        String label = word.getLabel();
-//        System.out.println("POS label for word = " + label );
-        Set<String> result = allowableTags(label);
+        String wordForm = word.toString();
+
+        Set<String> result = allowableTags(wordForm);
         if (result.size() > 0) return result;
 
 //        System.out.println("Checking for capitalization of " + word.toString());
-        if (isCapitalized(word.toString())) {
+        if (isCapitalized(wordForm)) {
             HashMap<String, TreeMap<String, Integer>> t;
             Constituent nearestBefore = nearestBefore(word);
 //            System.out.println("Nearest before = " +  nearestBefore);
 
-            if (nearestBefore.toString() == null) t = firstCapitalized;
+            if (nearestBefore == null || nearestBefore.toString() == null) t = firstCapitalized;
             else t = notFirstCapitalized;
 
-            if (label.length() >= 6) {
+            if (wordForm.length() >= 6) {
                 String suffix =
-                        label.substring(label.length() - 4).toLowerCase();
+                        wordForm.substring(wordForm.length() - 4).toLowerCase();
                 if (t.containsKey(suffix))
                     result = t.get(suffix).keySet();
             }
 
-            if (result.size() == 0 && label.length() >= 5) {
+            if (result.size() == 0 && wordForm.length() >= 5) {
                 String suffix =
-                        label.substring(label.length() - 3).toLowerCase();
+                        wordForm.substring(wordForm.length() - 3).toLowerCase();
                 if (t.containsKey(suffix))
                     result = t.get(suffix).keySet();
             }
 
             if (result.size() == 0) result.add("NNP");
         }
-        else if (label.contains("-")) {
+        else if (wordForm.contains("-")) {
             result.add("NN");
             result.add("JJ");
         }
         else {
-            if (label.length() >= 6) {
+            if (wordForm.length() >= 6) {
                 String suffix =
-                        label.substring(label.length() - 4).toLowerCase();
+                        wordForm.substring(wordForm.length() - 4).toLowerCase();
                 if (table.containsKey(suffix))
                     result = table.get(suffix).keySet();
             }
 
-            if (result.size() == 0 && label.length() >= 5) {
+            if (result.size() == 0 && wordForm.length() >= 5) {
                 String suffix =
-                        label.substring(label.length() - 3).toLowerCase();
+                        wordForm.substring(wordForm.length() - 3).toLowerCase();
                 if (table.containsKey(suffix))
                     result = table.get(suffix).keySet();
             }

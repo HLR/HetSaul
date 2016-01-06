@@ -19,7 +19,7 @@ object POSClassifiers {
     if (BaselineClassifier.classifier.observed(x.toString))
       POSTaggerKnown.classifier.valueOf(x, BaselineClassifier.classifier.allowableTags(wordForm(x))).getStringValue
     else
-      POSTaggerUnknown.classifier.valueOf(x, MikheevClassifier.classifier.allowableTags(wordForm(x))).getStringValue
+      POSTaggerUnknown.classifier.valueOf(x, MikheevClassifier.classifier.allowableTags(x)).getStringValue
   }
 
   object POSTaggerKnown extends Learnable[Constituent](POSDataModel) {
@@ -38,7 +38,7 @@ object POSClassifiers {
   object POSTaggerUnknown extends Learnable[Constituent](POSDataModel) {
     def label = POSLabel
     override def feature = using(wordForm, labelOrBaselineU, labelTwoBeforeU, labelOneBeforeU,
-      labelOneAfterU, labelTwoAfterU, L2bL1bU, L1bL1aU, L1aL2aU)
+      labelOneAfterU, labelTwoAfterU, L2bL1bU, L1bL1aU, L1aL2aU, suffixFeatures)
     override lazy val classifier = new SparseNetworkLearner {
       val p = new SparseAveragedPerceptron.Parameters()
       p.learningRate = .1
