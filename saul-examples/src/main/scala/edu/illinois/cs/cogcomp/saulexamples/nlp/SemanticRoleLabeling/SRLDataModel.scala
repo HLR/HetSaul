@@ -47,79 +47,79 @@ object SRLDataModel extends DataModel {
   relationsToPredicates.addSensor(relToPredicate _)
   sentencesTostringTree.addSensor(textAnnotationToStringTree _)
 
-  val isPredicate_Gth = property(predicates,"p") {
+  val isPredicate_Gth = property(predicates, "p") {
     x: Constituent => x.getLabel.equals("Predicate")
   }
-  val predicateSense_Gth = property(predicates,"s") {
+  val predicateSense_Gth = property(predicates, "s") {
     x: Constituent => x.getAttribute(CoNLLColumnFormatReader.SenseIdentifer)
   }
 
-  val isArgument_Gth = property(arguments,"a") {
+  val isArgument_Gth = property(arguments, "a") {
     x: Constituent => x.getLabel.equals("Argument")
   }
-  val isArgumentXu_Gth = property(relations,"aX") {
+  val isArgumentXu_Gth = property(relations, "aX") {
     x: Relation => !x.getRelationName.equals("candidate")
   }
-  val argumentLabel_Gth = property(relations,"l") {
+  val argumentLabel_Gth = property(relations, "l") {
     r: Relation => r.getRelationName
   }
 
-  val posTag = property(arguments,"posC") {
+  val posTag = property(arguments, "posC") {
     x: Constituent => x.getTextAnnotation.getView(ViewNames.POS).getConstituentsCovering(x).get(0).getLabel
   }
 
-  val address = property(arguments,"add") {
+  val address = property(arguments, "add") {
     x: Constituent => x.getTextAnnotation.getCorpusId + ":" + x.getTextAnnotation.getId + ":" + x.getSpan
   }
-  val subcategorization = property(arguments,"subcatC") {
+  val subcategorization = property(arguments, "subcatC") {
     x: Constituent => //new SubcategorizationFrame("Charniak").getFeatures(x)
       val subcatFex = new SubcategorizationFrame(ViewNames.PARSE_GOLD)
       val discreteFeature: String = FeatureUtilities.getFeatureSet(subcatFex, x).mkString
       discreteFeature
   }
 
-  val phraseType = property(arguments,"phraseTypeC") {
+  val phraseType = property(arguments, "phraseTypeC") {
     x: Constituent =>
       val phraseType = new ParsePhraseType(ViewNames.PARSE_GOLD)
       val discreteFeature: String = FeatureUtilities.getFeatureSet(phraseType, x).mkString
       discreteFeature
   }
 
-  val headword = property(arguments,"headC") {
+  val headword = property(arguments, "headC") {
     x: Constituent =>
       val headWordAndPos = new ParseHeadWordPOS(ViewNames.PARSE_GOLD)
       val discreteFeature: String = FeatureUtilities.getFeatureSet(headWordAndPos, x).mkString
       discreteFeature
   }
 
-  val syntacticFrame = property(arguments,"synFrameC") {
+  val syntacticFrame = property(arguments, "synFrameC") {
     x: Constituent =>
       val syntacticFrame = new SyntacticFrame(ViewNames.PARSE_GOLD)
       val discreteFeature: String = FeatureUtilities.getFeatureSet(syntacticFrame, x).mkString
       discreteFeature
   }
-  val path = property(arguments,"pathC") {
+  val path = property(arguments, "pathC") {
     x: Constituent =>
       val parspath = new ParsePath(ViewNames.PARSE_GOLD)
       val discreteFeature: String = FeatureUtilities.getFeatureSet(parspath, x).mkString
       discreteFeature
   }
 
-  val subcategorizationRelation = property(relations,"subcat") {
+  val subcategorizationRelation = property(relations, "subcat") {
     x: Relation => //new SubcategorizationFrame("Charniak").getFeatures(x)
       val subcatFex = new SubcategorizationFrame(ViewNames.PARSE_GOLD)
       val discreteFeature: String = FeatureUtilities.getFeatureSet(subcatFex, x.getTarget).mkString
       discreteFeature
   }
 
-  val phraseTypeRelation = property(relations,"phraseType") {
+  val phraseTypeRelation = property(relations, "phraseType") {
     x: Relation =>
       val phraseType = new ParsePhraseType(ViewNames.PARSE_GOLD)
       val discreteFeature: String = FeatureUtilities.getFeatureSet(phraseType, x.getTarget).mkString
       discreteFeature
   }
 
-  val headwordRelation = property(relations,"head") {
+  val headwordRelation = property(relations, "head") {
     x: Relation =>
 
       val headWordAndPos = new ParseHeadWordPOS(ViewNames.PARSE_GOLD)
@@ -127,49 +127,48 @@ object SRLDataModel extends DataModel {
       discreteFeature
   }
 
-  val syntacticFrameRelation = property(relations,"synFrame") {
+  val syntacticFrameRelation = property(relations, "synFrame") {
     x: Relation =>
       val syntacticFrame = new SyntacticFrame(ViewNames.PARSE_GOLD)
       val discreteFeature: String = FeatureUtilities.getFeatureSet(syntacticFrame, x.getTarget).mkString
       discreteFeature
   }
-  val pathRelation = property(relations,"path") {
+  val pathRelation = property(relations, "path") {
     x: Relation =>
       val parspath = new ParsePath(ViewNames.PARSE_GOLD)
       val discreteFeature: String = FeatureUtilities.getFeatureSet(parspath, x.getTarget).mkString
       discreteFeature
   }
-  val predPosTag = property(relations,"pPos") {
+  val predPosTag = property(relations, "pPos") {
     x: Relation => x.getSource.getTextAnnotation.getView(ViewNames.POS).getConstituentsCovering(x.getSource).get(0).getLabel
   }
-  val predLemma = property(relations,"pLem") {
+  val predLemma = property(relations, "pLem") {
     x: Relation =>
       val l = x.getSource.getTextAnnotation.getView(ViewNames.LEMMA).getConstituentsCovering(x.getSource).get(0).getLabel
       l
   }
-  val linearPosition = property(relations,"position") {
+  val linearPosition = property(relations, "position") {
     x: Relation =>
       val linposition = new LinearPosition()
       val discreteFeature: String = FeatureUtilities.getFeatureSet(linposition, x.getTarget).mkString
       discreteFeature
   }
   //frame properties
-  val isLegalSense = property(relations,"legalSens")
-  {
+  val isLegalSense = property(relations, "legalSens") {
     x: Relation => ""
   }
 
   //Classifiers as properties
 
-  val isPredicatePrediction = property(predicates,"isPredicatePrediction") {
+  val isPredicatePrediction = property(predicates, "isPredicatePrediction") {
     x: Constituent => predicateClassifier1(x)
   }
 
-  val isArgumentPrediction = property(relations,"isArgumentPrediction") {
+  val isArgumentPrediction = property(relations, "isArgumentPrediction") {
     x: Relation => argumentXuIdentifierGivenApredicate1(x)
   }
 
-  val isArgumentPipePrediction = property(relations,"isArgumentpipPrediction") {
+  val isArgumentPipePrediction = property(relations, "isArgumentpipPrediction") {
     x: Relation =>
       predicateClassifier1(x.getSource) match {
         case "false" => "false"
@@ -177,11 +176,11 @@ object SRLDataModel extends DataModel {
 
       }
   }
-  val typeArgumentPrediction = property(relations,"typeArgumentPrediction") {
+  val typeArgumentPrediction = property(relations, "typeArgumentPrediction") {
     x: Relation =>
       argumentTypeLearner1(x)
   }
-  val typeArgumentPipePrediction = property(relations,"typeArgumentpipPrediction") {
+  val typeArgumentPipePrediction = property(relations, "typeArgumentpipPrediction") {
     x: Relation =>
       val a: String = predicateClassifier1(x.getSource) match {
         case "false" => "false"
