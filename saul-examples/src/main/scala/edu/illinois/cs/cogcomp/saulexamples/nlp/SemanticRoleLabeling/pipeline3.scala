@@ -6,7 +6,7 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling
 import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.Constituent
 import edu.illinois.cs.cogcomp.saul.evaluation.evaluation
-import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLClassifiersForExperiment.{argumentTypeLearner1, argumentXuIdentifierGivenApredicate1, predicateClassifier1}
+import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLClassifiersForExperiment.{ argumentTypeLearner1, argumentXuIdentifierGivenApredicate1, predicateClassifier1 }
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLDataModel._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.commonSensors._
 
@@ -29,7 +29,6 @@ object pipeline3 extends App {
 
   predicates.populate(negativePredicateTrain)
   predicates.populate(negativePredicateTest, false)
-
 
   val XuPalmerCandidateArgsTraining = predicates.getTrainingInstances.flatMap(x => xuPalmerCandidate(x, (sentences(x.getTextAnnotation) ~> sentencesTostringTree).head))
 
@@ -65,8 +64,8 @@ object pipeline3 extends App {
   println("directly argIdentification")
   evaluation.Test(isArgumentXu_Gth, isArgumentPrediction, relations)
   println("type prediction pipline:")
-  evaluation.Test(argumentLabel_Gth, typeArgumentPipePrediction,relations)
+  evaluation.Test(argumentLabel_Gth, typeArgumentPipePrediction, relations)
   println("type prediction directly from candidates:")
-  evaluation.Test(argumentLabel_Gth, typeArgumentPrediction,relations)
+  evaluation.Test(argumentLabel_Gth, typeArgumentPrediction, relations)
   print("finish!")
 }
