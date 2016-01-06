@@ -145,6 +145,9 @@ trait Edge[T <: AnyRef, U <: AnyRef] {
     forward.loadIndexWithId(in)
     backward.loadIndexWithId(in)
   }
+
+  def apply(t: T) = from(t) ~> this
+  def apply(ts: Iterable[T]) = from(ts) ~> this
 }
 
 case class AsymmetricEdge[T <: AnyRef, U <: AnyRef](val forward: Link[T, U], val backward: Link[U, T],

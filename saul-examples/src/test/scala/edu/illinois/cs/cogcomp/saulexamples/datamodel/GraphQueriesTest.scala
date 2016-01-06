@@ -9,7 +9,7 @@ class GraphQueriesTest extends FlatSpec with Matchers {
     val firstNames = node[String]
     val lastNames = node[String]
     val name = edge(firstNames, lastNames, 'names)
-    val prefix = property[String]("prefix")((s: String) => s.charAt(1).toString)
+    val prefix = property(firstNames, "prefix")((s: String) => s.charAt(1).toString)
 
     firstNames.populate(Seq("Dave", "John", "Mark", "Michael"))
     lastNames.populate(List("Dell", "Jacobs", "Maron", "Mario"))

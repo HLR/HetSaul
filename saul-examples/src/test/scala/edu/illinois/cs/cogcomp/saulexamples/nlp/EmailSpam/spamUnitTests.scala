@@ -1,14 +1,10 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.EmailSpam
 
-import edu.illinois.cs.cogcomp.annotation.BasicTextAnnotationBuilder
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
 import edu.illinois.cs.cogcomp.saulexamples.data.Document
 import edu.illinois.cs.cogcomp.saulexamples.nlp.EdisonFeatures.toyDataGenerator
 import edu.illinois.cs.cogcomp.saulexamples.nlp.EmailSpam.spamClassifiers.spamClassifier
-import edu.illinois.cs.cogcomp.core.datastructures.textannotation.TextAnnotation
 import org.scalatest._
-
-import scala.collection.JavaConversions._
 
 class SpamUnitTests extends FlatSpec with Matchers {
 
