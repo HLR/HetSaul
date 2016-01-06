@@ -14,7 +14,7 @@ class jsonInterfaceTest extends FlatSpec with Matchers {
       val relations = node[String]
       val sentencesToRelations = edge(arguments, relations)
       val sentencesToTrees = edge(predicates, relations)
-      val isPredicate = property[String]("p") { x: String => "" }
+      val isPredicate = property[String](predicates, "p") { x: String => "" }
     }
 
     val predictedOutput = "{\"nodes\":[\"predicates\",\"arguments\",\"relations\"],\"edges\":[\"sentencesToRelations\",\"sentencesToTrees\"],\"properties\":[\"isPredicate\"]}"
