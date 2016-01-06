@@ -5,15 +5,13 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling
 
 import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.Constituent
-import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLClassifiersForExperiment.argumentXuIdentifierGivenApredicate1
+import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLClassifiersForExperiment.argumentTypeLearner1
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLDataModel._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.commonSensors._
 
 import scala.collection.JavaConversions._
 
-/** Created by Parisa on 12/11/15.
-  */
-object pipeline2 extends App {
+object pipeline3 extends App {
 
   SRLDataModel.sentencesToTokens.addSensor(textAnnotationToTokens _)
   populateGraphwithTextAnnotation(SRLDataModel, SRLDataModel.sentences)
@@ -53,9 +51,16 @@ object pipeline2 extends App {
 
   println("all relations number after population:" + SRLDataModel.relations().size)
 
-  argumentXuIdentifierGivenApredicate1.learn(100)
-  argumentXuIdentifierGivenApredicate1.test()
-  argumentXuIdentifierGivenApredicate1.save()
+  argumentTypeLearner1.learn(100)
+
+  print("argument classifier test results after 5 rounds:")
+
+  argumentTypeLearner1.test()
+  argumentTypeLearner1.save()
+
+//  argumentXuIdentifierGivenApredicate1.learn(100)
+//  argumentXuIdentifierGivenApredicate1.test()
+//  argumentXuIdentifierGivenApredicate1.save()
   //    println("pipeline argIdentification")
   //      val res = relations.getTestingInstances.map(x => {
   //        print("value", isArgumentPipePrediction(x))
