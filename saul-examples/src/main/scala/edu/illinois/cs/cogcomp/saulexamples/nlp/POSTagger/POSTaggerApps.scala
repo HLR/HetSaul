@@ -9,6 +9,7 @@ import edu.illinois.cs.cogcomp.nlp.corpusreaders.PennTreebankPOSReader
 import edu.illinois.cs.cogcomp.saul.parser.LBJIteratorParserScala
 import edu.illinois.cs.cogcomp.saulexamples.nlp.EdisonFeatures.toyDataGenerator
 import edu.illinois.cs.cogcomp.saulexamples.nlp.POSTagger.POSClassifiers._
+import edu.illinois.cs.cogcomp.saulexamples.nlp.POSTagger.POSDataModel._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.commonSensors
 
 import scala.collection.JavaConversions._
@@ -25,33 +26,54 @@ object POSTaggerApp {
   def main(args: Array[String]): Unit = {
     val trainDataReader = new PennTreebankPOSReader("train")
     trainDataReader.readFile(Constants.trainAndDevData)
-    //    val trainData = trainDataReader.getTextAnnotations.subList(0, 5).flatMap(commonSensors.textAnnotationToTokens(_).subList(0, 5))
-    val trainData = trainDataReader.getTextAnnotations.flatMap(commonSensors.textAnnotationToTokens)
+
+    var sentenceId = 0
+    val trainData = trainDataReader.getTextAnnotations.flatMap(p => {
+      val cons = commonSensors.textAnnotationToTokens(p)
+      sentenceId += 1
+      //      Adding a dummy attribute so that hashCode is different for each constituent
+      cons.foreach(c => c.addAttribute("SentenceId", sentenceId.toString))
+      cons
+    })
 
     val testDataReader = new PennTreebankPOSReader("test")
     testDataReader.readFile(Constants.testData)
-    val testData = testDataReader.getTextAnnotations.flatMap(commonSensors.textAnnotationToTokens)
+    val testData = testDataReader.getTextAnnotations.flatMap(p => {
+      val cons = commonSensors.textAnnotationToTokens(p)
+      sentenceId += 1
+      //      Adding a dummy attribute so that hashCode is different for each constituent
+      cons.foreach(c => c.addAttribute("SentenceId", sentenceId.toString))
+      cons
+    })
 
     POSDataModel.tokens populate trainData
     POSDataModel.tokens.populate(testData, train = false)
 
-    /** preprocess the baseline systems */
+    POSDataModel.isTraining = true
+
+    /** pre-process the baseline systems */
     BaselineClassifier.learn(1)
     MikheevClassifier.learn(1)
 
-    val unknownTrainData = trainData.filter(x => BaselineClassifier.classifier.observedCount(x.toString) <= POSLabeledUnknownWordParser.threshold)
+    // This is doubled for some reason
+    println(s"Should be 1044112 but is ")
+    print(trainData.map(x => wordForm(x)).distinct.map(w => BaselineClassifier.classifier.observed(w)).sum)
+    println()
 
-    //    POSTaggerKnown.learn(50)
-    //    POSTaggerUnknown.learn(50, unknownTrainData)
+    val unknownTrainData = trainData.filter(x => BaselineClassifier.classifier.observedCount(wordForm(x)) <= 2 * POSLabeledUnknownWordParser.threshold)
 
-    (0 until 50).foreach(_ => {
+    (0 until 50).foreach(iter => {
+      println(s"Training POS Tagger iteration $iter out of 50")
       POSTaggerKnown.learn(1)
       POSTaggerUnknown.learn(1, unknownTrainData)
       POSDataModel.featureCacheMap.clear()
     })
 
-    POSTaggerKnown.test(testData)
-    POSTaggerUnknown.test(testData)
+    // Inconsistent values here
+    println(POSTaggerKnown.isTraining)
+    println(POSTaggerUnknown.isTraining)
+
+    POSDataModel.isTraining = false
 
     val tester = new TestDiscrete
     val testReader = new LBJIteratorParserScala[Constituent](testData)
