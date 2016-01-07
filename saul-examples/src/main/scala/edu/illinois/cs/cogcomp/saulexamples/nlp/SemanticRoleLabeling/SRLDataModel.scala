@@ -41,25 +41,25 @@ object SRLDataModel extends DataModel {
   val sentencesToTokens = edge(sentences, tokens)
   sentencesToTokens.addSensor(commonSensors.textAnnotationToTokens _)
 
-  val isPredicate = property[Constituent]("p") {
+  val isPredicate = property(tokens, "p") {
     x: Constituent => x.getLabel.equals("Predicate")
   }
-  val predicateSense = property[Constituent]("s") {
+  val predicateSense = property(tokens, "s") {
     x: Constituent => x.getAttribute(CoNLLColumnFormatReader.SenseIdentifer)
   }
 
-  val isArgument = property[Constituent]("a") {
+  val isArgument = property(tokens, "a") {
     x: Constituent => x.getLabel.equals("Argument")
   }
-  val argumentLabel = property[Relation]("l") {
+  val argumentLabel = property(relations, "l") {
     r: Relation => r.getRelationName
   }
 
-  val posTag = property[Constituent]("pos") {
+  val posTag = property(tokens, "pos") {
     x: Constituent => x.getTextAnnotation.getView(ViewNames.POS).getConstituentsCovering(x).get(0).getLabel
   }
 
-  val address = property[Constituent]("add") {
+  val address = property(tokens, "add") {
     x: Constituent => x.getTextAnnotation.getCorpusId + ":" + x.getTextAnnotation.getId + ":" + x.getSpan
   }
 }

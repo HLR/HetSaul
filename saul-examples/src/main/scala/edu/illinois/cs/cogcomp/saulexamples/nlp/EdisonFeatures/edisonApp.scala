@@ -82,25 +82,27 @@ object edisonApp {
 }
 
 object toyDataGenerator {
-  val documentString = "Saul or Soul; that is the question"
+  val documentStrings = List("Saul or Soul; that is the question", "when will I graduate?")
   def generateToyDocuments(numDocs: Int): IndexedSeq[Document] = {
-    (1 to numDocs).map(_ => new Document(documentString.split(" ").toList, util.Random.nextInt(2).toString))
+    (1 to numDocs).map { _ =>
+      val randInt = util.Random.nextInt(2)
+      new Document(documentStrings(randInt).split(" ").toList, randInt.toString)
+    }
+  }
+
+  /** Generate toy instances that have the same labels */
+  def generateToyDocumentsSingleLabel(numDocs: Int): IndexedSeq[Document] = {
+    val label = util.Random.nextInt(2)
+    (1 to numDocs).map(_ => new Document(documentStrings(label).split(" ").toList, label.toString))
   }
 
   def generateToyTextAnnotation(numDocs: Int): List[TextAnnotation] = {
+    import scala.collection.JavaConversions._
+
     (1 to numDocs).map { _ =>
       val numSentences = 5
-      val documentsTokenized = for (i <- 1 to numSentences)
-        yield documentString.split(" ")
-      val a = BasicTextAnnotationBuilder.createTextAnnotationFromTokens(documentsTokenized)
-      println(a.getAvailableViews)
-      // TODO: add sentences
-      println(a.sentences().size())
-      a
+      val documentsTokenized = (1 to numSentences).map(_ => documentStrings(0).split(" "))
+      BasicTextAnnotationBuilder.createTextAnnotationFromTokens(documentsTokenized)
     }.toList
-  }
-
-  def main(args: Array[String]): Unit = {
-    generateToyTextAnnotation(3)
   }
 }

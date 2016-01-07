@@ -4,7 +4,7 @@ import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.Constituent
 import edu.illinois.cs.cogcomp.lbj.pos.POSLabeledUnknownWordParser
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
-import edu.illinois.cs.cogcomp.saulexamples.nlp.POSTagger.POSClassifiers.{ POSTaggerUnknown, POSTaggerKnown, BaselineClassifier, MikheevClassifier }
+import edu.illinois.cs.cogcomp.saulexamples.nlp.POSTagger.POSClassifiers.{ POSTaggerUnknown, POSTaggerKnown, BaselineClassifier }
 
 object POSDataModel extends DataModel {
 
@@ -38,11 +38,11 @@ object POSDataModel extends DataModel {
   val constituentTwoBefore = edge(tokens, tokens)
   constituentTwoBefore.addSensor(getConstituentTwoBefore _)
 
-  val POSLabel = property[Constituent]("label") {
+  val POSLabel = property(tokens, "label") {
     x: Constituent => x.getTextAnnotation.getView(ViewNames.POS).getConstituentsCovering(x).get(0).getLabel
   }
 
-  val wordForm = property[Constituent]("wordForm") {
+  val wordForm = property(tokens, "wordForm") {
     x: Constituent =>
       getOrUpdate("wordForm", x, (x) => {
         val wordFormLabel = x.toString
@@ -54,11 +54,11 @@ object POSDataModel extends DataModel {
       })
   }
 
-  val baselineTarget = property[Constituent]("baselineTarget") {
+  val baselineTarget = property(tokens, "baselineTarget") {
     x: Constituent => BaselineClassifier.classifier.discreteValue(x)
   }
 
-  val labelOrBaseline = property[Constituent]("labelOrBaseline") {
+  val labelOrBaseline = property(tokens, "labelOrBaseline") {
     x: Constituent =>
       getOrUpdate("labelOrBaseline", x, (x) => {
         if (POSTaggerKnown.isTraining)
@@ -69,7 +69,7 @@ object POSDataModel extends DataModel {
       })
   }
 
-  val labelOrBaselineU = property[Constituent]("labelOrBaselineU") {
+  val labelOrBaselineU = property(tokens, "labelOrBaselineU") {
     x: Constituent =>
       getOrUpdate("labelOrBaselineU", x, (x) => {
         if (POSTaggerUnknown.isTraining)
@@ -80,7 +80,7 @@ object POSDataModel extends DataModel {
       })
   }
 
-  val labelOneBefore = property[Constituent]("labelOneBefore") {
+  val labelOneBefore = property(tokens, "labelOneBefore") {
     x: Constituent =>
       getOrUpdate("labelOneBefore", x, (x) => {
         val cons = (tokens(x) ~> constituentBefore).head
@@ -94,7 +94,7 @@ object POSDataModel extends DataModel {
       })
   }
 
-  val labelOneBeforeU = property[Constituent]("labelOneBeforeU") {
+  val labelOneBeforeU = property(tokens, "labelOneBeforeU") {
     x: Constituent =>
       getOrUpdate("labelOneBeforeU", x, (x) => {
         val cons = (tokens(x) ~> constituentBefore).head
@@ -108,7 +108,7 @@ object POSDataModel extends DataModel {
       })
   }
 
-  val labelTwoBefore = property[Constituent]("labelTwoBefore") {
+  val labelTwoBefore = property(tokens, "labelTwoBefore") {
     x: Constituent =>
       getOrUpdate("labelTwoBefore", x, (x) => {
         val cons = (tokens(x) ~> constituentTwoBefore).head
@@ -124,7 +124,7 @@ object POSDataModel extends DataModel {
       })
   }
 
-  val labelTwoBeforeU = property[Constituent]("labelTwoBeforeU") {
+  val labelTwoBeforeU = property(tokens, "labelTwoBeforeU") {
     x: Constituent =>
       getOrUpdate("labelTwoBeforeU", x, (x) => {
         val cons = (tokens(x) ~> constituentTwoBefore).head
@@ -139,7 +139,7 @@ object POSDataModel extends DataModel {
       })
   }
 
-  val labelOneAfter = property[Constituent]("labelOneAfter") {
+  val labelOneAfter = property(tokens, "labelOneAfter") {
     x: Constituent =>
       getOrUpdate("labelOneAfter", x, (x) => {
         val cons = (tokens(x) ~> constituentAfter).head
@@ -150,7 +150,7 @@ object POSDataModel extends DataModel {
       })
   }
 
-  val labelOneAfterU = property[Constituent]("labelOneAfterU") {
+  val labelOneAfterU = property(tokens, "labelOneAfterU") {
     x: Constituent =>
       getOrUpdate("labelOneAfterU", x, (x) => {
         val cons = (tokens(x) ~> constituentAfter).head
@@ -161,7 +161,7 @@ object POSDataModel extends DataModel {
       })
   }
 
-  val labelTwoAfter = property[Constituent]("labelTwoAfter") {
+  val labelTwoAfter = property(tokens, "labelTwoAfter") {
     x: Constituent =>
       getOrUpdate("labelTwoAfter", x, (x) => {
         val cons = (tokens(x) ~> constituentTwoAfter).head
@@ -172,7 +172,7 @@ object POSDataModel extends DataModel {
       })
   }
 
-  val labelTwoAfterU = property[Constituent]("labelTwoAfterU") {
+  val labelTwoAfterU = property(tokens, "labelTwoAfterU") {
     x: Constituent =>
       getOrUpdate("labelTwoAfterU", x, (x) => {
         val cons = (tokens(x) ~> constituentTwoAfter).head
@@ -183,27 +183,27 @@ object POSDataModel extends DataModel {
       })
   }
 
-  val L2bL1b = property[Constituent]("label2beforeLabel1beforeConjunction") {
+  val L2bL1b = property(tokens, "label2beforeLabel1beforeConjunction") {
     x: Constituent => labelTwoBefore(x) + "-" + labelOneBefore(x)
   }
 
-  val L2bL1bU = property[Constituent]("label2beforeLabel1beforeConjunctionU") {
+  val L2bL1bU = property(tokens, "label2beforeLabel1beforeConjunctionU") {
     x: Constituent => labelTwoBeforeU(x) + "-" + labelOneBeforeU(x)
   }
 
-  val L1bL1a = property[Constituent]("label1beforeLabel1afterConjunction") {
+  val L1bL1a = property(tokens, "label1beforeLabel1afterConjunction") {
     x: Constituent => labelOneBefore(x) + "-" + labelOneAfter(x)
   }
 
-  val L1bL1aU = property[Constituent]("label1beforeLabel1afterConjunctionU") {
+  val L1bL1aU = property(tokens, "label1beforeLabel1afterConjunctionU") {
     x: Constituent => labelOneBeforeU(x) + "-" + labelOneAfterU(x)
   }
 
-  val L1aL2a = property[Constituent]("labelfterLabel2AfterConjunction") {
+  val L1aL2a = property(tokens, "labelfterLabel2AfterConjunction") {
     x: Constituent => labelOneAfter(x) + "-" + labelTwoAfter(x)
   }
 
-  val L1aL2aU = property[Constituent]("labelfterLabel2AfterConjunctionU") {
+  val L1aL2aU = property(tokens, "labelfterLabel2AfterConjunctionU") {
     x: Constituent => labelOneAfterU(x) + "-" + labelTwoAfterU(x)
   }
 
@@ -212,7 +212,7 @@ object POSDataModel extends DataModel {
     * lengths.
     */
   // TODO simplify this
-  val suffixFeatures = property[Constituent]("suffixFeatures") {
+  val suffixFeatures = property(tokens, "suffixFeatures") {
     x: Constituent =>
       val word = wordForm(x)
       val length = word.length

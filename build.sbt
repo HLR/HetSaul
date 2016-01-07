@@ -29,7 +29,8 @@ lazy val saulCore = (project in file("saul-core")).
   settings(
     name := "saul",
     libraryDependencies ++= Seq(
-      "edu.illinois.cs.cogcomp" % "LBJava" % "1.2.1"
+      "edu.illinois.cs.cogcomp" % "LBJava" % "1.2.2",
+      "com.typesafe.play" % "play_2.11" % "2.4.3" exclude("ch.qos.logback", "logback-classic")
     )
   )
 
@@ -40,7 +41,8 @@ lazy val saulExamples = (project in file("saul-examples")).
     libraryDependencies ++= Seq(
       "edu.illinois.cs.cogcomp" % "illinois-nlp-pipeline" % cogcompPipelineVersion,
       "edu.illinois.cs.cogcomp" % "illinois-curator" % cogcompNLPVersion,
-      "edu.illinois.cs.cogcomp" % "illinois-edison" % cogcompNLPVersion
+      "edu.illinois.cs.cogcomp" % "illinois-edison" % cogcompNLPVersion,
+      "edu.illinois.cs.cogcomp" % "illinois-nlp-readers" % "0.0.2-SNAPSHOT"
     )
   ).dependsOn(saulCore).aggregate(saulCore)
 

@@ -2,10 +2,9 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp.POSTagger
 
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.Constituent
 import edu.illinois.cs.cogcomp.lbj.pos.POSBaselineLearner
-import edu.illinois.cs.cogcomp.lbjava.learn.{ Learner, SparseAveragedPerceptron, SparseNetworkLearner }
+import edu.illinois.cs.cogcomp.lbjava.learn.{ SparseAveragedPerceptron, SparseNetworkLearner }
+
 import edu.illinois.cs.cogcomp.saul.classifier.Learnable
-import edu.illinois.cs.cogcomp.saul.constraint.ConstraintTypeConversion._
-import edu.illinois.cs.cogcomp.saul.datamodel.property.Property
 
 import edu.illinois.cs.cogcomp.saulexamples.nlp.POSTagger.POSDataModel._
 
@@ -24,7 +23,7 @@ object POSClassifiers {
 
   object POSTaggerKnown extends Learnable[Constituent](POSDataModel) {
     def label = POSLabel
-    override def feature = using(wordForm, baselineTarget, labelTwoBefore, labelOneBefore,
+    override def feature = List(wordForm, baselineTarget, labelTwoBefore, labelOneBefore,
       labelOneAfter, labelTwoAfter, L2bL1b, L1bL1a, L1aL2a)
     override lazy val classifier = new SparseNetworkLearner {
       val p = new SparseAveragedPerceptron.Parameters()
@@ -37,7 +36,7 @@ object POSClassifiers {
 
   object POSTaggerUnknown extends Learnable[Constituent](POSDataModel) {
     def label = POSLabel
-    override def feature = using(wordForm, baselineTarget, labelTwoBeforeU, labelOneBeforeU,
+    override def feature = List(wordForm, baselineTarget, labelTwoBeforeU, labelOneBeforeU,
       labelOneAfterU, labelTwoAfterU, L2bL1bU, L1bL1aU, L1aL2aU, suffixFeatures)
     override lazy val classifier = new SparseNetworkLearner {
       val p = new SparseAveragedPerceptron.Parameters()
@@ -50,14 +49,14 @@ object POSClassifiers {
 
   object BaselineClassifier extends Learnable[Constituent](POSDataModel) {
     def label = POSLabel
-    override def feature = using(wordForm)
+    override def feature = List(wordForm)
     override lazy val classifier = new POSBaselineLearner()
     override val loggging = true
   }
 
   object MikheevClassifier extends Learnable[Constituent](POSDataModel) {
     def label = POSLabel
-    override def feature = using(wordForm)
+    override def feature = List(wordForm)
     override lazy val classifier = new MikheevLearner
     override val loggging = true
   }
