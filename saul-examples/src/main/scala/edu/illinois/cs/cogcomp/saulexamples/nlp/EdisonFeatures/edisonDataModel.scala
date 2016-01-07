@@ -15,19 +15,19 @@ object edisonDataModel extends DataModel {
   val constituents = node[Constituent]
 
   /** Property Types */
-  val label = property[Constituent]("label") {
+  val label = property(constituents, "label") {
     x: Constituent => x.getLabel
   }
 
-  val constituentContent = property[Constituent]("consContent") {
+  val constituentContent = property(constituents, "consContent") {
     x: Constituent => x.getSpan.toString
   }
 
-  val documentContent = property[TextAnnotation]("docContent") {
+  val documentContent = property(documents, "docContent") {
     x: TextAnnotation => x.toString
   }
 
-  val sentenceContent = property[Sentence]("sentenceContent") {
+  val sentenceContent = property(sentences, "sentenceContent") {
     x: Sentence => x.getText
   }
 

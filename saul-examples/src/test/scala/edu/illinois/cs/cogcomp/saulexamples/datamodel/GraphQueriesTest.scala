@@ -9,7 +9,7 @@ class GraphQueriesTest extends FlatSpec with Matchers {
     val firstNames = node[String]
     val lastNames = node[String]
     val name = edge(firstNames, lastNames, 'names)
-    val prefix = property[String]("prefix")((s: String) => s.charAt(1).toString)
+    val prefix = property(firstNames, "prefix")((s: String) => s.charAt(1).toString)
 
     firstNames.populate(Seq("Dave", "John", "Mark", "Michael"))
     lastNames.populate(List("Dell", "Jacobs", "Maron", "Mario"))
@@ -19,20 +19,20 @@ class GraphQueriesTest extends FlatSpec with Matchers {
 
   "finding neighbors of a link" should "find the neighbors" in {
     import TestGraph._
-    name.forward.neighborsOf("Dave").toSet should be(Set("Dell"))
-    name.forward.neighborsOf("John").toSet should be(Set("Jacobs"))
+    name.forward.neighborsOf("Dave") should be(Set("Dell"))
+    name.forward.neighborsOf("John") should be(Set("Jacobs"))
   }
 
   "finding neighbors of a reverse link" should "find the reverse neighbors" in {
     import TestGraph._
-    name.backward.neighborsOf("Jacobs").toSet should be(Set("John"))
-    name.backward.neighborsOf("Maron").toSet should be(Set("Mark", "Michael"))
+    name.backward.neighborsOf("Jacobs") should be(Set("John"))
+    name.backward.neighborsOf("Maron") should be(Set("Mark", "Michael"))
   }
 
   "atomic queries" should "return themselves" in {
     import TestGraph._
-    firstNames().toSet should be(Set("Dave", "John", "Mark", "Michael"))
-    firstNames("Jim").toSet should be(Set("Jim"))
+    firstNames() should be(Set("Dave", "John", "Mark", "Michael"))
+    firstNames("Jim") should be(Set("Jim"))
   }
 
   "single hop with all instances" should "return their neighbors" in {
@@ -68,10 +68,10 @@ class GraphQueriesTest extends FlatSpec with Matchers {
     import TestGraph._
 
     val query1 = firstNames("John") ~> name ~> -name
-    query1.toSet should be(Set("John"))
+    query1 should be(Set("John"))
 
     val query2 = firstNames("Mark") ~> name ~> -name
-    query2.toSet should be(Set("Mark", "Michael"))
+    query2 should be(Set("Mark", "Michael"))
   }
 
   "prop on single node, single instance" should "return the correct value" in {

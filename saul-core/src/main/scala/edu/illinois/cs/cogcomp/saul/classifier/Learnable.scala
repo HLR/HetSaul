@@ -5,9 +5,9 @@ import java.net.URL
 import java.time
 
 import edu.illinois.cs.cogcomp.core.io.IOUtils
-import edu.illinois.cs.cogcomp.lbjava.classify.{ Classifier, FeatureVector, TestDiscrete }
+import edu.illinois.cs.cogcomp.lbjava.classify.{ FeatureVector, TestDiscrete }
 import edu.illinois.cs.cogcomp.lbjava.learn.Learner.Parameters
-import edu.illinois.cs.cogcomp.lbjava.learn.{ Learner, SparseAveragedPerceptron, SparsePerceptron, StochasticGradientDescent }
+import edu.illinois.cs.cogcomp.lbjava.learn._
 import edu.illinois.cs.cogcomp.lbjava.parse.Parser
 import edu.illinois.cs.cogcomp.lbjava.util.ExceptionlessOutputStream
 import edu.illinois.cs.cogcomp.saul.TestContinuous
@@ -37,43 +37,91 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
   /** filter out the label from the features */
   def combinedProperties = if (label != null) new CombinedDiscreteProperty[T](this.feature.filterNot(_.name == label.name))
   else new CombinedDiscreteProperty[T](this.feature)
+
   //combinedProperty.makeClassifierWithName("")
   def lbpFeatures = combinedProperties.makeClassifierWithName("") //combinedProperty.classifier
 
   /** classifier need to be defined by the user */
   val classifier: Learner
 
+  /** syntactic suger to create simple calls to the function */
+  def apply(example: AnyRef): String = classifier.discreteValue(example: AnyRef)
+
   /** specifications of the classifier and its model files  */
   classifier.setReadLexiconOnDemand()
   val modelDir = "models/"
+  val lcFilePath = new URL(new URL("file:"), modelDir + getClassNameForClassifier + ".lc")
+  val lexFilePath = new URL(new URL("file:"), modelDir + getClassNameForClassifier + ".lex")
   IOUtils.mkdir(modelDir)
-  IOUtils.rm(modelDir + getClassNameForClassifier + ".lc")
-  IOUtils.rm(modelDir + getClassNameForClassifier + ".lex")
-  val lcFilePath2 = new URL(new URL("file:"), modelDir + getClassNameForClassifier + ".lc")
-  val lexFilePath2 = new URL(new URL("file:"), modelDir + getClassNameForClassifier + ".lex")
-  classifier.setModelLocation(lcFilePath2)
-  classifier.setLexiconLocation(lexFilePath2)
-  val lexFile = ExceptionlessOutputStream.openCompressedStream(lexFilePath2)
-  if (classifier.getCurrentLexicon == null) lexFile.writeInt(0)
-  else classifier.getCurrentLexicon.write(lexFile)
-  lexFile.close()
-  val lcFile = ExceptionlessOutputStream.openCompressedStream(lcFilePath2)
-  classifier.write(lcFile)
-  lcFile.close()
+  classifier.setModelLocation(lcFilePath)
+  classifier.setLexiconLocation(lexFilePath)
 
-  if (feature != null) {
-    if (loggging)
-      println(s"Setting the feature extractors to be $lbpFeatures")
-    classifier.setExtractor(lbpFeatures)
+  // create lex file if it does not exist
+  if (!IOUtils.exists(lexFilePath.getPath)) {
+    val lexFile = ExceptionlessOutputStream.openCompressedStream(lexFilePath)
+    if (classifier.getCurrentLexicon == null) lexFile.writeInt(0)
+    else classifier.getCurrentLexicon.write(lexFile)
+    lexFile.close()
   }
 
-  if (label != null) {
-    val oracle = Property.entitiesToLBJFeature(label)
-    if (loggging) {
-      println(s"Setting the labeler to be '$oracle'")
-      println(s"Labels are $label with name ${label.name}")
+  // create lc file if it does not exist
+  if (!IOUtils.exists(lcFilePath.getPath)) {
+    val lcFile = ExceptionlessOutputStream.openCompressedStream(lcFilePath)
+    classifier.write(lcFile)
+    lcFile.close()
+  }
+
+  def setExtractor(): Unit = {
+    if (feature != null) {
+      if (loggging)
+        println(s"Setting the feature extractors to be $lbpFeatures")
+      classifier.setExtractor(lbpFeatures)
+    } else {
+      println("Warning: no features found! ")
     }
-    classifier.setLabeler(oracle)
+  }
+
+  def setLabeler(): Unit = {
+    if (label != null) {
+      val oracle = Property.entitiesToLBJFeature(label)
+      if (loggging) {
+        println(s"Setting the labeler to be '$oracle'")
+        println(s"Labels are $label with name ${label.name}")
+      }
+      classifier.setLabeler(oracle)
+    }
+  }
+
+  // set paramaters for classifier
+  setExtractor()
+  setLabeler()
+
+  def removeModelFiles(): Unit = {
+    IOUtils.rm(lcFilePath.getPath)
+    IOUtils.rm(lexFilePath.getPath)
+  }
+
+  def save(): Unit = {
+    removeModelFiles()
+    val cloneClasifier = classifier.clone().asInstanceOf[Learner]
+    val dummyClassifier = new SparseNetworkLearner
+    cloneClasifier.setExtractor(dummyClassifier)
+    cloneClasifier.setLabeler(dummyClassifier)
+    cloneClasifier.save()
+  }
+
+  def load(lcFile: String, lexFile: String): Unit = {
+    classifier.read(lcFile, lexFile)
+    setExtractor()
+    setLabeler()
+  }
+
+  def load(lcFile: URL, lexFile: URL): Unit = {
+    load(lcFile.getPath, lexFile.getPath)
+  }
+
+  def load(): Unit = {
+    load(lcFilePath.getPath, lexFilePath.getPath)
   }
 
   def learn(iteration: Int, filePath: String = datamodel.defaultDIFilePath): Unit = {
@@ -104,10 +152,10 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
     def learnAll(crTokenTest: Parser, remainingIteration: Int): Unit = {
       val v = crTokenTest.next
       if (v == null) {
-        if (remainingIteration > 0) {
-          if (loggging & remainingIteration % 10 == 1)
-            println(s"Training: $remainingIteration iterations remain. ${time.Instant.now()} ")
+        if (loggging & remainingIteration % 10 == 0)
+          println(s"Training: $remainingIteration iterations remain. ${time.Instant.now()} ")
 
+        if (remainingIteration > 1) {
           crTokenTest.reset()
           learnAll(crTokenTest, remainingIteration - 1)
         }
@@ -119,6 +167,7 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
 
     learnAll(crTokenTest, iteration)
     classifier.doneLearning()
+    isTraining = false
   }
 
   def learnWithDerivedInstances(numIterations: Int, featureVectors: Iterable[FeatureVector]): Unit = {

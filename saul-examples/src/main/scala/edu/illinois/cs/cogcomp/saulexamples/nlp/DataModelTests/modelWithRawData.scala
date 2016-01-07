@@ -22,7 +22,7 @@ object modelWithRawData {
     rawToAnn.addSensor(commonSensors.annotateWithCurator(_))
 
     /** Properties */
-    val docFeatureExample = property[TextAnnotation]("doc") {
+    val docFeatureExample = property(annotatedText, "doc") {
       x: TextAnnotation => x.getNumberOfSentences.toString
     }
   }
