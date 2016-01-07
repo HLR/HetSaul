@@ -9,6 +9,7 @@ import edu.illinois.cs.cogcomp.nlp.corpusreaders.PennTreebankPOSReader
 import edu.illinois.cs.cogcomp.saul.parser.LBJIteratorParserScala
 import edu.illinois.cs.cogcomp.saulexamples.nlp.EdisonFeatures.toyDataGenerator
 import edu.illinois.cs.cogcomp.saulexamples.nlp.POSTagger.POSClassifiers._
+import edu.illinois.cs.cogcomp.saulexamples.nlp.POSTagger.POSDataModel._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.commonSensors
 
 import scala.collection.JavaConversions._
@@ -25,12 +26,25 @@ object POSTaggerApp {
   def main(args: Array[String]): Unit = {
     val trainDataReader = new PennTreebankPOSReader("train")
     trainDataReader.readFile(Constants.trainAndDevData)
-    //    val trainData = trainDataReader.getTextAnnotations.subList(0, 5).flatMap(commonSensors.textAnnotationToTokens(_).subList(0, 5))
-    val trainData = trainDataReader.getTextAnnotations.flatMap(commonSensors.textAnnotationToTokens)
+
+    var sentenceId = 0
+    val trainData = trainDataReader.getTextAnnotations.flatMap(p => {
+      val cons = commonSensors.textAnnotationToTokens(p)
+      sentenceId += 1
+      //      Adding a dummy attribute so that hashCode is different for each constituent
+      cons.foreach(c => c.addAttribute("SentenceId", sentenceId.toString))
+      cons
+    })
 
     val testDataReader = new PennTreebankPOSReader("test")
     testDataReader.readFile(Constants.testData)
-    val testData = testDataReader.getTextAnnotations.flatMap(commonSensors.textAnnotationToTokens)
+    val testData = testDataReader.getTextAnnotations.flatMap(p => {
+      val cons = commonSensors.textAnnotationToTokens(p)
+      sentenceId += 1
+      //      Adding a dummy attribute so that hashCode is different for each constituent
+      cons.foreach(c => c.addAttribute("SentenceId", sentenceId.toString))
+      cons
+    })
 
     POSDataModel.tokens populate trainData
     POSDataModel.tokens.populate(testData, train = false)
@@ -39,7 +53,7 @@ object POSTaggerApp {
     BaselineClassifier.learn(1)
     MikheevClassifier.learn(1)
 
-    val unknownTrainData = trainData.filter(x => BaselineClassifier.classifier.observedCount(x.toString) <= POSLabeledUnknownWordParser.threshold)
+    val unknownTrainData = trainData.filter(x => BaselineClassifier.classifier.observedCount(wordForm(x)) <= 2 * POSLabeledUnknownWordParser.threshold)
 
     (0 until 50).foreach(iter => {
       println(s"Training POS Tagger iteration $iter out of 50")
@@ -47,9 +61,6 @@ object POSTaggerApp {
       POSTaggerUnknown.learn(1, unknownTrainData)
       POSDataModel.featureCacheMap.clear()
     })
-
-//    POSTaggerKnown.test(testData)
-//    POSTaggerUnknown.test(testData)
 
     val tester = new TestDiscrete
     val testReader = new LBJIteratorParserScala[Constituent](testData)
