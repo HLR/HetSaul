@@ -104,10 +104,10 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
     def learnAll(crTokenTest: Parser, remainingIteration: Int): Unit = {
       val v = crTokenTest.next
       if (v == null) {
-        if (remainingIteration > 0) {
-          if (loggging & remainingIteration % 10 == 1)
-            println(s"Training: $remainingIteration iterations remain. ${time.Instant.now()} ")
+        if (loggging & remainingIteration % 10 == 1)
+          println(s"Training: $remainingIteration iterations remain. ${time.Instant.now()} ")
 
+        if (remainingIteration > 1) {
           crTokenTest.reset()
           learnAll(crTokenTest, remainingIteration - 1)
         }
@@ -119,6 +119,7 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
 
     learnAll(crTokenTest, iteration)
     classifier.doneLearning()
+    isTraining = false
   }
 
   def learnWithDerivedInstances(numIterations: Int, featureVectors: Iterable[FeatureVector]): Unit = {

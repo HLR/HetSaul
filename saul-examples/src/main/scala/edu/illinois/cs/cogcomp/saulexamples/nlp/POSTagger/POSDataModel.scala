@@ -24,9 +24,6 @@ object POSDataModel extends DataModel {
     }
   }
 
-  // Used to distinguish the Training and Test phase features.
-  var isTraining = true
-
   import POSTaggerSensors._
 
   val constituentAfter = edge(tokens, tokens)
@@ -64,7 +61,7 @@ object POSDataModel extends DataModel {
   val labelOrBaseline = property[Constituent]("labelOrBaseline") {
     x: Constituent =>
       getOrUpdate("labelOrBaseline", x, (x) => {
-        if (POSDataModel.isTraining)
+        if (POSTaggerKnown.isTraining)
           POSLabel(x)
         else if (BaselineClassifier.classifier.observed(wordForm(x)))
           BaselineClassifier.classifier.discreteValue(x)
@@ -75,7 +72,7 @@ object POSDataModel extends DataModel {
   val labelOrBaselineU = property[Constituent]("labelOrBaselineU") {
     x: Constituent =>
       getOrUpdate("labelOrBaselineU", x, (x) => {
-        if (POSDataModel.isTraining)
+        if (POSTaggerUnknown.isTraining)
           POSLabel(x)
         else if (BaselineClassifier.classifier.observed(wordForm(x)))
           BaselineClassifier.classifier.discreteValue(x)
@@ -89,7 +86,7 @@ object POSDataModel extends DataModel {
         val cons = (tokens(x) ~> constituentBefore).head
         // make sure the spans are different. Otherwise it is not valid
         if (cons.getSpan != x.getSpan) {
-          if (POSDataModel.isTraining)
+          if (POSTaggerKnown.isTraining)
             POSLabel(cons)
           else
             POSTaggerKnown.classifier.discreteValue(cons)
@@ -103,7 +100,7 @@ object POSDataModel extends DataModel {
         val cons = (tokens(x) ~> constituentBefore).head
         // make sure the spans are different. Otherwise it is not valid
         if (cons.getSpan != x.getSpan) {
-          if (POSDataModel.isTraining)
+          if (POSTaggerUnknown.isTraining)
             POSLabel(cons)
           else
             POSTaggerUnknown.classifier.discreteValue(cons)
@@ -117,7 +114,7 @@ object POSDataModel extends DataModel {
         val cons = (tokens(x) ~> constituentTwoBefore).head
         // make sure the spans are different. Otherwise it is not valid
         if (cons.getSpan != x.getSpan) {
-          if (POSDataModel.isTraining) {
+          if (POSTaggerKnown.isTraining) {
             //          println(s"training one before for index ${tokens(x)}")
             POSLabel(cons)
           } else {
@@ -133,7 +130,7 @@ object POSDataModel extends DataModel {
         val cons = (tokens(x) ~> constituentTwoBefore).head
         // make sure the spans are different. Otherwise it is not valid
         if (cons.getSpan != x.getSpan) {
-          if (POSDataModel.isTraining) {
+          if (POSTaggerUnknown.isTraining) {
             POSLabel(cons)
           } else {
             POSTaggerUnknown.classifier.discreteValue(cons)
@@ -219,9 +216,9 @@ object POSDataModel extends DataModel {
     x: Constituent =>
       val word = wordForm(x)
       val length = word.length
-      val unknown = (POSDataModel.isTraining &&
+      val unknown = (POSTaggerUnknown.isTraining &&
         BaselineClassifier.classifier.observedCount(word) <= POSLabeledUnknownWordParser.threshold) ||
-        (!POSDataModel.isTraining && BaselineClassifier.classifier.discreteValue(x).equals("UNKNOWN"))
+        (!POSTaggerUnknown.isTraining && BaselineClassifier.classifier.discreteValue(x).equals("UNKNOWN"))
 
       val (r, s, t) = if (unknown && length > 3 && Character.isLetter(word.charAt(length - 1))) {
         val a = word.substring(length - 1).toLowerCase()
