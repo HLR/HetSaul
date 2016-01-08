@@ -1,13 +1,10 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.POSTagger
 
-import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.Constituent
-import edu.illinois.cs.cogcomp.core.utilities.DummyTextAnnotationGenerator
-import edu.illinois.cs.cogcomp.lbj.pos.{ POSLabeledUnknownWordParser }
+import edu.illinois.cs.cogcomp.lbj.pos.POSLabeledUnknownWordParser
 import edu.illinois.cs.cogcomp.lbjava.classify.TestDiscrete
 import edu.illinois.cs.cogcomp.nlp.corpusreaders.PennTreebankPOSReader
 import edu.illinois.cs.cogcomp.saul.parser.LBJIteratorParserScala
-import edu.illinois.cs.cogcomp.saulexamples.nlp.EdisonFeatures.toyDataGenerator
 import edu.illinois.cs.cogcomp.saulexamples.nlp.POSTagger.POSClassifiers._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.POSTagger.POSDataModel._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.commonSensors
@@ -24,6 +21,15 @@ object Constants {
 
 object POSTaggerApp {
   def main(args: Array[String]): Unit = {
+    // If you want to use pre-trained model change it to false
+    if (true)
+      trainAndTest()
+    else
+      test()
+  }
+
+  /** Reading test and train data */
+  lazy val (trainData, testData) = {
     val trainDataReader = new PennTreebankPOSReader("train")
     trainDataReader.readFile(Constants.trainAndDevData)
 
@@ -45,7 +51,10 @@ object POSTaggerApp {
       cons.foreach(c => c.addAttribute("SentenceId", sentenceId.toString))
       cons
     })
+    (trainData, testData)
+  }
 
+  def trainAndTest(): Unit = {
     POSDataModel.tokens populate trainData
     POSDataModel.tokens.populate(testData, train = false)
 
@@ -62,6 +71,22 @@ object POSTaggerApp {
       POSDataModel.featureCacheMap.clear()
     })
 
+    testPOSTagger()
+  }
+
+  /** Loading the serialized models as a dependency */
+  def test(): Unit = {
+    //TODO: make this work!
+
+    BaselineClassifier.load()
+    MikheevClassifier.load()
+    POSTaggerKnown.load()
+    POSTaggerUnknown.load()
+
+    testPOSTagger()
+  }
+
+  def testPOSTagger(): Unit = {
     val tester = new TestDiscrete
     val testReader = new LBJIteratorParserScala[Constituent](testData)
     testReader.reset()
@@ -76,45 +101,4 @@ object POSTaggerApp {
   }
 }
 
-object MikheevClassifierApp {
-  def main(args: Array[String]): Unit = {
-    val trainDataReader = new PennTreebankPOSReader("train")
-    //    trainDataReader.readFile("../data/POS/00-18.br")
-    trainDataReader.readFile("../data/POS/00-18_small.br")
-    val trainData = trainDataReader.getTextAnnotations.flatMap(commonSensors.textAnnotationToTokens)
-
-    val testDataReader = new PennTreebankPOSReader("test")
-    testDataReader.readFile("../data/POS/22-24.br")
-    val testData = testDataReader.getTextAnnotations.flatMap(commonSensors.textAnnotationToTokens)
-
-    POSDataModel.tokens populate trainData
-
-    MikheevClassifier.learn(1)
-    MikheevClassifier.test(testData)
-
-    val sampleInput = toyDataGenerator.generateToyTextAnnotation(1).head.getView(ViewNames.TOKENS).getConstituents.get(1)
-    println(BaselineClassifier.classifier.discreteValue(sampleInput))
-  }
-}
-
-object POSTaggerBaselineApp {
-  def main(args: Array[String]): Unit = {
-    val trainDataReader = new PennTreebankPOSReader("train")
-    trainDataReader.readFile("../data/POS/00-18.br")
-    val trainData = trainDataReader.getTextAnnotations.flatMap(commonSensors.textAnnotationToTokens)
-
-    val testDataReader = new PennTreebankPOSReader("test")
-    testDataReader.readFile("../data/POS/22-24.br")
-    val testData = testDataReader.getTextAnnotations.flatMap(commonSensors.textAnnotationToTokens)
-
-    POSDataModel.tokens populate trainData
-
-    // baseline and mikheev just count, they don't learn -- so one iteration should be enough
-    BaselineClassifier.learn(1)
-    BaselineClassifier.test(testData)
-
-    val sampleInput = toyDataGenerator.generateToyTextAnnotation(1).head.getView(ViewNames.TOKENS).getConstituents.get(1)
-    println(BaselineClassifier.classifier.discreteValue(sampleInput))
-  }
-}
 
