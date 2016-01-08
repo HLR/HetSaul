@@ -90,12 +90,7 @@ public class MikheevLearner extends POSBaselineLearner
      **/
     public void learn(Object example) {
         String form = extractor.discreteValue(example);
-
-//        System.out.println("form = " + form);
-
         String label = labeler.discreteValue(example);
-
-//        System.out.println("label = " + label );
 
         if (form.length() >= 5) {
             boolean allLetters = true;
@@ -106,11 +101,8 @@ public class MikheevLearner extends POSBaselineLearner
                 Constituent w = (Constituent) example;
                 HashMap<String, TreeMap<String, Integer>> t = null;
 
-//                System.out.println("Checking for capitalization of " + w.toString());
-
                 if (isCapitalized(w.toString())) {
                     Constituent nearestBefore = nearestBefore(w);
-//                    System.out.println("Nearest before = " +  nearestBefore);
                     if ( nearestBefore == null) t = firstCapitalized;
                     else t = notFirstCapitalized;
                 }
@@ -186,12 +178,9 @@ public class MikheevLearner extends POSBaselineLearner
 
         Set<String> result = allowableTags(wordForm);
         if (result.size() > 0) return result;
-
-//        System.out.println("Checking for capitalization of " + word.toString());
         if (isCapitalized(wordForm)) {
             HashMap<String, TreeMap<String, Integer>> t;
             Constituent nearestBefore = nearestBefore(word);
-//            System.out.println("Nearest before = " +  nearestBefore);
 
             if (nearestBefore == null || nearestBefore.toString() == null) t = firstCapitalized;
             else t = notFirstCapitalized;
