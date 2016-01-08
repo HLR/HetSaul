@@ -104,10 +104,7 @@ class POSTaggerTest extends FlatSpec with Matchers {
   }
 
   "POS combined classifier " should " should work. " in {
-    BaselineClassifier.load()
-    MikheevClassifier.load()
-    POSTaggerKnown.load()
-    POSTaggerUnknown.load()
+    POSClassifiers.loadModels()
     val combinedClassifierLabelMap = Map("To" -> "TO", "or" -> "CC", "not" -> "RB", ";" -> ":",
       "is" -> "VBZ", "the" -> "DT", "question" -> "NN", "." -> ".")
     toyConstituents.forall { cons =>

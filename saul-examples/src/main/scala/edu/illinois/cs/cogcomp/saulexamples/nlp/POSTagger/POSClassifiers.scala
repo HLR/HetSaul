@@ -22,6 +22,13 @@ object POSClassifiers {
       POSTaggerUnknown.classifier.valueOf(x, MikheevClassifier.classifier.allowableTags(x)).getStringValue
   }
 
+  def loadModels(): Unit = {
+    BaselineClassifier.load()
+    MikheevClassifier.load()
+    POSTaggerKnown.load()
+    POSTaggerUnknown.load()
+  }
+
   object POSTaggerKnown extends Learnable[Constituent](POSDataModel) {
     def label = POSLabel
     override def feature = using(wordForm, baselineTarget, labelTwoBefore, labelOneBefore,

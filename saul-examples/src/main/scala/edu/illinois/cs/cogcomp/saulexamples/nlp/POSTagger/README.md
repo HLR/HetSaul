@@ -37,26 +37,32 @@ Here is how you can add maven dependencies into your program:
             <artifactId>saul-examples</artifactId>
             <version>0.1</version>
         </dependency>
-        <dependency>
-            <groupId>edu.illinois.cs.cogcomp</groupId>
-            <artifactId>saul-examples-postager-mode</artifactId>
-            <version>0.1</version>
-        </dependency>
     </dependencies>
 ```
 
 Similarly the dependencies in sbt: 
 
 ```
-  resolvers += "CogcompSoftware" at "http://cogcomp.cs.illinois.edu/m2repo/",
-  "edu.illinois.cs.cogcomp" % "saul-examples" % "0.1",
-  "edu.illinois.cs.cogcomp" % "saul-examples-postager-mode" % "0.1"
+  resolvers += "CogcompSoftware" at "http://cogcomp.cs.illinois.edu/m2repo/"
+  libraryDependencies += "edu.illinois.cs.cogcomp" % "saul-examples" % "0.1"
 ```
 
 Here is how you can make calls to the POS tagger in Scala 
 
-```scala 
-  TODO 
+```scala  
+    /** Read your data as collection of `Constituent`s. 
+    val testData: List[Constituent] = ....
+
+    /** Populate your data in the model */ 
+    POSDataModel.tokens.populate(testData, train = false)
+
+    /** Load the models for the POS classifier */ 
+    POSClassifiers.loadModels() 
+
+    /** Make prediction on the input instances */  
+    toyConstituents.foreach { constituent =>
+      val predicted = POSClassifiers.POSClassifier(constituent)
+    }
 ```
 
 And similarly in Java: 
