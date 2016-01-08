@@ -12,18 +12,7 @@ lazy val commonSettings = Seq(
   name := "saul-project",
   version := "0.1",
   scalaVersion := "2.11.7",
-  mainClass in assembly := Some("edu.illinois.cs.cogcomp.saulexamples.setcover.setCoverApp"),
-  assemblyJarName in assembly := "JoinExperiment.jar",
-  assemblyMergeStrategy in assembly := {
-    case PathList("javax", "servlet", xs @ _*)         => MergeStrategy.first
-    case PathList(ps @ _*) if ps.last endsWith ".html" => MergeStrategy.first
-    case "application.conf"                            => MergeStrategy.concat
-    case "unwanted.txt"                                => MergeStrategy.discard
-    case x =>
-      val oldStrategy = (assemblyMergeStrategy in assembly).value
-      oldStrategy(x)
-  },
-   resolvers ++= Seq(
+  resolvers ++= Seq(
     Resolver.mavenLocal,
     "CogcompSoftware" at "http://cogcomp.cs.illinois.edu/m2repo/"
   ),
@@ -53,6 +42,20 @@ lazy val saulExamples = (project in file("saul-examples")).
   settings(
       name := "saul-examples",
       javaOptions += "-Xmx6g",
+     mainClass in assembly := Some("edu.illinois.cs.cogcomp.saulexamples.setcover.setCoverApp"),
+     assemblyJarName in assembly := "JoinExperiment.jar",
+     assemblyMergeStrategy in assembly := {
+      case PathList("javax", "servlet", xs @ _*) => MergeStrategy.first
+      case PathList("META-INF", xs @ _*) => MergeStrategy.discard
+      //case x => MergeStrategy.first
+      case x if x.contains("org.slf4j") => MergeStrategy.last
+      case PathList(ps @ _*) if ps.last endsWith ".html" => MergeStrategy.first
+      case "application.conf"                            => MergeStrategy.concat
+      case "unwanted.txt"                                => MergeStrategy.discard
+      case x => MergeStrategy.first
+      // val oldStrategy = (assemblyMergeStrategy in assembly).value
+      //oldStrategy(x)
+    },
       libraryDependencies ++= Seq(
       "edu.illinois.cs.cogcomp" % "illinois-nlp-pipeline" % cogcompPipelineVersion,
       "edu.illinois.cs.cogcomp" % "illinois-curator" % cogcompNLPVersion,
