@@ -64,8 +64,6 @@ case class DiscreteProperty[T <: AnyRef](
 
       override def discreteValue(__example: AnyRef): String = {
         val d: T = __example.asInstanceOf[T]
-        //        println("Inside DiscreteProperty: ")
-        //        println(d)
         sensor(d)
       }
 
