@@ -39,7 +39,7 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
   else new CombinedDiscreteProperty[T](this.feature)
 
   //combinedProperty.makeClassifierWithName("")
-  def lbpFeatures = combinedProperties.makeClassifierWithName("") //combinedProperty.classifier
+  def lbpFeatures = combinedProperties.makeClassifierWithName("featureExtractor")
 
   /** classifier need to be defined by the user */
   val classifier: Learner
@@ -74,7 +74,7 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
   def setExtractor(): Unit = {
     if (feature != null) {
       if (loggging)
-        println(s"Setting the feature extractors to be $lbpFeatures")
+        println(s"Setting the feature extractors to be ${lbpFeatures.getCompositeChildren}")
       classifier.setExtractor(lbpFeatures)
     } else {
       println("Warning: no features found! ")
@@ -86,7 +86,6 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
       val oracle = Property.entitiesToLBJFeature(label)
       if (loggging) {
         println(s"Setting the labeler to be '$oracle'")
-        println(s"Labels are $label with name ${label.name}")
       }
       classifier.setLabeler(oracle)
     }
