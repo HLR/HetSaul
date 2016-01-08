@@ -9,7 +9,7 @@ import edu.illinois.cs.cogcomp.lbjava.classify.{ FeatureVector, TestDiscrete }
 import edu.illinois.cs.cogcomp.lbjava.learn.Learner.Parameters
 import edu.illinois.cs.cogcomp.lbjava.learn._
 import edu.illinois.cs.cogcomp.lbjava.parse.Parser
-import edu.illinois.cs.cogcomp.lbjava.util.ExceptionlessOutputStream
+import edu.illinois.cs.cogcomp.lbjava.util.{ ExceptionlessInputStream, ExceptionlessOutputStream }
 import edu.illinois.cs.cogcomp.saul.TestContinuous
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
 import edu.illinois.cs.cogcomp.saul.datamodel.property.{ CombinedDiscreteProperty, Property, PropertyWithWindow, RelationalFeature }
@@ -56,7 +56,7 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
   classifier.setModelLocation(lcFilePath)
   classifier.setLexiconLocation(lexFilePath)
 
-  // create lex file if it does not exist
+  // create .lex file if it does not exist
   if (!IOUtils.exists(lexFilePath.getPath)) {
     val lexFile = ExceptionlessOutputStream.openCompressedStream(lexFilePath)
     if (classifier.getCurrentLexicon == null) lexFile.writeInt(0)
@@ -64,7 +64,7 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
     lexFile.close()
   }
 
-  // create lc file if it does not exist
+  // create .lc file if it does not exist
   if (!IOUtils.exists(lcFilePath.getPath)) {
     val lcFile = ExceptionlessOutputStream.openCompressedStream(lcFilePath)
     classifier.write(lcFile)
@@ -204,7 +204,7 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
 
   /** Test with given data, use internally
     * @param testData
-    * @return List of (label, (f1,precision,recall))
+    * @return List of (label, (f1, precision, recall))
     */
   def test(testData: Iterable[T]): List[(String, (Double, Double, Double))] = {
     isTraining = false
