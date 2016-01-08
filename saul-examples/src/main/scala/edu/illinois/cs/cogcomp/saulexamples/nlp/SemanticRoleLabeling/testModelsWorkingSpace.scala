@@ -21,7 +21,7 @@ object testModelsWorkingSpace extends App {
     .filterNot(cand => (predicates() prop address).contains(address(cand)))
 
   predicates.populate(negativePredicateTest, false)
-  predicateClassifier1.load("./models/models/isPredicate/edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLClassifiers.predicateClassifier$.lc", "./models/models/isPredicate/edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLClassifiers.predicateClassifier$.lex")
+  predicateClassifier1.load("./models/modelsFinal/edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLClassifiersForExperiment.predicateClassifier1$.lc", "./models/modelsFinal/edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLClassifiersForExperiment.predicateClassifier1$.lex")
   // predicateClassifier1.load()
   predicateClassifier1.test()
 

@@ -1,19 +1,33 @@
+
 val cogcompNLPVersion = "3.0.12"
 val cogcompPipelineVersion = "0.1.14"
+
 
 lazy val root = (project in file(".")).
   aggregate(saulCore, saulExamples)
 
+//
 lazy val commonSettings = Seq(
   organization := "edu.illinois.cs.cogcomp",
   name := "saul-project",
   version := "0.1",
   scalaVersion := "2.11.7",
-  resolvers ++= Seq(
+  mainClass in assembly := Some("edu.illinois.cs.cogcomp.saulexamples.setcover.setCoverApp"),
+  assemblyJarName in assembly := "JoinExperiment.jar",
+  assemblyMergeStrategy in assembly := {
+    case PathList("javax", "servlet", xs @ _*)         => MergeStrategy.first
+    case PathList(ps @ _*) if ps.last endsWith ".html" => MergeStrategy.first
+    case "application.conf"                            => MergeStrategy.concat
+    case "unwanted.txt"                                => MergeStrategy.discard
+    case x =>
+      val oldStrategy = (assemblyMergeStrategy in assembly).value
+      oldStrategy(x)
+  },
+   resolvers ++= Seq(
     Resolver.mavenLocal,
     "CogcompSoftware" at "http://cogcomp.cs.illinois.edu/m2repo/"
   ),
-  javaOptions ++= List("-Xmx4g"),
+  javaOptions ++= List("-Xmx8g"),
   libraryDependencies ++= Seq(
     "edu.illinois.cs.cogcomp" % "illinois-core-utilities" % cogcompNLPVersion withSources,
     "com.gurobi" % "gurobi" % "6.0",
@@ -37,9 +51,9 @@ lazy val saulCore = (project in file("saul-core")).
 lazy val saulExamples = (project in file("saul-examples")).
   settings(commonSettings: _*).
   settings(
-    name := "saul-examples",
-    javaOptions += "-Xmx6g",
-    libraryDependencies ++= Seq(
+      name := "saul-examples",
+      javaOptions += "-Xmx6g",
+      libraryDependencies ++= Seq(
       "edu.illinois.cs.cogcomp" % "illinois-nlp-pipeline" % cogcompPipelineVersion,
       "edu.illinois.cs.cogcomp" % "illinois-curator" % cogcompNLPVersion,
       "edu.illinois.cs.cogcomp" % "illinois-edison" % cogcompNLPVersion,

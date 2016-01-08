@@ -3,10 +3,13 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling
 import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{ Constituent, Relation, TextAnnotation }
 import edu.illinois.cs.cogcomp.core.datastructures.trees.Tree
+import edu.illinois.cs.cogcomp.core.utilities.configuration.ResourceManager
 import edu.illinois.cs.cogcomp.edison.features.FeatureUtilities
 import edu.illinois.cs.cogcomp.edison.features.factory._
 import edu.illinois.cs.cogcomp.nlp.corpusreaders.CoNLLColumnFormatReader
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
+import edu.illinois.cs.cogcomp.saulexamples.ExamplesConfigurator
+import edu.illinois.cs.cogcomp.saulexamples.data.SRLFrameManager
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLClassifiersForExperiment.{ argumentTypeLearner1, argumentXuIdentifierGivenApredicate1, predicateClassifier1 }
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLSensors._
 
@@ -15,6 +18,16 @@ import scala.collection.JavaConversions._
 /** Created by Parisa on 12/23/15.
   */
 object SRLDataModel extends DataModel {
+
+  val rm: ResourceManager = new ExamplesConfigurator().getDefaultConfig();
+  val frameManager: SRLFrameManager = new SRLFrameManager(rm.getString(ExamplesConfigurator.PROPBANK_HOME.key));
+  //  +
+  //    +    @Before
+  //  +    public void setUp() throws Exception {
+  //    +        ResourceManager rm = new ExamplesConfigurator().getDefaultConfig();
+  //    +        frameManager = new SRLFrameManager(rm.getString(ExamplesConfigurator.PROPBANK_HOME.key));
+  //    +    }
+  //  +
   val predicates = node[Constituent]
 
   val arguments = node[Constituent]
@@ -154,8 +167,12 @@ object SRLDataModel extends DataModel {
       discreteFeature
   }
   //frame properties
-  val isLegalSense = property(relations, "legalSens") {
-    x: Relation => ""
+  val legalSenses = property(relations, "legalSens") {
+    x: Relation => frameManager.getLegalArguments(predLemma(x)).toList
+
+  }
+  val legalArguments = property(relations, "legalArgs") {
+    x: Relation => frameManager.getLegalSenses(predLemma(x)).toList
   }
 
   //Classifiers as properties

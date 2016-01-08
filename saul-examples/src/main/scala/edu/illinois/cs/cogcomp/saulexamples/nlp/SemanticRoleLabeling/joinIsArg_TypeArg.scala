@@ -8,7 +8,7 @@ import edu.illinois.cs.cogcomp.saulexamples.nlp.commonSensors._
 
 import scala.collection.JavaConversions._
 
-object argIdentificationApp extends App {
+object joinIsArg_TypeArg extends App {
 
   populateGraphwithTextAnnotation(SRLDataModel, SRLDataModel.sentences)
 
