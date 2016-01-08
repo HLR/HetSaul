@@ -1,7 +1,7 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.POSTagger
 
 import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
-import edu.illinois.cs.cogcomp.saulexamples.nlp.POSTagger.POSClassifiers.{ POSTaggerKnown, BaselineClassifier }
+import edu.illinois.cs.cogcomp.saulexamples.nlp.POSTagger.POSClassifiers._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.POSTagger._
 import edu.illinois.cs.cogcomp.core.utilities.DummyTextAnnotationGenerator
 
@@ -89,4 +89,31 @@ class POSTaggerTest extends FlatSpec with Matchers {
     POSDataModel.labelTwoAfter(consConstruction) should be("DT")
     POSDataModel.labelTwoAfter(consOf) should be("NN")
   }
+
+  val toyConstituents = DummyTextAnnotationGenerator.generateBasicTextAnnotation(1).getView(ViewNames.TOKENS)
+  POSDataModel.tokens.populate(toyConstituents, train = false)
+
+  "POSBaseline " should " should work. " in {
+    BaselineClassifier.load()
+    val baselineLabelMap = Map("To" -> "TO", "or" -> "CC", "not" -> "RB", ";" -> ":",
+      "that" -> "IN", "is" -> "VBZ", "question" -> "NN", "." -> ".")
+    toyConstituents.forall { cons =>
+      val pred = BaselineClassifier.classifier.discreteValue(cons)
+      pred == baselineLabelMap.getOrElse(cons.getSurfaceForm, pred)
+    } should be(true)
+  }
+
+  "POS combined classifier " should " should work. " in {
+    BaselineClassifier.load()
+    MikheevClassifier.load()
+    POSTaggerKnown.load()
+    POSTaggerUnknown.load()
+    val combinedClassifierLabelMap = Map("To" -> "TO", "or" -> "CC", "not" -> "RB", ";" -> ":",
+      "is" -> "VBZ", "the" -> "DT", "question" -> "NN", "." -> ".")
+    toyConstituents.forall { cons =>
+      val predicted = POSClassifiers.POSClassifier(cons)
+      predicted == combinedClassifierLabelMap.getOrElse(cons.getSurfaceForm, predicted)
+    } should be(true)
+  }
+
 }

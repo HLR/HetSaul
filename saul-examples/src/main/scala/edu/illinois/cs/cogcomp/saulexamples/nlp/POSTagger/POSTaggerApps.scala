@@ -1,6 +1,8 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.POSTagger
 
+import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.Constituent
+import edu.illinois.cs.cogcomp.core.utilities.DummyTextAnnotationGenerator
 import edu.illinois.cs.cogcomp.lbj.pos.POSLabeledUnknownWordParser
 import edu.illinois.cs.cogcomp.lbjava.classify.TestDiscrete
 import edu.illinois.cs.cogcomp.nlp.corpusreaders.PennTreebankPOSReader
@@ -22,10 +24,10 @@ object Constants {
 object POSTaggerApp {
   def main(args: Array[String]): Unit = {
     // If you want to use pre-trained model change it to false
-    if (true)
+    if (false)
       trainAndTest()
     else
-      test()
+      testWithPretrainedModels()
   }
 
   /** Reading test and train data */
@@ -72,11 +74,44 @@ object POSTaggerApp {
     })
 
     testPOSTagger()
+
+    // saving all the models
+    BaselineClassifier.save()
+    MikheevClassifier.save()
+    POSTaggerKnown.save()
+    POSTaggerUnknown.save()
   }
 
   /** Loading the serialized models as a dependency */
-  def test(): Unit = {
-    //TODO: make this work!
+  def testWithPretrainedModels(): Unit = {
+    val toyConstituents = DummyTextAnnotationGenerator.generateBasicTextAnnotation(1).getView(ViewNames.TOKENS)
+    POSDataModel.tokens.populate(toyConstituents, train = false)
+
+    BaselineClassifier.load()
+    val baselineLabelMap = Map("To" -> "TO", "or" -> "CC", "not" -> "RB", ";" -> ":",
+      "that" -> "IN", "is" -> "VBZ", "the" -> "DT", "question" -> "NN", "." -> ".")
+    toyConstituents.foreach { cons =>
+      println(BaselineClassifier.classifier.discreteValue(cons) == baselineLabelMap.get(cons.getSurfaceForm).getOrElse(""))
+    }
+
+    MikheevClassifier.load()
+    POSTaggerKnown.load()
+    POSTaggerUnknown.load()
+
+    toyConstituents.foreach { cons =>
+      println(BaselineClassifier.classifier.discreteValue(cons) + cons.getSurfaceForm)
+      //println(MikheevClassifier.classifier.discreteValue(cons) )
+      //      println(MikheevClassifier.classifier.discreteValue(cons))
+      //    println(POSTaggerKnown.classifier.discreteValue(cons))
+      //  println(POSTaggerUnknown.classifier.discreteValue(cons))
+
+      val predicted = POSClassifiers.POSClassifier(cons)
+      println("predicted = " + predicted)
+    }
+  }
+
+  def testWithPretrainedModels2(): Unit = {
+    POSDataModel.tokens.populate(testData, train = false)
 
     BaselineClassifier.load()
     MikheevClassifier.load()
@@ -100,5 +135,4 @@ object POSTaggerApp {
     tester.printPerformance(System.out)
   }
 }
-
 
