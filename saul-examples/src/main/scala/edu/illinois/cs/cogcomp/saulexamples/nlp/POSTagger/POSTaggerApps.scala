@@ -27,7 +27,7 @@ object POSTaggerApp {
     if (false)
       trainAndTest()
     else
-      testWithPretrainedModels()
+      testWithPretrainedModels2()
   }
 
   /** Reading test and train data */
@@ -70,7 +70,7 @@ object POSTaggerApp {
       println(s"Training POS Tagger iteration $iter out of 50")
       POSTaggerKnown.learn(1)
       POSTaggerUnknown.learn(1, unknownTrainData)
-      POSDataModel.featureCacheMap.clear()
+      //      POSDataModel.propertyCacheMap.clear()
     })
 
     testPOSTagger()
@@ -87,22 +87,17 @@ object POSTaggerApp {
     val toyConstituents = DummyTextAnnotationGenerator.generateBasicTextAnnotation(1).getView(ViewNames.TOKENS)
     POSDataModel.tokens.populate(toyConstituents, train = false)
 
-    BaselineClassifier.load()
+    POSClassifiers.loadModels()
+
     val baselineLabelMap = Map("To" -> "TO", "or" -> "CC", "not" -> "RB", ";" -> ":",
       "that" -> "IN", "is" -> "VBZ", "the" -> "DT", "question" -> "NN", "." -> ".")
-    toyConstituents.foreach { cons =>
-      println(BaselineClassifier.classifier.discreteValue(cons) == baselineLabelMap.get(cons.getSurfaceForm).getOrElse(""))
-    }
-
-    MikheevClassifier.load()
-    POSTaggerKnown.load()
-    POSTaggerUnknown.load()
 
     toyConstituents.foreach { cons =>
+      println(BaselineClassifier.classifier.discreteValue(cons) == baselineLabelMap.getOrElse(cons.getSurfaceForm, ""))
       println(BaselineClassifier.classifier.discreteValue(cons) + cons.getSurfaceForm)
-      //println(MikheevClassifier.classifier.discreteValue(cons) )
-      //      println(MikheevClassifier.classifier.discreteValue(cons))
-      //    println(POSTaggerKnown.classifier.discreteValue(cons))
+      //  println(MikheevClassifier.classifier.discreteValue(cons) )
+      //  println(MikheevClassifier.classifier.discreteValue(cons))
+      //  println(POSTaggerKnown.classifier.discreteValue(cons))
       //  println(POSTaggerUnknown.classifier.discreteValue(cons))
 
       val predicted = POSClassifiers.POSClassifier(cons)
@@ -110,6 +105,7 @@ object POSTaggerApp {
     }
   }
 
+  //TODO: remove the above function after making sure that deserialization is fine, and keep this one only
   def testWithPretrainedModels2(): Unit = {
     POSDataModel.tokens.populate(testData, train = false)
 

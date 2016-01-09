@@ -156,6 +156,7 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
 
         if (remainingIteration > 1) {
           crTokenTest.reset()
+          datamodel.clearPropertyCache()
           learnAll(crTokenTest, remainingIteration - 1)
         }
       } else {
