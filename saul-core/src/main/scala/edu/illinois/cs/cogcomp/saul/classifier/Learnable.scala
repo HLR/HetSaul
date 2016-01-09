@@ -1,363 +1,352 @@
-package edu.illinois.cs.cogcomp.saul.classifier
+package edu.illinois.cs.cogcomp.saul.datamodel
 
-import java.io.File
-import java.net.URL
-import java.time
-
-import edu.illinois.cs.cogcomp.core.io.IOUtils
-import edu.illinois.cs.cogcomp.lbjava.classify.{ FeatureVector, TestDiscrete }
-import edu.illinois.cs.cogcomp.lbjava.learn.Learner.Parameters
-import edu.illinois.cs.cogcomp.lbjava.learn._
-import edu.illinois.cs.cogcomp.lbjava.parse.Parser
 import edu.illinois.cs.cogcomp.lbjava.util.{ ExceptionlessInputStream, ExceptionlessOutputStream }
-import edu.illinois.cs.cogcomp.saul.TestContinuous
-import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
-import edu.illinois.cs.cogcomp.saul.datamodel.property.{ CombinedDiscreteProperty, Property, PropertyWithWindow, RelationalFeature }
-import edu.illinois.cs.cogcomp.saul.lbjrelated.LBJLearnerEquivalent
-import edu.illinois.cs.cogcomp.saul.parser.LBJIteratorParserScala
+import edu.illinois.cs.cogcomp.saul.datamodel.edge.{ AsymmetricEdge, Edge, Link, SymmetricEdge }
+import edu.illinois.cs.cogcomp.saul.datamodel.node.{ NodeProperty, JoinNode, Node }
+import edu.illinois.cs.cogcomp.saul.datamodel.property.features.discrete._
+import edu.illinois.cs.cogcomp.saul.datamodel.property.features.real._
+import edu.illinois.cs.cogcomp.saul.datamodel.property.{ EvaluatedProperty, Property }
+import edu.illinois.cs.cogcomp.saul.datamodel.node.{ JoinNode, Node }
+import edu.illinois.cs.cogcomp.saul.datamodel.edge.{ SymmetricEdge, AsymmetricEdge, Edge, Link }
 
+import scala.collection.mutable.ListBuffer
 import scala.reflect.ClassTag
 
-abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: Parameters = new Learner.Parameters)(implicit tag: ClassTag[T]) extends LBJLearnerEquivalent {
-  /** Whether to use caching */
-  val useCache = false
+trait DataModel {
+  val PID = 'PID
 
-  val loggging = false
+  final val NODES = new ListBuffer[Node[_]]
+  final val PROPERTIES = new ListBuffer[NodeProperty[_]]
+  final val EDGES = new ListBuffer[Edge[_, _]]
 
-  var isTraining = false
-
-  val targetNode = datamodel.getNodeWithType[T]
-
-  def fromData = targetNode.getTrainingInstances
-
-  def getClassNameForClassifier = this.getClass.getCanonicalName
-
-  def feature: List[Property[T]] = datamodel.getPropertiesForType[T]
-
-  /** filter out the label from the features */
-  def combinedProperties = if (label != null) new CombinedDiscreteProperty[T](this.feature.filterNot(_.name == label.name))
-  else new CombinedDiscreteProperty[T](this.feature)
-
-  //combinedProperty.makeClassifierWithName("")
-  def lbpFeatures = combinedProperties.makeClassifierWithName("featureExtractor")
-
-  /** classifier need to be defined by the user */
-  val classifier: Learner
-
-  /** syntactic suger to create simple calls to the function */
-  def apply(example: AnyRef): String = classifier.discreteValue(example: AnyRef)
-
-  /** specifications of the classifier and its model files  */
-  classifier.setReadLexiconOnDemand()
-  val modelDir = "models/"
-  val lcFilePath = new URL(new URL("file:"), modelDir + getClassNameForClassifier + ".lc")
-  val lexFilePath = new URL(new URL("file:"), modelDir + getClassNameForClassifier + ".lex")
-  IOUtils.mkdir(modelDir)
-  classifier.setModelLocation(lcFilePath)
-  classifier.setLexiconLocation(lexFilePath)
-
-  // create .lex file if it does not exist
-  if (!IOUtils.exists(lexFilePath.getPath)) {
-    val lexFile = ExceptionlessOutputStream.openCompressedStream(lexFilePath)
-    if (classifier.getCurrentLexicon == null) lexFile.writeInt(0)
-    else classifier.getCurrentLexicon.write(lexFile)
-    lexFile.close()
+  // TODO: Implement this function.
+  def select[T <: AnyRef](node: Node[T], conditions: EvaluatedProperty[T, _]*): List[T] = {
+    val conds = conditions.toList
+    node.getAllInstances.filter({
+      t =>
+        conds.exists({
+          cond => cond.property.sensor(t).equals(cond.value)
+        })
+    }).toList
   }
 
-  // create .lc file if it does not exist
-  if (!IOUtils.exists(lcFilePath.getPath)) {
-    val lcFile = ExceptionlessOutputStream.openCompressedStream(lcFilePath)
-    classifier.write(lcFile)
-    lcFile.close()
+  @deprecated("Use node.properties to get the properties for a specific node")
+  def getPropertiesForType[T <: AnyRef](implicit tag: ClassTag[T]): List[Property[T]] = {
+    this.PROPERTIES.filter(a => a.tag.equals(tag)).map(_.asInstanceOf[Property[T]]).toList
   }
 
-  def setExtractor(): Unit = {
-    if (feature != null) {
-      if (loggging)
-        println(s"Setting the feature extractors to be ${lbpFeatures.getCompositeChildren}")
-      classifier.setExtractor(lbpFeatures)
+  @deprecated("Use node.populate() instead.")
+  def populate[T <: AnyRef](node: Node[T], coll: Seq[T]) = {
+    node.populate(coll)
+  }
+
+  @deprecated
+  def getNodeWithType[T <: AnyRef](implicit tag: ClassTag[T]): Node[T] = {
+    this.NODES.filter {
+      e: Node[_] => tag.equals(e.tag)
+    }.head.asInstanceOf[Node[T]]
+  }
+
+  @deprecated
+  def getFromRelation[FROM <: AnyRef, NEED <: AnyRef](t: FROM)(implicit tag: ClassTag[FROM], headTag: ClassTag[NEED]): Iterable[NEED] = {
+    val dm = this
+    if (tag.equals(headTag)) {
+      Set(t.asInstanceOf[NEED])
     } else {
-      println("Warning: no features found! ")
-    }
-  }
-
-  def setLabeler(): Unit = {
-    if (label != null) {
-      val oracle = Property.entitiesToLBJFeature(label)
-      if (loggging) {
-        println(s"Setting the labeler to be '$oracle'")
+      val r = this.EDGES.filter {
+        r => r.from.tag.toString.equals(tag.toString) && r.to.tag.toString.equals(headTag.toString)
       }
-      classifier.setLabeler(oracle)
-    }
-  }
-
-  // set paramaters for classifier
-  setExtractor()
-  setLabeler()
-
-  def removeModelFiles(): Unit = {
-    IOUtils.rm(lcFilePath.getPath)
-    IOUtils.rm(lexFilePath.getPath)
-  }
-
-  def save(): Unit = {
-    removeModelFiles()
-    val cloneClasifier = classifier.clone().asInstanceOf[Learner]
-    val dummyClassifier = new SparseNetworkLearner
-    cloneClasifier.setExtractor(dummyClassifier)
-    cloneClasifier.setLabeler(dummyClassifier)
-    cloneClasifier.save()
-  }
-
-  def load(lcFile: String, lexFile: String): Unit = {
-    classifier.read(lcFile, lexFile)
-    setExtractor()
-    setLabeler()
-  }
-
-  def load(lcFile: URL, lexFile: URL): Unit = {
-    load(lcFile.getPath, lexFile.getPath)
-  }
-
-  def load(): Unit = {
-    load(lcFilePath.getPath, lexFilePath.getPath)
-  }
-
-  def learn(iteration: Int, filePath: String = datamodel.defaultDIFilePath): Unit = {
-    isTraining = true
-    if (useCache) {
-      if (!datamodel.hasDerivedInstances) {
-        if (new File(filePath).exists()) {
-          datamodel.load(filePath)
-        } else {
-          datamodel.deriveInstances()
-          datamodel.write(filePath)
+      if (r.isEmpty) {
+        // reverse search
+        val r = this.EDGES.filter {
+          r => r.to.tag.toString.equals(tag.toString) && r.from.tag.toString.equals(headTag.toString)
         }
-      }
-      learnWithDerivedInstances(iteration, targetNode.derivedInstances.values)
-    } else {
-      learn(iteration, this.fromData)
+        if (r.isEmpty) {
+          throw new Exception(s"Failed to found relations between $tag to $headTag")
+        } else r flatMap (_.asInstanceOf[Edge[NEED, FROM]].backward.neighborsOf(t)) distinct
+      } else r flatMap (_.asInstanceOf[Edge[FROM, NEED]].forward.neighborsOf(t)) distinct
     }
-    isTraining = false
   }
 
-  def learn(iteration: Int, data: Iterable[T]): Unit = {
-    if (loggging)
-      println("Learnable: Learn with data of size " + data.size)
-    isTraining = true
-    val crTokenTest = new LBJIteratorParserScala[T](data)
-    crTokenTest.reset()
+  // TODO: comment this function
+  @deprecated
+  def getFromRelation[T <: AnyRef, HEAD <: AnyRef](name: Symbol, t: T)(implicit tag: ClassTag[T], headTag: ClassTag[HEAD]): Iterable[HEAD] = {
+    if (tag.equals(headTag)) {
+      List(t.asInstanceOf[HEAD])
+    } else {
+      val r = this.EDGES.filter {
+        r =>
+          r.to.tag.equals(tag) && r.from.tag.equals(headTag) && r.forward.name.isDefined && name.equals(r.forward.name.get)
+      }
 
-    def learnAll(crTokenTest: Parser, remainingIteration: Int): Unit = {
-      val v = crTokenTest.next
-      if (v == null) {
-        if (loggging & remainingIteration % 10 == 0)
-          println(s"Training: $remainingIteration iterations remain. ${time.Instant.now()} ")
+      // there must be only one such relation
+      if (r.isEmpty) {
+        throw new Exception(s"Failed to find any relation between $tag to $headTag")
+      } else if (r.size > 1) {
+        throw new Exception(s"Found too many relations between $tag to $headTag,\nPlease specify a name")
+      } else {
+        r.head.asInstanceOf[Link[T, HEAD]].neighborsOf(t)
+      }
+    }
+  }
 
-        if (remainingIteration > 1) {
-          crTokenTest.reset()
-          datamodel.clearPropertyCache()
-          learnAll(crTokenTest, remainingIteration - 1)
+  @deprecated
+  def getRelatedFieldsBetween[T <: AnyRef, U <: AnyRef](implicit fromTag: ClassTag[T], toTag: ClassTag[U]): Iterable[Link[T, U]] = {
+    this.EDGES.filter(r => r.from.tag.equals(fromTag) && r.to.tag.equals(toTag)).map(_.forward.asInstanceOf[Link[T, U]]) ++
+      this.EDGES.filter(r => r.to.tag.equals(fromTag) && r.from.tag.equals(toTag)).map(_.backward.asInstanceOf[Link[T, U]])
+  }
+
+  def testWith[T <: AnyRef](coll: Seq[T])(implicit tag: ClassTag[T]) = {
+    println("Adding for type" + tag.toString)
+    //getNodeWithType[T].addToTest(coll)
+  }
+
+  /** node definitions */
+  def node[T <: AnyRef](implicit tag: ClassTag[T]): Node[T] = node((x: T) => x)
+
+  def node[T <: AnyRef](keyFunc: T => Any)(implicit tag: ClassTag[T]): Node[T] = {
+    val n = new Node[T](keyFunc, tag)
+    NODES += n
+    n
+  }
+
+  def join[A <: AnyRef, B <: AnyRef](a: Node[A], b: Node[B])(matcher: (A, B) => Boolean)(implicit tag: ClassTag[(A, B)]): Node[(A, B)] = {
+    val n = new JoinNode(a, b, matcher, tag)
+    a.joinNodes += n
+    b.joinNodes += n
+    NODES += n
+    n
+  }
+
+  /** edges */
+  def edge[A <: AnyRef, B <: AnyRef](a: Node[A], b: Node[B], name: Symbol = 'default): Edge[A, B] = {
+    val e = AsymmetricEdge(new Link(a, b, Some(name)), new Link(b, a, Some(Symbol("-" + name.name))))
+    a.outgoing += e
+    b.incoming += e
+    EDGES += e
+    e
+  }
+
+  def symmEdge[A <: AnyRef](a: Node[A], b: Node[A], name: Symbol = 'default): Edge[A, A] = {
+    val e = SymmetricEdge(new Link(a, b, Some(name)))
+    a.incoming += e
+    a.outgoing += e
+    b.incoming += e
+    b.outgoing += e
+    EDGES += e
+    e
+  }
+
+  /** property definitions */
+  object PropertyType extends Enumeration {
+    val Real, Discrete = Value
+    type PropertyType = Value
+  }
+
+  import PropertyType._
+
+  case class PropertyDefinition(ty: PropertyType, name: Symbol)
+
+  /** list of hashmaps used inside properties for caching sensor values */
+  final val propertyCacheList = new ListBuffer[collection.mutable.HashMap[_, Any]]()
+
+  class PropertyApply[T <: AnyRef] private[DataModel] (val node: Node[T], name: String, cache: Boolean, ordered: Boolean) { papply =>
+
+    // TODO: make the hashmaps immutable
+    // val propertyCacheMap = collection.mutable.HashMap[String, collection.mutable.HashMap[T, Any]]()
+    val propertyCacheMap = collection.mutable.HashMap[T, Any]()
+    propertyCacheList += propertyCacheMap
+
+    def getOrUpdate(input: T, f: (T) => Any): Any = { propertyCacheMap.getOrElseUpdate(input, f(input)) }
+
+    def apply(f: T => Boolean)(implicit tag: ClassTag[T]): BooleanProperty[T] = {
+      def cachedF = if (cache) { x: T => getOrUpdate(x, f).asInstanceOf[Boolean] } else f
+      val a = new BooleanProperty[T](name, cachedF) with NodeProperty[T] { override def node: Node[T] = papply.node }
+      papply.node.properties += a
+      PROPERTIES += a
+      a
+    }
+
+    def apply(f: T => List[Int])(implicit tag: ClassTag[T], d: DummyImplicit): RealPropertyCollection[T] = {
+      def cachedF = if (cache) { x: T => getOrUpdate(x, f).asInstanceOf[List[Int]] } else f
+      val newf: T => List[Double] = { t => cachedF(t).map(_.toDouble) }
+      val a = if (ordered) {
+        new RealArrayProperty[T](name, newf) with NodeProperty[T] {
+          override def node: Node[T] = papply.node
         }
       } else {
-        classifier.learn(v)
-        learnAll(crTokenTest, remainingIteration)
-      }
-    }
-
-    learnAll(crTokenTest, iteration)
-    classifier.doneLearning()
-    isTraining = false
-  }
-
-  def learnWithDerivedInstances(numIterations: Int, featureVectors: Iterable[FeatureVector]): Unit = {
-    isTraining = true
-    val propertyNameSet = feature.map(_.name).toSet
-    (0 until numIterations).foreach { _ =>
-      featureVectors.foreach {
-        fullFeatureVector =>
-          val featureVector = new FeatureVector()
-          val numFeatures = fullFeatureVector.size()
-          (0 until numFeatures).foreach {
-            featureIndex =>
-              val feature = fullFeatureVector.getFeature(featureIndex)
-              val propertyName = feature.getGeneratingClassifier
-              if (label != null && label.name.equals(propertyName)) {
-                featureVector.addLabel(feature)
-              } else if (propertyNameSet.contains(propertyName)) {
-                featureVector.addFeature(feature)
-              }
-          }
-          classifier.learn(featureVector)
-      }
-    }
-    classifier.doneLearning()
-    isTraining = false
-  }
-
-  def forget() = this.classifier.forget()
-
-  def test(): List[(String, (Double, Double, Double))] = {
-    isTraining = false
-    val data = this.datamodel.getNodeWithType[T].getTestingInstances
-    test(data)
-  }
-
-  /** Test with given data, use internally
-    * @param testData
-    * @return List of (label, (f1, precision, recall))
-    */
-  def test(testData: Iterable[T]): List[(String, (Double, Double, Double))] = {
-    isTraining = false
-    val testReader = new LBJIteratorParserScala[T](testData)
-    testReader.reset()
-    val tester = TestDiscrete.testDiscrete(classifier, classifier.getLabeler, testReader)
-    tester.printPerformance(System.out)
-    val ret = tester.getLabels.map { label => (label, (tester.getF1(label), tester.getPrecision(label), tester.getRecall(label))) }
-    ret.toList
-  }
-
-  def testContinuos(): Unit = {
-    isTraining = false
-    val data = this.datamodel.getNodeWithType[T].getTestingInstances
-    testContinuos(data)
-  }
-
-  def testContinuos(testData: Iterable[T]): Unit = {
-    isTraining = false
-    println()
-    val testReader = new LBJIteratorParserScala[T](testData)
-    testReader.reset()
-    val tester = new TestContinuous(classifier, classifier.getLabeler, testReader)
-    // tester.printPerformance(System.out)
-    //val ret = tester.getLabels.map({
-    // label => (label , (tester.getF1(label),tester.getPrecision(label),tester.getRecall(label)))
-    // })
-
-    //ret toList
-  }
-
-  def chunkData(ts: List[Iterable[T]], i: Int, curr: Int, acc: (Iterable[T], Iterable[T])): (Iterable[T], Iterable[T]) = {
-    ts match {
-      case head :: more =>
-        acc match {
-          case (train, test) =>
-            if (i == curr) {
-              // we found the test part
-              chunkData(more, i, curr + 1, (train, head))
-            } else {
-              chunkData(more, i, curr + 1, (head ++ train, test))
-            }
+        new RealGenProperty[T](name, newf) with NodeProperty[T] {
+          override def node: Node[T] = papply.node
         }
-      case Nil => acc
-    }
-  }
-
-  /** Run k fold cross validation. */
-  def crossValidation(k: Int) = {
-    val allData = this.fromData
-
-    if (loggging)
-      println(s"Running cross validation on ${allData.size} data   ")
-
-    val groupSize = Math.ceil(allData.size / k).toInt
-    val groups = allData.grouped(groupSize).toList
-
-    val loops = if (k == 1) {
-      (groups.head, Nil) :: Nil
-    } else {
-      (0 until k) map {
-        i => chunkData(groups, i, 0, (Nil, Nil))
       }
+      papply.node.properties += a
+      PROPERTIES += a
+      a
     }
 
-    def printTestResult(result: (String, (Double, Double, Double))): Unit = {
-      result match {
-        case (label, (f1, precision, recall)) =>
-          println(s"  $label    $f1    $precision     $recall   ")
+    /** Discrete sensor feature with range, same as real name in lbjava */
+    def apply(f: T => Int)(implicit tag: ClassTag[T], d1: DummyImplicit, d2: DummyImplicit): RealProperty[T] = {
+      val newf: T => Double = { t => f(t).toDouble }
+      val a = new RealProperty[T](name, newf) with NodeProperty[T] {
+        override def node: Node[T] = papply.node
       }
+      papply.node.properties += a
+      PROPERTIES += a
+      a
     }
 
-    val results = loops.zipWithIndex map {
-      case ((trainingSet, testingSet), idx) =>
-        println(s"Running fold $idx")
-        println(s"Learn with ${trainingSet.size}")
-        println(s"Test with ${testingSet.size}")
-
-        this.classifier.forget()
-        this.learn(10, trainingSet)
-        val testResult = this.test(testingSet)
-        testResult
+    /** Discrete sensor feature with range, same as real% and real[] in lbjava */
+    def apply(f: T => List[Double])(implicit tag: ClassTag[T], d1: DummyImplicit, d2: DummyImplicit,
+      d3: DummyImplicit): RealCollectionProperty[T] = {
+      val a = new RealCollectionProperty[T](name, f, ordered) with NodeProperty[T] {
+        override def node: Node[T] = papply.node
+      }
+      papply.node.properties += a
+      PROPERTIES += a
+      a
     }
 
-    def sumTuple(a: (Double, Double, Double), b: (Double, Double, Double)): (Double, Double, Double) = {
-      (a._1 + b._1, a._2 + b._2, a._3 + b._3)
+    /** Discrete sensor feature with range, same as real name in lbjava */
+    def apply(f: T => Double)(implicit tag: ClassTag[T], d1: DummyImplicit, d2: DummyImplicit, d3: DummyImplicit,
+      d4: DummyImplicit): RealProperty[T] = {
+      val a = new RealProperty[T](name, f) with NodeProperty[T] {
+        override def node: Node[T] = papply.node
+      }
+      papply.node.properties += a
+      PROPERTIES += a
+      a
     }
 
-    def avgTuple(a: (Double, Double, Double), size: Int): (Double, Double, Double) = {
-      (a._1 / size, a._2 / size, a._3 / size)
+    /** Discrete feature without range, same as discrete SpamLabel in lbjava */
+    def apply(f: T => String)(implicit tag: ClassTag[T], d1: DummyImplicit, d2: DummyImplicit, d3: DummyImplicit,
+      d4: DummyImplicit, d5: DummyImplicit): DiscreteProperty[T] = {
+      def cachedF = if (cache) { x: T => getOrUpdate(x, f).asInstanceOf[String] } else f
+      val a = new DiscreteProperty[T](name, cachedF, None) with NodeProperty[T] {
+        override def node: Node[T] = papply.node
+      }
+      papply.node.properties += a
+      PROPERTIES += a
+      a
     }
 
-    println("  label    f1    precision     recall   ")
+    /** Discrete array feature with range, same as discrete[] and discrete% in lbjava */
+    def apply(f: T => List[String])(implicit tag: ClassTag[T], d1: DummyImplicit, d2: DummyImplicit, d3: DummyImplicit,
+      d4: DummyImplicit, d5: DummyImplicit, d6: DummyImplicit): DiscreteCollectionProperty[T] = {
+      val a = if (ordered) {
+        new DiscreteCollectionProperty[T](name, f, ordered = false) with NodeProperty[T] {
+          override def node: Node[T] = papply.node
+        }
+      } else {
+        new DiscreteCollectionProperty[T](name, f, ordered = true) with NodeProperty[T] {
+          override def node: Node[T] = papply.node
+        }
+      }
+      papply.node.properties += a
+      PROPERTIES += a
+      a
+    }
 
-    results.flatten.toList.groupBy({
-      tu: (String, (Double, Double, Double)) => tu._1
-    }).foreach({
-      case (label, l) =>
-        val t = l.length
-        val avg = avgTuple(l.map(_._2).reduce(sumTuple), t)
-
-        printTestResult((label, avg))
-    })
+    /** Discrete feature with range, same as discrete{"spam", "ham"} SpamLabel in lbjava */
+    def apply(range: String*)(f: T => String)(implicit tag: ClassTag[T], d1: DummyImplicit, d2: DummyImplicit, d3: DummyImplicit,
+      d4: DummyImplicit, d5: DummyImplicit, d6: DummyImplicit,
+      d7: DummyImplicit): DiscreteProperty[T] = {
+      val r = range.toList
+      val a = new DiscreteProperty[T](name, f, Some(r)) with NodeProperty[T] {
+        override def node: Node[T] = papply.node
+      }
+      papply.node.properties += a
+      PROPERTIES += a
+      a
+    }
   }
 
-  /** Label property foor users classifier */
-  def label: Property[T]
+  def property[T <: AnyRef](node: Node[T], name: String) = new PropertyApply[T](node, name, cache = false, ordered = false)
+  def property[T <: AnyRef](node: Node[T], name: String, cache: Boolean) = new PropertyApply[T](node, name, cache, ordered = false)
+  def property[T <: AnyRef](node: Node[T], name: String, cache: Boolean, ordered: Boolean) = new PropertyApply[T](node, name, cache, ordered)
 
-  /** A windows of properties
-    * @param before always negative (or 0)
-    * @param after always positive (or 0)
-    */
-  def windowWithIn[U <: AnyRef](before: Int, after: Int, properties: List[Property[T]])(implicit uTag: ClassTag[U]): Property[T] = {
-    val fls = datamodel.getRelatedFieldsBetween[T, U]
-    getWindowWithFilters(before, after, fls.map(e => (t: T) => e.neighborsOf(t).head), properties)
+  def clearPropertyCache[T](): Unit = {
+    propertyCacheList.foreach(_.asInstanceOf[collection.mutable.HashMap[T, Any]].clear)
   }
 
-  def window(before: Int, after: Int)(properties: List[Property[T]]): Property[T] = {
-    getWindowWithFilters(before, after, Nil, properties)
+  /** Methods for caching Data Model */
+  var hasDerivedInstances = false
+
+  def deriveInstances() = {
+    NODES.foreach {
+      node =>
+        val relatedProperties = PROPERTIES.filter(property => property.tag.equals(node.tag)).toList
+        node.deriveInstances(relatedProperties)
+    }
+    EDGES.foreach {
+      edge =>
+        edge.deriveIndexWithIds()
+    }
+    hasDerivedInstances = true
   }
 
-  private def getWindowWithFilters(before: Int, after: Int, filters: Iterable[T => Any], properties: List[Property[T]]): Property[T] = {
-    new PropertyWithWindow[T](this.datamodel, before, after, filters, properties)
+  val defaultDIFilePath = "models/" + getClass.getCanonicalName + ".di"
+
+  def write(filePath: String = defaultDIFilePath) = {
+    val out = ExceptionlessOutputStream.openCompressedStream(filePath)
+
+    out.writeInt(NODES.size)
+    NODES.zipWithIndex.foreach {
+      case (node, nodeId) =>
+        out.writeInt(nodeId)
+        node.writeDerivedInstances(out)
+    }
+
+    out.writeInt(EDGES.size)
+    EDGES.zipWithIndex.foreach {
+      case (edge, edgeId) =>
+        out.writeInt(edgeId)
+        edge.writeIndexWithIds(out)
+    }
+
+    out.close()
   }
 
-  def using(properties: List[Property[T]]*): List[Property[T]] = {
-    properties.toList.flatten
-  }
+  def load(filePath: String = defaultDIFilePath) = {
+    val in = ExceptionlessInputStream.openCompressedStream(filePath)
 
-  def nextWithIn[U <: AnyRef](properties: List[Property[T]])(implicit uTag: ClassTag[U]): Property[T] = {
-    this.windowWithIn[U](0, 1, properties.toList)
-  }
+    val nodesSize = in.readInt()
+    (0 until nodesSize).foreach {
+      _ =>
+        val nodeId = in.readInt()
+        NODES(nodeId).loadDerivedInstances(in)
+    }
 
-  def prevWithIn[U <: AnyRef](property: Property[T]*)(implicit uTag: ClassTag[U]): Property[T] = {
-    this.windowWithIn[U](-1, 0, property.toList)
-  }
+    val edgesSize = in.readInt()
+    (0 until edgesSize).foreach {
+      _ =>
+        val edgeId = in.readInt()
+        EDGES(edgeId).loadIndexWithIds(in)
+    }
 
-  def nextOf(properties: List[Property[T]]): Property[T] = {
-    window(0, 1)(properties)
-  }
+    in.close()
 
-  def prevOf(properties: List[Property[T]]): Property[T] = {
-    window(0, 1)(properties)
+    hasDerivedInstances = true
   }
+}
 
-  def relationalProperty[U <: AnyRef](implicit uTag: ClassTag[U]): Property[T] = {
-    val fts: List[Property[U]] = this.datamodel.getPropertiesForType[U]
-    relationalProperty[U](fts)
-  }
+object dataModelJsonInterface {
+  def getJson(dm: DataModel): String = {
+    val declaredFields = dm.getClass.getDeclaredFields
 
-  def relationalProperty[U <: AnyRef](ls: List[Property[U]])(implicit uTag: ClassTag[U]): Property[T] = {
-    val fts = this.datamodel.getPropertiesForType[U]
-    new RelationalFeature[T, U](this.datamodel, fts)
+    val nodes = declaredFields.filter(_.getType.getSimpleName == "Node")
+    val edges = declaredFields.filter(_.getType.getSimpleName == "Edge")
+    val properties = declaredFields.filter(_.getType.getSimpleName.contains("Property")).filterNot(_.getName.contains("$module"))
+
+    import play.api.libs.json._
+
+    val json: JsValue = JsObject(Seq(
+      "nodes" -> JsArray(nodes.map(node => JsString(node.getName))),
+      "edges" -> JsArray(edges.map(edge => JsString(edge.getName))),
+      "properties" -> JsArray(properties.map(prop => JsString(prop.getName)))
+    ))
+
+    println(json.toString())
+
+    json.toString()
   }
 }
