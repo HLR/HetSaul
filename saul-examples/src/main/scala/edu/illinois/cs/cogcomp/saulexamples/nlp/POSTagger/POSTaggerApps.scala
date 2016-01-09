@@ -24,7 +24,7 @@ object Constants {
 object POSTaggerApp {
   def main(args: Array[String]): Unit = {
     // If you want to use pre-trained model change it to false
-    if (false)
+    if (true)
       trainAndTest()
     else
       testWithPretrainedModels2()
@@ -66,7 +66,7 @@ object POSTaggerApp {
 
     val unknownTrainData = trainData.filter(x => BaselineClassifier.classifier.observedCount(wordForm(x)) <= POSLabeledUnknownWordParser.threshold)
 
-    (0 until 50).foreach(iter => {
+    (0 until 10).foreach(iter => {
       println(s"Training POS Tagger iteration $iter out of 50")
       POSTaggerKnown.learn(1)
       POSTaggerUnknown.learn(1, unknownTrainData)
