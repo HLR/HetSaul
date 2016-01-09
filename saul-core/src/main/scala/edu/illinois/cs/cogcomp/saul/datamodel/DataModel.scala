@@ -153,7 +153,6 @@ trait DataModel {
   class PropertyApply[T <: AnyRef] private[DataModel] (val node: Node[T], name: String, cache: Boolean, ordered: Boolean) { papply =>
 
     // TODO: make the hashmaps immutable
-    // val propertyCacheMap = collection.mutable.HashMap[String, collection.mutable.HashMap[T, Any]]()
     val propertyCacheMap = collection.mutable.HashMap[T, Any]()
     propertyCacheList += propertyCacheMap
 
