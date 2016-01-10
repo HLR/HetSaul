@@ -14,6 +14,11 @@ class Link[A <: AnyRef, B <: AnyRef](val from: Node[A], val to: Node[B], val nam
   def +=(a: A, b: B) = index.getOrElseUpdate(a, new mutable.LinkedHashSet) += b
   def ++=(a: A, bs: Iterable[B]) = index.getOrElseUpdate(a, new mutable.LinkedHashSet) ++= bs
 
+  def clear = {
+    index.clear()
+    indexWithId.clear()
+  }
+
   /** sensors */
   val sensors = new ArrayBuffer[A => Iterable[B]]()
 
@@ -68,6 +73,11 @@ trait Edge[T <: AnyRef, U <: AnyRef] {
   def +=(t: T, u: U) = {
     forward += (t, u)
     backward += (u, t)
+  }
+
+  def clear: Unit = {
+    forward.clear
+    backward.clear
   }
 
   @deprecated

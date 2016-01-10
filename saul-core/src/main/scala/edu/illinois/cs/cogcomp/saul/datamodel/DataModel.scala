@@ -30,6 +30,11 @@ trait DataModel {
     }).toList
   }
 
+  def clearInstances = {
+    NODES.foreach(_.clear)
+    EDGES.foreach(_.clear)
+  }
+
   @deprecated("Use node.properties to get the properties for a specific node")
   def getPropertiesForType[T <: AnyRef](implicit tag: ClassTag[T]): List[Property[T]] = {
     this.PROPERTIES.filter(a => a.tag.equals(tag)).map(_.asInstanceOf[Property[T]]).toList
