@@ -3,10 +3,11 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling
 import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation._
 import edu.illinois.cs.cogcomp.core.datastructures.trees.Tree
+import edu.illinois.cs.cogcomp.saulexamples.data.XuPalmerCandidateGenerator
 
 import scala.collection.JavaConversions._
 
-object SRLSensors {
+object srlSensors {
   def sentenceToGoldPredicates(ta: TextAnnotation): List[Constituent] = {
     ta.getView(ViewNames.SRL_VERB).asInstanceOf[PredicateArgumentView].getPredicates.toList
   }
@@ -52,5 +53,12 @@ object SRLSensors {
       if (!tree.isRoot && tree.getChildren.size() == 1) List()
       else getSubtreeArguments(tree.getChildren.toList)
     }
+  }
+
+  def xuPalmerCandidate(x: Constituent, y: Tree[String]): List[Relation] = {
+    val t = new XuPalmerCandidateGenerator(null)
+    val p = t.generateSaulCandidates(x, y)
+    val z = p.map(y => new Relation("candidate", x.cloneForNewView(x.getViewName), y.cloneForNewView(y.getViewName), 0.0))
+    z.toList
   }
 }

@@ -1,19 +1,19 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling
 
 import edu.illinois.cs.cogcomp.core.datastructures.{ IntPair, ViewNames }
-import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLClassifiers.argumentClassifier
-import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLDataModel_all._
+import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlDataModel._
+import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifiers.argumentClassifier
 
 import scala.collection.JavaConversions._
 /** Created by Parisa on 12/11/15.
   */
-object SRLapp2 extends App {
+object srl_treeGeneralCandidates extends App {
 
-  populateGraphwithTextAnnotation(SRLDataModel_all, SRLDataModel_all.sentences)
+  populateGraphwithTextAnnotation(srlDataModel, srlDataModel.sentences)
 
   val treeCandidates = trees().flatMap {
     tree =>
-      val subtrees = SRLSensors.getSubtreeArguments(List(tree))
+      val subtrees = srlSensors.getSubtreeArguments(List(tree))
       // First we need to get the list of predicates that are relevant to each tree
       val treePredicates = trees(tree) ~> -sentencesToTrees ~> sentencesToRelations ~> relationsToPredicates
       // Now we need to filter the trees based on whether they contain all predicates of the sentence
@@ -34,7 +34,6 @@ object SRLapp2 extends App {
 
   arguments.populate(negativeArgumentCandidates)
   println(arguments().size)
-  // argumentClassifier.learn(4)
   argumentClassifier.crossValidation(3)
 
 }

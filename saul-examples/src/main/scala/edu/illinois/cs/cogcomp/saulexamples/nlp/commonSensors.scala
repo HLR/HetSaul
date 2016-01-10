@@ -2,11 +2,10 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp
 
 import edu.illinois.cs.cogcomp.annotation.AnnotatorService
 import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
-import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{ Relation, Constituent, Sentence, TextAnnotation }
-import edu.illinois.cs.cogcomp.core.datastructures.trees.Tree
+import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{ Constituent, Sentence, TextAnnotation }
 import edu.illinois.cs.cogcomp.curator.CuratorFactory
 import edu.illinois.cs.cogcomp.nlp.pipeline.IllinoisPipelineFactory
-import edu.illinois.cs.cogcomp.saulexamples.data.{ XuPalmerCandidateGenerator, Document }
+import edu.illinois.cs.cogcomp.saulexamples.data.Document
 
 import scala.collection.JavaConversions._
 
@@ -67,11 +66,5 @@ object commonSensors {
     processDocumentWith(annotatorService, "corpus", id, content)
   }
 
-  def xuPalmerCandidate(x: Constituent, y: Tree[String]): List[Relation] = {
-    val t = new XuPalmerCandidateGenerator(null)
-    val p = t.generateSaulCandidates(x, y)
-    val z = p.map(y => new Relation("candidate", x.cloneForNewView(x.getViewName), y.cloneForNewView(y.getViewName), 0.0))
-    z.toList
-  }
 }
 

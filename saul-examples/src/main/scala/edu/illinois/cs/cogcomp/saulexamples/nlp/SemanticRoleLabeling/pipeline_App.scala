@@ -5,26 +5,28 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling
 
 import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.Constituent
-import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLClassifiersForExperiment.argumentXuIdentifierGivenApredicate1
-import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLDataModel._
+import edu.illinois.cs.cogcomp.saul.evaluation.evaluation
+import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifiers.{ argumentTypeLearner, argumentXuIdentifierGivenApredicate, predicateClassifier }
+import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlDataModel._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.commonSensors._
+import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlSensors._
 
 import scala.collection.JavaConversions._
 
-/** Created by Parisa on 12/11/15.
-  */
-object pipeline2 extends App {
+object pipeline_App extends App {
 
-  SRLDataModel.sentencesToTokens.addSensor(textAnnotationToTokens _)
-  populateGraphwithTextAnnotation(SRLDataModel, SRLDataModel.sentences)
+  srlDataModel.sentencesToTokens.addSensor(textAnnotationToTokens _)
+  populateGraphwithTextAnnotation(srlDataModel, srlDataModel.sentences)
 
-  // Generate predicate candidates by extracting all verb tokens
+  // Here first train and test the argClassifier Given the ground truth Boundaries (i.e. no negative class).
+  argumentTypeLearner.learn(100)
+  argumentTypeLearner.test()
+
   val predicateTrainCandidates = tokens.getTrainingInstances.filter((x: Constituent) => posTag(x).startsWith("VB"))
     .map(c => c.cloneForNewView(ViewNames.SRL_VERB))
   val predicateTestCandidates = tokens.getTestingInstances.filter((x: Constituent) => posTag(x).startsWith("VB"))
     .map(c => c.cloneForNewView(ViewNames.SRL_VERB))
 
-  // Remove the true predicates from the list of candidates (since they have a different label)
   val negativePredicateTrain = predicates(predicateTrainCandidates)
     .filterNot(cand => (predicates() prop address).contains(address(cand)))
   val negativePredicateTest = predicates(predicateTestCandidates)
@@ -32,11 +34,6 @@ object pipeline2 extends App {
 
   predicates.populate(negativePredicateTrain)
   predicates.populate(negativePredicateTest, false)
-  //predicateClassifier1.learn(100)
-  //predicateClassifier.save()
-  //predicateClassifier.load()
-  //predicateClassifier1.test()
-  //predicateClassifier1.save()
 
   val XuPalmerCandidateArgsTraining = predicates.getTrainingInstances.flatMap(x => xuPalmerCandidate(x, (sentences(x.getTextAnnotation) ~> sentencesTostringTree).head))
 
@@ -51,23 +48,29 @@ object pipeline2 extends App {
   relations.populate(negativePalmerTrainCandidates)
   relations.populate(negativePalmerTestCandidates, false)
 
-  println("all relations number after population:" + SRLDataModel.relations().size)
+  println("all relations number after population:" + srlDataModel.relations().size)
+  print("isPredicate test results:")
+  predicateClassifier.learn(100)
+  predicateClassifier.save()
+  predicateClassifier.test()
 
-  argumentXuIdentifierGivenApredicate1.learn(100)
-  argumentXuIdentifierGivenApredicate1.test()
-  argumentXuIdentifierGivenApredicate1.save()
-  //    println("pipeline argIdentification")
-  //      val res = relations.getTestingInstances.map(x => {
-  //        print("value", isArgumentPipePrediction(x))
-  //        isArgumentPipePrediction(x)
-  //      })
-  //
-  //      val res1 = relations.getAllInstances.map(x => isArgumentPipePrediction(x))
-  //
-  //      evaluation.Test(isArgumentXu_Gth, isArgumentPipePrediction, relations)
-  //
-  //      println("directly argIdentification")
-  //      evaluation.Test(isArgumentXu_Gth, isArgumentPrediction, relations)
+  println("directly argIdentification")
+  argumentXuIdentifierGivenApredicate.learn(100)
+  argumentXuIdentifierGivenApredicate.test()
+  argumentXuIdentifierGivenApredicate.save()
 
-  print("finish")
+  print("argument classifier test results:")
+  argumentTypeLearner.learn(100)
+  argumentTypeLearner.test()
+  argumentTypeLearner.save()
+
+  println("pipeline argIdentification")
+  evaluation.Test(isArgumentXuGold, isArgumentPipePrediction, relations)
+  println("directly argIdentification")
+  evaluation.Test(isArgumentXuGold, isArgumentPrediction, relations)
+  println("type prediction pipline:")
+  evaluation.Test(argumentLabelGold, typeArgumentPipePrediction, relations)
+  println("type prediction directly from candidates:")
+  evaluation.Test(argumentLabelGold, typeArgumentPrediction, relations)
+  print("finish!")
 }

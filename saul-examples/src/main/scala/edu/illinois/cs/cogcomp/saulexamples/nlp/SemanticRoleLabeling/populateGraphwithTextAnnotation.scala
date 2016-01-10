@@ -34,7 +34,7 @@ object pop {
     //aFun()
   }
   def aFun() = {
-    import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLDataModel._
+    import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlDataModel._
     val rm = new ExamplesConfigurator().getDefaultConfig
     val reader = new SRLDataReader(
       rm.getString(ExamplesConfigurator.TREEBANK_HOME.key),
@@ -57,14 +57,12 @@ object pop {
         println(json)
         pw.write(json.toString())
         // pw.close()
-
         annotatorService.addView(ta, ViewNames.LEMMA)
         println(ta.getAvailableViews)
       //} catch {
       //	      case _ => println("skipping the annotation! " )
       //    }
     }
-
     // Here we populate everythingd
     //x.populate(ta.toList)
     pw.close()
@@ -73,7 +71,7 @@ object pop {
 }
 
 object populateGraphwithTextAnnotation extends App {
-  import SRLDataModel._
+  import srlDataModel._
 
   def apply[T <: AnyRef](d: DataModel, x: Node[TextAnnotation]) = {
 
@@ -125,7 +123,7 @@ object populateGraphwithTextAnnotation extends App {
     println("all" + taAll.toList.size)
     val filteredTa = addViewAndFilter(taAll.toList)
     print(filteredTa.size)
-    val testAll = testReader.textAnnotations.slice(0, 10)
+    val testAll = testReader.textAnnotations //.slice(0, 10)
     val filteredTest = addViewAndFilter(testAll.toList)
     // Here we populate everythingd
     x.populate(filteredTa)

@@ -3,7 +3,6 @@ package edu.illinois.cs.cogcomp.saulexamples.data;
 import edu.illinois.cs.cogcomp.core.datastructures.ViewNames;
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.TextAnnotation;
 import edu.illinois.cs.cogcomp.nlp.corpusreaders.PropbankReader;
-import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLDataModel_all;
 
 import java.util.ArrayList;
 import java.util.List;

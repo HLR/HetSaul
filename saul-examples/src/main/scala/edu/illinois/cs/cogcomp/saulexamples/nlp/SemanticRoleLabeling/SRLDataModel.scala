@@ -10,14 +10,14 @@ import edu.illinois.cs.cogcomp.nlp.corpusreaders.CoNLLColumnFormatReader
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
 import edu.illinois.cs.cogcomp.saulexamples.ExamplesConfigurator
 import edu.illinois.cs.cogcomp.saulexamples.data.SRLFrameManager
-import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLClassifiersForExperiment.{ argumentTypeLearner1, argumentXuIdentifierGivenApredicate1, predicateClassifier1 }
-import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLSensors._
+import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlSensors._
+import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifiers.{ argumentTypeLearner, argumentXuIdentifierGivenApredicate, predicateClassifier }
 
 import scala.collection.JavaConversions._
 
 /** Created by Parisa on 12/23/15.
   */
-object SRLDataModel extends DataModel {
+object srlDataModel extends DataModel {
 
   val rm: ResourceManager = new ExamplesConfigurator().getDefaultConfig();
   val frameManager: SRLFrameManager = new SRLFrameManager(rm.getString(ExamplesConfigurator.PROPBANK_HOME.key));
@@ -44,7 +44,7 @@ object SRLDataModel extends DataModel {
 
   val tokens = node[Constituent]
 
-  // val sentencesToTrees = edge(sentences, trees)
+  val sentencesToTrees = edge(sentences, trees)
   val sentencesTostringTree = edge(sentences, stringTree)
   val sentencesToTokens = edge(sentences, tokens)
   val sentencesToRelations = edge(sentences, relations)
@@ -56,24 +56,25 @@ object SRLDataModel extends DataModel {
   sentencesToRelations.addSensor(textAnnotationToRelation _)
   sentencesToRelations.addSensor(textAnnotationToRelationMatch _)
   //  sentencesToTrees.addSensor(SRLSensors.textAnnotationToTree _)
+  // sentencesToTokens.addSensor(commonSensors.textAnnotationToTokens _)
   relationsToArguments.addSensor(relToArgument _)
   relationsToPredicates.addSensor(relToPredicate _)
   sentencesTostringTree.addSensor(textAnnotationToStringTree _)
 
-  val isPredicate_Gth = property(predicates, "p") {
+  val isPredicateGold = property(predicates, "p") {
     x: Constituent => x.getLabel.equals("Predicate")
   }
-  val predicateSense_Gth = property(predicates, "s") {
+  val predicateSenseGold = property(predicates, "s") {
     x: Constituent => x.getAttribute(CoNLLColumnFormatReader.SenseIdentifer)
   }
 
-  val isArgument_Gth = property(arguments, "a") {
+  val isArgumentGold = property(arguments, "a") {
     x: Constituent => x.getLabel.equals("Argument")
   }
-  val isArgumentXu_Gth = property(relations, "aX") {
+  val isArgumentXuGold = property(relations, "aX") {
     x: Relation => !x.getRelationName.equals("candidate")
   }
-  val argumentLabel_Gth = property(relations, "l") {
+  val argumentLabelGold = property(relations, "l") {
     r: Relation => r.getRelationName
   }
 
@@ -178,34 +179,34 @@ object SRLDataModel extends DataModel {
   //Classifiers as properties
 
   val isPredicatePrediction = property(predicates, "isPredicatePrediction") {
-    x: Constituent => predicateClassifier1(x)
+    x: Constituent => predicateClassifier(x)
   }
 
   val isArgumentPrediction = property(relations, "isArgumentPrediction") {
-    x: Relation => argumentXuIdentifierGivenApredicate1(x)
+    x: Relation => argumentXuIdentifierGivenApredicate(x)
   }
 
   val isArgumentPipePrediction = property(relations, "isArgumentpipPrediction") {
     x: Relation =>
-      predicateClassifier1(x.getSource) match {
+      predicateClassifier(x.getSource) match {
         case "false" => "false"
-        case _ => argumentXuIdentifierGivenApredicate1(x)
+        case _ => argumentXuIdentifierGivenApredicate(x)
 
       }
   }
   val typeArgumentPrediction = property(relations, "typeArgumentPrediction") {
     x: Relation =>
-      argumentTypeLearner1(x)
+      argumentTypeLearner(x)
   }
   val typeArgumentPipePrediction = property(relations, "typeArgumentpipPrediction") {
     x: Relation =>
-      val a: String = predicateClassifier1(x.getSource) match {
+      val a: String = predicateClassifier(x.getSource) match {
         case "false" => "false"
-        case _ => argumentXuIdentifierGivenApredicate1(x)
+        case _ => argumentXuIdentifierGivenApredicate(x)
       }
       val b = a match {
         case "false" => "false"
-        case _ => argumentTypeLearner1(x)
+        case _ => argumentTypeLearner(x)
       }
       b
   }
