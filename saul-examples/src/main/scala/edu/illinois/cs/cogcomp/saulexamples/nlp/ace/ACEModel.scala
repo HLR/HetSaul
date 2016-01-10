@@ -5,22 +5,25 @@ import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
 /** @author sameer
   * @since 12/24/15.
   */
-class ACEModel extends DataModel {
+object Types {
 
-  case class Token(string: String, attrs: Map[String, String] = Map.empty)
+  case class Token(string: String, start: Int = 0, end: Int = 0, attrs: Map[String, String] = Map.empty)
 
-  case class Mention(start: Int, length: Int)
+  case class Mention(startSpan: Int, endSpan: Int)
 
-  case class Sentence(sid: Int, ments: Seq[Mention], toks: Seq[Token])
+  case class Sentence(sid: Int, ments: Seq[Mention], toks: Seq[Token], span: (Int, Int) = -1 -> -1)
 
   case class Document(id: String, sents: Seq[Sentence])
 
   case class MentionPair(src: Mention, target: Mention)
 
-  type MentionTypeLabel = (Mention, String)
-  type RelationTypeLabel = (MentionPair, String)
-  type CorefTypeLabel = (MentionPair, Boolean)
+  case class MentionLabel(m: Mention, var label: String = "O", var gold: String = "O")
+  case class RelationLabel(m: MentionPair, var label: String = "O", var gold: String = "O")
+  case class CorefLabel(m: MentionPair, var label: Boolean = false, var gold: Boolean = false)
+}
 
+class ACEModel extends DataModel {
+  import Types._
   // observed
   val docs = node[Document]
   val sentences = node[Sentence]
@@ -30,14 +33,16 @@ class ACEModel extends DataModel {
   val corefMentions = node[MentionPair]
 
   // to predict
-  val mentionLabels = node[MentionTypeLabel]
-  val relationLabels = node[RelationTypeLabel]
-  val corefLabels = node[CorefTypeLabel]
+  val mentionLabels = node[MentionLabel]
+  val relationLabels = node[RelationLabel]
+  val corefLabels = node[CorefLabel]
 
   // edges
   val docSentences = edge(docs, sentences)
+  val sentenceTokens = edge(sentences, tokens)
   val sentenceMentions = edge(sentences, mentions)
   val sentenceRelations = edge(sentences, relationMentions)
+  // val mentionTokens = edge(mentions, tokens)
   val docCoreferences = edge(docs, corefMentions)
   val mentionToLabel = edge(mentions, mentionLabels)
   val relationToLabel = edge(relationMentions, relationLabels)
@@ -45,24 +50,27 @@ class ACEModel extends DataModel {
 
   // sensors
   docSentences.addSensor((d: Document) => d.sents)
+  sentenceTokens.addSensor((s: Sentence) => s.toks)
   sentenceMentions.addSensor((s: Sentence) => s.ments)
   sentenceRelations.addSensor((s: Sentence) => for (m1 <- s.ments; m2 <- s.ments; if m1 != m2) yield MentionPair(m1, m2))
+  // mentionTokens.addSensor((m: Mention) => (mentions(m) ~> -sentenceMentions ~> sentenceTokens).filter(t => m.startSpan <= t.start && m.endSpan >= t.end))
   docCoreferences.addSensor((d: Document) => for (m1 <- d.sents.flatMap(_.ments); m2 <- d.sents.flatMap(_.ments); if m1 != m2) yield MentionPair(m1, m2))
-  mentionToLabel.addSensor((m: Mention) => m -> "O")
-  relationToLabel.addSensor((m: MentionPair) => m -> "O")
-  corefToLabel.addSensor((m: MentionPair) => m -> false)
+  mentionToLabel.addSensor((m: Mention) => MentionLabel(m))
+  relationToLabel.addSensor((m: MentionPair) => RelationLabel(m))
+  corefToLabel.addSensor((m: MentionPair) => CorefLabel(m))
 
 }
 
 object TestACEModel extends ACEModel with App {
+  import Types._
 
   val d = Document("test", Seq(
-    Sentence(0, Seq(Mention(0, 2), Mention(5, 1)), Seq(
+    Sentence(0, Seq(Mention(0, 11), Mention(26, 33)), Seq(
       Token("Barack"), Token("Obama"), Token("is"), Token("married"), Token("to"), Token("Michelle"), Token(".")
-    )),
-    Sentence(1, Seq(Mention(0, 1), Mention(2, 1), Mention(5, 1), Mention(8, 1)), Seq(
+    ), 0 -> 35),
+    Sentence(1, Seq(Mention(36, 38), Mention(46, 49), Mention(56, 59), Mention(72, 78)), Seq(
       Token("He"), Token("leads"), Token("USA"), Token(","), Token("while"), Token("she"), Token("inspires"), Token("the"), Token("country"), Token(".")
-    ))
+    ), 36 -> 80)
   ))
 
   docs.populate(Seq(d))
