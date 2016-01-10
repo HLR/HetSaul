@@ -30,6 +30,11 @@ trait DataModel {
     }).toList
   }
 
+  def clearInstances = {
+    NODES.foreach(_.clear)
+    EDGES.foreach(_.clear)
+  }
+
   @deprecated("Use node.properties to get the properties for a specific node")
   def getPropertiesForType[T <: AnyRef](implicit tag: ClassTag[T]): List[Property[T]] = {
     this.PROPERTIES.filter(a => a.tag.equals(tag)).map(_.asInstanceOf[Property[T]]).toList
@@ -147,24 +152,28 @@ trait DataModel {
 
   case class PropertyDefinition(ty: PropertyType, name: Symbol)
 
-  class PropertyApply[T <: AnyRef] private[DataModel] (val node: Node[T], name: String, ordered: Boolean) {
+  /** list of hashmaps used inside properties for caching sensor values */
+  final val propertyCacheList = new ListBuffer[collection.mutable.HashMap[_, Any]]()
 
-    papply =>
-    def this(node: Node[T], name: String) {
-      this(node, name, false)
-    }
+  class PropertyApply[T <: AnyRef] private[DataModel] (val node: Node[T], name: String, cache: Boolean, ordered: Boolean) { papply =>
+
+    // TODO: make the hashmaps immutable
+    val propertyCacheMap = collection.mutable.HashMap[T, Any]()
+    propertyCacheList += propertyCacheMap
+
+    def getOrUpdate(input: T, f: (T) => Any): Any = { propertyCacheMap.getOrElseUpdate(input, f(input)) }
 
     def apply(f: T => Boolean)(implicit tag: ClassTag[T]): BooleanProperty[T] = {
-      val a = new BooleanProperty[T](name, f) with NodeProperty[T] {
-        override def node: Node[T] = papply.node
-      }
+      def cachedF = if (cache) { x: T => getOrUpdate(x, f).asInstanceOf[Boolean] } else f
+      val a = new BooleanProperty[T](name, cachedF) with NodeProperty[T] { override def node: Node[T] = papply.node }
       papply.node.properties += a
       PROPERTIES += a
       a
     }
 
     def apply(f: T => List[Int])(implicit tag: ClassTag[T], d: DummyImplicit): RealPropertyCollection[T] = {
-      val newf: T => List[Double] = { t => f(t).map(_.toDouble) }
+      def cachedF = if (cache) { x: T => getOrUpdate(x, f).asInstanceOf[List[Int]] } else f
+      val newf: T => List[Double] = { t => cachedF(t).map(_.toDouble) }
       val a = if (ordered) {
         new RealArrayProperty[T](name, newf) with NodeProperty[T] {
           override def node: Node[T] = papply.node
@@ -181,7 +190,8 @@ trait DataModel {
 
     /** Discrete sensor feature with range, same as real name in lbjava */
     def apply(f: T => Int)(implicit tag: ClassTag[T], d1: DummyImplicit, d2: DummyImplicit): RealProperty[T] = {
-      val newf: T => Double = { t => f(t).toDouble }
+      def cachedF = if (cache) { x: T => getOrUpdate(x, f).asInstanceOf[Int] } else f
+      val newf: T => Double = { t => cachedF(t).toDouble }
       val a = new RealProperty[T](name, newf) with NodeProperty[T] {
         override def node: Node[T] = papply.node
       }
@@ -193,7 +203,8 @@ trait DataModel {
     /** Discrete sensor feature with range, same as real% and real[] in lbjava */
     def apply(f: T => List[Double])(implicit tag: ClassTag[T], d1: DummyImplicit, d2: DummyImplicit,
       d3: DummyImplicit): RealCollectionProperty[T] = {
-      val a = new RealCollectionProperty[T](name, f, ordered) with NodeProperty[T] {
+      def cachedF = if (cache) { x: T => getOrUpdate(x, f).asInstanceOf[List[Double]] } else f
+      val a = new RealCollectionProperty[T](name, cachedF, ordered) with NodeProperty[T] {
         override def node: Node[T] = papply.node
       }
       papply.node.properties += a
@@ -204,7 +215,8 @@ trait DataModel {
     /** Discrete sensor feature with range, same as real name in lbjava */
     def apply(f: T => Double)(implicit tag: ClassTag[T], d1: DummyImplicit, d2: DummyImplicit, d3: DummyImplicit,
       d4: DummyImplicit): RealProperty[T] = {
-      val a = new RealProperty[T](name, f) with NodeProperty[T] {
+      def cachedF = if (cache) { x: T => getOrUpdate(x, f).asInstanceOf[Double] } else f
+      val a = new RealProperty[T](name, cachedF) with NodeProperty[T] {
         override def node: Node[T] = papply.node
       }
       papply.node.properties += a
@@ -215,7 +227,8 @@ trait DataModel {
     /** Discrete feature without range, same as discrete SpamLabel in lbjava */
     def apply(f: T => String)(implicit tag: ClassTag[T], d1: DummyImplicit, d2: DummyImplicit, d3: DummyImplicit,
       d4: DummyImplicit, d5: DummyImplicit): DiscreteProperty[T] = {
-      val a = new DiscreteProperty[T](name, f, None) with NodeProperty[T] {
+      def cachedF = if (cache) { x: T => getOrUpdate(x, f).asInstanceOf[String] } else f
+      val a = new DiscreteProperty[T](name, cachedF, None) with NodeProperty[T] {
         override def node: Node[T] = papply.node
       }
       papply.node.properties += a
@@ -226,12 +239,13 @@ trait DataModel {
     /** Discrete array feature with range, same as discrete[] and discrete% in lbjava */
     def apply(f: T => List[String])(implicit tag: ClassTag[T], d1: DummyImplicit, d2: DummyImplicit, d3: DummyImplicit,
       d4: DummyImplicit, d5: DummyImplicit, d6: DummyImplicit): DiscreteCollectionProperty[T] = {
+      def cachedF = if (cache) { x: T => getOrUpdate(x, f).asInstanceOf[List[String]] } else f
       val a = if (ordered) {
-        new DiscreteCollectionProperty[T](name, f, ordered = false) with NodeProperty[T] {
+        new DiscreteCollectionProperty[T](name, cachedF, ordered = false) with NodeProperty[T] {
           override def node: Node[T] = papply.node
         }
       } else {
-        new DiscreteCollectionProperty[T](name, f, ordered = true) with NodeProperty[T] {
+        new DiscreteCollectionProperty[T](name, cachedF, ordered = true) with NodeProperty[T] {
           override def node: Node[T] = papply.node
         }
       }
@@ -244,8 +258,9 @@ trait DataModel {
     def apply(range: String*)(f: T => String)(implicit tag: ClassTag[T], d1: DummyImplicit, d2: DummyImplicit, d3: DummyImplicit,
       d4: DummyImplicit, d5: DummyImplicit, d6: DummyImplicit,
       d7: DummyImplicit): DiscreteProperty[T] = {
+      def cachedF = if (cache) { x: T => getOrUpdate(x, f).asInstanceOf[String] } else f
       val r = range.toList
-      val a = new DiscreteProperty[T](name, f, Some(r)) with NodeProperty[T] {
+      val a = new DiscreteProperty[T](name, cachedF, Some(r)) with NodeProperty[T] {
         override def node: Node[T] = papply.node
       }
       papply.node.properties += a
@@ -254,16 +269,21 @@ trait DataModel {
     }
   }
 
-  def property[T <: AnyRef](node: Node[T], name: String) = new PropertyApply[T](node, name)
-  def property[T <: AnyRef](node: Node[T], name: String, ordered: Boolean) = new PropertyApply[T](node, name, ordered)
+  def property[T <: AnyRef](node: Node[T], name: String) = new PropertyApply[T](node, name, cache = false, ordered = false)
+  def property[T <: AnyRef](node: Node[T], name: String, cache: Boolean) = new PropertyApply[T](node, name, cache, ordered = false)
+  def property[T <: AnyRef](node: Node[T], name: String, cache: Boolean, ordered: Boolean) = new PropertyApply[T](node, name, cache, ordered)
 
+  def clearPropertyCache[T](): Unit = {
+    propertyCacheList.foreach(_.asInstanceOf[collection.mutable.HashMap[T, Any]].clear)
+  }
+
+  /** Methods for caching Data Model */
   var hasDerivedInstances = false
 
   def deriveInstances() = {
-    NODES.foreach {
-      node =>
-        val relatedProperties = PROPERTIES.filter(property => property.tag.equals(node.tag)).toList
-        node.deriveInstances(relatedProperties)
+    NODES.foreach { node =>
+      val relatedProperties = PROPERTIES.filter(property => property.tag.equals(node.tag)).toList
+      node.deriveInstances(relatedProperties)
     }
     EDGES.foreach {
       edge =>

@@ -28,6 +28,10 @@ class propertyTest extends FlatSpec with Matchers {
     intProperty(new toyClass) should be(2.0)
     listIntPropertyArray(new toyClass) should be(List(1.0, 3.0))
     listIntPropertyGenerator(new toyClass) should be(List(1.0, 3.0))
+
+    // Test cached properties (calling them multiple times)
+    stringPropertyWithCache(new toyClass).mkString should be("cachedValue")
+    stringPropertyWithCache(new toyClass).mkString should be("cachedValue")
   }
 }
 
@@ -44,7 +48,7 @@ object toyDataModel extends DataModel {
   val listIntPropertyArray = property(toys, "listInt") {
     x: toyClass => List(1, 3)
   }
-  val listIntPropertyGenerator = property(toys, "listInt", ordered = true) {
+  val listIntPropertyGenerator = property(toys, "listInt", cache = false, ordered = true) {
     x: toyClass => List(1, 3)
   }
 
@@ -57,7 +61,7 @@ object toyDataModel extends DataModel {
   val listDoublePropertyArray = property(toys, "listDouble") {
     x: toyClass => List(1.0, 2.0)
   }
-  val listDoublePropertyGenerator = property(toys, "listDouble", ordered = true) {
+  val listDoublePropertyGenerator = property(toys, "listDouble", cache = false, ordered = true) {
     x: toyClass => List(1.0, 2.0)
   }
 
@@ -70,13 +74,17 @@ object toyDataModel extends DataModel {
   val listStringPropertyArray = property(toys, "listString") {
     x: toyClass => List("listValue")
   }
-  val listStringPropertyGenerator = property(toys, "listString", ordered = true) {
+  val listStringPropertyGenerator = property(toys, "listString", cache = false, ordered = true) {
     x: toyClass => List("listValue")
   }
 
   // String
   val stringProperty = property(toys, "string") {
     x: toyClass => "value"
+  }
+
+  val stringPropertyWithCache = property(toys, "string", cache = true) {
+    x: toyClass => "cachedValue"
   }
 
   // ranged property

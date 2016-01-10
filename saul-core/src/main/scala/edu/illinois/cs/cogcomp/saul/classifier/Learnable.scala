@@ -9,7 +9,7 @@ import edu.illinois.cs.cogcomp.lbjava.classify.{ FeatureVector, TestDiscrete }
 import edu.illinois.cs.cogcomp.lbjava.learn.Learner.Parameters
 import edu.illinois.cs.cogcomp.lbjava.learn._
 import edu.illinois.cs.cogcomp.lbjava.parse.Parser
-import edu.illinois.cs.cogcomp.lbjava.util.ExceptionlessOutputStream
+import edu.illinois.cs.cogcomp.lbjava.util.{ ExceptionlessInputStream, ExceptionlessOutputStream }
 import edu.illinois.cs.cogcomp.saul.TestContinuous
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
 import edu.illinois.cs.cogcomp.saul.datamodel.property.{ CombinedDiscreteProperty, Property, PropertyWithWindow, RelationalFeature }
@@ -39,7 +39,7 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
   else new CombinedDiscreteProperty[T](this.feature)
 
   //combinedProperty.makeClassifierWithName("")
-  def lbpFeatures = combinedProperties.makeClassifierWithName("") //combinedProperty.classifier
+  def lbpFeatures = combinedProperties.makeClassifierWithName("featureExtractor")
 
   /** classifier need to be defined by the user */
   val classifier: Learner
@@ -56,7 +56,7 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
   classifier.setModelLocation(lcFilePath)
   classifier.setLexiconLocation(lexFilePath)
 
-  // create lex file if it does not exist
+  // create .lex file if it does not exist
   if (!IOUtils.exists(lexFilePath.getPath)) {
     val lexFile = ExceptionlessOutputStream.openCompressedStream(lexFilePath)
     if (classifier.getCurrentLexicon == null) lexFile.writeInt(0)
@@ -64,7 +64,7 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
     lexFile.close()
   }
 
-  // create lc file if it does not exist
+  // create .lc file if it does not exist
   if (!IOUtils.exists(lcFilePath.getPath)) {
     val lcFile = ExceptionlessOutputStream.openCompressedStream(lcFilePath)
     classifier.write(lcFile)
@@ -74,7 +74,7 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
   def setExtractor(): Unit = {
     if (feature != null) {
       if (loggging)
-        println(s"Setting the feature extractors to be $lbpFeatures")
+        println(s"Setting the feature extractors to be ${lbpFeatures.getCompositeChildren}")
       classifier.setExtractor(lbpFeatures)
     } else {
       println("Warning: no features found! ")
@@ -86,7 +86,6 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
       val oracle = Property.entitiesToLBJFeature(label)
       if (loggging) {
         println(s"Setting the labeler to be '$oracle'")
-        println(s"Labels are $label with name ${label.name}")
       }
       classifier.setLabeler(oracle)
     }
@@ -152,11 +151,12 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
     def learnAll(crTokenTest: Parser, remainingIteration: Int): Unit = {
       val v = crTokenTest.next
       if (v == null) {
-        if (remainingIteration > 0) {
-          if (loggging & remainingIteration % 10 == 1)
-            println(s"Training: $remainingIteration iterations remain. ${time.Instant.now()} ")
+        if (loggging & remainingIteration % 10 == 0)
+          println(s"Training: $remainingIteration iterations remain. ${time.Instant.now()} ")
 
+        if (remainingIteration > 1) {
           crTokenTest.reset()
+          datamodel.clearPropertyCache()
           learnAll(crTokenTest, remainingIteration - 1)
         }
       } else {
@@ -167,6 +167,7 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
 
     learnAll(crTokenTest, iteration)
     classifier.doneLearning()
+    isTraining = false
   }
 
   def learnWithDerivedInstances(numIterations: Int, featureVectors: Iterable[FeatureVector]): Unit = {
@@ -204,7 +205,7 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
 
   /** Test with given data, use internally
     * @param testData
-    * @return List of (label, (f1,precision,recall))
+    * @return List of (label, (f1, precision, recall))
     */
   def test(testData: Iterable[T]): List[(String, (Double, Double, Double))] = {
     isTraining = false
