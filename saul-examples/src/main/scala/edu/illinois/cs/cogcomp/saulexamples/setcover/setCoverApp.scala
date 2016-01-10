@@ -6,8 +6,6 @@ import edu.illinois.cs.cogcomp.saul.constraint.ConstraintTypeConversion._
 import scala.collection.JavaConversions._
 
 object setCoverApp {
-
-  val trainingData = new SetCoverSolverDataModel
   val cities = new City("./data/SetCover/example.txt")
   val ns = cities.getNeighborhoods.toList
 
@@ -24,15 +22,15 @@ object setCoverApp {
       }
   })
 
-  println(containsStationConstrint.createInferenceCondition[Neighborhood](trainingData).subjectTo.evalDiscreteValue(cities))
+  println(containsStationConstrint.createInferenceCondition[Neighborhood](setCoverSolverDataModel).subjectTo.evalDiscreteValue(cities))
 
   def main(args: Array[String]) {
-    trainingData.cities populate List(cities)
-    trainingData.neighborhoods populate ns
-    trainingData.cityContainsNeighborhoods.populateWith(_ == _.getParentCity)
+    setCoverSolverDataModel.cities populate List(cities)
+    setCoverSolverDataModel.neighborhoods populate ns
+    setCoverSolverDataModel.cityContainsNeighborhoods.populateWith(_ == _.getParentCity)
 
-    println(trainingData.getFromRelation[City, Neighborhood](cities))
-    println(trainingData.getFromRelation[Neighborhood, City](ns.head))
+    println(setCoverSolverDataModel.getFromRelation[City, Neighborhood](cities))
+    println(setCoverSolverDataModel.getFromRelation[Neighborhood, City](ns.head))
 
     cities.getNeighborhoods.foreach {
       n => println(n.getNumber + ": " + containsStationConstraint.classifier.discreteValue(n))

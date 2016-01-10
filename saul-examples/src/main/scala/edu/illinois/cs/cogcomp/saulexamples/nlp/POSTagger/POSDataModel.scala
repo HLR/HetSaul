@@ -8,11 +8,11 @@ object POSDataModel extends DataModel {
 
   val tokens = node[Constituent]
 
-  val posLabel = property[Constituent]("label") {
+  val posLabel = property(tokens, "label") {
     x: Constituent => x.getTextAnnotation.getView(ViewNames.POS).getConstituentsCovering(x).get(0).getLabel
   }
 
-  val wordFormFeature = property[Constituent]("wordForm") {
+  val wordFormFeature = property(tokens, "wordForm") {
     x: Constituent =>
       val wordForm = x.getTextAnnotation.getView(ViewNames.TOKENS).getConstituentsCovering(x).get(0).getLabel
 

@@ -20,44 +20,44 @@ object entityRelationBasicDataModel extends DataModel {
   val tokenContainsInSentence = edge(tokens, pairs)
 
   /** Properties */
-  val pos = property[ConllRawToken]("pos") {
+  val pos = property(tokens, "pos") {
     t: ConllRawToken => t.POS :: Nil
   }
 
-  val word = property[ConllRawToken]("word") {
+  val word = property(tokens, "word") {
     t: ConllRawToken => t.getWords(false).toList
   }
-  val phrase = property[ConllRawToken]("phrase") {
+  val phrase = property(tokens, "phrase") {
     t: ConllRawToken => t.phrase :: Nil
   }
 
-  val tokenSurface = property[ConllRawToken]("tokenSurface") {
+  val tokenSurface = property(tokens, "tokenSurface") {
     t: ConllRawToken => t.getWords(false).toList.mkString(" ")
   }
 
-  val containsSubPhraseMent = property[ConllRawToken]("containsSubPhraseMent") {
+  val containsSubPhraseMent = property(tokens, "containsSubPhraseMent") {
     t: ConllRawToken => t.getWords(false).exists(_.contains("ment")).toString
   }
 
-  val containsSubPhraseIng = property[ConllRawToken]("containsSubPhraseIng") {
+  val containsSubPhraseIng = property(tokens, "containsSubPhraseIng") {
     t: ConllRawToken => t.getWords(false).exists(_.contains("ing")).toString
   }
 
   import entityRelationSensors._
 
-  val containsInCityList = property[ConllRawToken]("containsInCityList") {
+  val containsInCityList = property(tokens, "containsInCityList") {
     t: ConllRawToken => cityGazetSensor.isContainedIn(t).toString
   }
 
-  val containsInPersonList = property[ConllRawToken]("containsInCityList") {
+  val containsInPersonList = property(tokens, "containsInCityList") {
     t: ConllRawToken => personGazetSensor.containsAny(t).toString
   }
 
-  val wordLen = property[ConllRawToken]("wordLen") {
+  val wordLen = property(tokens, "wordLen") {
     t: ConllRawToken => t.getLength
   }
 
-  val relFeature = property[ConllRelation]("reltokenSurface") {
+  val relFeature = property(pairs, "reltokenSurface") {
     token: ConllRelation =>
       {
         "w1-word-" + token.e1.phrase :: "w2-word-" + token.e2.phrase ::
@@ -70,7 +70,7 @@ object entityRelationBasicDataModel extends DataModel {
       }
   }
 
-  val relPos = property[ConllRelation]("reltokenSurface") {
+  val relPos = property(pairs, "reltokenSurface") {
     rela: ConllRelation =>
       val e1 = rela.e1
       val e2 = rela.e2
@@ -86,11 +86,11 @@ object entityRelationBasicDataModel extends DataModel {
   }
 
   /** Labeler Properties  */
-  val entityType = property[ConllRawToken]("entityType") {
+  val entityType = property(tokens, "entityType") {
     t: ConllRawToken => t.entType
   }
 
-  val relationType = property[ConllRelation]("relationType") {
+  val relationType = property(pairs, "relationType") {
     r: ConllRelation => r.relType
   }
 }
