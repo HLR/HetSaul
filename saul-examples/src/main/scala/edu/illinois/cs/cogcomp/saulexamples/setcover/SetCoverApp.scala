@@ -22,17 +22,17 @@ object SetCoverApp {
       }
   })
 
-  println(containsStationConstrint.createInferenceCondition[Neighborhood](SetCoverSolverDataModel).subjectTo.evalDiscreteValue(citiesData))
+  println(containsStationConstrint.createInferenceCondition[Neighborhood](SetCoverDataModel).subjectTo.evalDiscreteValue(citiesData))
 
-  import SetCoverSolverDataModel._
+  import SetCoverDataModel._
 
   def main(args: Array[String]) {
     cities populate List(citiesData)
     neighborhoods populate ns
     cityContainsNeighborhoods.populateWith(_ == _.getParentCity)
 
-    println(SetCoverSolverDataModel.getFromRelation[City, Neighborhood](citiesData))
-    println(SetCoverSolverDataModel.getFromRelation[Neighborhood, City](ns.head))
+    println(SetCoverDataModel.getFromRelation[City, Neighborhood](citiesData))
+    println(SetCoverDataModel.getFromRelation[Neighborhood, City](ns.head))
 
     citiesData.getNeighborhoods.foreach {
       n => println(n.getNumber + ": " + containsStationConstraint.classifier.discreteValue(n))
