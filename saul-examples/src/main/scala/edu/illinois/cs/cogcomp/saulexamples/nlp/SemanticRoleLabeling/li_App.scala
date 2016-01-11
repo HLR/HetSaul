@@ -10,7 +10,7 @@ import scala.collection.JavaConversions._
   */
 object li_App extends App {
 
-  populateGraphwithTextAnnotation(srlDataModel, srlDataModel.sentences)
+  populateGraphwithGoldSRL(srlDataModel, srlDataModel.sentences)
 
   val XuPalmerCandidateArgsTesting = predicates.getTestingInstances.flatMap(x => xuPalmerCandidate(x, (sentences(x.getTextAnnotation) ~> sentencesTostringTree).head))
 

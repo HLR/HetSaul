@@ -156,9 +156,14 @@ object srlDataModel extends DataModel {
   val predPosTag = property(relations, "pPos") {
     x: Relation => x.getSource.getTextAnnotation.getView(ViewNames.POS).getConstituentsCovering(x.getSource).get(0).getLabel
   }
-  val predLemma = property(relations, "pLem") {
+  val predLemmaR = property(relations, "pLem") {
     x: Relation =>
       val l = x.getSource.getTextAnnotation.getView(ViewNames.LEMMA).getConstituentsCovering(x.getSource).get(0).getLabel
+      l
+  }
+  val predLemmaP = property(predicates, "pLem") {
+    x: Constituent =>
+      val l = x.getTextAnnotation.getView(ViewNames.LEMMA).getConstituentsCovering(x).get(0).getLabel
       l
   }
   val linearPosition = property(relations, "position") {
@@ -169,11 +174,11 @@ object srlDataModel extends DataModel {
   }
   //frame properties
   val legalSenses = property(relations, "legalSens") {
-    x: Relation => frameManager.getLegalArguments(predLemma(x)).toList
+    x: Relation => frameManager.getLegalSenses(predLemmaR(x)).toList
 
   }
-  val legalArguments = property(relations, "legalArgs") {
-    x: Relation => frameManager.getLegalSenses(predLemma(x)).toList
+  val legalArguments = property(predicates, "legalArgs") {
+    x: Constituent => frameManager.getLegalArguments(predLemmaP(x)).toList
   }
 
   //Classifiers as properties

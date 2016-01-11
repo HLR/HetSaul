@@ -9,7 +9,7 @@ import scala.collection.JavaConversions._
   */
 object srl_treeGeneralCandidates extends App {
 
-  populateGraphwithTextAnnotation(srlDataModel, srlDataModel.sentences)
+  populateGraphwithGoldSRL(srlDataModel, srlDataModel.sentences)
 
   val treeCandidates = trees().flatMap {
     tree =>

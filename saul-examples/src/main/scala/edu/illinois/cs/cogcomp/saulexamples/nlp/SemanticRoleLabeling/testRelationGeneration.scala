@@ -7,7 +7,7 @@ import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlDataMode
   */
 object testRelationGeneration extends App {
 
-  populateGraphwithTextAnnotation(srlDataModel, srlDataModel.sentences)
+  populateGraphwithGoldSRL(srlDataModel, srlDataModel.sentences)
 
   println("\n" + (relations(relations().head) ~> relationsToArguments).size)
 

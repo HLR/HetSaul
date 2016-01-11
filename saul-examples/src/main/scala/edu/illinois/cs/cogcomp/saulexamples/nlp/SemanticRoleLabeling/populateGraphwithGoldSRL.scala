@@ -70,7 +70,7 @@ object pop {
   }
 }
 
-object populateGraphwithTextAnnotation extends App {
+object populateGraphwithGoldSRL extends App {
   import srlDataModel._
 
   def apply[T <: AnyRef](d: DataModel, x: Node[TextAnnotation]) = {
@@ -123,8 +123,10 @@ object populateGraphwithTextAnnotation extends App {
     println("all" + taAll.toList.size)
     val filteredTa = addViewAndFilter(taAll.toList)
     print(filteredTa.size)
-    val testAll = testReader.textAnnotations //.slice(0, 10)
+    val testAll = testReader.textAnnotations.slice(0, 10)
     val filteredTest = addViewAndFilter(testAll.toList)
+    print(filteredTest.map(x => (x.getView(ViewNames.SRL_VERB).getRelations.toList).map(y => y.getTarget)).size)
+
     // Here we populate everythingd
     x.populate(filteredTa)
     x.populate(filteredTest, train = false)
