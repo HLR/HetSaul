@@ -8,6 +8,7 @@ import edu.illinois.cs.cogcomp.saulexamples.nlp.commonSensors._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlSensors._
 import scala.collection.JavaConversions._
 /** Created by Parisa on 1/5/16.
+  * TODO Either make this into a unit test or remove it entirely
   */
 object testModelsWorkingSpace extends App {
 
@@ -20,7 +21,7 @@ object testModelsWorkingSpace extends App {
   val negativePredicateTest = predicates(predicateTestCandidates)
     .filterNot(cand => (predicates() prop address).contains(address(cand)))
 
-  predicates.populate(negativePredicateTest, false)
+  predicates.populate(negativePredicateTest, train = false)
   predicateClassifier.load("./models/modelsFinal/edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLClassifiersForExperiment.predicateClassifier1$.lc", "./models/modelsFinal/edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLClassifiersForExperiment.predicateClassifier1$.lex")
   predicateClassifier.test()
 
@@ -29,9 +30,9 @@ object testModelsWorkingSpace extends App {
   val a = relations() ~> relationsToArguments prop address
   val b = relations() ~> relationsToPredicates prop address
 
-  val negativePalmerTestCandidates = XuPalmerCandidateArgsTesting.filterNot(cand => (a.contains(address(cand.getTarget))) && b.contains(address(cand.getSource)))
+  val negativePalmerTestCandidates = XuPalmerCandidateArgsTesting.filterNot(cand => a.contains(address(cand.getTarget)) && b.contains(address(cand.getSource)))
 
-  relations.populate(negativePalmerTestCandidates, false)
+  relations.populate(negativePalmerTestCandidates, train = false)
 
   argumentXuIdentifierGivenApredicate.load("./models/modelsFinal/edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLClassifiersForExperiment.argumentXuIdentifierGivenApredicate1$.lc", "./models/modelsFinal/edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLClassifiersForExperiment.argumentXuIdentifierGivenApredicate1$.lex")
   argumentXuIdentifierGivenApredicate.test()

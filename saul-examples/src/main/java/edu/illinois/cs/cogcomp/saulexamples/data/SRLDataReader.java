@@ -9,7 +9,7 @@ import java.util.List;
 
 
 /**
- * A reader that interfaces with {@link PropbankReader} and collects all the entities required by {@link SRLDataModel_all}
+ * A reader that interfaces with {@link PropbankReader} and collects all the entities required by {@code SRLDataModel}
  *
  * @author Christos Christodoulopoulos
  */
@@ -20,13 +20,14 @@ public class SRLDataReader {
 	public SRLDataReader(String treebankHome, String propbankHome, String[] sections) throws Exception {
         textAnnotations = new ArrayList<>();
         reader = new PropbankReader(treebankHome, propbankHome, sections, ViewNames.SRL_VERB, true);
-
     }
-    public SRLDataReader(String treebankHome, String propbankHome) throws Exception {
+    public SRLDataReader(String treebankHome, String propbankHome, int fromSection, int toSection) throws Exception {
+        List<String> sections = new ArrayList<>();
+        for (int i = fromSection; i <= toSection; i++) {
+            sections.add(String.format("%02d", i));
+        }
         textAnnotations = new ArrayList<>();
-        reader = new PropbankReader(treebankHome, propbankHome, new String[]{"00"}, ViewNames.SRL_VERB, true);
-
-
+        reader = new PropbankReader(treebankHome, propbankHome, sections.toArray(new String[sections.size()]), ViewNames.SRL_VERB, true);
     }
 
 	public void readData() {

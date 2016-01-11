@@ -33,20 +33,19 @@ object pipeline_App extends App {
     .filterNot(cand => (predicates() prop address).contains(address(cand)))
 
   predicates.populate(negativePredicateTrain)
-  predicates.populate(negativePredicateTest, false)
+  predicates.populate(negativePredicateTest, train = false)
 
   val XuPalmerCandidateArgsTraining = predicates.getTrainingInstances.flatMap(x => xuPalmerCandidate(x, (sentences(x.getTextAnnotation) ~> sentencesTostringTree).head))
-
   val XuPalmerCandidateArgsTesting = predicates.getTestingInstances.flatMap(x => xuPalmerCandidate(x, (sentences(x.getTextAnnotation) ~> sentencesTostringTree).head))
 
   val a = relations() ~> relationsToArguments prop address
   val b = relations() ~> relationsToPredicates prop address
 
-  val negativePalmerTestCandidates = XuPalmerCandidateArgsTesting.filterNot(cand => (a.contains(address(cand.getTarget))) && b.contains(address(cand.getSource)))
-  val negativePalmerTrainCandidates = XuPalmerCandidateArgsTraining.filterNot(cand => (a.contains(address(cand.getTarget))) && b.contains(address(cand.getSource)))
+  val negativePalmerTestCandidates = XuPalmerCandidateArgsTesting.filterNot(cand => a.contains(address(cand.getTarget)) && b.contains(address(cand.getSource)))
+  val negativePalmerTrainCandidates = XuPalmerCandidateArgsTraining.filterNot(cand => a.contains(address(cand.getTarget)) && b.contains(address(cand.getSource)))
 
   relations.populate(negativePalmerTrainCandidates)
-  relations.populate(negativePalmerTestCandidates, false)
+  relations.populate(negativePalmerTestCandidates, train = false)
 
   println("all relations number after population:" + srlDataModel.relations().size)
   print("isPredicate test results:")
