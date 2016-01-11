@@ -105,15 +105,4 @@ object srlConstraints {
     }
     a
   }
-  /*constraint LegalArguments(SRLSentence sentence) {
-    2. for (int i = 0; i < sentence.verbCount(); ++i) {
-      3. ParseTreeWord verb = sentence.getVerb(i);
-      4. LinkedList forVerb = sentence.getCandidates(verb);
-      5. LinkedList legal = PropBankFrames.getLegalArguments(scalatest.verb.lemma);
-      6. forall (Argument a in forVerb)
-      7. exists (String type in legal)
-      8. ArgumentTypeLearner(a) :: type;
-      9. }
-    10.*/
-
 }
