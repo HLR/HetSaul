@@ -4,10 +4,10 @@ import java.util.Properties
 
 import edu.illinois.cs.cogcomp.annotation.AnnotatorException
 import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
-import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{ TextAnnotation, TreeView }
+import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{TextAnnotation, TreeView}
 import edu.illinois.cs.cogcomp.core.datastructures.trees.Tree
-import edu.illinois.cs.cogcomp.core.utilities.configuration.{ Configurator, ResourceManager }
-import edu.illinois.cs.cogcomp.curator.{ CuratorConfigurator, CuratorFactory }
+import edu.illinois.cs.cogcomp.core.utilities.configuration.{Configurator, ResourceManager}
+import edu.illinois.cs.cogcomp.curator.{CuratorConfigurator, CuratorFactory}
 import edu.illinois.cs.cogcomp.nlp.common.PipelineConfigurator
 import edu.illinois.cs.cogcomp.nlp.pipeline.IllinoisPipelineFactory
 import edu.illinois.cs.cogcomp.nlp.utilities.ParseUtils
@@ -15,14 +15,14 @@ import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
 import edu.illinois.cs.cogcomp.saul.datamodel.node.Node
 import edu.illinois.cs.cogcomp.saulexamples.ExamplesConfigurator
 import edu.illinois.cs.cogcomp.saulexamples.data.SRLDataReader
-import org.slf4j.{ Logger, LoggerFactory }
+import org.slf4j.{Logger, LoggerFactory}
 
 import scala.collection.JavaConversions._
 
 /** Created by Parisa on 12/11/15.
   */
 
-object populateGraphwithTextAnnotation extends App {
+object populateGraphwithGoldSRL extends App {
   import srlDataModel._
 
   def apply[T <: AnyRef](d: DataModel, x: Node[TextAnnotation]) = {
@@ -73,7 +73,7 @@ object populateGraphwithTextAnnotation extends App {
     }
 
     val trainingFromSection = 2
-    val trainingToSection = 22
+    val trainingToSection = 3
     logger.info("Reading training data from sections {} to {}", trainingFromSection, trainingToSection)
     val trainReader = new SRLDataReader(
       rm.getString(ExamplesConfigurator.TREEBANK_HOME.key),
@@ -91,8 +91,8 @@ object populateGraphwithTextAnnotation extends App {
     logger.info("Reading test data from section {}", testSection)
     testReader.readData()
 
-    val filteredTa = addViewAndFilter(trainReader.textAnnotations.toList)
-    val filteredTest = addViewAndFilter(testReader.textAnnotations.toList)
+    val filteredTa = addViewAndFilter(trainReader.textAnnotations.slice(0, 10).toList)
+    val filteredTest = addViewAndFilter(testReader.textAnnotations.slice(0, 10).toList)
 
     // Here we populate everything
     x.populate(filteredTa)

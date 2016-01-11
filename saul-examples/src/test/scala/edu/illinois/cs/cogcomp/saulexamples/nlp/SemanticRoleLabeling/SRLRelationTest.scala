@@ -8,7 +8,7 @@ import org.scalatest.{ FlatSpec, Matchers }
   */
 class SRLRelationTest extends FlatSpec with Matchers {
   "relations" should "increase in size" in {
-    populateGraphwithTextAnnotation(srlDataModel, srlDataModel.sentences)
+    populateGraphwithGoldSRL(srlDataModel, srlDataModel.sentences)
 
     (relations(relations().head) ~> relationsToArguments).size should be(1)
 

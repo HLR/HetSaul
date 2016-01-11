@@ -17,9 +17,6 @@ object pipeline_App extends App {
 
   //  srlDataModel.sentencesToTokens.addSensor(textAnnotationToTokens _)
   populateGraphwithGoldSRL(srlDataModel, srlDataModel.sentences)
-  println(predicates.getTestingInstances.size)
-  println(arguments.getTestingInstances.size)
-  println(relations.getTestingInstances.size)
 
   // Here first train and test the argClassifier Given the ground truth Boundaries (i.e. no negative class).
 
