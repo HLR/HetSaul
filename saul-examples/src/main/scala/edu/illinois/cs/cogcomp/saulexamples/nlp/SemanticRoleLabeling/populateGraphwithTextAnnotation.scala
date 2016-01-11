@@ -8,6 +8,7 @@ import edu.illinois.cs.cogcomp.core.datastructures.trees.Tree
 import edu.illinois.cs.cogcomp.core.utilities.SerializationHelper
 import edu.illinois.cs.cogcomp.core.utilities.configuration.{ ResourceManager, Configurator }
 import edu.illinois.cs.cogcomp.curator.{ CuratorConfigurator, CuratorFactory }
+import edu.illinois.cs.cogcomp.nlp.pipeline.IllinoisPipelineFactory
 import edu.illinois.cs.cogcomp.nlp.utilities.ParseUtils
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
 import edu.illinois.cs.cogcomp.saul.datamodel.node.Node
@@ -74,17 +75,20 @@ object populateGraphwithTextAnnotation extends App {
   import srlDataModel._
 
   def apply[T <: AnyRef](d: DataModel, x: Node[TextAnnotation]) = {
+    val rm = new ExamplesConfigurator().getDefaultConfig
 
     val nonDefaultProps = new Properties()
     nonDefaultProps.setProperty(CuratorConfigurator.RESPECT_TOKENIZATION.key, Configurator.TRUE)
-    val annotatorService = CuratorFactory.buildCuratorClient(new CuratorConfigurator().getConfig(new ResourceManager(nonDefaultProps)))
+    val useCurator = rm.getBoolean(ExamplesConfigurator.USE_CURATOR)
+    val annotatorService = useCurator match {
+      case true => CuratorFactory.buildCuratorClient(new CuratorConfigurator().getConfig(new ResourceManager(nonDefaultProps)))
+      case false => IllinoisPipelineFactory.buildPipeline(new CuratorConfigurator().getConfig(new ResourceManager(nonDefaultProps)))
+    }
 
     def addViewAndFilter(tAll: List[TextAnnotation]): List[TextAnnotation] = {
       var filteredTa = List[TextAnnotation]()
       tAll.zipWithIndex.foreach {
         case (ta, idx) =>
-          println("Sentence:", idx)
-          // try {
           annotatorService.addView(ta, ViewNames.LEMMA)
           // annotatorService.addView(ta, ViewNames.NER_CONLL)
           // annotatorService.addView(ta, ViewNames.SHALLOW_PARSE)
@@ -96,17 +100,9 @@ object populateGraphwithTextAnnotation extends App {
           parseView.setParseTree(0, ParseUtils.snipNullNodes(ta.getView(ViewNames.PARSE_GOLD).asInstanceOf[TreeView].getTree(0)))
           ta.addView(ViewNames.PARSE_GOLD, parseView)
           filteredTa = ta :: filteredTa
-        //        } catch {
-        //          case _ => {
-        //            println("skipping the annotation! ")
-        //          }
-        //          // taAll.remove(ta)
-        //}
       }
       filteredTa
     }
-
-    val rm = new ExamplesConfigurator().getDefaultConfig
 
     val trainReader = new SRLDataReader(
       rm.getString(ExamplesConfigurator.TREEBANK_HOME.key),

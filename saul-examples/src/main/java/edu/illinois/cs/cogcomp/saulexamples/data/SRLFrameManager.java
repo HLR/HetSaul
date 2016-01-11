@@ -9,6 +9,7 @@ import org.w3c.dom.NodeList;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import java.io.File;
 import java.util.*;
 
 /**
@@ -79,7 +80,9 @@ public class SRLFrameManager {
         dbf.setValidating(false);
 
         for (String file : IOUtils.lsFiles(dir, (dir1, name) -> name.endsWith("xml"))) {
-            String fileName = IOUtils.getFileName(file);
+            // IOUtils.getFileName(file) doesn't work in Windows
+            int slashIndex = file.lastIndexOf(File.separator);
+            String fileName = file.substring(slashIndex + 1);
 
             // A hack to deal with percent-sign in nombank. There is another
             // file called perc-sign that will fill this void.
