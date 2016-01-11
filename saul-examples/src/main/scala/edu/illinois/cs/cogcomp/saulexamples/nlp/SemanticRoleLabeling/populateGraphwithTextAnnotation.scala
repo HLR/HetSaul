@@ -8,6 +8,7 @@ import edu.illinois.cs.cogcomp.core.datastructures.trees.Tree
 import edu.illinois.cs.cogcomp.core.utilities.SerializationHelper
 import edu.illinois.cs.cogcomp.core.utilities.configuration.{ ResourceManager, Configurator }
 import edu.illinois.cs.cogcomp.curator.{ CuratorConfigurator, CuratorFactory }
+import edu.illinois.cs.cogcomp.nlp.common.PipelineConfigurator
 import edu.illinois.cs.cogcomp.nlp.pipeline.IllinoisPipelineFactory
 import edu.illinois.cs.cogcomp.nlp.utilities.ParseUtils
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
@@ -77,12 +78,23 @@ object populateGraphwithTextAnnotation extends App {
   def apply[T <: AnyRef](d: DataModel, x: Node[TextAnnotation]) = {
     val rm = new ExamplesConfigurator().getDefaultConfig
 
-    val nonDefaultProps = new Properties()
-    nonDefaultProps.setProperty(CuratorConfigurator.RESPECT_TOKENIZATION.key, Configurator.TRUE)
     val useCurator = rm.getBoolean(ExamplesConfigurator.USE_CURATOR)
     val annotatorService = useCurator match {
-      case true => CuratorFactory.buildCuratorClient(new CuratorConfigurator().getConfig(new ResourceManager(nonDefaultProps)))
-      case false => IllinoisPipelineFactory.buildPipeline(new CuratorConfigurator().getConfig(new ResourceManager(nonDefaultProps)))
+      case true =>
+        val nonDefaultProps = new Properties()
+        nonDefaultProps.setProperty(CuratorConfigurator.RESPECT_TOKENIZATION.key, Configurator.TRUE)
+        CuratorFactory.buildCuratorClient(new CuratorConfigurator().getConfig(new ResourceManager(nonDefaultProps)))
+      case false =>
+        val nonDefaultProps = new Properties()
+        nonDefaultProps.setProperty(PipelineConfigurator.USE_POS.key, Configurator.FALSE)
+        nonDefaultProps.setProperty(PipelineConfigurator.USE_NER_CONLL.key, Configurator.FALSE)
+        nonDefaultProps.setProperty(PipelineConfigurator.USE_NER_ONTONOTES.key, Configurator.FALSE)
+        nonDefaultProps.setProperty(PipelineConfigurator.USE_SHALLOW_PARSE.key, Configurator.FALSE)
+        nonDefaultProps.setProperty(PipelineConfigurator.USE_SRL_VERB.key, Configurator.FALSE)
+        nonDefaultProps.setProperty(PipelineConfigurator.USE_SRL_NOM.key, Configurator.FALSE)
+        nonDefaultProps.setProperty(PipelineConfigurator.USE_STANFORD_DEP.key, Configurator.FALSE)
+        nonDefaultProps.setProperty(PipelineConfigurator.USE_STANFORD_PARSE.key, Configurator.FALSE)
+        IllinoisPipelineFactory.buildPipeline(new CuratorConfigurator().getConfig(new ResourceManager(nonDefaultProps)))
     }
 
     def addViewAndFilter(tAll: List[TextAnnotation]): List[TextAnnotation] = {

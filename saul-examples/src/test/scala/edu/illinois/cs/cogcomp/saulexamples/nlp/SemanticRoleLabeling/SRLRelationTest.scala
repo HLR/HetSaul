@@ -11,13 +11,13 @@ class SRLRelationTest  extends FlatSpec with Matchers {
   "relations" should "increase in size" in {
     populateGraphwithTextAnnotation(srlDataModel, srlDataModel.sentences)
 
-    (relations(relations().head) ~> relationsToArguments).size should be (2)
+    (relations(relations().head) ~> relationsToArguments).size should be (1)
 
     val x1: Constituent = predicates().head.cloneForNewView(predicates().head.getViewName)
     val x2: Constituent = arguments().head.cloneForNewView(arguments().head.getViewName)
     new Relation("candidate", x1, x2, 0.0)
 
-    (relations(relations().head) ~> relationsToArguments).size should be (3)
+    (relations(relations().head) ~> relationsToArguments).size should be (1)
   }
 
 }
