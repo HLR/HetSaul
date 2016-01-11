@@ -10,7 +10,7 @@ import scala.collection.JavaConversions._
 
 object ibt_IsArgTypeArg_App extends App {
 
-  populateGraphwithTextAnnotation(srlDataModel, srlDataModel.sentences)
+  populateGraphwithGoldSRL(srlDataModel, srlDataModel.sentences)
 
   val XuPalmerCandidateArgsTraining = predicates.getTrainingInstances.flatMap(x => xuPalmerCandidate(x, (sentences(x.getTextAnnotation) ~> sentencesTostringTree).head))
 

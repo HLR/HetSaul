@@ -13,7 +13,7 @@ import scala.collection.JavaConversions._
 object testModelsWorkingSpace extends App {
 
   srlDataModel.sentencesToTokens.addSensor(textAnnotationToTokens _)
-  populateGraphwithTextAnnotation(srlDataModel, srlDataModel.sentences)
+  populateGraphwithGoldSRL(srlDataModel, srlDataModel.sentences)
 
   val predicateTestCandidates = tokens.getTestingInstances.filter((x: Constituent) => posTag(x).startsWith("VB"))
     .map(c => c.cloneForNewView(ViewNames.SRL_VERB))

@@ -34,13 +34,14 @@ object srlClassifiers {
   object argumentTypeLearner extends Learnable[Relation](srlDataModel, parameters) {
     def label = srlDataModel.argumentLabelGold
     import srlDataModel._
-    override def feature = using(headwordRelation, syntacticFrameRelation, pathRelation, subcategorizationRelation, phraseTypeRelation, predPosTag, predLemma, linearPosition)
+    override def feature = using(headwordRelation, syntacticFrameRelation, pathRelation, subcategorizationRelation, phraseTypeRelation, predPosTag, predLemmaR, linearPosition)
     override lazy val classifier = new SparseNetworkLBP
   }
 
   object argumentXuIdentifierGivenApredicate extends Learnable[Relation](srlDataModel, parameters) {
+    x =>
     def label = srlDataModel.isArgumentXuGold
-    override def feature = using(headwordRelation, syntacticFrameRelation, pathRelation, subcategorizationRelation, phraseTypeRelation, predPosTag, predLemma, linearPosition)
+    override def feature = using(headwordRelation, syntacticFrameRelation, pathRelation, subcategorizationRelation, phraseTypeRelation, predPosTag, predLemmaR, linearPosition)
     override lazy val classifier = new SparseNetworkLBP
   }
 
