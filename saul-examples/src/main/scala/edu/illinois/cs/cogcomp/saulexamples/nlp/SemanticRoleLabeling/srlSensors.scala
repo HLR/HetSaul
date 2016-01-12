@@ -35,7 +35,7 @@ object srlSensors {
     ta.getView(ViewNames.SRL_VERB).getRelations.toList
   }
   def textAnnotationToRelationMatch(ta: TextAnnotation, r: Relation): Boolean = {
-    return (ta.getCorpusId + ":" + ta.getId).matches(r.getSource.getTextAnnotation.getCorpusId + ":" + r.getSource.getTextAnnotation.getId)
+    (ta.getCorpusId + ":" + ta.getId).matches(r.getSource.getTextAnnotation.getCorpusId + ":" + r.getSource.getTextAnnotation.getId)
 
     // ta.getView(ViewNames.SRL_VERB).getRelations.toList
   }

@@ -12,7 +12,6 @@ object srlConstraintClassifiers {
 
   object argTypeConstraintClassifier extends ConstrainedClassifier[Relation, TextAnnotation](srlDataModel, argumentTypeLearner) {
     def subjectTo = noOverlap
-
   }
 
   object arg_Is_TypeConstraintClassifier extends ConstrainedClassifier[Relation, Relation](srlDataModel, argumentTypeLearner) {

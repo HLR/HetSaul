@@ -19,15 +19,9 @@ import scala.collection.JavaConversions._
   */
 object srlDataModel extends DataModel {
 
-  val rm: ResourceManager = new ExamplesConfigurator().getDefaultConfig();
-  val frameManager: SRLFrameManager = new SRLFrameManager(rm.getString(ExamplesConfigurator.PROPBANK_HOME.key));
-  //  +
-  //    +    @Before
-  //  +    public void setUp() throws Exception {
-  //    +        ResourceManager rm = new ExamplesConfigurator().getDefaultConfig();
-  //    +        frameManager = new SRLFrameManager(rm.getString(ExamplesConfigurator.PROPBANK_HOME.key));
-  //    +    }
-  //  +
+  val rm: ResourceManager = new ExamplesConfigurator().getDefaultConfig
+  val frameManager: SRLFrameManager = new SRLFrameManager(rm.getString(ExamplesConfigurator.PROPBANK_HOME.key))
+
   val predicates = node[Constituent]
 
   val arguments = node[Constituent]
@@ -135,7 +129,6 @@ object srlDataModel extends DataModel {
 
   val headwordRelation = property(relations, "head") {
     x: Relation =>
-
       val headWordAndPos = new ParseHeadWordPOS(ViewNames.PARSE_GOLD)
       val discreteFeature: String = FeatureUtilities.getFeatureSet(headWordAndPos, x.getTarget).mkString
       discreteFeature
@@ -147,42 +140,48 @@ object srlDataModel extends DataModel {
       val discreteFeature: String = FeatureUtilities.getFeatureSet(syntacticFrame, x.getTarget).mkString
       discreteFeature
   }
+
   val pathRelation = property(relations, "path") {
     x: Relation =>
       val parspath = new ParsePath(ViewNames.PARSE_GOLD)
       val discreteFeature: String = FeatureUtilities.getFeatureSet(parspath, x.getTarget).mkString
       discreteFeature
   }
+
   val predPosTag = property(relations, "pPos") {
     x: Relation => x.getSource.getTextAnnotation.getView(ViewNames.POS).getConstituentsCovering(x.getSource).get(0).getLabel
   }
+
   val predLemmaR = property(relations, "pLem") {
     x: Relation =>
       val l = x.getSource.getTextAnnotation.getView(ViewNames.LEMMA).getConstituentsCovering(x.getSource).get(0).getLabel
       l
   }
+
   val predLemmaP = property(predicates, "pLem") {
     x: Constituent =>
       val l = x.getTextAnnotation.getView(ViewNames.LEMMA).getConstituentsCovering(x).get(0).getLabel
       l
   }
+
   val linearPosition = property(relations, "position") {
     x: Relation =>
       val linposition = new LinearPosition()
       val discreteFeature: String = FeatureUtilities.getFeatureSet(linposition, x.getTarget).mkString
       discreteFeature
   }
+
   //frame properties
   val legalSenses = property(relations, "legalSens") {
     x: Relation => frameManager.getLegalSenses(predLemmaR(x)).toList
 
   }
+
   val legalArguments = property(predicates, "legalArgs") {
     x: Constituent => frameManager.getLegalArguments(predLemmaP(x)).toList
   }
 
   //Classifiers as properties
-
   val isPredicatePrediction = property(predicates, "isPredicatePrediction") {
     x: Constituent => predicateClassifier(x)
   }
@@ -199,10 +198,12 @@ object srlDataModel extends DataModel {
 
       }
   }
+
   val typeArgumentPrediction = property(relations, "typeArgumentPrediction") {
     x: Relation =>
       argumentTypeLearner(x)
   }
+
   val typeArgumentPipePrediction = property(relations, "typeArgumentpipPrediction") {
     x: Relation =>
       val a: String = predicateClassifier(x.getSource) match {
