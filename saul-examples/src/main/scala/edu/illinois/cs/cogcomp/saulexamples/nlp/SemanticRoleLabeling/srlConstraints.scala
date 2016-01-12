@@ -27,7 +27,7 @@ object srlConstraints {
           //(sentences(x) ~> sentencesToRelations ~> relationsToPredicates).foreach {
           y =>
             {
-              val argCandList = (t.generateSaulCandidates(y, (sentences(y.getTextAnnotation) ~> sentencesTostringTree).head)).
+              val argCandList = (t.generateSaulCandidates(y, (sentences(y.getTextAnnotation) ~> sentencesToStringTree).head)).
                 map(y => new Relation("candidate", y.cloneForNewView(y.getViewName), y.cloneForNewView(y.getViewName), 0.0))
               //Xucandidates(y)
 
@@ -55,7 +55,7 @@ object srlConstraints {
         //(sentences(x) ~> sentencesToRelations ~> relationsToPredicates).foreach {
         y =>
           {
-            val argCandList = xuPalmerCandidate(y, (sentences(y.getTextAnnotation) ~> sentencesTostringTree).head)
+            val argCandList = xuPalmerCandidate(y, (sentences(y.getTextAnnotation) ~> sentencesToStringTree).head)
             for (t1 <- 0 until argCandList.size - 1)
               for (t2 <- t1 + 1 until argCandList.size) {
                 a = a &&& (((argumentTypeLearner on argCandList.get(t1)) is (argumentTypeLearner on argCandList.get(t2))) unary_!)
@@ -89,7 +89,7 @@ object srlConstraints {
       x.getView(ViewNames.SRL_VERB).asInstanceOf[PredicateArgumentView].getPredicates.foreach {
         y =>
           {
-            val argCandList = xuPalmerCandidate(y, (sentences(y.getTextAnnotation) ~> sentencesTostringTree).head)
+            val argCandList = xuPalmerCandidate(y, (sentences(y.getTextAnnotation) ~> sentencesToStringTree).head)
             val argLegalList = legalArguments(y)
             argCandList.foreach {
               z =>
@@ -109,7 +109,7 @@ object srlConstraints {
       x.getView(ViewNames.SRL_VERB).asInstanceOf[PredicateArgumentView].getPredicates.foreach {
         y =>
           {
-            val argCandList = xuPalmerCandidate(y, (sentences(y.getTextAnnotation) ~> sentencesTostringTree).head)
+            val argCandList = xuPalmerCandidate(y, (sentences(y.getTextAnnotation) ~> sentencesToStringTree).head)
             argCandList.foreach {
               t: Relation =>
                 {
@@ -132,7 +132,7 @@ object srlConstraints {
       x.getView(ViewNames.SRL_VERB).asInstanceOf[PredicateArgumentView].getPredicates.foreach {
         y =>
           {
-            val argCandList = xuPalmerCandidate(y, (sentences(y.getTextAnnotation) ~> sentencesTostringTree).head)
+            val argCandList = xuPalmerCandidate(y, (sentences(y.getTextAnnotation) ~> sentencesToStringTree).head)
             argCandList.foreach {
               t: Relation =>
                 {

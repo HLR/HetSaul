@@ -1,25 +1,30 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling
 
 import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
-import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{ Constituent, Relation, TextAnnotation }
+import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{Constituent, Relation, TextAnnotation}
 import edu.illinois.cs.cogcomp.core.datastructures.trees.Tree
 import edu.illinois.cs.cogcomp.core.utilities.configuration.ResourceManager
-import edu.illinois.cs.cogcomp.edison.features.FeatureUtilities
 import edu.illinois.cs.cogcomp.edison.features.factory._
+import edu.illinois.cs.cogcomp.edison.features.{ContextFeatureExtractor, FeatureExtractor, FeatureUtilities, WordFeatureExtractor}
 import edu.illinois.cs.cogcomp.nlp.corpusreaders.CoNLLColumnFormatReader
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
 import edu.illinois.cs.cogcomp.saulexamples.ExamplesConfigurator
 import edu.illinois.cs.cogcomp.saulexamples.data.SRLFrameManager
+import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifiers.{argumentTypeLearner, argumentXuIdentifierGivenApredicate, predicateClassifier}
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlSensors._
-import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifiers.{ argumentTypeLearner, argumentXuIdentifierGivenApredicate, predicateClassifier }
 
 import scala.collection.JavaConversions._
 
-/** Created by Parisa on 12/23/15.
+/** Contains all the SRL-related `Nodes`, `Edges` and `Properties` (labels and features)
+  * @author Parisa Kordjamshidi
+  * @author Christos Christodoulopoulos
   */
 object srlDataModel extends DataModel {
 
   val rm: ResourceManager = new ExamplesConfigurator().getDefaultConfig
+
+  val parseViewName: String = rm.getString(ExamplesConfigurator.SRL_PARSE_VIEW)
+
   val frameManager: SRLFrameManager = new SRLFrameManager(rm.getString(ExamplesConfigurator.PROPBANK_HOME.key))
 
   val predicates = node[Constituent]
@@ -39,13 +44,11 @@ object srlDataModel extends DataModel {
   val tokens = node[Constituent]
 
   val sentencesToTrees = edge(sentences, trees)
-  val sentencesTostringTree = edge(sentences, stringTree)
+  val sentencesToStringTree = edge(sentences, stringTree)
   val sentencesToTokens = edge(sentences, tokens)
   val sentencesToRelations = edge(sentences, relations)
   val relationsToPredicates = edge(relations, predicates)
   val relationsToArguments = edge(relations, arguments)
-
-  //TODO PARSE_GOLD is only good for training; for testing we need PARSE_STANFORD or PARSE_CHARNIAK
 
   sentencesToRelations.addSensor(textAnnotationToRelation _)
   sentencesToRelations.addSensor(textAnnotationToRelationMatch _)
@@ -53,8 +56,14 @@ object srlDataModel extends DataModel {
   // sentencesToTokens.addSensor(commonSensors.textAnnotationToTokens _)
   relationsToArguments.addSensor(relToArgument _)
   relationsToPredicates.addSensor(relToPredicate _)
-  sentencesTostringTree.addSensor(textAnnotationToStringTree _)
+  sentencesToStringTree.addSensor(textAnnotationToStringTree _)
 
+  /** This can be applied to both predicates and arguments */
+  val address = property(predicates, "add") {
+    x: Constituent => x.getTextAnnotation.getCorpusId + ":" + x.getTextAnnotation.getId + ":" + x.getSpan
+  }
+
+  // Classification labels
   val isPredicateGold = property(predicates, "p") {
     x: Constituent => x.getLabel.equals("Predicate")
   }
@@ -72,106 +81,123 @@ object srlDataModel extends DataModel {
     r: Relation => r.getRelationName
   }
 
-  val posTag = property(arguments, "posC") {
-    x: Constituent => x.getTextAnnotation.getView(ViewNames.POS).getConstituentsCovering(x).get(0).getLabel
+  // Features properties
+  val posTag = property(predicates, "posC") {
+    x: Constituent => getPOS(x)
   }
 
-  val address = property(arguments, "add") {
-    x: Constituent => x.getTextAnnotation.getCorpusId + ":" + x.getTextAnnotation.getId + ":" + x.getSpan
-  }
-  val subcategorization = property(arguments, "subcatC") {
-    x: Constituent => //new SubcategorizationFrame("Charniak").getFeatures(x)
-      val subcatFex = new SubcategorizationFrame(ViewNames.PARSE_GOLD)
-      val discreteFeature: String = FeatureUtilities.getFeatureSet(subcatFex, x).mkString
-      discreteFeature
+  val subcategorization = property(predicates, "subcatC") {
+    x: Constituent => toFeatString(x, new SubcategorizationFrame(parseViewName))
   }
 
-  val phraseType = property(arguments, "phraseTypeC") {
-    x: Constituent =>
-      val phraseType = new ParsePhraseType(ViewNames.PARSE_GOLD)
-      val discreteFeature: String = FeatureUtilities.getFeatureSet(phraseType, x).mkString
-      discreteFeature
+  val phraseType = property(predicates, "phraseTypeC") {
+    x: Constituent => toFeatString(x, new ParsePhraseType(parseViewName))
   }
 
-  val headword = property(arguments, "headC") {
-    x: Constituent =>
-      val headWordAndPos = new ParseHeadWordPOS(ViewNames.PARSE_GOLD)
-      val discreteFeature: String = FeatureUtilities.getFeatureSet(headWordAndPos, x).mkString
-      discreteFeature
+  val headword = property(predicates, "headC") {
+    x: Constituent => toFeatString(x, new ParseHeadWordPOS(parseViewName))
   }
 
-  val syntacticFrame = property(arguments, "synFrameC") {
-    x: Constituent =>
-      val syntacticFrame = new SyntacticFrame(ViewNames.PARSE_GOLD)
-      val discreteFeature: String = FeatureUtilities.getFeatureSet(syntacticFrame, x).mkString
-      discreteFeature
+  val syntacticFrame = property(predicates, "synFrameC") {
+    x: Constituent => toFeatString(x, new SyntacticFrame(parseViewName))
   }
-  val path = property(arguments, "pathC") {
-    x: Constituent =>
-      val parspath = new ParsePath(ViewNames.PARSE_GOLD)
-      val discreteFeature: String = FeatureUtilities.getFeatureSet(parspath, x).mkString
-      discreteFeature
+  val path = property(predicates, "pathC") {
+    x: Constituent => toFeatString(x, new ParsePath(parseViewName))
   }
 
   val subcategorizationRelation = property(relations, "subcat") {
-    x: Relation => //new SubcategorizationFrame("Charniak").getFeatures(x)
-      val subcatFex = new SubcategorizationFrame(ViewNames.PARSE_GOLD)
-      val discreteFeature: String = FeatureUtilities.getFeatureSet(subcatFex, x.getTarget).mkString
-      discreteFeature
+    x: Relation => toFeatString(x.getTarget, new SubcategorizationFrame(parseViewName))
   }
 
   val phraseTypeRelation = property(relations, "phraseType") {
-    x: Relation =>
-      val phraseType = new ParsePhraseType(ViewNames.PARSE_GOLD)
-      val discreteFeature: String = FeatureUtilities.getFeatureSet(phraseType, x.getTarget).mkString
-      discreteFeature
+    x: Relation => toFeatString(x.getTarget, new ParsePhraseType(parseViewName))
   }
 
   val headwordRelation = property(relations, "head") {
-    x: Relation =>
-      val headWordAndPos = new ParseHeadWordPOS(ViewNames.PARSE_GOLD)
-      val discreteFeature: String = FeatureUtilities.getFeatureSet(headWordAndPos, x.getTarget).mkString
-      discreteFeature
+    x: Relation => toFeatString(x.getTarget, new ParseHeadWordPOS(parseViewName))
   }
 
   val syntacticFrameRelation = property(relations, "synFrame") {
-    x: Relation =>
-      val syntacticFrame = new SyntacticFrame(ViewNames.PARSE_GOLD)
-      val discreteFeature: String = FeatureUtilities.getFeatureSet(syntacticFrame, x.getTarget).mkString
-      discreteFeature
+    x: Relation => toFeatString(x.getTarget, new SyntacticFrame(parseViewName))
   }
 
   val pathRelation = property(relations, "path") {
-    x: Relation =>
-      val parspath = new ParsePath(ViewNames.PARSE_GOLD)
-      val discreteFeature: String = FeatureUtilities.getFeatureSet(parspath, x.getTarget).mkString
-      discreteFeature
+    x: Relation => toFeatString(x.getTarget, new ParsePath(parseViewName))
   }
 
   val predPosTag = property(relations, "pPos") {
-    x: Relation => x.getSource.getTextAnnotation.getView(ViewNames.POS).getConstituentsCovering(x.getSource).get(0).getLabel
+    x: Relation => getPOS(x.getSource)
   }
 
   val predLemmaR = property(relations, "pLem") {
-    x: Relation =>
-      val l = x.getSource.getTextAnnotation.getView(ViewNames.LEMMA).getConstituentsCovering(x.getSource).get(0).getLabel
-      l
+    x: Relation => getLemma(x.getSource)
   }
 
   val predLemmaP = property(predicates, "pLem") {
-    x: Constituent =>
-      val l = x.getTextAnnotation.getView(ViewNames.LEMMA).getConstituentsCovering(x).get(0).getLabel
-      l
+    x: Constituent => getLemma(x)
   }
 
   val linearPosition = property(relations, "position") {
-    x: Relation =>
-      val linposition = new LinearPosition()
-      val discreteFeature: String = FeatureUtilities.getFeatureSet(linposition, x.getTarget).mkString
-      discreteFeature
+    x: Relation => toFeatString(x.getTarget, new LinearPosition())
   }
 
-  //frame properties
+  val voice = property(predicates, "voice") {
+    x: Constituent => toFeatString(x, new VerbVoiceIndicator(parseViewName))
+  }
+
+  val predWordWindow = property(predicates, "predWordWindow") {
+    x: Constituent => getContextFeats(x, WordFeatureExtractorFactory.word)
+  }
+
+  val predPOSWindow = property(predicates, "predPOSWindow") {
+    x: Constituent => getContextFeats(x, WordFeatureExtractorFactory.pos)
+  }
+
+  val argWordWindow = property(relations, "argWordWindow") {
+    rel: Relation => getContextFeats(rel.getTarget, WordFeatureExtractorFactory.word)
+  }
+
+  val argPOSWindow = property(relations, "argPOSWindow") {
+    rel: Relation => getContextFeats(rel.getTarget, WordFeatureExtractorFactory.pos)
+  }
+
+  val verbClass = property(relations, "verbClass") {
+    rel: Relation => frameManager.getAllClasses(getLemma(rel.getTarget)).toList
+  }
+
+  val constituentLength = property(relations, "constLength") {
+    rel: Relation => rel.getTarget.getEndSpan - rel.getTarget.getStartSpan
+  }
+
+  val chunkLength = property(relations, "chunkLength") {
+    rel: Relation => rel.getTarget.getTextAnnotation.getView(ViewNames.SHALLOW_PARSE).getConstituentsCovering(rel.getTarget).length
+  }
+
+  val chunkEmbedding = property(relations, "chunkEmbedding") {
+    rel: Relation => toFeatString(rel.getTarget, new ChunkEmbedding(ViewNames.SHALLOW_PARSE))
+  }
+
+  val chunkPathPattern = property(relations, "chunkPath") {
+    rel: Relation => toFeatString(rel.getTarget, new ChunkPathPattern(ViewNames.SHALLOW_PARSE))
+  }
+
+  /** Combines clause relative position and clause coverage */
+  val clauseFeatures = property(relations, "clauseFeats") {
+    rel: Relation =>
+      val clauseViewName = if (parseViewName.equals(ViewNames.PARSE_GOLD)) "CLAUSES_GOLD" else ViewNames.CLAUSES_STANFORD
+      toFeatString(rel.getTarget, new ClauseFeatureExtractor(parseViewName, clauseViewName))
+  }
+
+  val containsNEG = property(relations, "containsNEG") {
+    rel: Relation => toFeatString(rel.getTarget, ChunkPropertyFeatureFactory.isNegated)
+  }
+
+  val containsMOD = property(relations, "containsMOD") {
+    rel: Relation => toFeatString(rel.getTarget, ChunkPropertyFeatureFactory.hasModalVerb)
+  }
+
+
+  // Frame properties
   val legalSenses = property(relations, "legalSens") {
     x: Relation => frameManager.getLegalSenses(predLemmaR(x)).toList
 
@@ -181,7 +207,7 @@ object srlDataModel extends DataModel {
     x: Constituent => frameManager.getLegalArguments(predLemmaP(x)).toList
   }
 
-  //Classifiers as properties
+  // Classifiers as properties
   val isPredicatePrediction = property(predicates, "isPredicatePrediction") {
     x: Constituent => predicateClassifier(x)
   }
@@ -190,7 +216,7 @@ object srlDataModel extends DataModel {
     x: Relation => argumentXuIdentifierGivenApredicate(x)
   }
 
-  val isArgumentPipePrediction = property(relations, "isArgumentpipPrediction") {
+  val isArgumentPipePrediction = property(relations, "isArgumentPipePrediction") {
     x: Relation =>
       predicateClassifier(x.getSource) match {
         case "false" => "false"
@@ -204,7 +230,7 @@ object srlDataModel extends DataModel {
       argumentTypeLearner(x)
   }
 
-  val typeArgumentPipePrediction = property(relations, "typeArgumentpipPrediction") {
+  val typeArgumentPipePrediction = property(relations, "typeArgumentPipePrediction") {
     x: Relation =>
       val a: String = predicateClassifier(x.getSource) match {
         case "false" => "false"
@@ -215,5 +241,27 @@ object srlDataModel extends DataModel {
         case _ => argumentTypeLearner(x)
       }
       b
+  }
+
+  // Utility functions
+  def toFeatString(x: Constituent, fex: FeatureExtractor): String = {
+    FeatureUtilities.getFeatureSet(fex, x).mkString
+  }
+
+  def getPOS(x: Constituent): String = {
+    WordFeatureExtractorFactory.pos.getFeatures(x).mkString
+  }
+
+  def getLemma(x: Constituent): String = {
+    x.getTextAnnotation.getView(ViewNames.LEMMA).getConstituentsCovering(x).get(0).getLabel
+    // The "correct" way to get this feature is the following, but the lemma is used as a string
+    // elsewhere in the code and so we don't need the addition of the feature name
+    //WordFeatureExtractorFactory.lemma.getFeatures(x).mkString
+  }
+
+  def getContextFeats(x: Constituent, featureExtractor: WordFeatureExtractor): String = {
+    val contextFex = new ContextFeatureExtractor(2, true, true)
+    contextFex.addFeatureExtractor(featureExtractor)
+    toFeatString(x, contextFex)
   }
 }

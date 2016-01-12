@@ -11,6 +11,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * A collection of function related to legal frames and sense ported from
@@ -248,6 +249,18 @@ public class SRLFrameManager {
         return allArgumentsSet;
     }
 
+    public Set<String> getAllClasses(String lemma) {
+        Set<String> allClasses = new HashSet<>();
+        if (getPredicates().contains(lemma)) {
+            allClasses.addAll(getFrame(lemma).getVerbClasses());
+        }
+        else {
+            log.error("Unknown predicate {}. Returning {}", lemma, UNKNOWN_VERB_CLASS);
+            allClasses.add(UNKNOWN_VERB_CLASS);
+        }
+        return allClasses;
+    }
+
     private class FrameData {
         private String lemma;
 
@@ -305,6 +318,11 @@ public class SRLFrameManager {
             assert this.senseFrameData.containsKey(sense) : sense
                     + " missing for predicate lemma " + this.lemma;
             return this.senseFrameData.get(sense).senseName;
+        }
+
+        public Set<String> getVerbClasses() {
+            return senseFrameData.keySet().stream().map(sense -> senseFrameData.get(sense).verbClass)
+                    .collect(Collectors.toSet());
         }
 
         public Set<String> getLegalArguments() {
