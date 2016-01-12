@@ -5,7 +5,6 @@ import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{Constituent, 
 import edu.illinois.cs.cogcomp.core.datastructures.trees.Tree
 import edu.illinois.cs.cogcomp.core.utilities.configuration.ResourceManager
 import edu.illinois.cs.cogcomp.edison.features.factory._
-import edu.illinois.cs.cogcomp.edison.features.{ContextFeatureExtractor, FeatureExtractor, FeatureUtilities, WordFeatureExtractor}
 import edu.illinois.cs.cogcomp.nlp.corpusreaders.CoNLLColumnFormatReader
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
 import edu.illinois.cs.cogcomp.saulexamples.ExamplesConfigurator
@@ -87,42 +86,42 @@ object srlDataModel extends DataModel {
   }
 
   val subcategorization = property(predicates, "subcatC") {
-    x: Constituent => toFeatString(x, new SubcategorizationFrame(parseViewName))
+    x: Constituent => fexFeatureExtractor(x, new SubcategorizationFrame(parseViewName))
   }
 
   val phraseType = property(predicates, "phraseTypeC") {
-    x: Constituent => toFeatString(x, new ParsePhraseType(parseViewName))
+    x: Constituent => fexFeatureExtractor(x, new ParsePhraseType(parseViewName))
   }
 
   val headword = property(predicates, "headC") {
-    x: Constituent => toFeatString(x, new ParseHeadWordPOS(parseViewName))
+    x: Constituent => fexFeatureExtractor(x, new ParseHeadWordPOS(parseViewName))
   }
 
   val syntacticFrame = property(predicates, "synFrameC") {
-    x: Constituent => toFeatString(x, new SyntacticFrame(parseViewName))
+    x: Constituent => fexFeatureExtractor(x, new SyntacticFrame(parseViewName))
   }
   val path = property(predicates, "pathC") {
-    x: Constituent => toFeatString(x, new ParsePath(parseViewName))
+    x: Constituent => fexFeatureExtractor(x, new ParsePath(parseViewName))
   }
 
   val subcategorizationRelation = property(relations, "subcat") {
-    x: Relation => toFeatString(x.getTarget, new SubcategorizationFrame(parseViewName))
+    x: Relation => fexFeatureExtractor(x.getTarget, new SubcategorizationFrame(parseViewName))
   }
 
   val phraseTypeRelation = property(relations, "phraseType") {
-    x: Relation => toFeatString(x.getTarget, new ParsePhraseType(parseViewName))
+    x: Relation => fexFeatureExtractor(x.getTarget, new ParsePhraseType(parseViewName))
   }
 
   val headwordRelation = property(relations, "head") {
-    x: Relation => toFeatString(x.getTarget, new ParseHeadWordPOS(parseViewName))
+    x: Relation => fexFeatureExtractor(x.getTarget, new ParseHeadWordPOS(parseViewName))
   }
 
   val syntacticFrameRelation = property(relations, "synFrame") {
-    x: Relation => toFeatString(x.getTarget, new SyntacticFrame(parseViewName))
+    x: Relation => fexFeatureExtractor(x.getTarget, new SyntacticFrame(parseViewName))
   }
 
   val pathRelation = property(relations, "path") {
-    x: Relation => toFeatString(x.getTarget, new ParsePath(parseViewName))
+    x: Relation => fexFeatureExtractor(x.getTarget, new ParsePath(parseViewName))
   }
 
   val predPosTag = property(relations, "pPos") {
@@ -138,27 +137,27 @@ object srlDataModel extends DataModel {
   }
 
   val linearPosition = property(relations, "position") {
-    x: Relation => toFeatString(x.getTarget, new LinearPosition())
+    x: Relation => fexFeatureExtractor(x.getTarget, new LinearPosition())
   }
 
   val voice = property(predicates, "voice") {
-    x: Constituent => toFeatString(x, new VerbVoiceIndicator(parseViewName))
+    x: Constituent => fexFeatureExtractor(x, new VerbVoiceIndicator(parseViewName))
   }
 
   val predWordWindow = property(predicates, "predWordWindow") {
-    x: Constituent => getContextFeats(x, WordFeatureExtractorFactory.word)
+    x: Constituent => fexContextFeats(x, WordFeatureExtractorFactory.word)
   }
 
   val predPOSWindow = property(predicates, "predPOSWindow") {
-    x: Constituent => getContextFeats(x, WordFeatureExtractorFactory.pos)
+    x: Constituent => fexContextFeats(x, WordFeatureExtractorFactory.pos)
   }
 
   val argWordWindow = property(relations, "argWordWindow") {
-    rel: Relation => getContextFeats(rel.getTarget, WordFeatureExtractorFactory.word)
+    rel: Relation => fexContextFeats(rel.getTarget, WordFeatureExtractorFactory.word)
   }
 
   val argPOSWindow = property(relations, "argPOSWindow") {
-    rel: Relation => getContextFeats(rel.getTarget, WordFeatureExtractorFactory.pos)
+    rel: Relation => fexContextFeats(rel.getTarget, WordFeatureExtractorFactory.pos)
   }
 
   val verbClass = property(relations, "verbClass") {
@@ -174,26 +173,26 @@ object srlDataModel extends DataModel {
   }
 
   val chunkEmbedding = property(relations, "chunkEmbedding") {
-    rel: Relation => toFeatString(rel.getTarget, new ChunkEmbedding(ViewNames.SHALLOW_PARSE))
+    rel: Relation => fexFeatureExtractor(rel.getTarget, new ChunkEmbedding(ViewNames.SHALLOW_PARSE))
   }
 
   val chunkPathPattern = property(relations, "chunkPath") {
-    rel: Relation => toFeatString(rel.getTarget, new ChunkPathPattern(ViewNames.SHALLOW_PARSE))
+    rel: Relation => fexFeatureExtractor(rel.getTarget, new ChunkPathPattern(ViewNames.SHALLOW_PARSE))
   }
 
   /** Combines clause relative position and clause coverage */
   val clauseFeatures = property(relations, "clauseFeats") {
     rel: Relation =>
       val clauseViewName = if (parseViewName.equals(ViewNames.PARSE_GOLD)) "CLAUSES_GOLD" else ViewNames.CLAUSES_STANFORD
-      toFeatString(rel.getTarget, new ClauseFeatureExtractor(parseViewName, clauseViewName))
+      fexFeatureExtractor(rel.getTarget, new ClauseFeatureExtractor(parseViewName, clauseViewName))
   }
 
   val containsNEG = property(relations, "containsNEG") {
-    rel: Relation => toFeatString(rel.getTarget, ChunkPropertyFeatureFactory.isNegated)
+    rel: Relation => fexFeatureExtractor(rel.getTarget, ChunkPropertyFeatureFactory.isNegated)
   }
 
   val containsMOD = property(relations, "containsMOD") {
-    rel: Relation => toFeatString(rel.getTarget, ChunkPropertyFeatureFactory.hasModalVerb)
+    rel: Relation => fexFeatureExtractor(rel.getTarget, ChunkPropertyFeatureFactory.hasModalVerb)
   }
 
 
@@ -241,16 +240,5 @@ object srlDataModel extends DataModel {
         case _ => argumentTypeLearner(x)
       }
       b
-  }
-
-  // Utility functions
-  def toFeatString(x: Constituent, fex: FeatureExtractor): String = {
-    FeatureUtilities.getFeatureSet(fex, x).mkString
-  }
-
-  def getContextFeats(x: Constituent, featureExtractor: WordFeatureExtractor): String = {
-    val contextFex = new ContextFeatureExtractor(2, true, true)
-    contextFex.addFeatureExtractor(featureExtractor)
-    toFeatString(x, contextFex)
   }
 }
