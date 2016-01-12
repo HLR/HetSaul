@@ -19,6 +19,8 @@ object IndependentERTraining extends App {
     sentences populate trainSentences
     tokens populate trainTokens
     pairs populate trainRelations
+    sentences.populate(trainSentences,false)
+   // tokens.populate(trai)
   }
 
   populate_ER_graph
@@ -26,5 +28,5 @@ object IndependentERTraining extends App {
   forgetAll(personClassifier, orgClassifier, locationClassifier, worksForClassifier, livesInClassifier)
   //TODO revise this when the below functions can handle various types of nodes
   independent_train((personClassifier, tokens()), (orgClassifier, tokens()), (locationClassifier, tokens()))
-  independent_test((personClassifier, tokens()), (orgClassifier, tokens()), (locationClassifier, tokens()))
+  independent_test((personClassifier, tokens.testingSet), (orgClassifier, tokens.testingSet), (locationClassifier, tokens.testingSet))
 }

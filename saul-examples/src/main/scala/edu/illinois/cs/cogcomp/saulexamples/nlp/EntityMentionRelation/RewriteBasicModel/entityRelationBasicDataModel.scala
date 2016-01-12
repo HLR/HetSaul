@@ -60,7 +60,7 @@ object entityRelationBasicDataModel extends DataModel {
   val relFeature = property(pairs, "reltokenSurface") {
     token: ConllRelation =>
       {
-        "w1-word-" + token.e1.phrase :: "w2-word-" + token.e2.phrase ::
+          "w1-word-" + token.e1.phrase :: "w2-word-" + token.e2.phrase ::
           "w1-pos-" + token.e1.POS :: "w2-pos-" + token.e2.POS ::
           "w1-city-" + cityGazetSensor.isContainedIn(token.e1) :: "w2-city-" + cityGazetSensor.isContainedIn(token.e2) ::
           "w1-per-" + personGazetSensor.containsAny(token.e1) :: "w2-per-" + personGazetSensor.containsAny(token.e2) ::

@@ -6,7 +6,7 @@ import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.RewriteBas
 import edu.illinois.cs.cogcomp.saul.constraint.ConstraintTypeConversion._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.entityRelationConstraints._
 
-object entityRelationConstraints {
+object entityRelationConstraintClassifiers {
 
   object orgConstraintClassifier extends ConstrainedClassifier[ConllRawToken, ConllRelation](entityRelationBasicDataModel, orgClassifier) {
     def subjectTo = Per_Org

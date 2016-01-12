@@ -29,9 +29,7 @@ object entityRelationClassifiers {
     def label: Property[ConllRawToken] = entityType is "Peop"
     override lazy val classifier = new SparseNetworkLearner()
     override def feature = using(
-      windowWithIn[ConllRawSentence](-2, 2, List(
-        pos
-      )), word, phrase, containsSubPhraseMent, containsSubPhraseIng,
+      windowWithIn[ConllRawSentence](-2, 2, List(pos)), word, phrase, containsSubPhraseMent, containsSubPhraseIng,
       containsInPersonList, wordLen, containsInCityList
     )
   }
