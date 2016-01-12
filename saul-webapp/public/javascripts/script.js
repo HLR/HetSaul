@@ -152,12 +152,14 @@ var generateSchemaGraphFromJson = function(data){
     var s = new sigma('graphContainer');
     var nodeId = 0;
     var nodeDict = {};
+    var nodePropertyCount = {};
     for(var node in data['nodes']){
+        nodePropertyCount[data['nodes'][node]] = 0;
         nodeDict[data['nodes'][node]] = 'n'+ ++nodeId;
         s.graph.addNode({
             id: 'n'+ nodeId,
             label: data['nodes'][node],
-            size: 1,
+            size: 3,
             x: Math.cos(2 * nodeId * Math.PI / data['nodes'].length),
             y: Math.sin(2 * nodeId * Math.PI / data['nodes'].length),
             color: "#ec5148"
@@ -174,7 +176,29 @@ var generateSchemaGraphFromJson = function(data){
         });
     };
 
-    // Finally, let's ask our sigma instance to refresh:
+    var getNodeByLabel = function(label){
+
+        var id = nodeDict[label];
+        return s.graph.nodes(id);
+    }
+    //generate properties nodes and edges
+    for(var property in data['properties']){
+        ++nodePropertyCount[data['properties'][property]];
+        var parentNode = getNodeByLabel(data['properties'][property]);
+        s.graph.addNode({
+            id: 'p' + property + nodePropertyCount[data['properties'][property]],
+            label: property,
+            size: 1,
+            x: parentNode.x + 0.5 * Math.cos(2 * nodePropertyCount[data['properties'][property]] * Math.PI / 6),
+            y: parentNode.y + 0.5 * Math.sin(2 * nodePropertyCount[data['properties'][property]] * Math.PI / 6),
+            color: "#0000ff"
+        });
+        s.graph.addEdge({
+            id: 'e'+ edgeId++,
+            source: nodeDict[data['properties'][property]],
+            target: 'p' + property + nodePropertyCount[data['properties'][property]]
+        });
+    }
     s.refresh();
     $("#graphContainer").css("position","absolute");
 }
