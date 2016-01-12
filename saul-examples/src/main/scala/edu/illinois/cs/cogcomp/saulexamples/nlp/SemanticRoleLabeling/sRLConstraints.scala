@@ -93,11 +93,8 @@ object srlConstraints {
             val argLegalList = legalArguments(y)
             argCandList.foreach {
               z =>
-                {
-
-                  a = a &&& argLegalList._exists {
-                    t: String => argumentTypeLearner on z is t
-                  }
+                a = a &&& argLegalList._exists {
+                  t: String => argumentTypeLearner on z is t
                 }
             }
           }
@@ -105,4 +102,50 @@ object srlConstraints {
     }
     a
   }
-}
+  val r_arg_Constraint = ConstrainedClassifier.constraintOf[TextAnnotation] {
+    var a: FirstOrderConstraint = new FirstOrderConstant(true)
+    x: TextAnnotation => {
+      val values = Array("R-A1", "R-A2", "R-A3", "R-A4", "R-A5")
+      x.getView(ViewNames.SRL_VERB).asInstanceOf[PredicateArgumentView].getPredicates.foreach {
+        y =>
+          {
+            val argCandList = xuPalmerCandidate(y, (sentences(y.getTextAnnotation) ~> sentencesTostringTree).head)
+            argCandList.foreach {
+              t: Relation =>
+                {
+                  for (i <- 0 until values.length - 1)
+                    a = a &&& ((argumentTypeLearner on t) is values(i)) ==>
+                      (argCandList._exists {
+                        k: Relation => (argumentTypeLearner on k) is values(0).substring(2)
+                      })
+                }
+            }
+          }
+      }
+    }
+    a
+  } // end r-arg constraint
+  val c_arg_Constraint = ConstrainedClassifier.constraintOf[TextAnnotation] {
+    var a: FirstOrderConstraint = new FirstOrderConstant(true)
+    x: TextAnnotation => {
+      val values = Array("C-A1", "C-A2", "C-A3", "C-A4", "C-A5")
+      x.getView(ViewNames.SRL_VERB).asInstanceOf[PredicateArgumentView].getPredicates.foreach {
+        y =>
+          {
+            val argCandList = xuPalmerCandidate(y, (sentences(y.getTextAnnotation) ~> sentencesTostringTree).head)
+            argCandList.foreach {
+              t: Relation =>
+                {
+                  for (i <- 0 until values.length - 1)
+                    a = a &&& ((argumentTypeLearner on t) is values(i)) ==>
+                      (argCandList._exists {
+                        k: Relation => (argumentTypeLearner on k) is values(0).substring(2)
+                      })
+                }
+            }
+          }
+      }
+    }
+    a
+  } // end r-arg constraint
+} // end srlConstainrs
