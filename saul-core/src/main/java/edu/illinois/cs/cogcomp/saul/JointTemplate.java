@@ -2,6 +2,7 @@ package edu.illinois.cs.cogcomp.saul;
 
 import edu.illinois.cs.cogcomp.lbjava.infer.GurobiHook;
 import edu.illinois.cs.cogcomp.lbjava.infer.ILPInference;
+import edu.illinois.cs.cogcomp.lbjava.infer.OJalgoHook;
 import edu.illinois.cs.cogcomp.lbjava.infer.ParameterizedConstraint;
 import edu.illinois.cs.cogcomp.lbjava.learn.IdentityNormalizer;
 import edu.illinois.cs.cogcomp.lbjava.learn.Learner;
@@ -23,7 +24,9 @@ public abstract class JointTemplate<T> extends ILPInference {
     public JointTemplate(T head)
     {
 
-        super(head, new GurobiHook());
+        super(head, new OJalgoHook());
+//        super(head, new GurobiHook());
+
 //        verbosity = 2;
 //        System.out.println(" NONEmpty Constructor " + head);
 

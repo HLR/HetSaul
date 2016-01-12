@@ -5,8 +5,7 @@ import edu.illinois.cs.cogcomp.lbjava.learn.Learner
 import edu.illinois.cs.cogcomp.saul.datamodel.property.Property
 import edu.illinois.cs.cogcomp.saul.lbjrelated.LBJLearnerEquivalent
 
-/** Created by kordjam on 11/11/14.
-  * We need to define the langauge of constraints here to work with the first order constraints that are programmed in
+/** We need to define the langauge of constraints here to work with the first order constraints that are programmed in
   * our main LBP script. The wrapper just gives us a java firstorderconstraint object in the shell of an scala object.
   * in this way our language works on scala objects.
   */
@@ -43,7 +42,6 @@ object ConstraintTypeConversion {
 }
 
 class QuantifierWrapper[T](val coll: Seq[T]) {
-
   def _exists(p: T => FirstOrderConstraint): FirstOrderConstraint = {
     val __result: FirstOrderConstraint = new FirstOrderConstant(false)
     def makeDisjunction(c1: FirstOrderConstraint, c2: FirstOrderConstraint): FirstOrderConstraint = {
@@ -52,20 +50,19 @@ class QuantifierWrapper[T](val coll: Seq[T]) {
     coll.map(p).foldLeft[FirstOrderConstraint](__result)(makeDisjunction)
   }
 
-  def _forAll(p: T => FirstOrderConstraint): FirstOrderConstraint = {
+  def _forall(p: T => FirstOrderConstraint): FirstOrderConstraint = {
     val __result: FirstOrderConstraint = new FirstOrderConstant(true)
     def makeConjunction(c1: FirstOrderConstraint, c2: FirstOrderConstraint): FirstOrderConstraint = {
       new FirstOrderConjunction(c1, c2)
     }
     coll.map(p).foldLeft[FirstOrderConstraint](__result)(makeConjunction)
-
   }
 
   /** transfer the constraint to a constant,
-    * I'm worried about ths performance, because otherwise(at most 10 will be O(n^10) thing to evaluate)
-    * One reason is we use conjunction and disjunction in forall and exist
+    * TODO: I'm worried about its performance, because otherwise(at most 10 will be O(n^10) thing to evaluate)
+    * One reason is that we use conjunction and disjunction in forall and exist
     */
-  def _atMost(n: Int)(p: T => FirstOrderConstraint): FirstOrderConstraint = {
+  def _atmost(n: Int)(p: T => FirstOrderConstraint): FirstOrderConstraint = {
     if (coll.count(p.andThen(_.evaluate())) <= n) {
       new FirstOrderConstant(true)
     } else {
@@ -77,7 +74,7 @@ class QuantifierWrapper[T](val coll: Seq[T]) {
     * I'm worried about ths performance, because otherwise(at most 10 will be O(n^10) thing to evaluate)
     * One reason is we use conjunction and disjunction in forall and exist
     */
-  def _atLeast(n: Int)(p: T => FirstOrderConstraint): FirstOrderConstraint = {
+  def _atleast(n: Int)(p: T => FirstOrderConstraint): FirstOrderConstraint = {
     if (coll.count(p.andThen(_.evaluate())) >= n) {
       new FirstOrderConstant(true)
     } else {
@@ -95,13 +92,17 @@ class FirstOrderConstraints(val r: FirstOrderConstraint) {
 
   def <==>(other: FirstOrderConstraint) = new FirstOrderDoubleImplication(this.r, other)
 
-  def unary_! = new FirstOrderNegation(this.r)
+  //  def iff(other: FirstOrderConstraint) = new FirstOrderDoubleImplication(this.r, other)
 
-  def &&&(other: FirstOrderConstraint) = and(other)
+  //  def unary_! = new FirstOrderNegation(this.r)
+
+  def not = new FirstOrderNegation(this.r)
+
+  //  def &&&(other: FirstOrderConstraint) = and(other)
 
   def and(other: FirstOrderConstraint) = new FirstOrderConjunction(this.r, other)
 
-  def |||(other: FirstOrderConstraint) = or(other)
+  //  def |||(other: FirstOrderConstraint) = or(other)
 
   def or(other: FirstOrderConstraint) = new FirstOrderDisjunction(this.r, other)
 

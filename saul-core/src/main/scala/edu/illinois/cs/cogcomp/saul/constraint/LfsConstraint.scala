@@ -6,8 +6,6 @@ import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
 
 import scala.reflect.ClassTag
 
-/** Created by haowu on 1/29/15.
-  */
 abstract class LfsConstraint[T <: AnyRef](implicit val tag: ClassTag[T]) {
 
   def makeConstrainDef(x: T): FirstOrderConstraint

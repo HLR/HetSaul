@@ -242,7 +242,7 @@ object ConstrainedClassifier {
 
   val ConstraintManager = scala.collection.mutable.HashMap[Int, LfsConstraint[_]]()
 
-  def constraintOf[HEAD <: AnyRef](f: HEAD => FirstOrderConstraint)(implicit headTag: ClassTag[HEAD]): LfsConstraint[HEAD] = {
+  def constraint[HEAD <: AnyRef](f: HEAD => FirstOrderConstraint)(implicit headTag: ClassTag[HEAD]): LfsConstraint[HEAD] = {
 
     val hash = f.hashCode()
 

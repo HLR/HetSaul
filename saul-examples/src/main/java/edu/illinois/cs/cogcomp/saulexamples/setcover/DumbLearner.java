@@ -6,10 +6,7 @@ import edu.illinois.cs.cogcomp.lbjava.classify.ScoreSet;
 import edu.illinois.cs.cogcomp.lbjava.learn.Learner;
 
 import java.io.PrintStream;
-//import LBJ2.classify.DiscretePrimitiveStringFeature;
-//import LBJ2.classify.FeatureVector;
-//import LBJ2.classify.ScoreSet;
-//import LBJ2.learn.Learner;
+
 
 public abstract class DumbLearner extends Learner
 {
@@ -20,6 +17,7 @@ public abstract class DumbLearner extends Learner
                     int[] exampleLabels, double[] labelValues) { }
   public FeatureVector classify(int[] exampleFeatures, double[] exampleValues)
   { return null; }
+
   public ScoreSet scores(int[] f, double[] v) { return scores(null); }
 
   public FeatureVector classify(Object example) {
