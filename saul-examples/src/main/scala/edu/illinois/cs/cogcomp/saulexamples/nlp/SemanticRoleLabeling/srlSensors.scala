@@ -3,6 +3,7 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling
 import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation._
 import edu.illinois.cs.cogcomp.core.datastructures.trees.Tree
+import edu.illinois.cs.cogcomp.edison.features.factory.WordFeatureExtractorFactory
 import edu.illinois.cs.cogcomp.saulexamples.data.XuPalmerCandidateGenerator
 
 import scala.collection.JavaConversions._
@@ -36,9 +37,19 @@ object srlSensors {
   }
   def textAnnotationToRelationMatch(ta: TextAnnotation, r: Relation): Boolean = {
     (ta.getCorpusId + ":" + ta.getId).matches(r.getSource.getTextAnnotation.getCorpusId + ":" + r.getSource.getTextAnnotation.getId)
-
-    // ta.getView(ViewNames.SRL_VERB).getRelations.toList
   }
+
+  def getPOS(x: Constituent): String = {
+    WordFeatureExtractorFactory.pos.getFeatures(x).mkString
+  }
+
+  def getLemma(x: Constituent): String = {
+    x.getTextAnnotation.getView(ViewNames.LEMMA).getConstituentsCovering(x).get(0).getLabel
+    // The "correct" way to get this feature is the following, but the lemma is used as a string
+    // elsewhere in the code and so we don't need the addition of the feature name
+    //WordFeatureExtractorFactory.lemma.getFeatures(x).mkString
+  }
+
   /** Returns all the subtrees that are suitable arguments:
     * It excludes punctuations and traces (which have a 0-length span)
     * @param currentSubTrees A list of already defined subtrees

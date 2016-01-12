@@ -248,17 +248,6 @@ object srlDataModel extends DataModel {
     FeatureUtilities.getFeatureSet(fex, x).mkString
   }
 
-  def getPOS(x: Constituent): String = {
-    WordFeatureExtractorFactory.pos.getFeatures(x).mkString
-  }
-
-  def getLemma(x: Constituent): String = {
-    x.getTextAnnotation.getView(ViewNames.LEMMA).getConstituentsCovering(x).get(0).getLabel
-    // The "correct" way to get this feature is the following, but the lemma is used as a string
-    // elsewhere in the code and so we don't need the addition of the feature name
-    //WordFeatureExtractorFactory.lemma.getFeatures(x).mkString
-  }
-
   def getContextFeats(x: Constituent, featureExtractor: WordFeatureExtractor): String = {
     val contextFex = new ContextFeatureExtractor(2, true, true)
     contextFex.addFeatureExtractor(featureExtractor)
