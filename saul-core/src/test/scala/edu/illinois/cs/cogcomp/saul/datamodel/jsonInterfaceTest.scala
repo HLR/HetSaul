@@ -17,9 +17,9 @@ class jsonInterfaceTest extends FlatSpec with Matchers {
       val isPredicate = property[String](predicates, "p") { x: String => "" }
     }
 
-    val predictedOutput = "{\"nodes\":[\"predicates\",\"arguments\",\"relations\"],\"edges\":[\"sentencesToRelations\",\"sentencesToTrees\"],\"properties\":[\"isPredicate\"]}"
+    val predictedOutput = "{\"nodes\":[\"predicates\",\"arguments\",\"relations\"],\"edges\":{\"sentencesToRelations\":[\"arguments\",\"relations\"],\"sentencesToTrees\":[\"predicates\",\"relations\"]},\"properties\":[\"isPredicate\"]}"
 
-    dataModelJsonInterface.getJson(toyDataModelJsonInterfaceTest) should be(predictedOutput)
+    dataModelJsonInterface.getJson(toyDataModelJsonInterfaceTest).toString should be(predictedOutput)
   }
 }
 
