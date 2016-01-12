@@ -8,6 +8,7 @@ import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{ TextAnnotati
 import edu.illinois.cs.cogcomp.core.datastructures.trees.Tree
 import edu.illinois.cs.cogcomp.core.utilities.configuration.{ Configurator, ResourceManager }
 import edu.illinois.cs.cogcomp.curator.{ CuratorConfigurator, CuratorFactory }
+import edu.illinois.cs.cogcomp.edison.annotators.ClauseViewGenerator
 import edu.illinois.cs.cogcomp.nlp.common.PipelineConfigurator
 import edu.illinois.cs.cogcomp.nlp.pipeline.IllinoisPipelineFactory
 import edu.illinois.cs.cogcomp.nlp.utilities.ParseUtils
@@ -19,7 +20,9 @@ import org.slf4j.{ Logger, LoggerFactory }
 
 import scala.collection.JavaConversions._
 
-/** Created by Parisa on 12/11/15.
+/** Fetches the training/test data, does the required preprocessing and populates the `srlDataModel`
+  * @author Parisa Kordjamshidi
+  * @author Christos Christodoulopoulos
   */
 
 object populateGraphwithGoldSRL extends App {
@@ -31,6 +34,8 @@ object populateGraphwithGoldSRL extends App {
     val rm = new ExamplesConfigurator().getDefaultConfig
 
     val useCurator = rm.getBoolean(ExamplesConfigurator.USE_CURATOR)
+    val parseViewName = rm.getString(ExamplesConfigurator.SRL_PARSE_VIEW)
+
     val annotatorService = useCurator match {
       case true =>
         val nonDefaultProps = new Properties()
@@ -38,15 +43,20 @@ object populateGraphwithGoldSRL extends App {
         CuratorFactory.buildCuratorClient(new CuratorConfigurator().getConfig(new ResourceManager(nonDefaultProps)))
       case false =>
         val nonDefaultProps = new Properties()
-        nonDefaultProps.setProperty(PipelineConfigurator.USE_POS.key, Configurator.FALSE)
+        if (parseViewName.equals(ViewNames.PARSE_GOLD))
+          nonDefaultProps.setProperty(PipelineConfigurator.USE_POS.key, Configurator.FALSE)
         nonDefaultProps.setProperty(PipelineConfigurator.USE_NER_CONLL.key, Configurator.FALSE)
         nonDefaultProps.setProperty(PipelineConfigurator.USE_NER_ONTONOTES.key, Configurator.FALSE)
-        nonDefaultProps.setProperty(PipelineConfigurator.USE_SHALLOW_PARSE.key, Configurator.FALSE)
         nonDefaultProps.setProperty(PipelineConfigurator.USE_SRL_VERB.key, Configurator.FALSE)
         nonDefaultProps.setProperty(PipelineConfigurator.USE_SRL_NOM.key, Configurator.FALSE)
         nonDefaultProps.setProperty(PipelineConfigurator.USE_STANFORD_DEP.key, Configurator.FALSE)
-        nonDefaultProps.setProperty(PipelineConfigurator.USE_STANFORD_PARSE.key, Configurator.FALSE)
+        if (parseViewName.equals(ViewNames.PARSE_GOLD))
+          nonDefaultProps.setProperty(PipelineConfigurator.USE_STANFORD_PARSE.key, Configurator.FALSE)
         IllinoisPipelineFactory.buildPipeline(new CuratorConfigurator().getConfig(new ResourceManager(nonDefaultProps)))
+    }
+    val clauseViewGenerator = parseViewName match {
+      case ViewNames.PARSE_GOLD => new ClauseViewGenerator (parseViewName, "CLAUSES_GOLD")
+      case ViewNames.PARSE_STANFORD => ClauseViewGenerator.STANFORD
     }
 
     def addViewAndFilter(tAll: List[TextAnnotation]): List[TextAnnotation] = {
@@ -54,19 +64,23 @@ object populateGraphwithGoldSRL extends App {
       tAll.foreach(ta => {
         try {
           annotatorService.addView(ta, ViewNames.LEMMA)
-          // annotatorService.addView(ta, ViewNames.NER_CONLL)
-          // annotatorService.addView(ta, ViewNames.SHALLOW_PARSE)
-          // annotatorService.addView(ta, ViewNames.PARSE_STANFORD)
+          annotatorService.addView(ta, ViewNames.SHALLOW_PARSE)
+          if (!parseViewName.equals(ViewNames.PARSE_GOLD)) {
+            annotatorService.addView(ta, ViewNames.POS)
+            annotatorService.addView(ta, ViewNames.PARSE_STANFORD)
+          }
+          // Add a clause view (needed for the clause relative position feature)
+          clauseViewGenerator.addView(ta)
         } catch {
           case e: AnnotatorException =>
             logger.warn("Annotation failed for sentence {}; removing it from the list.", ta.getId)
             tAll.remove(ta)
         }
         // Clean up the trees
-        val tree: Tree[String] = ta.getView(ViewNames.PARSE_GOLD).asInstanceOf[TreeView].getTree(0)
-        val parseView = new TreeView(ViewNames.PARSE_GOLD, ta)
+        val tree: Tree[String] = ta.getView(parseViewName).asInstanceOf[TreeView].getTree(0)
+        val parseView = new TreeView(parseViewName, ta)
         parseView.setParseTree(0, ParseUtils.stripFunctionTags(ParseUtils.snipNullNodes(tree)))
-        ta.addView(ViewNames.PARSE_GOLD, parseView)
+        ta.addView(parseViewName, parseView)
         filteredTa = ta :: filteredTa
       })
       filteredTa

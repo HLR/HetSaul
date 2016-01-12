@@ -12,7 +12,7 @@ object li_App extends App {
 
   populateGraphwithGoldSRL(srlDataModel, srlDataModel.sentences)
 
-  val XuPalmerCandidateArgsTesting = predicates.getTestingInstances.flatMap(x => xuPalmerCandidate(x, (sentences(x.getTextAnnotation) ~> sentencesTostringTree).head))
+  val XuPalmerCandidateArgsTesting = predicates.getTestingInstances.flatMap(x => xuPalmerCandidate(x, (sentences(x.getTextAnnotation) ~> sentencesToStringTree).head))
 
   val a = relations() ~> relationsToArguments prop address
   val b = relations() ~> relationsToPredicates prop address
