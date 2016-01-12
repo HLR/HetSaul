@@ -19,6 +19,7 @@
         <script src="@routes.Assets.versioned("javascripts/ace/mode-scala.js")" type="text/javascript" charset="utf-8"></script>
         <script src="@routes.Assets.versioned("javascripts/ace/mode-java.js")" type="text/javascript" charset="utf-8"></script>
         <script src="@routes.Assets.versioned("javascripts/ace/theme-twilight.js")" type="text/javascript" charset="utf-8"></script>
+        <script src="@routes.Assets.versioned("javascripts/sigma.min.js")" type="text/javascript" charset="utf-8"></script>
     </head>
     <body>
         <div class="page-header">
@@ -65,8 +66,8 @@
                     <div class="panel-heading">
                         <h3 class="panel-title">Data Model Graph</h3>
                     </div>
-                    <div class="panel-body" style="height: 335px; text-align: center">
-                        Data Model Graph Visualization Here!
+                    <div class="panel-body" id="graphParent" style="height: 335px; text-align: center">
+                        <div id="graphContainer"></div>
                     </div>
                 </div>
             </div>

@@ -13,3 +13,7 @@
 .code{
     display: none;
 }
+
+#graphContainer{
+	height: 100%;
+}
