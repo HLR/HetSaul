@@ -3,6 +3,7 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling
 import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation._
 import edu.illinois.cs.cogcomp.core.datastructures.trees.Tree
+import edu.illinois.cs.cogcomp.edison.features.{ContextFeatureExtractor, WordFeatureExtractor, FeatureUtilities, FeatureExtractor}
 import edu.illinois.cs.cogcomp.edison.features.factory.WordFeatureExtractorFactory
 import edu.illinois.cs.cogcomp.saulexamples.data.XuPalmerCandidateGenerator
 
@@ -71,5 +72,15 @@ object srlSensors {
     val p = t.generateSaulCandidates(x, y)
     val z = p.map(y => new Relation("candidate", x.cloneForNewView(x.getViewName), y.cloneForNewView(y.getViewName), 0.0))
     z.toList
+  }
+
+  def fexFeatureExtractor(x: Constituent, fex: FeatureExtractor): String = {
+    FeatureUtilities.getFeatureSet(fex, x).mkString
+  }
+
+  def fexContextFeats(x: Constituent, featureExtractor: WordFeatureExtractor): String = {
+    val contextFex = new ContextFeatureExtractor(2, true, true)
+    contextFex.addFeatureExtractor(featureExtractor)
+    fexFeatureExtractor(x, contextFex)
   }
 }
