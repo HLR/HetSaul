@@ -147,8 +147,40 @@ var updateCode = function(){
         });
 };
 
+var generateSchemaGraphFromJson = function(data){
+
+    var s = new sigma('graphContainer');
+    var nodeId = 0;
+    var nodeDict = {};
+    for(var node in data['nodes']){
+        nodeDict[data['nodes'][node]] = 'n'+ ++nodeId;
+        s.graph.addNode({
+            id: 'n'+ nodeId,
+            label: data['nodes'][node],
+            size: 1,
+            x: Math.cos(2 * nodeId * Math.PI / data['nodes'].length),
+            y: Math.sin(2 * nodeId * Math.PI / data['nodes'].length),
+        });
+
+    };
+    var edgeId = 0;
+    for(var edge in data['edges']){
+        s.graph.addEdge({
+            id: 'e'+ edgeId++,
+            // Reference extremities:
+            source: nodeDict[data['edges'][edge][0]],
+            target: nodeDict[data['edges'][edge][1]]
+        });
+    };
+
+    // Finally, let's ask our sigma instance to refresh:
+    s.refresh();
+    $("#graphContainer").css("position","absolute");
+}
+
 var onSuccess = function(data){
     alert(JSON.stringify(data));
+    generateSchemaGraphFromJson(data);
 }
 var onError = function(data){
     alert("error"+data);

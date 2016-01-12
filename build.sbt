@@ -28,7 +28,7 @@ lazy val saulCore = (project in file("saul-core")).
     name := "saul",
     libraryDependencies ++= Seq(
       "edu.illinois.cs.cogcomp" % "LBJava" % "1.2.2",
-      "com.typesafe.play" % "play_2.11" % "2.4.3" exclude("ch.qos.logback", "logback-classic")
+      "com.typesafe.play" % "play_2.11" % "2.4.3" //exclude("ch.qos.logback", "logback-classic")
     )
   )
 
@@ -54,16 +54,13 @@ lazy val saulWebapp = (project in file("saul-webapp")).
       "org.webjars" %% "webjars-play" % "2.4.0-1",
       "org.webjars" % "bootstrap" % "3.1.1-2",
       "org.scala-lang" % "scala-compiler" % scalaVersion.value, 
-      "com.twitter" %% "util-eval" % "6.30.0",
-      "edu.illinois.cs.cogcomp" % "LBJava" % "1.1.1",
+      "edu.illinois.cs.cogcomp" % "LBJava" % "1.2.2",
       jdbc,
       cache,
       ws,
       specs2 % Test
     ),
-    resolvers ++= Seq("scalaz-bintray" at "http://dl.bintray.com/scalaz/releases",
-    "Twitter repo" at "http://maven.twttr.com/"
-      ),
+    resolvers ++= Seq("scalaz-bintray" at "http://dl.bintray.com/scalaz/releases"),
     routesGenerator := InjectedRoutesGenerator
   ).dependsOn(saulCore).aggregate(saulCore)
 

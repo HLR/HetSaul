@@ -8,6 +8,7 @@ import edu.illinois.cs.cogcomp.saul.datamodel.property.features.real._
 import edu.illinois.cs.cogcomp.saul.datamodel.property.{ EvaluatedProperty, Property }
 import edu.illinois.cs.cogcomp.saul.datamodel.node.{ JoinNode, Node }
 import edu.illinois.cs.cogcomp.saul.datamodel.edge.{ SymmetricEdge, AsymmetricEdge, Edge, Link }
+import java.lang.reflect.ParameterizedType
 
 import scala.collection.mutable.ListBuffer
 import scala.reflect.ClassTag
@@ -338,7 +339,7 @@ trait DataModel {
 }
 
 object dataModelJsonInterface {
-  def getJson(dm: DataModel): String = {
+  def getJson(dm: DataModel) = {
     val declaredFields = dm.getClass.getDeclaredFields
 
     val nodes = declaredFields.filter(_.getType.getSimpleName == "Node")
@@ -346,15 +347,47 @@ object dataModelJsonInterface {
     val properties = declaredFields.filter(_.getType.getSimpleName.contains("Property")).filterNot(_.getName.contains("$module"))
 
     import play.api.libs.json._
+    val nodesObjs = nodes.map{n => {
+        n.setAccessible(true)
+        (n.getName,n.get(dm)) 
+      }
+    }
+    val edgesDict = edges.map{
+      e => {
+        e.setAccessible(true)
+        val edgeObj = e.get(dm).asInstanceOf[Edge[_,_]]
+        nodesObjs.find{case(_,x) => x == edgeObj.from} match{
+          case Some(startNodeTuple) => {
+            startNodeTuple match{
+              case (startNodeName, _) => {
+                nodesObjs.find{case(_,x) => x == edgeObj.to} match{
+                  case Some(endNodeTuple) => {
+                    endNodeTuple match{
+                      case (endNodeName, _) => (e.getName,List(startNodeName,endNodeName))
+                      case _ => (e.getName,List())
+                    }
+
+                  }
+                  case _ => (e.getName,List())
+                }
+              }
+              case _ => (e.getName,List())
+            }
+          }
+          case _ =>(e.getName,List())
+        }
+
+
+      }
+    }
 
     val json: JsValue = JsObject(Seq(
       "nodes" -> JsArray(nodes.map(node => JsString(node.getName))),
-      "edges" -> JsArray(edges.map(edge => JsString(edge.getName))),
+      "edges" -> Json.toJson(edgesDict.toMap),
       "properties" -> JsArray(properties.map(prop => JsString(prop.getName)))
+
     ))
 
-    println(json.toString())
-
-    json.toString()
+    json
   }
 }
