@@ -347,11 +347,28 @@ object dataModelJsonInterface {
     val properties = declaredFields.filter(_.getType.getSimpleName.contains("Property")).filterNot(_.getName.contains("$module"))
 
     import play.api.libs.json._
+
+    //get a name-field tuple
     val nodesObjs = nodes.map{n => {
         n.setAccessible(true)
         (n.getName,n.get(dm)) 
       }
     }
+
+    import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
+    //get a map of property -> [corresponding nodes]
+    val propertyDict = properties.map{
+      p => {
+        p.setAccessible(true)
+        val propertyObj = p.get(dm).asInstanceOf[NodeProperty[_]]
+        nodesObjs.find{case(_,x) => x == propertyObj.node} match{
+          case Some((nodeName,_))=> (p.getName,nodeName)
+          case _ => (p.getName,"")
+        }
+      }
+    }.toMap
+
+    //get a map of edge -> [two connecting nodes]
     val edgesDict = edges.map{
       e => {
         e.setAccessible(true)
@@ -376,15 +393,13 @@ object dataModelJsonInterface {
           }
           case _ =>(e.getName,List())
         }
-
-
       }
-    }
+    }.toMap
 
     val json: JsValue = JsObject(Seq(
       "nodes" -> JsArray(nodes.map(node => JsString(node.getName))),
-      "edges" -> Json.toJson(edgesDict.toMap),
-      "properties" -> JsArray(properties.map(prop => JsString(prop.getName)))
+      "edges" -> Json.toJson(edgesDict),
+      "properties" -> Json.toJson(propertyDict)
 
     ))
 
