@@ -3,7 +3,7 @@ package controllers
 import play.api.mvc._
 import play.api.libs.json.{JsObject,Json}
 import io.Source
-import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
+import edu.illinois.cs.cogcomp.saul.datamodel.{DataModel,dataModelJsonInterface}
 import java.io.File
 import java.nio.file.Files
 import javax.tools._
@@ -13,10 +13,13 @@ import scala.collection.JavaConverters._
 import java.lang.reflect.Method
 import scala.tools.nsc.{Global, Settings}
 import scala.reflect.internal.util.{BatchSourceFile}
+import scala.reflect.runtime.universe
 
 class Application extends Controller {
 
-  val completeClasspath = (List("/tmp/") :::  classPathOfClass("scala.tools.nsc.Interpreter") ::: classPathOfClass("scala.AnyVal") ::: classPathOfClass("edu.illinois.cs.cogcomp.saul.datamodel.DataModel") ::: classPathOfClass("edu.illinois.cs.cogcomp.lbjava.parse.Parser")) .mkString(File.pathSeparator)
+  //val saulExternalLibs = new File(classPathOfClass("edu.illinois.cs.cogcomp.lbjava.parse.Parser")(0)).getParentFile().getParentFile().getParentFile().getPath()
+  //val resolvedSaulExternalLibs = if(saulExternalLibs.endsWith(File.separator)) (saulExternalLibs+"*") else (saulExternalLibs + File.separator + "*")
+  val completeClasspath = (List("/tmp/") :::  classPathOfClass("scala.tools.nsc.Interpreter") ::: classPathOfClass("scala.AnyVal") ::: classPathOfClass("edu.illinois.cs.cogcomp.saul.datamodel.DataModel") ::: classPathOfClass("edu.illinois.cs.cogcomp.lbjava.parse.Parser") ::: classPathOfClass("edu.illinois.cs.cogcomp.core.datastructures.textannotation.TextAnnotation")) .mkString(File.pathSeparator)
   val re = """package\s(.*)\s""".r
   val root:File = new File("/tmp"); // On Windows running on C:\, this is C:\java.
   val rootURL = root.toURI.toURL
@@ -27,7 +30,7 @@ class Application extends Controller {
   method.invoke(ClassLoader.getSystemClassLoader(), new File(classPathOfClass("scala.tools.nsc.Interpreter")(0)).toURI.toURL)
   method.invoke(ClassLoader.getSystemClassLoader(), new File(classPathOfClass("scala.AnyVal")(0)).toURI.toURL)
   method.invoke(ClassLoader.getSystemClassLoader(), new File(classPathOfClass("edu.illinois.cs.cogcomp.saul.datamodel.DataModel")(0)).toURI.toURL)
-  method.invoke(ClassLoader.getSystemClassLoader(), new File(classPathOfClass("edu.illinois.cs.cogcomp.lbjava.parse.Parser")(0)).toURI.toURL)
+  method.invoke(ClassLoader.getSystemClassLoader(), new File(classPathOfClass("edu.illinois.cs.cogcomp.lbjava.parse.Parser")(0)).getParentFile().getParentFile().getParentFile().toURI.toURL)
   
   def addPathToClasspath(file : File) = {
       method.invoke(ClassLoader.getSystemClassLoader(), file.toURI().toURL());
@@ -44,7 +47,7 @@ class Application extends Controller {
             val result = runCode(fileMap)
             //val result = runCode(fileMap.map { case(k,v) => v }.mkString("\n"))
 
-            Ok(Json.toJson(result))
+            Ok(result)
       }
 
       case _ => Ok("Bad json." + request.body)
@@ -52,16 +55,32 @@ class Application extends Controller {
     
   }
 
-  def runCode(fileMap: Map[String,String]) = {
+  def runCode(fileMap: Map[String,String])= {
 
     val (javaFiles,scalaFiles) = fileMap partition {
       case (k,_) => k contains ".java"
     }
 
     compileJava(javaFiles)
-    compileScala(scalaFiles)
-    "dummy"
-  //instance.mkString 
+    val scalaInstances : Iterable[Any] = compileScala(scalaFiles)
+
+    val result = scalaInstances find( x => x match{
+        case model: DataModel => true
+        case _ => false
+      }
+    )
+    
+    result match{
+
+      case Some(x) => x match{
+
+        case model : DataModel => dataModelJsonInterface.getJson(model)
+        case _ => Json.toJson("Error")
+      }
+      case _ => Json.toJson("No DataModel found.")
+    }
+
+
   }
 
   /*
@@ -94,42 +113,35 @@ class Application extends Controller {
       }
     } toList
   }
-  def compileScala(files:Map[String,String]) = files map {case(name,code)=>{
+  def compileScala(files:Map[String,String]) : Iterable[Any]= { val result = files map {
 
-    play.api.Logger.info("Compiling Scala code.")
-    //#1 method
+    case(name,code)=>{
 
-    //val mirror = universe.runtimeMirror(classLoader)
-    //val toolbox = mirror.mkToolBox()
-    //val tree = toolbox.parse(code)
-    //val compiledCode = toolbox.compile(tree)
-    //val model = compiledCode()
+      play.api.Logger.info("Compiling Scala code.")
 
-    //#2 method
-    //val eval = new Eval()
-    //val greenhouse = eval.apply[DataModel](code) 
-    //new File("./spamDataModel.scala")
+      val sett = new Settings()
+      sett.classpath.value = completeClasspath
+      println(sett.classpath.value)
+      sett.bootclasspath.value = sett.classpath.value
+      sett.outdir.value = "/tmp"
+      val g = new Global(sett) 
 
-    //#3 
-    val sett = new Settings()
-    sett.classpath.value = completeClasspath
-    println(sett.classpath.value)
-    sett.bootclasspath.value = sett.classpath.value
-    sett.outdir.value = "/tmp"
-    val g = new Global(sett) 
+      val run = new g.Run  
 
-    val run = new g.Run  
+     val code =  files map { 
+       case (k,v) => v
+     } mkString("\\n")
 
-    val code =  files map { 
-      case (k,v) => v
-    } mkString("\\n")
-
-    val sourceFiles = List(new BatchSourceFile("(inline)", code))
-    run.compileSources(sourceFiles)
+      val sourceFiles = List(new BatchSourceFile("(inline)", code))
+      run.compileSources(sourceFiles)
     
-    val clazz = classLoader.loadClass(getCodePackageName(code) + "." + "spamDataModel") // load class 
-  }
+      val clazz = instantiateClass(name,getCodePackageName(code))
+
+      clazz
+    }
     
+    }
+    result
   }
   def compileJava(files: Map[ String,String]) = {
     play.api.Logger.info("Compiling Java code.")
@@ -162,17 +174,24 @@ class Application extends Controller {
   }
 
   def getCurrentClasspath() = {
-    val method2 : Method= new URLClassLoader(Array(rootURL)).getClass().getDeclaredMethod("getURLs")
-    method2.setAccessible(true);
-    val result = method2.invoke(ClassLoader.getSystemClassLoader()).asInstanceOf[Array[URL]]
+    val getDeclaredMethod : Method= new URLClassLoader(Array(rootURL)).getClass().getDeclaredMethod("getURLs")
+    getDeclaredMethod.setAccessible(true);
+    val result = getDeclaredMethod.invoke(ClassLoader.getSystemClassLoader()).asInstanceOf[Array[URL]]
     result
   }
   def instantiateClass(fileName : String, packageName: String) = {
     // Load and instantiate compiled class.
     val name = fileName.split('.')
-    val cls = Class.forName(packageName + "."+name(0), true, classLoader); 
-    val instance = cls.newInstance(); // Should print "world".
-    instance
+    val runtimeMirror = universe.runtimeMirror(classLoader)
+    //val clazz = classLoader.loadClass(packageName + "." + name(0)) 
+    //val constructor = clazz.getConstructor()
+    //constructor.setAccessible(true)
+    //val instance = constructor.newInstance()
+    val module = runtimeMirror.staticModule(packageName + "." + name(0))
+
+    val obj = runtimeMirror.reflectModule(module)
+
+    obj.instance
   }
   def getCodePackageName(code: String) = {
     (re findFirstIn code) match {    
