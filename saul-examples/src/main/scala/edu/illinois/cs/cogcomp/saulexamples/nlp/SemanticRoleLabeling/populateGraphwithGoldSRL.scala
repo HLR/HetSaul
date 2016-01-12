@@ -26,7 +26,7 @@ object populateGraphwithGoldSRL extends App {
   import srlDataModel._
 
   def apply[T <: AnyRef](d: DataModel, x: Node[TextAnnotation]) = {
-    val logger: Logger = LoggerFactory.getLogger("populateGraphWithTextAnnotation")
+    val logger: Logger = LoggerFactory.getLogger(this.getClass)
 
     val rm = new ExamplesConfigurator().getDefaultConfig
 
@@ -91,18 +91,26 @@ object populateGraphwithGoldSRL extends App {
     logger.info("Reading test data from section {}", testSection)
     testReader.readData()
 
-    val filteredTa = addViewAndFilter(trainReader.textAnnotations.slice(0, 10).toList)
-    val filteredTest = addViewAndFilter(testReader.textAnnotations.slice(0, 10).toList)
+    logger.info("Annotating {} training sentences", trainReader.textAnnotations.size)
+    val filteredTa = addViewAndFilter(trainReader.textAnnotations.toList)
+    logger.info("Annotating {} test sentences", testReader.textAnnotations.size)
+    val filteredTest = addViewAndFilter(testReader.textAnnotations.toList)
 
     // Here we populate everything
+    logger.info("Populating SRLDataModel with training data.")
     x.populate(filteredTa)
     logger.info("Number of SRLDataModel sentences: {}", sentences().size)
-    logger.info("Number of SRLDataModel predicates: {}", predicates().size)
-    logger.info("Number of SRLDataModel arguments: {}", arguments().size)
-    logger.info("Number of SRLDataModel relations: {}", relations().size)
+    logger.debug("Number of SRLDataModel predicates: {}", predicates().size)
+    logger.debug("Number of SRLDataModel arguments: {}", arguments().size)
+    logger.debug("Number of SRLDataModel relations: {}", relations().size)
 
+    logger.info("Populating SRLDataModel with test data.")
     x.populate(filteredTest, train = false)
     logger.info("Number of SRLDataModel sentences (w/ test data): {}", sentences().size)
+    logger.debug("Number of SRLDataModel predicates (w/ test data): {}", predicates().size)
+    logger.debug("Number of SRLDataModel arguments (w/ test data): {}", arguments().size)
+    logger.debug("Number of SRLDataModel relations (w/ test data): {}", relations().size)
+
   }
 
 }

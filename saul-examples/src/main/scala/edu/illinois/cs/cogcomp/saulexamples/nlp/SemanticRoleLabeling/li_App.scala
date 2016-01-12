@@ -17,9 +17,9 @@ object li_App extends App {
   val a = relations() ~> relationsToArguments prop address
   val b = relations() ~> relationsToPredicates prop address
 
-  val negativePalmerTestCandidates = XuPalmerCandidateArgsTesting.filterNot(cand => (a.contains(address(cand.getTarget))) && b.contains(address(cand.getSource)))
+  val negativePalmerTestCandidates = XuPalmerCandidateArgsTesting.filterNot(cand => a.contains(address(cand.getTarget)) && b.contains(address(cand.getSource)))
 
-  relations.populate(negativePalmerTestCandidates, false)
+  relations.populate(negativePalmerTestCandidates, train = false)
 
   println("all relations number after population:" + srlDataModel.relations().size)
 
