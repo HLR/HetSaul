@@ -82,11 +82,11 @@ object populateGraphwithGoldSRL extends App {
     )
     trainReader.readData()
 
-    val testSection = "23"
+    val testSection = 23
     val testReader = new SRLDataReader(
       rm.getString(ExamplesConfigurator.TREEBANK_HOME.key),
       rm.getString(ExamplesConfigurator.PROPBANK_HOME.key),
-      Array(testSection)
+      testSection, testSection
     )
     logger.info("Reading test data from section {}", testSection)
     testReader.readData()
@@ -95,6 +95,15 @@ object populateGraphwithGoldSRL extends App {
     val filteredTa = addViewAndFilter(trainReader.textAnnotations.toList)
     logger.info("Annotating {} test sentences", testReader.textAnnotations.size)
     val filteredTest = addViewAndFilter(testReader.textAnnotations.toList)
+
+    def printNumbers(reader: SRLDataReader, readerType: String) = {
+      val numPredicates = reader.textAnnotations.map(ta => ta.getView(ViewNames.SRL_VERB).getConstituents.count(c => c.getLabel == "Predicate")).sum
+      val numArguments = reader.textAnnotations.map(ta => ta.getView(ViewNames.SRL_VERB).getConstituents.count(c => c.getLabel != "Predicate")).sum
+      logger.debug("Number of {} data predicates: {}", readerType, numPredicates)
+      logger.debug("Number of {} data arguments: {}", readerType, numArguments)
+    }
+    printNumbers(trainReader, "training")
+    printNumbers(testReader, "test")
 
     // Here we populate everything
     logger.info("Populating SRLDataModel with training data.")
