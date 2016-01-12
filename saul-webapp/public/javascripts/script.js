@@ -160,6 +160,7 @@ var generateSchemaGraphFromJson = function(data){
             size: 1,
             x: Math.cos(2 * nodeId * Math.PI / data['nodes'].length),
             y: Math.sin(2 * nodeId * Math.PI / data['nodes'].length),
+            color: "#ec5148"
         });
 
     };
