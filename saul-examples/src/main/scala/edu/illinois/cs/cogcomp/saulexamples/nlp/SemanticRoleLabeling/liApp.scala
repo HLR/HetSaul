@@ -8,7 +8,7 @@ import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifi
 import scala.collection.JavaConversions._
 /** Created by Parisa on 12/27/15.
   */
-object li_App extends App {
+object liApp extends App {
 
   populateGraphwithGoldSRL(srlDataModel, srlDataModel.sentences)
 

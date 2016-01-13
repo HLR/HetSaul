@@ -8,7 +8,7 @@ import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlSensors.
 
 import scala.collection.JavaConversions._
 
-object ibt_IsArgTypeArg_App extends App {
+object ibtApp extends App {
 
   populateGraphwithGoldSRL(srlDataModel, srlDataModel.sentences)
 

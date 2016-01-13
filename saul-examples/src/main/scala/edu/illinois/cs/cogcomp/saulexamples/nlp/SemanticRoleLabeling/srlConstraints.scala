@@ -16,10 +16,8 @@ import scala.collection.JavaConversions._
 object srlConstraints {
   val noOverlap = ConstrainedClassifier.constraintOf[TextAnnotation] {
     // here this constituent is a sentence
-
     {
       var a: FirstOrderConstraint = new FirstOrderConstant(true)
-      val t = new XuPalmerCandidateGenerator(null)
       x: TextAnnotation => {
         //using TextAnnotation
         x.getView(ViewNames.SRL_VERB).asInstanceOf[PredicateArgumentView].getPredicates.foreach {
@@ -27,15 +25,14 @@ object srlConstraints {
           //(sentences(x) ~> sentencesToRelations ~> relationsToPredicates).foreach {
           y =>
             {
-              val argCandList = (t.generateSaulCandidates(y, (sentences(y.getTextAnnotation) ~> sentencesToStringTree).head)).
+              val argCandList = XuPalmerCandidateGenerator.generateCandidates(y, (sentences(y.getTextAnnotation) ~> sentencesToStringTree).head).
                 map(y => new Relation("candidate", y.cloneForNewView(y.getViewName), y.cloneForNewView(y.getViewName), 0.0))
-              //Xucandidates(y)
 
               x.getView(ViewNames.TOKENS).asInstanceOf[TokenLabelView].getConstituents.toList.foreach {
                 t: Constituent =>
                   {
                     val contains = argCandList.filter(z => z.getTarget.doesConstituentCover(t))
-                    a = a &&& (contains.toList._atMost(1)({ p: Relation => (argumentTypeLearner on p).is("candidate") }))
+                    a = a &&& contains.toList._atMost(1)({ p: Relation => (argumentTypeLearner on p).is("candidate") })
                   }
               }
             }
@@ -70,7 +67,7 @@ object srlConstraints {
     x: Relation =>
       {
         (argumentXuIdentifierGivenApredicate on x isNotTrue) ==>
-          (argumentTypeLearner on x is ("candidate"))
+          (argumentTypeLearner on x is "candidate")
       }
   }
 
@@ -78,7 +75,7 @@ object srlConstraints {
     x: Relation =>
       {
         (predicateClassifier on x.getSource isTrue) &&& (argumentXuIdentifierGivenApredicate on x isTrue) ==>
-          (argumentTypeLearner on x isNot ("candidate"))
+          (argumentTypeLearner on x isNot "candidate")
       }
   }
 
@@ -115,9 +112,9 @@ object srlConstraints {
                 {
                   for (i <- 0 until values.length - 1)
                     a = a &&& ((argumentTypeLearner on t) is values(i)) ==>
-                      (argCandList._exists {
+                      argCandList._exists {
                         k: Relation => (argumentTypeLearner on k) is values(0).substring(2)
-                      })
+                      }
                 }
             }
           }
@@ -138,9 +135,9 @@ object srlConstraints {
                 {
                   for (i <- 0 until values.length - 1)
                     a = a &&& ((argumentTypeLearner on t) is values(i)) ==>
-                      (argCandList._exists {
+                      argCandList._exists {
                         k: Relation => (argumentTypeLearner on k) is values(0).substring(2)
-                      })
+                      }
                 }
             }
           }
