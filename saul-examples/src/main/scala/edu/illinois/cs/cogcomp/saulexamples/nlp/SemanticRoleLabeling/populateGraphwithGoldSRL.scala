@@ -86,19 +86,21 @@ object populateGraphwithGoldSRL extends App {
       filteredTa
     }
 
-    val trainingFromSection = "00,03"
+    val trainingFromSection = 2
     val trainingToSection = 22
     logger.info("Reading training data from sections {} to {}", trainingFromSection, trainingToSection)
     val trainReader = new SRLDataReader(
       rm.getString(ExamplesConfigurator.TREEBANK_HOME.key),
-      rm.getString(ExamplesConfigurator.PROPBANK_HOME.key), Array("00", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22")
+      rm.getString(ExamplesConfigurator.PROPBANK_HOME.key),
+      trainingFromSection, trainingToSection
     )
     trainReader.readData()
 
     val testSection = 23
     val testReader = new SRLDataReader(
       rm.getString(ExamplesConfigurator.TREEBANK_HOME.key),
-      rm.getString(ExamplesConfigurator.PROPBANK_HOME.key), Array("23")
+      rm.getString(ExamplesConfigurator.PROPBANK_HOME.key),
+      testSection, testSection
     )
     logger.info("Reading test data from section {}", testSection)
     testReader.readData()
