@@ -19,7 +19,7 @@ class Application extends Controller {
 
   //val saulExternalLibs = new File(classPathOfClass("edu.illinois.cs.cogcomp.lbjava.parse.Parser")(0)).getParentFile().getParentFile().getParentFile().getPath()
   //val resolvedSaulExternalLibs = if(saulExternalLibs.endsWith(File.separator)) (saulExternalLibs+"*") else (saulExternalLibs + File.separator + "*")
-  val completeClasspath = (List("/tmp/") :::  classPathOfClass("scala.tools.nsc.Interpreter") ::: classPathOfClass("scala.AnyVal") ::: classPathOfClass("edu.illinois.cs.cogcomp.saul.datamodel.DataModel") ::: classPathOfClass("edu.illinois.cs.cogcomp.lbjava.parse.Parser") ::: classPathOfClass("edu.illinois.cs.cogcomp.core.datastructures.textannotation.TextAnnotation")) .mkString(File.pathSeparator)
+  val completeClasspath = (List("/tmp/") :::  classPathOfClass("scala.tools.nsc.Interpreter") ::: classPathOfClass("scala.AnyVal") ::: classPathOfClass("edu.illinois.cs.cogcomp.saul.datamodel.DataModel") ::: classPathOfClass("edu.illinois.cs.cogcomp.lbjava.parse.Parser") ::: classPathOfClass("edu.illinois.cs.cogcomp.core.datastructures.textannotation.TextAnnotation") ::: classPathOfClass("edu.illinois.cs.cogcomp.nlp.pipeline.IllinoisPipelineFactory") ::: classPathOfClass("edu.illinois.cs.cogcomp.curator.CuratorFactory")) .mkString(File.pathSeparator)
   val re = """package\s(.*)\s""".r
   val root:File = new File("/tmp"); // On Windows running on C:\, this is C:\java.
   val rootURL = root.toURI.toURL
@@ -31,6 +31,7 @@ class Application extends Controller {
   method.invoke(ClassLoader.getSystemClassLoader(), new File(classPathOfClass("scala.AnyVal")(0)).toURI.toURL)
   method.invoke(ClassLoader.getSystemClassLoader(), new File(classPathOfClass("edu.illinois.cs.cogcomp.saul.datamodel.DataModel")(0)).toURI.toURL)
   method.invoke(ClassLoader.getSystemClassLoader(), new File(classPathOfClass("edu.illinois.cs.cogcomp.lbjava.parse.Parser")(0)).getParentFile().getParentFile().getParentFile().toURI.toURL)
+
   
   def addPathToClasspath(file : File) = {
       method.invoke(ClassLoader.getSystemClassLoader(), file.toURI().toURL());
@@ -113,35 +114,30 @@ class Application extends Controller {
       }
     } toList
   }
-  def compileScala(files:Map[String,String]) : Iterable[Any]= { val result = files map {
+  def compileScala(files:Map[String,String]) : Iterable[Any]= files map {
 
     case(name,code)=>{
 
-      play.api.Logger.info("Compiling Scala code.")
+      play.api.Logger.info("Compiling Scala code.") 
+
+      val sourceFiles =  files map { x : (String,String)=> x match {
+        case (k,v) => new BatchSourceFile("(inline)", v)
+        }
+      }
 
       val sett = new Settings()
       sett.classpath.value = completeClasspath
-      println(sett.classpath.value)
       sett.bootclasspath.value = sett.classpath.value
       sett.outdir.value = "/tmp"
-      val g = new Global(sett) 
-
-      val run = new g.Run  
-
-     val code =  files map { 
-       case (k,v) => v
-     } mkString("\\n")
-
-      val sourceFiles = List(new BatchSourceFile("(inline)", code))
-      run.compileSources(sourceFiles)
+      val g = new Global(sett)
+      val run = new g.Run        
+      run.compileSources(sourceFiles.toList)
     
       val clazz = instantiateClass(name,getCodePackageName(code))
 
       clazz
     }
     
-    }
-    result
   }
   def compileJava(files: Map[ String,String]) = {
     play.api.Logger.info("Compiling Java code.")
