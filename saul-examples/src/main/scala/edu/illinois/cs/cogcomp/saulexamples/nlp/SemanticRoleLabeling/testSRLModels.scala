@@ -8,12 +8,12 @@ import edu.illinois.cs.cogcomp.saulexamples.nlp.commonSensors._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlSensors._
 import scala.collection.JavaConversions._
 /** Created by Parisa on 1/5/16.
-  * TODO Either make this into a unit test or remove it entirely
   */
-object testModelsWorkingSpace extends App {
+object testSRLModels extends App {
+  var modelsPath = "./models/modelsFinal/edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLClassifiersForExperiment"
 
   srlDataModel.sentencesToTokens.addSensor(textAnnotationToTokens _)
-  populateGraphwithGoldSRL(srlDataModel, srlDataModel.sentences)
+  populateGraphwithGoldSRL(srlDataModel, srlDataModel.sentences, testOnly = true)
 
   val predicateTestCandidates = tokens.getTestingInstances.filter((x: Constituent) => posTag(x).startsWith("VB"))
     .map(c => c.cloneForNewView(ViewNames.SRL_VERB))
@@ -22,23 +22,26 @@ object testModelsWorkingSpace extends App {
     .filterNot(cand => (predicates() prop address).contains(address(cand)))
 
   predicates.populate(negativePredicateTest, train = false)
-  predicateClassifier.load("./models/modelsFinal/edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLClassifiersForExperiment.predicateClassifier1$.lc", "./models/modelsFinal/edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLClassifiersForExperiment.predicateClassifier1$.lex")
+  predicateClassifier.load(
+    modelsPath + ".predicateClassifier1$.lc",
+    modelsPath + ".predicateClassifier1$.lex"
+  )
   predicateClassifier.test()
 
   val XuPalmerCandidateArgsTesting = predicates.getTestingInstances.flatMap(x => xuPalmerCandidate(x, (sentences(x.getTextAnnotation) ~> sentencesToStringTree).head))
 
   val a = relations() ~> relationsToArguments prop address
-  val b = relations() ~> relationsToPredicates prop address
 
-  val negativePalmerTestCandidates = XuPalmerCandidateArgsTesting.filterNot(cand => a.contains(address(cand.getTarget)) && b.contains(address(cand.getSource)))
+  val negativePalmerTestCandidates = XuPalmerCandidateArgsTesting.filterNot(cand => a.contains(address(cand.getTarget)))
 
   relations.populate(negativePalmerTestCandidates, train = false)
 
-  argumentXuIdentifierGivenApredicate.load("./models/modelsFinal/edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLClassifiersForExperiment.argumentXuIdentifierGivenApredicate1$.lc", "./models/modelsFinal/edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLClassifiersForExperiment.argumentXuIdentifierGivenApredicate1$.lex")
+  argumentXuIdentifierGivenApredicate.load(
+    modelsPath + ".argumentXuIdentifierGivenApredicate1$.lc",
+    modelsPath + ".argumentXuIdentifierGivenApredicate1$.lex"
+  )
   argumentXuIdentifierGivenApredicate.test()
 
   //TODO working space for laoding more and more trained models and test
-
-  print("finish")
 
 }
