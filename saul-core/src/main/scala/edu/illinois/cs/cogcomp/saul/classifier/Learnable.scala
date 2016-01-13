@@ -95,6 +95,34 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
   setExtractor()
   setLabeler()
 
+  def setModelDir(directory: String) ={
+    classifier.setReadLexiconOnDemand()
+    val modelDir = directory+"/"
+    val lcFilePath = new URL(new URL("file:"), modelDir + getClassNameForClassifier + ".lc")
+    val lexFilePath = new URL(new URL("file:"), modelDir + getClassNameForClassifier + ".lex")
+    IOUtils.mkdir(modelDir)
+    classifier.setModelLocation(lcFilePath)
+    classifier.setLexiconLocation(lexFilePath)
+
+    // create .lex file if it does not exist
+    if (!IOUtils.exists(lexFilePath.getPath)) {
+      val lexFile = ExceptionlessOutputStream.openCompressedStream(lexFilePath)
+      if (classifier.getCurrentLexicon == null) lexFile.writeInt(0)
+      else classifier.getCurrentLexicon.write(lexFile)
+      lexFile.close()
+    }
+
+    // create .lc file if it does not exist
+    if (!IOUtils.exists(lcFilePath.getPath)) {
+      val lcFile = ExceptionlessOutputStream.openCompressedStream(lcFilePath)
+      classifier.write(lcFile)
+      lcFile.close()
+    }
+    // set paramaters for classifier
+    setExtractor()
+    setLabeler()
+  }
+
   def removeModelFiles(): Unit = {
     IOUtils.rm(lcFilePath.getPath)
     IOUtils.rm(lexFilePath.getPath)
