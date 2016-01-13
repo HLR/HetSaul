@@ -29,7 +29,7 @@ object srlClassifiers {
   object argumentTypeLearner extends Learnable[Relation](srlDataModel, parameters) {
     def label = srlDataModel.argumentLabelGold
     import srlDataModel._
-    override def feature = using(headwordRelation, syntacticFrameRelation, pathRelation, subcategorizationRelation, phraseTypeRelation, predPosTag, predLemmaR, linearPosition)
+    override def feature = using(containsMOD, containsNEG, clauseFeatures, chunkPathPattern, chunkEmbedding, chunkLength, constituentLength, verbClass, argPOSWindow, argWordWindow, headwordRelation, syntacticFrameRelation, pathRelation, subcategorizationRelation, phraseTypeRelation, predPosTag, predLemmaR, linearPosition)
     override lazy val classifier = new SparseNetworkLBP
   }
 
