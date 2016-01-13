@@ -70,9 +70,6 @@ object srlDataModel extends DataModel {
     x: Constituent => x.getAttribute(CoNLLColumnFormatReader.SenseIdentifer)
   }
 
-  val isArgumentGold = property(arguments, "a") {
-    x: Constituent => x.getLabel.equals("Argument")
-  }
   val isArgumentXuGold = property(relations, "aX") {
     x: Relation => !x.getRelationName.equals("candidate")
   }

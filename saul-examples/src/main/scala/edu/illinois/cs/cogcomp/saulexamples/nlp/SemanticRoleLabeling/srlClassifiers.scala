@@ -21,11 +21,6 @@ object srlClassifiers {
     override lazy val classifier = new SparseNetworkLearner()
   }
 
-  object argumentClassifier extends Learnable[Constituent](srlDataModel, parameters) {
-    def label = srlDataModel.isArgumentGold
-    override lazy val classifier = new SparseNetworkLBP
-  }
-
   object predicateSenseClassifier extends Learnable[Constituent](srlDataModel, parameters) {
     def label = srlDataModel.predicateSenseGold
     override lazy val classifier = new SparseNetworkLBP

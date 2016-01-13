@@ -28,7 +28,7 @@ import scala.collection.JavaConversions._
 object populateGraphwithGoldSRL extends App {
   import srlDataModel._
 
-  def apply[T <: AnyRef](d: DataModel, x: Node[TextAnnotation]) = {
+  def apply[T <: AnyRef](d: DataModel, x: Node[TextAnnotation], testOnly: Boolean = false) = {
     val logger: Logger = LoggerFactory.getLogger(this.getClass)
 
     val rm = new ExamplesConfigurator().getDefaultConfig
@@ -86,15 +86,36 @@ object populateGraphwithGoldSRL extends App {
       filteredTa
     }
 
+    def printNumbers(reader: SRLDataReader, readerType: String) = {
+      val numPredicates = reader.textAnnotations.map(ta => ta.getView(ViewNames.SRL_VERB).getConstituents.count(c => c.getLabel == "Predicate")).sum
+      val numArguments = reader.textAnnotations.map(ta => ta.getView(ViewNames.SRL_VERB).getConstituents.count(c => c.getLabel != "Predicate")).sum
+      logger.debug("Number of {} data predicates: {}", readerType, numPredicates)
+      logger.debug("Number of {} data arguments: {}", readerType, numArguments)
+    }
+
     val trainingFromSection = 2
-    val trainingToSection = 22
-    logger.info("Reading training data from sections {} to {}", trainingFromSection, trainingToSection)
-    val trainReader = new SRLDataReader(
-      rm.getString(ExamplesConfigurator.TREEBANK_HOME.key),
-      rm.getString(ExamplesConfigurator.PROPBANK_HOME.key),
-      trainingFromSection, trainingToSection
-    )
-    trainReader.readData()
+    val trainingToSection = 21
+
+    if (!testOnly) {
+      logger.info("Reading training data from sections {} to {}", trainingFromSection, trainingToSection)
+      val trainReader = new SRLDataReader(
+        rm.getString(ExamplesConfigurator.TREEBANK_HOME.key),
+        rm.getString(ExamplesConfigurator.PROPBANK_HOME.key),
+        trainingFromSection, trainingToSection
+      )
+      trainReader.readData()
+      logger.info("Annotating {} training sentences", trainReader.textAnnotations.size)
+      val filteredTa = addViewAndFilter(trainReader.textAnnotations.toList)
+      printNumbers(trainReader, "training")
+
+      // Here we populate everything
+      logger.info("Populating SRLDataModel with training data.")
+      x.populate(filteredTa)
+      logger.info("Number of SRLDataModel sentences: {}", sentences().size)
+      logger.debug("Number of SRLDataModel predicates: {}", predicates().size)
+      logger.debug("Number of SRLDataModel arguments: {}", arguments().size)
+      logger.debug("Number of SRLDataModel relations: {}", relations().size)
+    }
 
     val testSection = 23
     val testReader = new SRLDataReader(
@@ -105,27 +126,10 @@ object populateGraphwithGoldSRL extends App {
     logger.info("Reading test data from section {}", testSection)
     testReader.readData()
 
-    logger.info("Annotating {} training sentences", trainReader.textAnnotations.size)
-    val filteredTa = addViewAndFilter(trainReader.textAnnotations.toList)
     logger.info("Annotating {} test sentences", testReader.textAnnotations.size)
     val filteredTest = addViewAndFilter(testReader.textAnnotations.toList)
 
-    def printNumbers(reader: SRLDataReader, readerType: String) = {
-      val numPredicates = reader.textAnnotations.map(ta => ta.getView(ViewNames.SRL_VERB).getConstituents.count(c => c.getLabel == "Predicate")).sum
-      val numArguments = reader.textAnnotations.map(ta => ta.getView(ViewNames.SRL_VERB).getConstituents.count(c => c.getLabel != "Predicate")).sum
-      logger.debug("Number of {} data predicates: {}", readerType, numPredicates)
-      logger.debug("Number of {} data arguments: {}", readerType, numArguments)
-    }
-    printNumbers(trainReader, "training")
     printNumbers(testReader, "test")
-
-    // Here we populate everything
-    logger.info("Populating SRLDataModel with training data.")
-    x.populate(filteredTa)
-    logger.info("Number of SRLDataModel sentences: {}", sentences().size)
-    logger.debug("Number of SRLDataModel predicates: {}", predicates().size)
-    logger.debug("Number of SRLDataModel arguments: {}", arguments().size)
-    logger.debug("Number of SRLDataModel relations: {}", relations().size)
 
     logger.info("Populating SRLDataModel with test data.")
     x.populate(filteredTest, train = false)

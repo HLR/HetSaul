@@ -68,8 +68,7 @@ object srlSensors {
   }
 
   def xuPalmerCandidate(x: Constituent, y: Tree[String]): List[Relation] = {
-    val t = new XuPalmerCandidateGenerator(null)
-    val p = t.generateSaulCandidates(x, y)
+    val p = XuPalmerCandidateGenerator.generateCandidates(x, y)
     val z = p.map(y => new Relation("candidate", x.cloneForNewView(x.getViewName), y.cloneForNewView(y.getViewName), 0.0))
     z.toList
   }
