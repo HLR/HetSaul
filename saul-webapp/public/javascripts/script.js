@@ -204,6 +204,7 @@ var generateSchemaGraphFromJson = function(data){
 }
 
 var onSuccess = function(data){
+    $("#graphContainer").empty();
     alert(JSON.stringify(data));
     generateSchemaGraphFromJson(data);
 }

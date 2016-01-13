@@ -54,7 +54,6 @@ lazy val saulWebapp = (project in file("saul-webapp")).
       "org.webjars" %% "webjars-play" % "2.4.0-1",
       "org.webjars" % "bootstrap" % "3.1.1-2",
       "org.scala-lang" % "scala-compiler" % scalaVersion.value, 
-      "edu.illinois.cs.cogcomp" % "LBJava" % "1.2.2",
       jdbc,
       cache,
       ws,
@@ -62,5 +61,5 @@ lazy val saulWebapp = (project in file("saul-webapp")).
     ),
     resolvers ++= Seq("scalaz-bintray" at "http://dl.bintray.com/scalaz/releases"),
     routesGenerator := InjectedRoutesGenerator
-  ).dependsOn(saulCore).aggregate(saulCore)
+  ).dependsOn(saulExamples).aggregate(saulExamples)
 
