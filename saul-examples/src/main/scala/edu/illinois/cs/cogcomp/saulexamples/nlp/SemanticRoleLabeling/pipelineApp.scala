@@ -15,9 +15,10 @@ import scala.collection.JavaConversions._
 
 object pipelineApp extends App {
   var trainPredicates = false
-  var trainArgTypeWithGold = true
-  var trainArgIdWithCandidates = false
+  var trainArgTypeWithGold = false
+  var trainArgIdWithCandidates = true
   var trainArgTypeWithCandidates = false
+  var modelsDir = "models"
 
   if (!trainArgTypeWithGold) {
     srlDataModel.sentencesToTokens.addSensor(textAnnotationToTokens _)
@@ -26,7 +27,7 @@ object pipelineApp extends App {
 
   if (trainArgTypeWithGold) {
     // Here first train and test the argClassifier Given the ground truth Boundaries (i.e. no negative class).
-    argumentTypeLearner.setModelDir("modelsMe")
+    argumentTypeLearner.setModelDir(modelsDir)
     argumentTypeLearner.learn(3)
     argumentTypeLearner.test()
     argumentTypeLearner.save()
@@ -59,6 +60,7 @@ object pipelineApp extends App {
     println("all relations number after population:" + srlDataModel.relations().size)
 
     if (trainPredicates) {
+      predicateClassifier.setModelDir(modelsDir)
       println("Training predicate identifier")
       predicateClassifier.learn(100)
       predicateClassifier.save()
@@ -67,6 +69,7 @@ object pipelineApp extends App {
     }
 
     if (trainArgIdWithCandidates || trainArgTypeWithCandidates) {
+      argumentXuIdentifierGivenApredicate.setModelDir(modelsDir)
       println("Training argument identifier")
       argumentXuIdentifierGivenApredicate.learn(100)
       print("isArgument test results:")
@@ -75,6 +78,7 @@ object pipelineApp extends App {
     }
 
     if (trainArgTypeWithCandidates) {
+      argumentTypeLearner.setModelDir(modelsDir)
       println("Training argument classifier")
       argumentTypeLearner.learn(100)
       print("argument classifier test results:")

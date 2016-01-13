@@ -51,8 +51,6 @@ object srlDataModel extends DataModel {
 
   sentencesToRelations.addSensor(textAnnotationToRelation _)
   sentencesToRelations.addSensor(textAnnotationToRelationMatch _)
-  //  sentencesToTrees.addSensor(SRLSensors.textAnnotationToTree _)
-  // sentencesToTokens.addSensor(commonSensors.textAnnotationToTokens _)
   relationsToArguments.addSensor(relToArgument _)
   relationsToPredicates.addSensor(relToPredicate _)
   sentencesToStringTree.addSensor(textAnnotationToStringTree _)
