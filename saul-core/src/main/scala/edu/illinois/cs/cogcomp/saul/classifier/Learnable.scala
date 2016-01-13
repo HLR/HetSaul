@@ -95,9 +95,9 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
   setExtractor()
   setLabeler()
 
-  def setModelDir(directory: String) ={
+  def setModelDir(directory: String) = {
     classifier.setReadLexiconOnDemand()
-    modelDir = directory+"/"
+    modelDir = directory + "/"
     lcFilePath = new URL(new URL("file:"), modelDir + getClassNameForClassifier + ".lc")
     lexFilePath = new URL(new URL("file:"), modelDir + getClassNameForClassifier + ".lex")
     IOUtils.mkdir(modelDir)

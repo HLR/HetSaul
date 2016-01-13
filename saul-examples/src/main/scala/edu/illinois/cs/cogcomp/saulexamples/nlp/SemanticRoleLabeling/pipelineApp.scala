@@ -6,9 +6,10 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling
 import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.Constituent
 import edu.illinois.cs.cogcomp.saul.evaluation.evaluation
-import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifiers.{argumentTypeLearner, argumentXuIdentifierGivenApredicate, predicateClassifier}
+import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifiers.{ argumentTypeLearner, argumentXuIdentifierGivenApredicate, predicateClassifier }
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlDataModel._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlSensors._
+import edu.illinois.cs.cogcomp.saulexamples.nlp.commonSensors._
 
 import scala.collection.JavaConversions._
 
@@ -18,7 +19,9 @@ object pipelineApp extends App {
   var trainArgIdWithCandidates = false
   var trainArgTypeWithCandidates = false
 
-  //srlDataModel.sentencesToTokens.addSensor(textAnnotationToTokens _)
+  if (!trainArgTypeWithGold) {
+    srlDataModel.sentencesToTokens.addSensor(textAnnotationToTokens _)
+  }
   populateGraphwithGoldSRL(srlDataModel, srlDataModel.sentences)
 
   if (trainArgTypeWithGold) {
