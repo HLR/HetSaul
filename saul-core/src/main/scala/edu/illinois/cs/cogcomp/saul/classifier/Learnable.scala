@@ -49,9 +49,9 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
 
   /** specifications of the classifier and its model files  */
   classifier.setReadLexiconOnDemand()
-  val modelDir = "models_aTr/"
-  val lcFilePath = new URL(new URL("file:"), modelDir + getClassNameForClassifier + ".lc")
-  val lexFilePath = new URL(new URL("file:"), modelDir + getClassNameForClassifier + ".lex")
+  var modelDir = "models_aTr/"
+  var lcFilePath = new URL(new URL("file:"), modelDir + getClassNameForClassifier + ".lc")
+  var lexFilePath = new URL(new URL("file:"), modelDir + getClassNameForClassifier + ".lex")
   IOUtils.mkdir(modelDir)
   classifier.setModelLocation(lcFilePath)
   classifier.setLexiconLocation(lexFilePath)
@@ -97,9 +97,9 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
 
   def setModelDir(directory: String) ={
     classifier.setReadLexiconOnDemand()
-    val modelDir = directory+"/"
-    val lcFilePath = new URL(new URL("file:"), modelDir + getClassNameForClassifier + ".lc")
-    val lexFilePath = new URL(new URL("file:"), modelDir + getClassNameForClassifier + ".lex")
+    modelDir = directory+"/"
+    lcFilePath = new URL(new URL("file:"), modelDir + getClassNameForClassifier + ".lc")
+    lexFilePath = new URL(new URL("file:"), modelDir + getClassNameForClassifier + ".lex")
     IOUtils.mkdir(modelDir)
     classifier.setModelLocation(lcFilePath)
     classifier.setLexiconLocation(lexFilePath)
