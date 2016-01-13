@@ -105,7 +105,7 @@ trait Edge[T <: AnyRef, U <: AnyRef] {
 
   def unary_- : Edge[U, T]
 
-  def links = forward.index.flatMap((p) => p._2.map(b => p._1 -> b)).toSeq
+  def links = forward.index.map((p) => p._2.map(b => p._1 -> b)).flatten.toSeq
 
   def addSensor(f: (T, U) => Boolean) = matchers += f
 
