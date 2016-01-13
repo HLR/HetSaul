@@ -161,7 +161,7 @@ trait Edge[T <: AnyRef, U <: AnyRef] {
 }
 
 case class AsymmetricEdge[T <: AnyRef, U <: AnyRef](forward: Link[T, U], backward: Link[U, T],
-                                                    ms: Seq[(T, U) => Boolean] = Seq.empty[(T, U) => Boolean])
+  ms: Seq[(T, U) => Boolean] = Seq.empty[(T, U) => Boolean])
   extends Edge[T, U] {
   val matchers = {
     val m = ArrayBuffer.empty[(T, U) => Boolean]

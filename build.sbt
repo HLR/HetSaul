@@ -42,8 +42,8 @@ lazy val saulExamples = (project in file("saul-examples")).
   settings(
       name := "saul-examples",
       javaOptions += "-Xmx6g",
-      mainClass in assembly := Some("edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.joinIsArg_TypeArg"),
-     assemblyJarName in assembly := "JoinExperiment.jar",
+      mainClass in assembly := Some("edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.pipeline_App"),
+     assemblyJarName in assembly := "aTr.jar",
      assemblyMergeStrategy in assembly := {
       case PathList("javax", "servlet", xs @ _*) => MergeStrategy.first
       case PathList("META-INF", xs @ _*) => MergeStrategy.discard
