@@ -55,7 +55,7 @@ object populateGraphwithGoldSRL extends App {
         IllinoisPipelineFactory.buildPipeline(new CuratorConfigurator().getConfig(new ResourceManager(nonDefaultProps)))
     }
     val clauseViewGenerator = parseViewName match {
-      case ViewNames.PARSE_GOLD => new ClauseViewGenerator (parseViewName, "CLAUSES_GOLD")
+      case ViewNames.PARSE_GOLD => new ClauseViewGenerator(parseViewName, "CLAUSES_GOLD")
       case ViewNames.PARSE_STANFORD => ClauseViewGenerator.STANFORD
     }
 
@@ -91,7 +91,7 @@ object populateGraphwithGoldSRL extends App {
     logger.info("Reading training data from sections {} to {}", trainingFromSection, trainingToSection)
     val trainReader = new SRLDataReader(
       rm.getString(ExamplesConfigurator.TREEBANK_HOME.key),
-      rm.getString(ExamplesConfigurator.PROPBANK_HOME.key),Array("00")//, "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22")
+      rm.getString(ExamplesConfigurator.PROPBANK_HOME.key), Array("00", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22")
     )
     trainReader.readData()
 
