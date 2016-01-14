@@ -349,51 +349,54 @@ object dataModelJsonInterface {
     import play.api.libs.json._
 
     //get a name-field tuple
-    val nodesObjs = nodes.map{n => {
+    val nodesObjs = nodes.map { n =>
+      {
         n.setAccessible(true)
-        (n.getName,n.get(dm)) 
+        (n.getName, n.get(dm))
       }
     }
 
     import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
     //get a map of property -> [corresponding nodes]
-    val propertyDict = properties.map{
-      p => {
-        p.setAccessible(true)
-        val propertyObj = p.get(dm).asInstanceOf[NodeProperty[_]]
-        nodesObjs.find{case(_,x) => x == propertyObj.node} match{
-          case Some((nodeName,_))=> (p.getName,nodeName)
-          case _ => (p.getName,"")
+    val propertyDict = properties.map {
+      p =>
+        {
+          p.setAccessible(true)
+          val propertyObj = p.get(dm).asInstanceOf[NodeProperty[_]]
+          nodesObjs.find { case (_, x) => x == propertyObj.node } match {
+            case Some((nodeName, _)) => (p.getName, nodeName)
+            case _ => (p.getName, "")
+          }
         }
-      }
     }.toMap
 
     //get a map of edge -> [two connecting nodes]
-    val edgesDict = edges.map{
-      e => {
-        e.setAccessible(true)
-        val edgeObj = e.get(dm).asInstanceOf[Edge[_,_]]
-        nodesObjs.find{case(_,x) => x == edgeObj.from} match{
-          case Some(startNodeTuple) => {
-            startNodeTuple match{
-              case (startNodeName, _) => {
-                nodesObjs.find{case(_,x) => x == edgeObj.to} match{
-                  case Some(endNodeTuple) => {
-                    endNodeTuple match{
-                      case (endNodeName, _) => (e.getName,List(startNodeName,endNodeName))
-                      case _ => (e.getName,List())
-                    }
+    val edgesDict = edges.map {
+      e =>
+        {
+          e.setAccessible(true)
+          val edgeObj = e.get(dm).asInstanceOf[Edge[_, _]]
+          nodesObjs.find { case (_, x) => x == edgeObj.from } match {
+            case Some(startNodeTuple) => {
+              startNodeTuple match {
+                case (startNodeName, _) => {
+                  nodesObjs.find { case (_, x) => x == edgeObj.to } match {
+                    case Some(endNodeTuple) => {
+                      endNodeTuple match {
+                        case (endNodeName, _) => (e.getName, List(startNodeName, endNodeName))
+                        case _ => (e.getName, List())
+                      }
 
+                    }
+                    case _ => (e.getName, List())
                   }
-                  case _ => (e.getName,List())
                 }
+                case _ => (e.getName, List())
               }
-              case _ => (e.getName,List())
             }
+            case _ => (e.getName, List())
           }
-          case _ =>(e.getName,List())
         }
-      }
     }.toMap
 
     val json: JsValue = JsObject(Seq(

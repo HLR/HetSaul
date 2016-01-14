@@ -1,19 +1,21 @@
 package controllers
 
 import play.api.mvc._
-import play.api.libs.json.{JsObject,Json}
+import play.api.libs.json.{JsObject,Json,JsValue}
 import io.Source
 import edu.illinois.cs.cogcomp.saul.datamodel.{DataModel,dataModelJsonInterface}
 import java.io.File
 import java.nio.file.Files
 import javax.tools._
+import scala.collection.mutable
 import java.net.{URLClassLoader,URL}
 import java.nio.charset.StandardCharsets
 import scala.collection.JavaConverters._
 import java.lang.reflect.Method
 import scala.tools.nsc.{Global, Settings}
-import scala.reflect.internal.util.{BatchSourceFile}
+import scala.reflect.internal.util.{BatchSourceFile, Position}
 import scala.reflect.runtime.universe
+import scala.tools.nsc.reporters.{Reporter, AbstractReporter}
 
 class Application extends Controller {
 
@@ -32,7 +34,12 @@ class Application extends Controller {
   method.invoke(ClassLoader.getSystemClassLoader(), new File(classPathOfClass("edu.illinois.cs.cogcomp.saul.datamodel.DataModel")(0)).toURI.toURL)
   method.invoke(ClassLoader.getSystemClassLoader(), new File(classPathOfClass("edu.illinois.cs.cogcomp.lbjava.parse.Parser")(0)).getParentFile().getParentFile().getParentFile().toURI.toURL)
 
-  
+  trait MessageCollector {
+      val messages: Seq[List[String]]
+  }
+  class CompilerException(val messages: List[List[String]]) extends Exception(
+    "Compiler exception " + messages.map(_.mkString("\n")).mkString("\n"))
+
   def addPathToClasspath(file : File) = {
       method.invoke(ClassLoader.getSystemClassLoader(), file.toURI().toURL());
   }
@@ -46,7 +53,6 @@ class Application extends Controller {
             val fileMap = files.as[Map[String, String]]
 
             val result = runCode(fileMap)
-            //val result = runCode(fileMap.map { case(k,v) => v }.mkString("\n"))
 
             Ok(result)
       }
@@ -56,13 +62,17 @@ class Application extends Controller {
     
   }
 
-  def runCode(fileMap: Map[String,String])= {
+  def getErrorJson(content : JsValue) : JsValue ={
+    JsObject(Seq("error" -> content))
+  }
+  def runCode(fileMap: Map[String,String]) : JsValue = {
 
     val (javaFiles,scalaFiles) = fileMap partition {
       case (k,_) => k contains ".java"
     }
 
     compileJava(javaFiles)
+    try{
     val scalaInstances : Iterable[Any] = compileScala(scalaFiles)
 
     val result = scalaInstances find( x => x match{
@@ -76,11 +86,14 @@ class Application extends Controller {
       case Some(x) => x match{
 
         case model : DataModel => dataModelJsonInterface.getJson(model)
-        case _ => Json.toJson("Error")
+        case _ => getErrorJson(Json.toJson("Error"))
       }
-      case _ => Json.toJson("No DataModel found.")
+      case _ => getErrorJson(Json.toJson("No DataModel found."))
     }
 
+}catch{
+  case errors: CompilerException => getErrorJson(Json.toJson(errors.messages))
+}
 
   }
 
@@ -114,6 +127,46 @@ class Application extends Controller {
       }
     } toList
   }
+
+  def getScalaCompilerReporter(setting : Settings) = new AbstractReporter with MessageCollector {
+
+      //for displaying compiler error message
+      val settings = setting
+      val messages = new mutable.ListBuffer[List[String]]
+
+      def display(pos: Position, message: String, severity: Severity) {
+        severity.count += 1
+        val severityName = severity match {
+          case ERROR   => "error: "
+          case WARNING => "warning: "
+          case _ => ""
+        }
+        // the line number is not always available
+        val lineMessage =
+          try {
+            "line " + (pos.line - 0)
+          } catch {
+            case _: Throwable => ""
+          }
+        messages += (severityName + lineMessage + ": " + message) ::
+          (if (pos.isDefined) {
+            pos.inUltimateSource(pos.source).lineContent.stripLineEnd ::
+              (" " * (pos.column - 1) + "^") ::
+              Nil
+          } else {
+            Nil
+          })
+      }
+
+      def displayPrompt {
+        // no.
+      }
+
+      override def reset {
+        super.reset
+        messages.clear()
+      }
+  }
   def compileScala(files:Map[String,String]) : Iterable[Any]= files map {
 
     case(name,code)=>{
@@ -129,17 +182,28 @@ class Application extends Controller {
       sett.classpath.value = completeClasspath
       sett.bootclasspath.value = sett.classpath.value
       sett.outdir.value = "/tmp"
-      val g = new Global(sett)
+      val reporter = getScalaCompilerReporter(sett)
+      val g = new Global(sett,reporter)
       val run = new g.Run        
       run.compileSources(sourceFiles.toList)
-    
+
+      //Ignore warnings for now
+      if (reporter.hasErrors /*|| reporter.WARNING.count > 0*/) {
+        val msgs: List[List[String]] = reporter match {
+          case collector: MessageCollector =>
+            collector.messages.toList
+          case _ =>
+            List(List(reporter.toString))
+        }
+        throw new CompilerException(msgs)
+      }
       val clazz = instantiateClass(name,getCodePackageName(code))
 
       clazz
     }
     
   }
-  def compileJava(files: Map[ String,String]) = {
+  def compileJava(files: Map[ String,String]) : Unit= {
     play.api.Logger.info("Compiling Java code.")
 
     val names = files map { 
@@ -153,6 +217,8 @@ class Application extends Controller {
       }
     } toList
 
+    if(names.isEmpty) return
+    
     val names2 = List("-classpath") ::: List(completeClasspath) ::: names
 
     // Compile source file.
