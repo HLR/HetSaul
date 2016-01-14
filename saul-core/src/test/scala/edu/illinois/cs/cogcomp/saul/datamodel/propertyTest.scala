@@ -29,10 +29,7 @@ class propertyTest extends FlatSpec with Matchers {
     listIntPropertyArray(new toyClass) should be(List(1.0, 3.0))
     listIntPropertyGenerator(new toyClass) should be(List(1.0, 3.0))
 
-    // Test cached properties (calling them trice)
-    stringPropertyWithCache(new toyClass).mkString should be("cachedValue")
-    stringPropertyWithCache(new toyClass).mkString should be("cachedValue")
-    stringPropertyWithCache(new toyClass).mkString should be("cachedValue")
+    // Test cached properties (calling them multiple times)
     stringPropertyWithCache(new toyClass).mkString should be("cachedValue")
     stringPropertyWithCache(new toyClass).mkString should be("cachedValue")
   }
