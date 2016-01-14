@@ -13,12 +13,12 @@ import edu.illinois.cs.cogcomp.saulexamples.nlp.commonSensors._
 import scala.collection.JavaConversions._
 
 object pipelineApp extends App {
-  val useGoldPredicate = false
+  val useGoldPredicate = true
   val useGoldArgBoundaries = false
-  val trainPredicates = true
+  val trainPredicates = false
   val trainArgTypeWithGold = false
   val trainArgIdWithCandidates = false
-  val trainArgTypeWithCandidates = false
+  val trainArgTypeWithCandidates = true
 
   if (!useGoldPredicate) {
     srlDataModel.sentencesToTokens.addSensor(textAnnotationToTokens _)
@@ -87,6 +87,14 @@ object pipelineApp extends App {
     print("isArgument test results:")
     argumentXuIdentifierGivenApredicate.test()
     argumentXuIdentifierGivenApredicate.save()
+  }
+  if (trainArgTypeWithCandidates && useGoldPredicate) {
+    argumentTypeLearner.setModelDir("models_cTr")
+    println("Training argument classifier")
+    argumentTypeLearner.learn(100)
+    print("argument classifier test results:")
+    argumentTypeLearner.test()
+    argumentTypeLearner.save()
   }
   if (trainArgTypeWithCandidates && !useGoldPredicate) {
     argumentTypeLearner.setModelDir("models_fTr")

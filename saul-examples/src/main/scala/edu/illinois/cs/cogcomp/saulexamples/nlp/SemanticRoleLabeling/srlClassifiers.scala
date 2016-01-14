@@ -1,8 +1,8 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling
 
-import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{ Constituent, Relation }
-import edu.illinois.cs.cogcomp.lbjava.learn.{ SparseNetworkLearner, SparseAveragedPerceptron }
-import edu.illinois.cs.cogcomp.saul.classifier.{ Learnable, SparseNetworkLBP }
+import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{Constituent, Relation}
+import edu.illinois.cs.cogcomp.lbjava.learn.SparseAveragedPerceptron
+import edu.illinois.cs.cogcomp.saul.classifier.{Learnable, SparseNetworkLBP}
 import edu.illinois.cs.cogcomp.saul.constraint.ConstraintTypeConversion._
 import edu.illinois.cs.cogcomp.saul.datamodel.property.Property
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlDataModel._
@@ -17,7 +17,7 @@ object srlClassifiers {
     //TODO These are not used during Learner's initialization
     def label: Property[Constituent] = srlDataModel.isPredicateGold
     override def feature = using(posTag, subcategorization, phraseType, headword, voice, verbClass, predPOSWindow, predWordWindow)
-    override lazy val classifier = new SparseNetworkLearner()
+    override lazy val classifier = new SparseNetworkLBP
   }
 
   object predicateSenseClassifier extends Learnable[Constituent](srlDataModel, parameters) {
