@@ -13,11 +13,10 @@ object srlClassifiers {
 
   //TODO This needs to be overriden by the user; change it to be dynamic
   val parameters = new SparseAveragedPerceptron.Parameters()
-  //  parameters.modelDir = new ExamplesConfigurator().getDefaultConfig.getString(ExamplesConfigurator.MODELS_DIR.getFirst)
   object predicateClassifier extends Learnable[Constituent](srlDataModel, parameters) {
     //TODO These are not used during Learner's initialization
     def label: Property[Constituent] = srlDataModel.isPredicateGold
-    override def feature = using(posTag, subcategorization, phraseType, headword)
+    override def feature = using(posTag, subcategorization, phraseType, headword, voice, verbClass)
     override lazy val classifier = new SparseNetworkLearner()
   }
 
@@ -29,14 +28,18 @@ object srlClassifiers {
   object argumentTypeLearner extends Learnable[Relation](srlDataModel, parameters) {
     def label = srlDataModel.argumentLabelGold
     import srlDataModel._
-    override def feature = using(containsMOD, containsNEG, clauseFeatures, chunkPathPattern, chunkEmbedding, chunkLength, constituentLength, verbClass, argPOSWindow, argWordWindow, headwordRelation, syntacticFrameRelation, pathRelation, subcategorizationRelation, phraseTypeRelation, predPosTag, predLemmaR, linearPosition)
+    override def feature = using(containsMOD, containsNEG, clauseFeatures, chunkPathPattern, chunkEmbedding, chunkLength,
+      constituentLength, argPOSWindow, argWordWindow, headwordRelation, syntacticFrameRelation, pathRelation,
+      subcategorizationRelation, phraseTypeRelation, predPosTag, predLemmaR, linearPosition)
     override lazy val classifier = new SparseNetworkLBP
   }
 
   object argumentXuIdentifierGivenApredicate extends Learnable[Relation](srlDataModel, parameters) {
     x =>
     def label = srlDataModel.isArgumentXuGold
-    override def feature = using(headwordRelation, syntacticFrameRelation, pathRelation, subcategorizationRelation, phraseTypeRelation, predPosTag, predLemmaR, linearPosition)
+    override def feature = using(headwordRelation, syntacticFrameRelation, pathRelation, subcategorizationRelation,
+      phraseTypeRelation, predPosTag, predLemmaR, linearPosition, argWordWindow, argPOSWindow,
+      constituentLength, chunkLength, chunkEmbedding, chunkPathPattern, clauseFeatures, containsNEG, containsMOD)
     override lazy val classifier = new SparseNetworkLBP
   }
 

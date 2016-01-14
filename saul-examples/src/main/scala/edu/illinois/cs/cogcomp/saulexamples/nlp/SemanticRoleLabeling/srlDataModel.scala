@@ -51,8 +51,6 @@ object srlDataModel extends DataModel {
 
   sentencesToRelations.addSensor(textAnnotationToRelation _)
   sentencesToRelations.addSensor(textAnnotationToRelationMatch _)
-  //  sentencesToTrees.addSensor(SRLSensors.textAnnotationToTree _)
-  // sentencesToTokens.addSensor(commonSensors.textAnnotationToTokens _)
   relationsToArguments.addSensor(relToArgument _)
   relationsToPredicates.addSensor(relToPredicate _)
   sentencesToStringTree.addSensor(textAnnotationToStringTree _)
@@ -157,8 +155,8 @@ object srlDataModel extends DataModel {
     rel: Relation => fexContextFeats(rel.getTarget, WordFeatureExtractorFactory.pos)
   }
 
-  val verbClass = property(relations, "verbClass") {
-    rel: Relation => frameManager.getAllClasses(getLemma(rel.getTarget)).toList
+  val verbClass = property(predicates, "verbClass") {
+    x: Constituent => frameManager.getAllClasses(getLemma(x)).toList
   }
 
   val constituentLength = property(relations, "constLength") {

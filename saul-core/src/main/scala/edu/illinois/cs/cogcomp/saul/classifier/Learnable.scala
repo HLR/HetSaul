@@ -22,7 +22,7 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
   /** Whether to use caching */
   val useCache = false
 
-  val loggging = false
+  val logging = false
 
   var isTraining = false
 
@@ -49,7 +49,8 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
 
   /** specifications of the classifier and its model files  */
   classifier.setReadLexiconOnDemand()
-  var modelDir = "models_aTr/"
+  // TODO Right now these are set (and the directory is created) twice; we need a better solution
+  var modelDir = "models" + File.separator
   var lcFilePath = new URL(new URL("file:"), modelDir + getClassNameForClassifier + ".lc")
   var lexFilePath = new URL(new URL("file:"), modelDir + getClassNameForClassifier + ".lex")
   IOUtils.mkdir(modelDir)
@@ -73,7 +74,7 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
 
   def setExtractor(): Unit = {
     if (feature != null) {
-      if (loggging)
+      if (logging)
         println(s"Setting the feature extractors to be ${lbpFeatures.getCompositeChildren}")
       classifier.setExtractor(lbpFeatures)
     } else {
@@ -84,7 +85,7 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
   def setLabeler(): Unit = {
     if (label != null) {
       val oracle = Property.entitiesToLBJFeature(label)
-      if (loggging) {
+      if (logging) {
         println(s"Setting the labeler to be '$oracle'")
       }
       classifier.setLabeler(oracle)
@@ -97,7 +98,7 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
 
   def setModelDir(directory: String) = {
     classifier.setReadLexiconOnDemand()
-    modelDir = directory + "/"
+    modelDir = directory + File.separator
     lcFilePath = new URL(new URL("file:"), modelDir + getClassNameForClassifier + ".lc")
     lexFilePath = new URL(new URL("file:"), modelDir + getClassNameForClassifier + ".lex")
     IOUtils.mkdir(modelDir)
@@ -170,7 +171,7 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
   }
 
   def learn(iteration: Int, data: Iterable[T]): Unit = {
-    if (loggging)
+    if (logging)
       println("Learnable: Learn with data of size " + data.size)
     isTraining = true
     val crTokenTest = new LBJIteratorParserScala[T](data)
@@ -179,7 +180,7 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
     def learnAll(crTokenTest: Parser, remainingIteration: Int): Unit = {
       val v = crTokenTest.next
       if (v == null) {
-        if (loggging & remainingIteration % 10 == 0)
+        if (logging & remainingIteration % 10 == 0)
           println(s"Training: $remainingIteration iterations remain. ${time.Instant.now()} ")
 
         if (remainingIteration > 1) {
@@ -285,7 +286,7 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
   def crossValidation(k: Int) = {
     val allData = this.fromData
 
-    if (loggging)
+    if (logging)
       println(s"Running cross validation on ${allData.size} data   ")
 
     val groupSize = Math.ceil(allData.size / k).toInt
