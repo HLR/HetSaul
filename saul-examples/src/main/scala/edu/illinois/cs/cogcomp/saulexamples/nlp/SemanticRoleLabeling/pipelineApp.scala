@@ -5,8 +5,7 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling
 
 import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.Constituent
-import edu.illinois.cs.cogcomp.saul.evaluation.evaluation
-import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifiers.{ argumentTypeLearner, argumentXuIdentifierGivenApredicate, predicateClassifier }
+import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifiers.{argumentTypeLearner, argumentXuIdentifierGivenApredicate, predicateClassifier}
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlDataModel._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlSensors._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.commonSensors._
@@ -15,9 +14,9 @@ import scala.collection.JavaConversions._
 
 object pipelineApp extends App {
   var trainPredicates = false
-  var trainArgTypeWithGold = true
+  var trainArgTypeWithGold = false
   var trainArgIdWithCandidates = false
-  var trainArgTypeWithCandidates = false
+  var trainArgTypeWithCandidates = true
   var modelsDir = "models_aTr"
 
   if (!trainArgTypeWithGold) {
@@ -60,7 +59,7 @@ object pipelineApp extends App {
     println("all relations number after population:" + srlDataModel.relations().size)
 
     if (trainPredicates) {
-      predicateClassifier.setModelDir(modelsDir)
+      predicateClassifier.setModelDir("models_dTr")
       println("Training predicate identifier")
       predicateClassifier.learn(100)
       predicateClassifier.save()
@@ -68,8 +67,8 @@ object pipelineApp extends App {
       predicateClassifier.test()
     }
 
-    if (trainArgIdWithCandidates || trainArgTypeWithCandidates) {
-      argumentXuIdentifierGivenApredicate.setModelDir(modelsDir)
+    if (trainArgIdWithCandidates) {
+      argumentXuIdentifierGivenApredicate.setModelDir("models_bTr")
       println("Training argument identifier")
       argumentXuIdentifierGivenApredicate.learn(100)
       print("isArgument test results:")
@@ -78,26 +77,12 @@ object pipelineApp extends App {
     }
 
     if (trainArgTypeWithCandidates) {
-      argumentTypeLearner.setModelDir(modelsDir)
+      argumentTypeLearner.setModelDir("models_cTr")
       println("Training argument classifier")
       argumentTypeLearner.learn(100)
       print("argument classifier test results:")
       argumentTypeLearner.test()
       argumentTypeLearner.save()
     }
-
-    if (trainArgIdWithCandidates || trainArgTypeWithCandidates) {
-      println("Pipeline argument identification")
-      evaluation.Test(isArgumentXuGold, isArgumentPipePrediction, relations)
-      println("Pipeline argument classification")
-      evaluation.Test(argumentLabelGold, typeArgumentPipePrediction, relations)
-    }
-    if (trainArgTypeWithGold) {
-      println("Direct argument identification")
-      evaluation.Test(isArgumentXuGold, isArgumentPrediction, relations)
-      println("Direct argument classification")
-      evaluation.Test(argumentLabelGold, typeArgumentPrediction, relations)
-    }
-    print("finish!")
   }
 }

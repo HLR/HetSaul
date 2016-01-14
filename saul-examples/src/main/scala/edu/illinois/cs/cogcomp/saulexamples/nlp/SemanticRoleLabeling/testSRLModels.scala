@@ -42,6 +42,20 @@ object testSRLModels extends App {
   )
   argumentXuIdentifierGivenApredicate.test()
 
+  // moved these from pipe to here
+  //    if (trainArgIdWithCandidates || trainArgTypeWithCandidates) {
+  //      println("Pipeline argument identification")
+  //      evaluation.Test(isArgumentXuGold, isArgumentPipePrediction, relations)
+  //      println("Pipeline argument classification")
+  //      evaluation.Test(argumentLabelGold, typeArgumentPipePrediction, relations)
+  //    }
+  //    if (trainArgTypeWithGold) {
+  //      println("Direct argument identification")
+  //      evaluation.Test(isArgumentXuGold, isArgumentPrediction, relations)
+  //      println("Direct argument classification")
+  //      evaluation.Test(argumentLabelGold, typeArgumentPrediction, relations)
+  //    }
+
   //TODO working space for laoding more and more trained models and test
 
 }
