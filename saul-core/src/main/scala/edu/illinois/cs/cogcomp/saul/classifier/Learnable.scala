@@ -218,11 +218,10 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
     test(data)
   }
 
-  /**
-   * Test with given data, use internally
-   * @param testData
-   * @return List of (label, (f1, precision, recall))
-   */
+  /** Test with given data, use internally
+    * @param testData
+    * @return List of (label, (f1, precision, recall))
+    */
   def test(testData: Iterable[T]): List[(String, (Double, Double, Double))] = {
     isTraining = false
     val testReader = new LBJIteratorParserScala[T](testData)
@@ -330,11 +329,10 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
   /** Label property foor users classifier */
   def label: Property[T]
 
-  /**
-   * A windows of properties
-   * @param before always negative (or 0)
-   * @param after always positive (or 0)
-   */
+  /** A windows of properties
+    * @param before always negative (or 0)
+    * @param after always positive (or 0)
+    */
   def windowWithIn[U <: AnyRef](before: Int, after: Int, properties: List[Property[T]])(implicit uTag: ClassTag[U]): Property[T] = {
     val fls = datamodel.getRelatedFieldsBetween[T, U]
     getWindowWithFilters(before, after, fls.map(e => (t: T) => e.neighborsOf(t).head), properties)

@@ -286,7 +286,7 @@ trait DataModel {
       node.deriveInstances(relatedProperties)
     }
     EDGES.foreach { edge =>
-        edge.deriveIndexWithIds()
+      edge.deriveIndexWithIds()
     }
     hasDerivedInstances = true
   }
