@@ -40,7 +40,7 @@ object pipelineApp extends App {
     predicates.populate(negativePredicateTest, train = false)
   }
 
-  if (trainArgTypeWithGold && useGoldArgBoundaries) { //this block should be here before populating negative args below!!
+  if (trainArgTypeWithGold && useGoldArgBoundaries) {
     //train and test the argClassifier Given the ground truth Boundaries (i.e. no negative class).
     argumentTypeLearner.setModelDir("models_aTr")
     argumentTypeLearner.learn(100)
