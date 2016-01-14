@@ -1,7 +1,11 @@
 package controllers
 
 import play.api.mvc._
+<<<<<<< HEAD
 import play.api.libs.json.{JsObject,Json,JsValue}
+=======
+import play.api.libs.json.{ JsValue, JsObject, Json }
+>>>>>>> Refactor compilation code
 import io.Source
 import edu.illinois.cs.cogcomp.saul.datamodel.{ DataModel, dataModelJsonInterface }
 import java.io.File
@@ -114,6 +118,7 @@ class Application extends Controller {
     }
 
     compileJava(javaFiles)
+
     try {
       Left(compileScala(scalaFiles))
     } catch {
@@ -127,6 +132,11 @@ class Application extends Controller {
 
   def parseDataModel(scalaInstances: Iterable[Any]) : JsValue = {
 
+    compileScala(scalaFiles)
+  }
+
+
+  private def parseDataModel(scalaInstances: Iterable[Any]): JsValue = {
     val result = scalaInstances find (x => x match {
       case model: DataModel => true
       case _ => false
@@ -141,15 +151,14 @@ class Application extends Controller {
       }
       case _ => Json.toJson("No DataModel found.")
     }
-
   }
   
 
   /*
-   *    * For a given FQ classname, trick the resource finder into telling us the containing jar.
-   *
-   *
-   * */
+     *    * For a given FQ classname, trick the resource finder into telling us the containing jar.
+     *
+     *
+     * */
   private def classPathOfClass(className: String) = {
     val resource = className.split('.').mkString("/", "/", ".class")
     val path = getClass.getResource(resource).getPath
