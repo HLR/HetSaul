@@ -1,5 +1,6 @@
 $(document).ready(function(){
 
+        $("#errors").hide();
         setEditor("editor1","scala"); 
         $("#fileList").children("li").each(function(){
             installTabClickedAction($(this));
@@ -148,7 +149,8 @@ var updateCode = function(){
 };
 
 var generateSchemaGraphFromJson = function(data){
-
+    $('#graphContainer').remove(); 
+    $('#graphParent').html('<div id="graphContainer"></div>');
     var s = new sigma('graphContainer');
     var nodeId = 0;
     var nodeDict = {};
@@ -204,8 +206,20 @@ var generateSchemaGraphFromJson = function(data){
 }
 
 var onSuccess = function(data){
-    $("#graphContainer").empty();
     alert(JSON.stringify(data));
+    if(data['error']){
+
+        var message = "";
+        for(var index in data['error']){
+            for(var index2 in data['error'][index]){
+                message += data['error'][index][index2] + "<br>";
+            }
+        }
+        $("#errors").html(message);
+        $("#errors").show();
+    }else{
+        $("#errors").hide();
+    }
     generateSchemaGraphFromJson(data);
 }
 var onError = function(data){
