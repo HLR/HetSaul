@@ -161,10 +161,11 @@ object POSDataModel extends DataModel {
     labelOneAfterU(x) + "-" + labelTwoAfterU(x)
   }
 
-  /** When baselineTarget has not observed the given word during
-    * training, this classifier extracts suffixes of the word of various
-    * lengths.
-    */
+  /**
+   * When baselineTarget has not observed the given word during
+   * training, this classifier extracts suffixes of the word of various
+   * lengths.
+   */
   val suffixFeatures = property(tokens, "suffixFeatures") { x: Constituent =>
     val word = wordForm(x)
     val length = word.length

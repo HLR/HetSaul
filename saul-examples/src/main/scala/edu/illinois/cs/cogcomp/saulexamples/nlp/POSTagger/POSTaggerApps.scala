@@ -1,8 +1,6 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.POSTagger
 
-import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.Constituent
-import edu.illinois.cs.cogcomp.core.utilities.DummyTextAnnotationGenerator
 import edu.illinois.cs.cogcomp.lbj.pos.POSLabeledUnknownWordParser
 import edu.illinois.cs.cogcomp.lbjava.classify.TestDiscrete
 import edu.illinois.cs.cogcomp.nlp.corpusreaders.PennTreebankPOSReader
@@ -24,10 +22,10 @@ object Constants {
 object POSTaggerApp {
   def main(args: Array[String]): Unit = {
     // If you want to use pre-trained model change it to false
-    if (true)
+    if (false)
       trainAndTest()
     else
-      testWithPretrainedModels2()
+      testWithPretrainedModels()
   }
 
   /** Reading test and train data */
@@ -67,10 +65,9 @@ object POSTaggerApp {
     val unknownTrainData = trainData.filter(x => BaselineClassifier.classifier.observedCount(wordForm(x)) <= POSLabeledUnknownWordParser.threshold)
 
     (0 until 10).foreach(iter => {
-      println(s"Training POS Tagger iteration $iter out of 50")
+      println(s"Training POS Tagger iteration $iter out of 9")
       POSTaggerKnown.learn(1)
       POSTaggerUnknown.learn(1, unknownTrainData)
-      //      POSDataModel.propertyCacheMap.clear()
     })
 
     testPOSTagger()
@@ -84,35 +81,9 @@ object POSTaggerApp {
 
   /** Loading the serialized models as a dependency */
   def testWithPretrainedModels(): Unit = {
-    val toyConstituents = DummyTextAnnotationGenerator.generateBasicTextAnnotation(1).getView(ViewNames.TOKENS)
-    POSDataModel.tokens.populate(toyConstituents, train = false)
-
-    POSClassifiers.loadModels()
-
-    val baselineLabelMap = Map("To" -> "TO", "or" -> "CC", "not" -> "RB", ";" -> ":",
-      "that" -> "IN", "is" -> "VBZ", "the" -> "DT", "question" -> "NN", "." -> ".")
-
-    toyConstituents.foreach { cons =>
-      println(BaselineClassifier.classifier.discreteValue(cons) == baselineLabelMap.getOrElse(cons.getSurfaceForm, ""))
-      println(BaselineClassifier.classifier.discreteValue(cons) + cons.getSurfaceForm)
-      //  println(MikheevClassifier.classifier.discreteValue(cons) )
-      //  println(MikheevClassifier.classifier.discreteValue(cons))
-      //  println(POSTaggerKnown.classifier.discreteValue(cons))
-      //  println(POSTaggerUnknown.classifier.discreteValue(cons))
-
-      val predicted = POSClassifiers.POSClassifier(cons)
-      println("predicted = " + predicted)
-    }
-  }
-
-  //TODO: remove the above function after making sure that deserialization is fine, and keep this one only
-  def testWithPretrainedModels2(): Unit = {
     POSDataModel.tokens.populate(testData, train = false)
 
-    BaselineClassifier.load()
-    MikheevClassifier.load()
-    POSTaggerKnown.load()
-    POSTaggerUnknown.load()
+    POSClassifiers.loadModelsFromPackage()
 
     testPOSTagger()
   }

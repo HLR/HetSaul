@@ -10,11 +10,12 @@ import edu.illinois.cs.cogcomp.saul.classifier.Learnable
 import edu.illinois.cs.cogcomp.saulexamples.nlp.POSTagger.POSDataModel._
 
 object POSClassifiers {
-  /** After POSTaggerKnown and POSTaggerUnknown are trained,
-    * this classifier will return the prediction of POSTaggerKnown if
-    * the input word was observed during training or of POSTaggerUnknown
-    * if it wasn't.
-    */
+  /**
+   * After POSTaggerKnown and POSTaggerUnknown are trained,
+   * this classifier will return the prediction of POSTaggerKnown if
+   * the input word was observed during training or of POSTaggerUnknown
+   * if it wasn't.
+   */
   def POSClassifier(x: Constituent): String = {
     if (BaselineClassifier.classifier.observed(wordForm(x)))
       POSTaggerKnown.classifier.valueOf(x, BaselineClassifier.classifier.allowableTags(wordForm(x))).getStringValue
@@ -22,7 +23,22 @@ object POSClassifiers {
       POSTaggerUnknown.classifier.valueOf(x, MikheevClassifier.classifier.allowableTags(x)).getStringValue
   }
 
-  def loadModels(): Unit = {
+  // Loads learned models from the "saul-pos-tagger-models" jar package
+  def loadModelsFromPackage(): Unit = {
+    val jarModelPath = "edu/illinois/cs/cogcomp/saulexamples/nlp/POSTagger/models/"
+
+    def loadModel(x: Learnable[Constituent]): Unit = {
+      val prefix = jarModelPath + x.getClassNameForClassifier
+      x.load(prefix + ".lc", prefix + ".lex")
+    }
+
+    loadModel(BaselineClassifier)
+    loadModel(MikheevClassifier)
+    loadModel(POSTaggerKnown)
+    loadModel(POSTaggerUnknown)
+  }
+
+  def loadSavedModels(): Unit = {
     BaselineClassifier.load()
     MikheevClassifier.load()
     POSTaggerKnown.load()
