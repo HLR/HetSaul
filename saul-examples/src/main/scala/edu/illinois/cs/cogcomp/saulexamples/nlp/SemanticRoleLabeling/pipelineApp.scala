@@ -5,7 +5,7 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling
 
 import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.Constituent
-import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifiers.{argumentTypeLearner, argumentXuIdentifierGivenApredicate, predicateClassifier}
+import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifiers.{ argumentTypeLearner, argumentXuIdentifierGivenApredicate, predicateClassifier }
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlDataModel._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlSensors._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.commonSensors._
@@ -13,11 +13,11 @@ import edu.illinois.cs.cogcomp.saulexamples.nlp.commonSensors._
 import scala.collection.JavaConversions._
 
 object pipelineApp extends App {
-  var trainPredicates = false
-  var trainArgTypeWithGold = false
-  var trainArgIdWithCandidates = false
-  var trainArgTypeWithCandidates = true
-  var modelsDir = "models_aTr"
+  val trainPredicates = true
+  val trainArgTypeWithGold = false
+  val trainArgIdWithCandidates = false
+  val trainArgTypeWithCandidates = false
+  val modelsDir = "models_aTr"
 
   if (!trainArgTypeWithGold) {
     srlDataModel.sentencesToTokens.addSensor(textAnnotationToTokens _)

@@ -16,7 +16,7 @@ object srlClassifiers {
   object predicateClassifier extends Learnable[Constituent](srlDataModel, parameters) {
     //TODO These are not used during Learner's initialization
     def label: Property[Constituent] = srlDataModel.isPredicateGold
-    override def feature = using(posTag, subcategorization, phraseType, headword, voice, verbClass)
+    override def feature = using(posTag, subcategorization, phraseType, headword, voice, verbClass, predPOSWindow, predWordWindow)
     override lazy val classifier = new SparseNetworkLearner()
   }
 
