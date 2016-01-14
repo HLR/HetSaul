@@ -15,10 +15,10 @@ import scala.collection.JavaConversions._
 
 object pipelineApp extends App {
   var trainPredicates = false
-  var trainArgTypeWithGold = false
-  var trainArgIdWithCandidates = true
+  var trainArgTypeWithGold = true
+  var trainArgIdWithCandidates = false
   var trainArgTypeWithCandidates = false
-  var modelsDir = "models"
+  var modelsDir = "models_aTr"
 
   if (!trainArgTypeWithGold) {
     srlDataModel.sentencesToTokens.addSensor(textAnnotationToTokens _)
@@ -28,7 +28,7 @@ object pipelineApp extends App {
   if (trainArgTypeWithGold) {
     // Here first train and test the argClassifier Given the ground truth Boundaries (i.e. no negative class).
     argumentTypeLearner.setModelDir(modelsDir)
-    argumentTypeLearner.learn(3)
+    argumentTypeLearner.learn(100)
     argumentTypeLearner.test()
     argumentTypeLearner.save()
   }
