@@ -45,6 +45,13 @@ object POSClassifiers {
     POSTaggerUnknown.load()
   }
 
+  def saveModels(): Unit = {
+    BaselineClassifier.save()
+    MikheevClassifier.save()
+    POSTaggerKnown.save()
+    POSTaggerUnknown.save()
+  }
+
   object POSTaggerKnown extends Learnable[Constituent](POSDataModel) {
     def label = POSLabel
     override def feature = using(wordForm, baselineTarget, labelTwoBefore, labelOneBefore,

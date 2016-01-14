@@ -73,10 +73,7 @@ object POSTaggerApp {
     testPOSTagger()
 
     // saving all the models
-    BaselineClassifier.save()
-    MikheevClassifier.save()
-    POSTaggerKnown.save()
-    POSTaggerUnknown.save()
+    saveModels()
   }
 
   /** Loading the serialized models as a dependency */

@@ -57,7 +57,7 @@ Here is how you can make calls to the POS tagger in Scala
     POSDataModel.tokens.populate(testData, train = false)
 
     /** Load the models for the POS classifier */ 
-    POSClassifiers.loadModels() 
+    POSClassifiers.loadModelsFromPackage()
 
     /** Make prediction on the input instances */  
     toyConstituents.foreach { constituent =>
