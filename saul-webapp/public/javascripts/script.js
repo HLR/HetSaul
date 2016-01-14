@@ -8,7 +8,11 @@ $(document).ready(function(){
 
 
         $("#compileBtn").click(function(){
-            updateCode();
+            updateCode(false);
+        });
+
+        $("runBtn").click(function() {
+            updateCode(true);
         });
 
         $("#plusFile").click(function(){
@@ -128,16 +132,26 @@ var getAllFiles = function(){
     return JSON.stringify(files);
     
 }
-var updateCode = function(){
+
+/**
+ * @param {boolean} isRun indicates if the code should be run after compilation
+ */
+var updateCode = function(isRun){
     var callback = {
         success : onSuccess,
         error : onError
     }
     
     //jsRoutes.controllers.Application.updateCode($("#code1").text()).ajax(callback);
+    var rURL;
+    if (isRun) {
+        rURL = '/runCode';
+    } else {
+        rURL = '/compileCode';
+    }
     $.ajax({
         type : 'POST',
-        url : '/updateCode',
+        url : rURL,
         headers: { 
                 'Accept': 'application/json',
                 'Content-Type': 'application/json' 
