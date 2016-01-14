@@ -16,9 +16,8 @@ object pipelineApp extends App {
   val useGoldPredicate = true
   val useGoldArgBoundaries = false
   val trainPredicates = false
-  val trainArgTypeWithGold = false
-  val trainArgIdWithCandidates = false
-  val trainArgTypeWithCandidates = true
+  val trainArgIdentifier = false
+  val trainArgType = true
 
   if (!useGoldPredicate) {
     srlDataModel.sentencesToTokens.addSensor(textAnnotationToTokens _)
@@ -40,7 +39,7 @@ object pipelineApp extends App {
     predicates.populate(negativePredicateTest, train = false)
   }
 
-  if (trainArgTypeWithGold && useGoldArgBoundaries) {
+  if (trainArgType && useGoldArgBoundaries) {
     //train and test the argClassifier Given the ground truth Boundaries (i.e. no negative class).
     argumentTypeLearner.setModelDir("models_aTr")
     argumentTypeLearner.learn(100)
@@ -71,7 +70,7 @@ object pipelineApp extends App {
     predicateClassifier.test(predicates.testingSet)
   }
 
-  if (trainArgIdWithCandidates && useGoldPredicate) {
+  if (trainArgIdentifier && useGoldPredicate) {
     argumentXuIdentifierGivenApredicate.setModelDir("models_bTr")
     println("Training argument identifier")
     argumentXuIdentifierGivenApredicate.learn(100)
@@ -80,7 +79,7 @@ object pipelineApp extends App {
     argumentXuIdentifierGivenApredicate.save()
   }
 
-  if (trainArgIdWithCandidates && !useGoldPredicate) {
+  if (trainArgIdentifier && !useGoldPredicate) {
     argumentXuIdentifierGivenApredicate.setModelDir("models_eTr")
     println("Training argument identifier")
     argumentXuIdentifierGivenApredicate.learn(100)
@@ -88,7 +87,7 @@ object pipelineApp extends App {
     argumentXuIdentifierGivenApredicate.test()
     argumentXuIdentifierGivenApredicate.save()
   }
-  if (trainArgTypeWithCandidates && useGoldPredicate) {
+  if (trainArgType && useGoldPredicate) {
     argumentTypeLearner.setModelDir("models_cTr")
     println("Training argument classifier")
     argumentTypeLearner.learn(100)
@@ -96,7 +95,7 @@ object pipelineApp extends App {
     argumentTypeLearner.test()
     argumentTypeLearner.save()
   }
-  if (trainArgTypeWithCandidates && !useGoldPredicate) {
+  if (trainArgType && !useGoldPredicate) {
     argumentTypeLearner.setModelDir("models_fTr")
     println("Training argument classifier")
     argumentTypeLearner.learn(100)
