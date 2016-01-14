@@ -1,5 +1,5 @@
 .DS_Store
-/data
+*/data
 .idea
 /RUNNING_PID
 /logs/
@@ -12,3 +12,6 @@ target/
 *.class
 annotation-cache/
 /config
+*.lc
+*.lex
+*~

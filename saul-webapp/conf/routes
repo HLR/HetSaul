@@ -5,7 +5,12 @@
 # Home page
 GET     /                           controllers.Application.index
 
-POST     /updateCode                 controllers.Application.updateCode
+# Run main application
+POST    /runCode                controllers.Application.runCode
+
+# Compile source code
+POST     /compileCode                 controllers.Application.compileCode
+
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
 
