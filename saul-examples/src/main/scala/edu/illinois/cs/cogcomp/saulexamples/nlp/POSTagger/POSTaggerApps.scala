@@ -26,7 +26,7 @@ object POSTaggerApp {
 
   def main(args: Array[String]): Unit = {
     /** Choose the experiment you're interested in by changing the following line */
-    val testType = POSExperimentType.TrainAndTest
+    val testType = POSExperimentType.TestFromModel
 
     testType match {
       case POSExperimentType.TrainAndTest => trainAndTest()
