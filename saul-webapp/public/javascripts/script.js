@@ -11,7 +11,8 @@ $(document).ready(function(){
             updateCode(false);
         });
 
-        $("runBtn").click(function() {
+        $("#runBtn").click(function() {
+            console.log("run click")
             updateCode(true);
         });
 
