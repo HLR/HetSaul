@@ -26,7 +26,15 @@ class Application extends Controller {
 
   //val saulExternalLibs = new File(classPathOfClass("edu.illinois.cs.cogcomp.lbjava.parse.Parser")(0)).getParentFile().getParentFile().getParentFile().getPath()
   //val resolvedSaulExternalLibs = if(saulExternalLibs.endsWith(File.separator)) (saulExternalLibs+"*") else (saulExternalLibs + File.separator + "*")
-  val completeClasspath = (List("/tmp/") ::: classPathOfClass("scala.tools.nsc.Interpreter") ::: classPathOfClass("scala.AnyVal") ::: classPathOfClass("edu.illinois.cs.cogcomp.saul.datamodel.DataModel") ::: classPathOfClass("edu.illinois.cs.cogcomp.lbjava.parse.Parser") ::: classPathOfClass("edu.illinois.cs.cogcomp.core.datastructures.textannotation.TextAnnotation") ::: classPathOfClass("edu.illinois.cs.cogcomp.nlp.pipeline.IllinoisPipelineFactory") ::: classPathOfClass("edu.illinois.cs.cogcomp.curator.CuratorFactory")).mkString(File.pathSeparator)
+  val completeClasspath = (List(
+    "scala.tools.nsc.Interpreter",
+    "scala.AnyVal",
+    "edu.illinois.cs.cogcomp.saul.datamodel.DataModel",
+    "edu.illinois.cs.cogcomp.lbjava.parse.Parser",
+    "edu.illinois.cs.cogcomp.core.datastructures.textannotation.TextAnnotation",
+    "edu.illinois.cs.cogcomp.nlp.pipeline.IllinoisPipelineFactory",
+    "edu.illinois.cs.cogcomp.curator.CuratorFactory"
+  ).flatMap(x => classPathOfClass(x)) ::: List("/tmp/")).mkString(File.pathSeparator)
   val re = """package\s(.*)\s""".r
   val root: File = new File("/tmp"); // On Windows running on C:\, this is C:\java.
   val rootURL = root.toURI.toURL
@@ -54,15 +62,23 @@ class Application extends Controller {
     Ok(views.html.main("Your new application is ready."))
   }
 
-  //TODO: Further refactor the two methods
-  def compileCode = Action(parse.json) { implicit request =>
-
+  /** @param request The request containing ths JsValue
+    * @param isRun   Indicate if the code should be run or just display data model
+    */
+  //TODO: make events ADT and get rid of the Boolean
+  def executeCode(request: Request[JsValue], isRun: Boolean) = {
     request.body match {
       case files: JsObject => {
         val fileMap = files.as[Map[String, String]]
         val compilationResult = compile(fileMap)
         compilationResult match {
-          case Left(scalaInstances) => Ok(parseDataModel(scalaInstances))
+          case Left(scalaInstances) => {
+            if (isRun) {
+              Ok(runMain(scalaInstances))
+            } else {
+              Ok(parseDataModel(scalaInstances))
+            }
+          }
           case Right(errorMsg) => Ok(errorMsg)
 
         }
@@ -70,24 +86,14 @@ class Application extends Controller {
 
       case _ => Ok("Bad json." + request.body)
     }
+  }
 
+  def compileCode = Action(parse.json) { implicit request =>
+    executeCode(request, false)
   }
 
   def runCode = Action(parse.json) { implicit request =>
-
-    request.body match {
-      case files: JsObject => {
-        val fileMap = files.as[Map[String, String]]
-        val compilationResult = compile(fileMap)
-        compilationResult match {
-          case Left(scalaInstances) => Ok(runMain(scalaInstances))
-          case Right(errorMsg) => Ok(errorMsg)
-          case _ => Ok("Unknown error")
-        }
-
-      }
-      case _ => Ok("Bad json." + request.body)
-    }
+    executeCode(request, true)
   }
 
   private def runMain(scalaInstances: Iterable[Any]): JsValue = {
@@ -100,10 +106,11 @@ class Application extends Controller {
         x match {
           case ob: Object => {
             val output = classExecutor.execute(ob.getClass.getName.init, completeClasspath)
-            output match {
-              case Left(s) => Json.toJson(s)
-              case Right(s) => Json.toJson("Error")
-            }
+            Json.obj(
+              "stdout" -> output._1,
+              "stderr" -> output._2,
+              "status" -> output._3
+            )
           }
           case _ => Json.toJson("Error.")
         }
