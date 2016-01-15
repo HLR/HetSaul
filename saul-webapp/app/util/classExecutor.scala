@@ -19,24 +19,21 @@ object classExecutor {
     }
   }
 
-  //TODO: Add error handling
-  def execute(className: String, classPath: String): Either[String, Error] = {
-/*
+  /** @param className The main class to execute
+    * @param classPath The classpath argument
+    * @return Output from STDOUT, output from STDERR, value return on exit
+    */
+  //TODO: further handle exception
+  def execute(className: String, classPath: String): (String, String, Int) = {
+
     val cmd = Seq("scala", "-cp", classPath, className)
-    val buffer = new StringBuilder
-    def outputReader(input: java.io.InputStream) = {
-      val reader = new BufferedReader(new InputStreamReader(input))
-      while (true) {
-        val line = reader.readLine()
-        if (line eq null) {
-          input.close()
-          break
-        } else {
-          buffer.append(line)
-        }
-      }
-    }
-    cmd ! new ProcessIO(_.close(), outputReader, _.close())*/
-    Left("Success")
+    val outBuffer = new StringBuilder
+    val errBuffer = new StringBuilder
+    val outputLogger = ProcessLogger(
+      line => outBuffer.append(line),
+      line => errBuffer.append(line)
+    )
+    val status = cmd ! outputLogger
+    (outBuffer.toString(), errBuffer.toString(), status)
   }
 }
