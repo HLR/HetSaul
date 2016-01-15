@@ -2,7 +2,6 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp.POSTagger
 
 import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
 import edu.illinois.cs.cogcomp.saulexamples.nlp.POSTagger.POSClassifiers._
-import edu.illinois.cs.cogcomp.saulexamples.nlp.POSTagger._
 import edu.illinois.cs.cogcomp.core.utilities.DummyTextAnnotationGenerator
 
 import org.scalatest._
@@ -10,8 +9,6 @@ import org.scalatest._
 import scala.collection.JavaConversions._
 
 class POSTaggerTest extends FlatSpec with Matchers {
-
-  import POSDataModel._
 
   "POSTager feature queries " should " should work. " in {
     val dummyData = DummyTextAnnotationGenerator.generateAnnotatedTextAnnotation(Array(ViewNames.POS), false)
