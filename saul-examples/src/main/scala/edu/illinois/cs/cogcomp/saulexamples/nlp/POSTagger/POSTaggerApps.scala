@@ -1,6 +1,7 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.POSTagger
 
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.Constituent
+import edu.illinois.cs.cogcomp.core.utilities.configuration.{ Property, ResourceManager, Configurator }
 import edu.illinois.cs.cogcomp.lbj.pos.POSLabeledUnknownWordParser
 import edu.illinois.cs.cogcomp.lbjava.classify.TestDiscrete
 import edu.illinois.cs.cogcomp.nlp.corpusreaders.PennTreebankPOSReader
@@ -11,12 +12,17 @@ import edu.illinois.cs.cogcomp.saulexamples.nlp.commonSensors
 
 import scala.collection.JavaConversions._
 
-object Constants {
+object POSConfigurator extends Configurator {
   private val prefix = "../data/POS/"
-  val trainData = prefix + "00-18.br"
-  val trainDataSmall = prefix + "00-18_small.br"
-  val trainAndDevData = prefix + "00-21.br"
-  val testData = prefix + "22-24.br"
+  val trainData = new Property("trainData", prefix + "00-18.br")
+  val trainDataSmall = new Property("trainDataSmall", prefix + "00-18_small.br")
+  val trainAndDevData = new Property("trainAndDevData", prefix + "00-21.br")
+  val testData = new Property("testData", prefix + "22-24.br")
+
+  override def getDefaultConfig: ResourceManager = {
+    val props = Array(trainData, trainDataSmall, trainAndDevData, testData)
+    new ResourceManager(generateProperties(props))
+  }
 }
 
 object POSTaggerApp {
@@ -37,7 +43,7 @@ object POSTaggerApp {
   /** Reading test and train data */
   lazy val (trainData, testData) = {
     val trainDataReader = new PennTreebankPOSReader("train")
-    trainDataReader.readFile(Constants.trainAndDevData)
+    trainDataReader.readFile(POSConfigurator.trainAndDevData.value)
 
     var sentenceId = 0
     val trainData = trainDataReader.getTextAnnotations.flatMap(p => {
@@ -49,7 +55,7 @@ object POSTaggerApp {
     })
 
     val testDataReader = new PennTreebankPOSReader("test")
-    testDataReader.readFile(Constants.testData)
+    testDataReader.readFile(POSConfigurator.testData.value)
     val testData = testDataReader.getTextAnnotations.flatMap(p => {
       val cons = commonSensors.textAnnotationToTokens(p)
       sentenceId += 1
