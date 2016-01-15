@@ -5,6 +5,7 @@ import edu.illinois.cs.cogcomp.lbj.pos.POSLabeledUnknownWordParser
 import edu.illinois.cs.cogcomp.lbjava.classify.TestDiscrete
 import edu.illinois.cs.cogcomp.nlp.corpusreaders.PennTreebankPOSReader
 import edu.illinois.cs.cogcomp.saul.parser.LBJIteratorParserScala
+import edu.illinois.cs.cogcomp.saulexamples.nlp.EmailSpam.SpamApp.SpamExperimentType._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.POSTagger.POSClassifiers._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.POSTagger.POSDataModel._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.commonSensors
@@ -20,12 +21,18 @@ object Constants {
 }
 
 object POSTaggerApp {
+  object POSExperimentType extends Enumeration {
+    val TrainAndTest, TestFromModel = Value
+  }
+
   def main(args: Array[String]): Unit = {
-    // If you want to use pre-trained model change it to false
-    if (false)
-      trainAndTest()
-    else
-      testWithPretrainedModels()
+    /** Choose the experiment you're interested in by changing the following line */
+    val testType = POSExperimentType.TestFromModel
+
+    testType match {
+      case POSExperimentType.TrainAndTest => trainAndTest()
+      case POSExperimentType.TestFromModel => testWithPretrainedModels()
+    }
   }
 
   /** Reading test and train data */
