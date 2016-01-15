@@ -26,7 +26,7 @@ object pipelineApp extends App {
   println ("input trainArgType (true/false):")
   val trainArgType = readBoolean()
 
-  if (!useGoldPredicate.asInstanceOf[Boolean]) {
+  if (!useGoldPredicate) {
     srlDataModel.sentencesToTokens.addSensor(textAnnotationToTokens _)
   }
   populateGraphwithGoldSRL(srlDataModel, srlDataModel.sentences)
