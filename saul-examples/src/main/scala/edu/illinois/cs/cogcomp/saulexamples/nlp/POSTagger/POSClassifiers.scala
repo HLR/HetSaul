@@ -4,9 +4,7 @@ import edu.illinois.cs.cogcomp.core.datastructures.textannotation.Constituent
 import edu.illinois.cs.cogcomp.lbj.pos.POSBaselineLearner
 import edu.illinois.cs.cogcomp.lbjava.learn.{ SparseAveragedPerceptron, SparseNetworkLearner }
 import edu.illinois.cs.cogcomp.saul.constraint.ConstraintTypeConversion._
-
 import edu.illinois.cs.cogcomp.saul.classifier.Learnable
-
 import edu.illinois.cs.cogcomp.saulexamples.nlp.POSTagger.POSDataModel._
 
 object POSClassifiers {
