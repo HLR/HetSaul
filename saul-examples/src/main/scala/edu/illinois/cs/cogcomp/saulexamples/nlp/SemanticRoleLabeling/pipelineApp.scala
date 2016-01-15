@@ -94,8 +94,8 @@ object pipelineApp extends App {
     println("Training argument classifier")
     argumentTypeLearner.learn(100)
     print("argument classifier test results:")
-    println("\n =============================================================")
     evaluation.Test(argumentLabelGold, typeArgumentPrediction, relations)
+    println("\n =============================================================")
     argumentTypeLearner.test()
     argumentTypeLearner.save()
   }
