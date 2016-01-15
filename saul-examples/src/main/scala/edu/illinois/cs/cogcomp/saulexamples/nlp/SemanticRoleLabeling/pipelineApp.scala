@@ -49,7 +49,7 @@ object pipelineApp extends App {
     argumentTypeLearner.save()
   }
 
-  if (!useGoldArgBoundaries) {
+  if (!useGoldArgBoundaries && !trainPredicates) {
     val XuPalmerCandidateArgsTraining = predicates.getTrainingInstances.flatMap(x => xuPalmerCandidate(x, (sentences(x.getTextAnnotation) ~> sentencesToStringTree).head))
     val XuPalmerCandidateArgsTesting = predicates.getTestingInstances.flatMap(x => xuPalmerCandidate(x, (sentences(x.getTextAnnotation) ~> sentencesToStringTree).head))
 
