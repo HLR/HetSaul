@@ -12,7 +12,8 @@
         <script src="@routes.WebJarAssets.at(WebJarAssets.locate("js/bootstrap.min.js"))"></script>
         @helper.javascriptRouter("jsRoutes")(
             routes.javascript.Application.index,
-            routes.javascript.Application.compileCode
+            routes.javascript.Application.compileCode,
+            routes.javascript.Application.runCode
         )
         <script src="@routes.Assets.versioned("javascripts/script.js")" type="text/javascript"></script>
         <script src="@routes.Assets.versioned("javascripts/ace/ace.js")" type="text/javascript" charset="utf-8"></script>
