@@ -79,8 +79,33 @@ Here is how you can make calls to the POS tagger in Scala
 And similarly in Java: 
 
 ```java 
-  TODO 
+    import edu.illinois.cs.cogcomp.core.datastructures.ViewNames;
+    import edu.illinois.cs.cogcomp.core.datastructures.textannotation.Constituent;
+    import edu.illinois.cs.cogcomp.core.utilities.DummyTextAnnotationGenerator;
+    import edu.illinois.cs.cogcomp.saulexamples.nlp.POSTagger.POSClassifiers;
+    import edu.illinois.cs.cogcomp.saulexamples.nlp.POSTagger.POSDataModel;
+    
+    /* Read your data as collection of `Constituent`s. */
+    // Your way of reading data.
+    // The following is just a bunch of dummy constituents: 
+    java.util.List<Constituent> testData = DummyTextAnnotationGenerator.generateBasicTextAnnotation(1).getView(ViewNames.TOKENS).getConstituents();
+    scala.collection.Iterable<Constituent> testDataAsScalaCollection = scala.collection.JavaConversions.asScalaBuffer(testData);
+    
+    // For example the following, generates dummy constituents:
+    
+    /** Populate your data in the model */
+    POSDataModel.tokens().populate(testDataAsScalaCollection, false);
+    
+    /** Load the models for the POS classifier */
+    POSClassifiers.loadModelsFromPackage();
+    
+    /** Make prediction on the input instances */
+    for(Constituent constituent : testData ) {
+      String predicted = POSClassifiers.POSClassifier(constituent);
+      System.out.println(predicted);
+    }
 ```
+
 
 Side note: In order to convert raw text to `Constituent`s, you can use the static method 
 `BasicTextAnnotationBuilder.createTextAnnotationFromTokens(docs)`, where `docs` is an array of `String`s.  
