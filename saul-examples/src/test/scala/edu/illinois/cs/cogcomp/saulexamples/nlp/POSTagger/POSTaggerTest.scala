@@ -90,10 +90,9 @@ class POSTaggerTest extends FlatSpec with Matchers {
     POSDataModel.labelTwoAfter(consOf) should be("NN")
   }
 
-  val toyConstituents = DummyTextAnnotationGenerator.generateBasicTextAnnotation(1).getView(ViewNames.TOKENS)
-  POSDataModel.tokens.populate(toyConstituents, train = false)
-
   "POSBaseline " should " should work. " in {
+    val toyConstituents = DummyTextAnnotationGenerator.generateBasicTextAnnotation(1).getView(ViewNames.TOKENS).getConstituents
+    POSDataModel.tokens.populate(toyConstituents, train = false)
     POSClassifiers.loadModelsFromPackage()
     val baselineLabelMap = Map("To" -> "TO", "or" -> "CC", "not" -> "RB", ";" -> ":",
       "that" -> "IN", "is" -> "VBZ", "question" -> "NN", "." -> ".")
@@ -103,7 +102,22 @@ class POSTaggerTest extends FlatSpec with Matchers {
     } should be(true)
   }
 
+  "POSUnknown " should " should work. " in {
+    val toyConstituents = DummyTextAnnotationGenerator.generateBasicTextAnnotation(1).getView(ViewNames.TOKENS).getConstituents
+    POSDataModel.tokens.populate(toyConstituents, train = false)
+    POSClassifiers.loadModelsFromPackage()
+    val posUnknownLabelMap = Map("or" -> "CC", "not" -> "RB",
+      "that" -> "IN", "is" -> "VBZ", "question" -> "NN")
+    println("toyConstituents.size = " + toyConstituents.size)
+    toyConstituents.forall { cons =>
+      val pred = POSTaggerUnknown.classifier.discreteValue(cons)
+      pred == posUnknownLabelMap.getOrElse(cons.getSurfaceForm, pred)
+    } should be(true)
+  }
+
   "POS combined classifier " should " should work. " in {
+    val toyConstituents = DummyTextAnnotationGenerator.generateBasicTextAnnotation(1).getView(ViewNames.TOKENS).getConstituents
+    POSDataModel.tokens.populate(toyConstituents, train = false)
     POSClassifiers.loadModelsFromPackage()
     val combinedClassifierLabelMap = Map("To" -> "TO", "or" -> "CC", "not" -> "RB", ";" -> ":",
       "is" -> "VBZ", "the" -> "DT", "question" -> "NN", "." -> ".")

@@ -50,7 +50,7 @@ Similarly the dependencies in sbt:
 Here is how you can make calls to the POS tagger in Scala 
 
 ```scala  
-    /** Read your data as collection of `Constituent`s. 
+    /** Read your data as collection of `Constituent`s. */ 
     val testData: List[Constituent] = ....
 
     /** Populate your data in the model */ 
