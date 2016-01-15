@@ -5,6 +5,7 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling
 
 import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.Constituent
+import edu.illinois.cs.cogcomp.saul.evaluation.evaluation
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifiers.{ argumentTypeLearner, argumentXuIdentifierGivenApredicate, predicateClassifier }
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlDataModel._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlSensors._
@@ -43,7 +44,8 @@ object pipelineApp extends App {
     //train and test the argClassifier Given the ground truth Boundaries (i.e. no negative class).
     argumentTypeLearner.setModelDir("models_aTr")
     argumentTypeLearner.learn(100)
-    argumentTypeLearner.test()
+    evaluation.Test(argumentLabelGold, typeArgumentPrediction, relations)
+    // argumentTypeLearner.test()
     argumentTypeLearner.save()
   }
 
@@ -92,7 +94,8 @@ object pipelineApp extends App {
     println("Training argument classifier")
     argumentTypeLearner.learn(100)
     print("argument classifier test results:")
-    argumentTypeLearner.test()
+    evaluation.Test(argumentLabelGold, typeArgumentPrediction, relations)
+    //argumentTypeLearner.test()
     argumentTypeLearner.save()
   }
   if (trainArgType && !useGoldPredicate) {
@@ -100,7 +103,8 @@ object pipelineApp extends App {
     println("Training argument classifier")
     argumentTypeLearner.learn(100)
     print("argument classifier test results:")
-    argumentTypeLearner.test()
+    evaluation.Test(argumentLabelGold, typeArgumentPrediction, relations)
+    //argumentTypeLearner.test()
     argumentTypeLearner.save()
   }
 }

@@ -2,10 +2,11 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling
 
 import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.Constituent
-import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifiers.{ argumentXuIdentifierGivenApredicate, predicateClassifier }
+import edu.illinois.cs.cogcomp.saul.evaluation.evaluation
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlDataModel._
-import edu.illinois.cs.cogcomp.saulexamples.nlp.commonSensors._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlSensors._
+import edu.illinois.cs.cogcomp.saulexamples.nlp.commonSensors._
+
 import scala.collection.JavaConversions._
 /** Created by Parisa on 1/5/16.
   */
@@ -22,11 +23,11 @@ object testSRLModels extends App {
     .filterNot(cand => (predicates() prop address).contains(address(cand)))
 
   predicates.populate(negativePredicateTest, train = false)
-  predicateClassifier.load(
-    modelsPath + ".predicateClassifier1$.lc",
-    modelsPath + ".predicateClassifier1$.lex"
-  )
-  predicateClassifier.test()
+  //  predicateClassifier.load(
+  //    modelsPath + ".predicateClassifier1$.lc",
+  //    modelsPath + ".predicateClassifier1$.lex"
+  //  )
+  //predicateClassifier.test()
 
   val XuPalmerCandidateArgsTesting = predicates.getTestingInstances.flatMap(x => xuPalmerCandidate(x, (sentences(x.getTextAnnotation) ~> sentencesToStringTree).head))
 
@@ -36,11 +37,12 @@ object testSRLModels extends App {
 
   relations.populate(negativePalmerTestCandidates, train = false)
 
-  argumentXuIdentifierGivenApredicate.load(
-    modelsPath + ".argumentXuIdentifierGivenApredicate1$.lc",
-    modelsPath + ".argumentXuIdentifierGivenApredicate1$.lex"
-  )
-  argumentXuIdentifierGivenApredicate.test()
+  //  argumentXuIdentifierGivenApredicate.load(
+  //    modelsPath + ".argumentXuIdentifierGivenApredicate1$.lc",
+  //    modelsPath + ".argumentXuIdentifierGivenApredicate1$.lex"
+  //  )
+  //  argumentXuIdentifierGivenApredicate.test()
+  evaluation.Test(argumentLabelGold, argumentLabelGold, relations)
 
   // moved these from pipe to here
   //    if (trainArgIdWithCandidates || trainArgTypeWithCandidates) {
