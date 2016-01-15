@@ -14,7 +14,7 @@ import edu.illinois.cs.cogcomp.saulexamples.nlp.commonSensors._
 import scala.collection.JavaConversions._
 
 object pipelineApp extends App {
-  
+
   if (args.length > 0)
     println("Run with this parameters:\n -goldPred=true/false -goldBoundary=true/false -TrainPred= true/false" +
       " -TrainIdentifier=true/false -TrainType=true/false")
@@ -29,11 +29,6 @@ object pipelineApp extends App {
   val trainPredicates = optBoolean("-TrainPred=", false)
   val trainArgIdentifier = optBoolean("-TrainIdentifier=", false)
   val trainArgType = optBoolean("-TrainType=", false)
-
-  //  val useGoldArgBoundaries = args(1).asInstanceOf[Boolean]
-  //  val trainPredicates = args(2).asInstanceOf[Boolean]
-  //  val trainArgIdentifier = args(3).asInstanceOf[Boolean]
-  //  val trainArgType = args(4).asInstanceOf[Boolean]
   if (!useGoldPredicate) {
     srlDataModel.sentencesToTokens.addSensor(textAnnotationToTokens _)
   }
