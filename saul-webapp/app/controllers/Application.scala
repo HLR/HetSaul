@@ -1,11 +1,11 @@
 package controllers
 
 import play.api.mvc._
-<<<<<<< HEAD
-import play.api.libs.json.{JsObject,Json,JsValue}
-=======
+
 import play.api.libs.json.{ JsValue, JsObject, Json }
->>>>>>> Refactor compilation code
+import play.api.Logger
+
+>>>>>>> Finish run event and add executor
 import io.Source
 import edu.illinois.cs.cogcomp.saul.datamodel.{ DataModel, dataModelJsonInterface }
 import java.io.File
@@ -15,6 +15,8 @@ import javax.tools._
 import scala.collection.mutable
 import java.net.{URLClassLoader,URL}
 import java.nio.charset.StandardCharsets
+import util.classExecutor
+
 import scala.collection.JavaConverters._
 import java.lang.reflect.Method
 import scala.tools.nsc.{Global, Settings}
@@ -74,6 +76,7 @@ class Application extends Controller {
   }
 
   def runCode = Action(parse.json) { implicit request =>
+
     request.body match {
       case files: JsObject => {
         val fileMap = files.as[Map[String, String]]
@@ -111,7 +114,9 @@ class Application extends Controller {
     }
   }
 
-  private def compile(fileMap: Map[String, String]):Either[Iterable[Any], JsValue] = {
+
+  private def compile(fileMap: Map[String, String]) = {
+
 
     val (javaFiles, scalaFiles) = fileMap partition {
       case (k, _) => k contains ".java"
@@ -133,6 +138,29 @@ class Application extends Controller {
   def parseDataModel(scalaInstances: Iterable[Any]) : JsValue = {
 
     compileScala(scalaFiles)
+  }
+
+
+  private def runMain(scalaInstances: Iterable[Any]): JsValue = {
+
+    val result = scalaInstances find (x => classExecutor.containsMain(x))
+
+    result match {
+
+      case Some(x) => {
+        x match {
+          case ob: Object => {
+            val output = classExecutor.execute(ob.getClass.getName.init, completeClasspath)
+            output match {
+              case Left(s) => Json.toJson(s)
+              case Right(s) => Json.toJson("Error")
+            }
+          }
+          case _ => Json.toJson("Error.")
+        }
+      }
+      case None => Json.toJson("No main method found.")
+    }
   }
 
 
