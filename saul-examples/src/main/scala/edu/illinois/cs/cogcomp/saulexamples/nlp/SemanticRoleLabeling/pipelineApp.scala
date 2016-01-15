@@ -10,22 +10,30 @@ import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifi
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlDataModel._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlSensors._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.commonSensors._
-import scala.io.StdIn._
+
 import scala.collection.JavaConversions._
 
 object pipelineApp extends App {
+  
+  if (args.length > 0)
+    println("Run with this parameters:\n -goldPred=true/false -goldBoundary=true/false -TrainPred= true/false" +
+      " -TrainIdentifier=true/false -TrainType=true/false")
+  def optArg(prefix: String) = args.find { _.startsWith(prefix) }.map { _.replaceFirst(prefix, "") }
+  def optBoolean(prefix: String, default: Boolean) = optArg(prefix).map((x: String) => {
+    if (x.trim == "true")
+      true else false
+  }).getOrElse(default)
 
-  println(" input useGoldPredicate (true/false): ")
-  val useGoldPredicate= readBoolean()
-  println ("input useGoldArgBoundaries (true/false):")
-  val useGoldArgBoundaries = readBoolean()
-  println ("input trainPredicates (true/false):")
-  val trainPredicates = readBoolean()
-  println ("input trainArgIdentifier (true/false):")
-  val trainArgIdentifier = readBoolean()
-  println ("input trainArgType (true/false):")
-  val trainArgType = readBoolean()
+  val useGoldPredicate = optBoolean("-goldPred=", false)
+  val useGoldArgBoundaries = optBoolean("-goldBoundary=", false)
+  val trainPredicates = optBoolean("-TrainPred=", false)
+  val trainArgIdentifier = optBoolean("-TrainIdentifier=", false)
+  val trainArgType = optBoolean("-TrainType=", false)
 
+  //  val useGoldArgBoundaries = args(1).asInstanceOf[Boolean]
+  //  val trainPredicates = args(2).asInstanceOf[Boolean]
+  //  val trainArgIdentifier = args(3).asInstanceOf[Boolean]
+  //  val trainArgType = args(4).asInstanceOf[Boolean]
   if (!useGoldPredicate) {
     srlDataModel.sentencesToTokens.addSensor(textAnnotationToTokens _)
   }
