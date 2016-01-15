@@ -26,7 +26,7 @@ object POSTaggerApp {
 
   def main(args: Array[String]): Unit = {
     /** Choose the experiment you're interested in by changing the following line */
-    val testType = POSExperimentType.TestFromModel
+    val testType = POSExperimentType.TrainAndTest
 
     testType match {
       case POSExperimentType.TrainAndTest => trainAndTest()
@@ -68,14 +68,12 @@ object POSTaggerApp {
     BaselineClassifier.learn(1)
     MikheevClassifier.learn(1)
 
+    /** train the learning models */
     val unknownTrainData = trainData.filter(x => BaselineClassifier.classifier.observedCount(wordForm(x)) <= POSLabeledUnknownWordParser.threshold)
+    POSTaggerKnown.learn(50)
+    POSTaggerUnknown.learn(50, unknownTrainData)
 
-    (0 until 10).foreach(iter => {
-      println(s"Training POS Tagger iteration $iter out of 9")
-      POSTaggerKnown.learn(1)
-      POSTaggerUnknown.learn(1, unknownTrainData)
-    })
-
+    /** test the resulting model */
     testPOSTagger()
 
     // saving all the models
