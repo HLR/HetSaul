@@ -21,24 +21,22 @@ object classExecutor {
 
   //TODO: Add error handling
   def execute(className: String, classPath: String): Either[String, Error] = {
-
-    val cat = Seq("scala", "-cp", classPath, className)
+/*
+    val cmd = Seq("scala", "-cp", classPath, className)
     val buffer = new StringBuilder
-    def byteCounter(input: java.io.InputStream) = {
+    def outputReader(input: java.io.InputStream) = {
       val reader = new BufferedReader(new InputStreamReader(input))
-      /*
-      while(true) {
+      while (true) {
         val line = reader.readLine()
-        if(line eq null) {
+        if (line eq null) {
           input.close()
           break
         } else {
           buffer.append(line)
         }
-      }*/
+      }
     }
-    //cat !! new ProcessIO(_.close(), byteCounter, _.close())
-
+    cmd ! new ProcessIO(_.close(), outputReader, _.close())*/
     Left("Success")
   }
 }
