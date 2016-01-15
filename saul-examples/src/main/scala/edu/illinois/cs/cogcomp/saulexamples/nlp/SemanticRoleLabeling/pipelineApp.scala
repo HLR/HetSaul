@@ -10,17 +10,23 @@ import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifi
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlDataModel._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlSensors._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.commonSensors._
-
+import scala.io.StdIn._
 import scala.collection.JavaConversions._
 
 object pipelineApp extends App {
-  val useGoldPredicate = true
-  val useGoldArgBoundaries = false
-  val trainPredicates = false
-  val trainArgIdentifier = false
-  val trainArgType = true
 
-  if (!useGoldPredicate) {
+  println(" input useGoldPredicate (true/false): ")
+  val useGoldPredicate= readBoolean()
+  println ("input useGoldArgBoundaries (true/false):")
+  val useGoldArgBoundaries = readBoolean()
+  println ("input trainPredicates (true/false):")
+  val trainPredicates = readBoolean()
+  println ("input trainArgIdentifier (true/false):")
+  val trainArgIdentifier = readBoolean()
+  println ("input trainArgType (true/false):")
+  val trainArgType = readBoolean()
+
+  if (!useGoldPredicate.asInstanceOf[Boolean]) {
     srlDataModel.sentencesToTokens.addSensor(textAnnotationToTokens _)
   }
   populateGraphwithGoldSRL(srlDataModel, srlDataModel.sentences)
