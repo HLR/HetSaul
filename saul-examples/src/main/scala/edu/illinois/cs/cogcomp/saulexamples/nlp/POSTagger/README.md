@@ -22,7 +22,6 @@ If you want to use this in your project, you need to take two steps. First add t
 Here is how you can add maven dependencies into your program: 
 
 ```xml
-
     <repositories>
         <repository>
             <id>CogcompSoftware</id>
@@ -44,24 +43,34 @@ Similarly the dependencies in sbt:
 
 ```
   resolvers += "CogcompSoftware" at "http://cogcomp.cs.illinois.edu/m2repo/"
-  libraryDependencies += "edu.illinois.cs.cogcomp" % "saul-examples" % "0.1"
+  libraryDependencies += "edu.illinois.cs.cogcomp" % "saul-examples_2.11" % "0.1"
 ```
 
 Here is how you can make calls to the POS tagger in Scala 
 
 ```scala  
-    /** Read your data as collection of `Constituent`s. */ 
-    val testData: List[Constituent] = ....
+    import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
+    import edu.illinois.cs.cogcomp.core.utilities.DummyTextAnnotationGenerator
+    import edu.illinois.cs.cogcomp.saulexamples.nlp.POSTagger.{POSClassifiers, POSDataModel}
 
-    /** Populate your data in the model */ 
+    import scala.collection.JavaConversions._
+
+    /** Read your data as collection of `Constituent`s. */
+    // Your way of reading data. 
+    val testData = ... 
+    // For example the following, generates dummy constituents: 
+    // DummyTextAnnotationGenerator.generateBasicTextAnnotation(1).getView(ViewNames.TOKENS).getConstituents
+    
+    /** Populate your data in the model */
     POSDataModel.tokens.populate(testData, train = false)
 
-    /** Load the models for the POS classifier */ 
+    /** Load the models for the POS classifier */
     POSClassifiers.loadModelsFromPackage()
 
-    /** Make prediction on the input instances */  
-    toyConstituents.foreach { constituent =>
+    /** Make prediction on the input instances */
+    testData.foreach { constituent =>
       val predicted = POSClassifiers.POSClassifier(constituent)
+      println(predicted)
     }
 ```
 
@@ -70,3 +79,6 @@ And similarly in Java:
 ```java 
   TODO 
 ```
+
+Side note: In order to convert raw text to `Constituent`s, you can use the static method 
+`BasicTextAnnotationBuilder.createTextAnnotationFromTokens(docs)`, where `docs` is an array of `String`s.  
