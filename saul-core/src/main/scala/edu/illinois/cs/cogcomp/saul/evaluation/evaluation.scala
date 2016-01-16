@@ -9,24 +9,24 @@ object evaluation {
 
   def Test[T <: AnyRef](ground_truth: Property[T], actual: Property[T], ds: Node[T]): Unit = {
     val r1 = ds.getTestingInstances
-    def allmeasures(className: String, tp: Double, fp: Double, tn: Double, fn: Double)={
+    def allmeasures(className: String, tp: Double, fp: Double, tn: Double, fn: Double) = {
       println("\n---------------------------------------------------------------------------")
 
       print(s"$className      \t")
-     // print(s" class: $className tp: $tp fp: $fp tn: $tn fn: $fn ")
+      // print(s" class: $className tp: $tp fp: $fp tn: $tn fn: $fn ")
       if ((tp + fp) > 0)
-      print(s"${tp / (tp + fp)} \t")
+        print(s"${tp / (tp + fp)} \t")
       else
-      print(" 1\t")
+        print(" 1\t")
 
       if ((tp + fn) > 0)
-      print(s"${tp / (tp + fn)} \t")
+        print(s"${tp / (tp + fn)} \t")
       else
-      print(" 1\t")
+        print(" 1\t")
       if (2 * tp + fp + fn > 0)
-      print(s"${(2.0 * tp) / (2 * tp + fp + fn)} \t")
+        print(s"${(2.0 * tp) / (2 * tp + fp + fn)} \t")
       else
-      print("   1\t")
+        print("   1\t")
 
       print(s"$tp\t$fp\t$tn\t$fn")
     }
@@ -51,14 +51,14 @@ object evaluation {
 
         val tn = results.count({ case (x, y) => x == y && (x != z) }) * 1.0
         val fn = results.count({ case (x, y) => x != y && (x != z) }) * 1.0
-        allmeasures(z.toString,tp,fp,tn,fn)
-        tp_total=tp_total+tp
-        fn_total=fn_total+fn
-        tn_total=tn_total+tn
-        fp_total=fp_total+fp
+        allmeasures(z.toString, tp, fp, tn, fn)
+        tp_total = tp_total + tp
+        fn_total = fn_total + fn
+        tn_total = tn_total + tn
+        fp_total = fp_total + fp
     }
 
-    allmeasures("Total:", tp_total,fp_total,tn_total,fn_total)
+    allmeasures("Total:", tp_total, fp_total, tn_total, fn_total)
   }
 
 }

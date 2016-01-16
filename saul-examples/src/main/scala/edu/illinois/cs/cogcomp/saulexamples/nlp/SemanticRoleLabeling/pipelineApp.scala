@@ -14,12 +14,21 @@ import edu.illinois.cs.cogcomp.saulexamples.nlp.commonSensors._
 import scala.collection.JavaConversions._
 
 object pipelineApp extends App {
-  val useGoldPredicate = true
-  val useGoldArgBoundaries = false
-  val trainPredicates = false
-  val trainArgIdentifier = false
-  val trainArgType = true
 
+  if (args.length > 0)
+    println("Run with this parameters:\n -goldPred=true/false -goldBoundary=true/false -TrainPred= true/false" +
+      " -TrainIdentifier=true/false -TrainType=true/false")
+  def optArg(prefix: String) = args.find { _.startsWith(prefix) }.map { _.replaceFirst(prefix, "") }
+  def optBoolean(prefix: String, default: Boolean) = optArg(prefix).map((x: String) => {
+    if (x.trim == "true")
+      true else false
+  }).getOrElse(default)
+
+  val useGoldPredicate = optBoolean("-goldPred=", false)
+  val useGoldArgBoundaries = optBoolean("-goldBoundary=", false)
+  val trainPredicates = optBoolean("-TrainPred=", false)
+  val trainArgIdentifier = optBoolean("-TrainIdentifier=", false)
+  val trainArgType = optBoolean("-TrainType=", false)
   if (!useGoldPredicate) {
     srlDataModel.sentencesToTokens.addSensor(textAnnotationToTokens _)
   }
@@ -49,7 +58,7 @@ object pipelineApp extends App {
     argumentTypeLearner.save()
   }
 
-  if (!useGoldArgBoundaries) {
+  if (!useGoldArgBoundaries && !trainPredicates) {
     val XuPalmerCandidateArgsTraining = predicates.getTrainingInstances.flatMap(x => xuPalmerCandidate(x, (sentences(x.getTextAnnotation) ~> sentencesToStringTree).head))
     val XuPalmerCandidateArgsTesting = predicates.getTestingInstances.flatMap(x => xuPalmerCandidate(x, (sentences(x.getTextAnnotation) ~> sentencesToStringTree).head))
 
@@ -95,7 +104,8 @@ object pipelineApp extends App {
     argumentTypeLearner.learn(100)
     print("argument classifier test results:")
     evaluation.Test(argumentLabelGold, typeArgumentPrediction, relations)
-    //argumentTypeLearner.test()
+    println("\n =============================================================")
+    argumentTypeLearner.test()
     argumentTypeLearner.save()
   }
   if (trainArgType && !useGoldPredicate) {
