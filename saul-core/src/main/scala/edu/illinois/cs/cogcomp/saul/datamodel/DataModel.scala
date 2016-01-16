@@ -339,14 +339,15 @@ trait DataModel {
 }
 
 object dataModelJsonInterface {
-  def getJson(dm: DataModel) = {
+
+  import play.api.libs.json._
+
+  def getJson(dm: DataModel): JsValue = {
     val declaredFields = dm.getClass.getDeclaredFields
 
     val nodes = declaredFields.filter(_.getType.getSimpleName == "Node")
     val edges = declaredFields.filter(_.getType.getSimpleName == "Edge")
     val properties = declaredFields.filter(_.getType.getSimpleName.contains("Property")).filterNot(_.getName.contains("$module"))
-
-    import play.api.libs.json._
 
     //get a name-field tuple
     val nodesObjs = nodes.map { n =>
