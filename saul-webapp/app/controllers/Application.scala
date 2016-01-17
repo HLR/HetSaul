@@ -45,27 +45,6 @@ class Application extends Controller {
     Ok(views.html.main("Your new application is ready."))
   }
 
-  def execute(event: Event, request: Request[JsValue]) = {
-    request.body match {
-      case files: JsObject => {
-        val fileMap = files.as[Map[String, String]]
-        val compilationResult = compile(fileMap)
-        compilationResult match {
-          case Left(scalaInstances) => {
-            event match {
-              case DisplayModel() => Ok(displayModel(scalaInstances))
-              case RunMain() => Ok(runMain(scalaInstances))
-              case PopulateData() => Ok(populateModel(scalaInstances))
-            }
-          }
-          case Right(errorMsg) => Ok(errorMsg)
-        }
-      }
-
-      case _ => Ok("Bad json." + request.body)
-    }
-  }
-
   def acceptDisplayModel = Action(parse.json) { implicit request =>
     execute(DisplayModel(), request)
   }
@@ -78,8 +57,46 @@ class Application extends Controller {
     execute(PopulateData(), request)
   }
 
-  private def populateModel(scalaInstances: Iterable[Any]): JsValue = {
-    Json.toJson("Success")
+  private def execute(event: Event, request: Request[JsValue]) = {
+    request.body match {
+      case files: JsObject => {
+        val fileMap = files.as[Map[String, String]]
+        val compilationResult = compile(fileMap)
+        compilationResult match {
+          case Left(scalaInstances) => {
+            event match {
+              case DisplayModel() => Ok(displayModel(scalaInstances))
+              case PopulateData() => Ok(populateModel(scalaInstances, fileMap, compiler))
+              case RunMain() => Ok(runMain(scalaInstances))
+            }
+          }
+          case Right(errorMsg) => Ok(errorMsg)
+        }
+      }
+
+      case _ => Ok("Bad json." + request.body)
+    }
+  }
+
+  private def displayModel(scalaInstances: Iterable[Any]): JsValue = {
+    val result = scalaInstances find (x => x match {
+      case model: DataModel => true
+      case _ => false
+    })
+
+    result match {
+
+      case Some(x) => x match {
+
+        case model: DataModel => dataModelJsonInterface.getJson(model)
+        case _ => Json.toJson("Error")
+      }
+      case _ => Json.toJson("No DataModel found.")
+    }
+  }
+
+  private def populateModel(scalaInstances: Iterable[Any], fileMap: Map[String, String], compiler: Compiler): JsValue = {
+    Eval.eval(scalaInstances, fileMap, compiler)
   }
 
   private def runMain(scalaInstances: Iterable[Any]): JsValue = {
@@ -107,23 +124,6 @@ class Application extends Controller {
 
   def getErrorJson(content: JsValue): JsValue = {
     JsObject(Seq("error" -> content))
-  }
-
-  def displayModel(scalaInstances: Iterable[Any]): JsValue = {
-    val result = scalaInstances find (x => x match {
-      case model: DataModel => true
-      case _ => false
-    })
-
-    result match {
-
-      case Some(x) => x match {
-
-        case model: DataModel => dataModelJsonInterface.getJson(model)
-        case _ => Json.toJson("Error")
-      }
-      case _ => Json.toJson("No DataModel found.")
-    }
   }
 
   private def compile(fileMap: Map[String, String]) = {
