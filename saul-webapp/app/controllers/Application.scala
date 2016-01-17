@@ -1,7 +1,9 @@
 package controllers
 
-import play.api.mvc._
+import controllers.Event._
+import util.reflectUtils._
 
+import play.api.mvc._
 import play.api.libs.json.{ JsValue, JsObject, Json }
 import io.Source
 import edu.illinois.cs.cogcomp.saul.datamodel.{ DataModel, dataModelJsonInterface }
@@ -26,6 +28,8 @@ class Application extends Controller {
 
   //val saulExternalLibs = new File(classPathOfClass("edu.illinois.cs.cogcomp.lbjava.parse.Parser")(0)).getParentFile().getParentFile().getParentFile().getPath()
   //val resolvedSaulExternalLibs = if(saulExternalLibs.endsWith(File.separator)) (saulExternalLibs+"*") else (saulExternalLibs + File.separator + "*")
+  val rootDir = "/tmp"
+  val root: File = new File(rootDir); // On Windows running on C:\, this is C:\java.
   val completeClasspath = (List(
     "scala.tools.nsc.Interpreter",
     "scala.AnyVal",
@@ -34,53 +38,29 @@ class Application extends Controller {
     "edu.illinois.cs.cogcomp.core.datastructures.textannotation.TextAnnotation",
     "edu.illinois.cs.cogcomp.nlp.pipeline.IllinoisPipelineFactory",
     "edu.illinois.cs.cogcomp.curator.CuratorFactory"
-  ).flatMap(x => classPathOfClass(x)) ::: List("/tmp/")).mkString(File.pathSeparator)
-  val re = """package\s(.*)\s""".r
-  val root: File = new File("/tmp"); // On Windows running on C:\, this is C:\java.
+  ).flatMap(x => classPathOfClass(x)) ::: List(rootDir)).mkString(File.pathSeparator)
+
   val rootURL = root.toURI.toURL
   val classLoader = URLClassLoader.newInstance(Array(rootURL), this.getClass().getClassLoader());
-  val method: Method = new URLClassLoader(Array(rootURL)).getClass().getDeclaredMethod("addURL", rootURL.getClass())
-  method.setAccessible(true)
-  method.invoke(ClassLoader.getSystemClassLoader(), rootURL)
-  method.invoke(ClassLoader.getSystemClassLoader(), new File(classPathOfClass("scala.tools.nsc.Interpreter")(0)).toURI.toURL)
-  method.invoke(ClassLoader.getSystemClassLoader(), new File(classPathOfClass("scala.AnyVal")(0)).toURI.toURL)
-  method.invoke(ClassLoader.getSystemClassLoader(), new File(classPathOfClass("edu.illinois.cs.cogcomp.saul.datamodel.DataModel")(0)).toURI.toURL)
-  method.invoke(ClassLoader.getSystemClassLoader(), new File(classPathOfClass("edu.illinois.cs.cogcomp.lbjava.parse.Parser")(0)).getParentFile().getParentFile().getParentFile().toURI.toURL)
 
-  trait MessageCollector {
-    val messages: Seq[List[String]]
-  }
-  class CompilerException(val messages: List[List[String]]) extends Exception(
-    "Compiler exception " + messages.map(_.mkString("\n")).mkString("\n")
-  )
-
-  def addPathToClasspath(file: File) = {
-    method.invoke(ClassLoader.getSystemClassLoader(), file.toURI().toURL());
-
-  }
   def index = Action { implicit request =>
     Ok(views.html.main("Your new application is ready."))
   }
 
-  /** @param request The request containing ths JsValue
-    * @param isRun   Indicate if the code should be run or just display data model
-    */
-  //TODO: make events ADT and get rid of the Boolean
-  def executeCode(request: Request[JsValue], isRun: Boolean) = {
+  def execute(event: Event, request: Request[JsValue]) = {
     request.body match {
       case files: JsObject => {
         val fileMap = files.as[Map[String, String]]
         val compilationResult = compile(fileMap)
         compilationResult match {
           case Left(scalaInstances) => {
-            if (isRun) {
-              Ok(runMain(scalaInstances))
-            } else {
-              Ok(parseDataModel(scalaInstances))
+            event match {
+              case DisplayModel() => Ok(displayModel(scalaInstances))
+              case RunMain() => Ok(runMain(scalaInstances))
+              case PopulateData() => Ok(populateModel(scalaInstances))
             }
           }
           case Right(errorMsg) => Ok(errorMsg)
-
         }
       }
 
@@ -88,12 +68,20 @@ class Application extends Controller {
     }
   }
 
-  def compileCode = Action(parse.json) { implicit request =>
-    executeCode(request, false)
+  def acceptDisplayModel = Action(parse.json) { implicit request =>
+    execute(DisplayModel(), request)
   }
 
-  def runCode = Action(parse.json) { implicit request =>
-    executeCode(request, true)
+  def acceptRunMain = Action(parse.json) { implicit request =>
+    execute(RunMain(), request)
+  }
+
+  def acceptPopulateModel = Action(parse.json) { implicit request =>
+    execute(PopulateData(), request)
+  }
+
+  private def populateModel(scalaInstances: Iterable[Any]): JsValue = {
+    Json.toJson("Success")
   }
 
   private def runMain(scalaInstances: Iterable[Any]): JsValue = {
@@ -123,7 +111,7 @@ class Application extends Controller {
     JsObject(Seq("error" -> content))
   }
 
-  def parseDataModel(scalaInstances: Iterable[Any]): JsValue = {
+  def displayModel(scalaInstances: Iterable[Any]): JsValue = {
     val result = scalaInstances find (x => x match {
       case model: DataModel => true
       case _ => false
@@ -154,36 +142,6 @@ class Application extends Controller {
       case errors: CompilerException => Right(getErrorJson(Json.toJson(errors.messages)))
       case _ => Right(Json.toJson("Unknown exception."))
     }
-  }
-
-  /*
-     *    * For a given FQ classname, trick the resource finder into telling us the containing jar.
-     *
-     *
-     * */
-  private def classPathOfClass(className: String) = {
-    val resource = className.split('.').mkString("/", "/", ".class")
-    val path = getClass.getResource(resource).getPath
-    if (path.indexOf("file:") >= 0) {
-      val indexOfFile = path.indexOf("file:") + 5
-      val indexOfSeparator = path.lastIndexOf('!')
-      List(path.substring(indexOfFile, indexOfSeparator))
-    } else {
-      require(path.endsWith(resource))
-      List(path.substring(0, path.length - resource.length + 1))
-    }
-  }
-
-  def writeCodeToFiles(files: Map[String, String]) = {
-    files map {
-      case (k, v) => {
-        // Save source in .java file.
-        val sourceFile: File = new File(root, "test/" + k);
-        sourceFile.getParentFile().mkdirs();
-        Files.write(sourceFile.toPath(), v.split("\\n").toList.asJava, StandardCharsets.UTF_8);
-        sourceFile.getPath()
-      }
-    } toList
   }
 
   def getScalaCompilerReporter(setting: Settings) = new AbstractReporter with MessageCollector {
@@ -289,25 +247,18 @@ class Application extends Controller {
 
   }
 
-  def cleanUpTmpFolder() = {
-    val file: File = new File("/tmp")
-    cleanUpFolder(file)
-  }
-  def cleanUpFolder(file: File): Array[(String, Boolean)] = {
-    Option(file.listFiles).map(_.flatMap(f => cleanUpFolder(f))).getOrElse(Array()) :+ (file.getPath -> file.delete)
-  }
-
   def getCurrentClasspath() = {
     val getDeclaredMethod: Method = new URLClassLoader(Array(rootURL)).getClass().getDeclaredMethod("getURLs")
     getDeclaredMethod.setAccessible(true);
     val result = getDeclaredMethod.invoke(ClassLoader.getSystemClassLoader()).asInstanceOf[Array[URL]]
     result
   }
+
   def instantiateClass(fileName: String, packageName: String) = {
     // Load and instantiate compiled class.
     val name = fileName.split('.')
     val runtimeMirror = universe.runtimeMirror(classLoader)
-    //val clazz = classLoader.loadClass(packageName + "." + name(0)) 
+    //val clazz = classLoader.loadClass(packageName + "." + name(0))
     //val constructor = clazz.getConstructor()
     //constructor.setAccessible(true)
     //val instance = constructor.newInstance()
@@ -317,10 +268,12 @@ class Application extends Controller {
 
     obj.instance
   }
-  def getCodePackageName(code: String) = {
-    (re findFirstIn code) match {
-      case Some(v) => (v.split(" "))(1).replaceFirst("\\n", "").replaceFirst(";", "")
-      case None => play.api.Logger.error("Could not find package name."); ""
-    }
+
+  trait MessageCollector {
+    val messages: Seq[List[String]]
   }
+  class CompilerException(val messages: List[List[String]]) extends Exception(
+    "Compiler exception " + messages.map(_.mkString("\n")).mkString("\n")
+  )
+
 }
