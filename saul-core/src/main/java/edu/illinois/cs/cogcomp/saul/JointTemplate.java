@@ -8,15 +8,7 @@ import edu.illinois.cs.cogcomp.lbjava.learn.IdentityNormalizer;
 import edu.illinois.cs.cogcomp.lbjava.learn.Learner;
 import edu.illinois.cs.cogcomp.lbjava.learn.Normalizer;
 
-/**
- * Created by haowu on 11/16/14.
- * Email : haowu@haowu.me
- */
 public abstract class JointTemplate<T> extends ILPInference {
-
-
-//    private Class<T> tType;
-//    Class<T> getType(){return tType;}
 
     public JointTemplate() {
 //      System.out.println(" Empty Constructor ");
@@ -24,8 +16,8 @@ public abstract class JointTemplate<T> extends ILPInference {
     public JointTemplate(T head)
     {
 
-        super(head, new OJalgoHook());
-//        super(head, new GurobiHook());
+//        super(head, new OJalgoHook());
+        super(head, new GurobiHook());
 
 //        verbosity = 2;
 //        System.out.println(" NONEmpty Constructor " + head);
