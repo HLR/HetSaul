@@ -113,7 +113,7 @@ object srlConstraints {
                   for (i <- 0 until values.length - 1)
                     a = a &&& ((argumentTypeLearner on t) is values(i)) ==>
                       argCandList._exists {
-                        k: Relation => (argumentTypeLearner on k) is values(0).substring(2)
+                        k: Relation => (argumentTypeLearner on k) is values(i).substring(2)
                       }
                 }
             }
@@ -136,7 +136,7 @@ object srlConstraints {
                   for (i <- 0 until values.length - 1)
                     a = a &&& ((argumentTypeLearner on t) is values(i)) ==>
                       argCandList._exists {
-                        k: Relation => (argumentTypeLearner on k) is values(0).substring(2)
+                        k: Relation => (argumentTypeLearner on k) is values(i).substring(2)
                       }
                 }
             }
@@ -144,5 +144,9 @@ object srlConstraints {
       }
     }
     a
-  } // end r-arg constraint
+  }
+  val r_and_c_args = ConstrainedClassifier.constraintOf[TextAnnotation]{
+    x => r_arg_Constraint(x) &&& c_arg_Constraint(x)
+  }
+  // end r-arg constraint
 } // end srlConstainrs

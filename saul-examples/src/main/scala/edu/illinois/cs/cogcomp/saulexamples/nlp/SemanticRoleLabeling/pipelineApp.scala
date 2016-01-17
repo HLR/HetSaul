@@ -6,7 +6,7 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling
 import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.Constituent
 import edu.illinois.cs.cogcomp.saul.evaluation.evaluation
-import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifiers.{ argumentTypeLearner, argumentXuIdentifierGivenApredicate, predicateClassifier }
+import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifiers.{predicateClassifier, argumentTypeLearner, argumentXuIdentifierGivenApredicate}
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlDataModel._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlSensors._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.commonSensors._
@@ -16,12 +16,11 @@ import scala.collection.JavaConversions._
 object pipelineApp extends App {
 
   if (args.length > 0)
-    println("Run with this parameters:\n -goldPred=true/false -goldBoundary=true/false -TrainPred= true/false" +
+    println("Run with this parameters:\n -goldPred=true/false -goldBoundary=true/false -TrainPred=true/false" +
       " -TrainIdentifier=true/false -TrainType=true/false")
   def optArg(prefix: String) = args.find { _.startsWith(prefix) }.map { _.replaceFirst(prefix, "") }
   def optBoolean(prefix: String, default: Boolean) = optArg(prefix).map((x: String) => {
-    if (x.trim == "true")
-      true else false
+    if (x.trim == "true") true else false
   }).getOrElse(default)
 
   val useGoldPredicate = optBoolean("-goldPred=", false)
@@ -29,10 +28,13 @@ object pipelineApp extends App {
   val trainPredicates = optBoolean("-TrainPred=", false)
   val trainArgIdentifier = optBoolean("-TrainIdentifier=", false)
   val trainArgType = optBoolean("-TrainType=", false)
+
+
+
   if (!useGoldPredicate) {
-    srlDataModel.sentencesToTokens.addSensor(textAnnotationToTokens _)
+    sentencesToTokens.addSensor(textAnnotationToTokens _)
   }
-  populateGraphwithGoldSRL(srlDataModel, srlDataModel.sentences)
+  populateGraphwithGoldSRL(srlDataModel,sentences)
 
   if (!useGoldPredicate) {
     val predicateTrainCandidates = tokens.getTrainingInstances.filter((x: Constituent) => posTag(x).startsWith("VB"))
@@ -49,7 +51,7 @@ object pipelineApp extends App {
     predicates.populate(negativePredicateTest, train = false)
   }
 
-  if (trainArgType && useGoldArgBoundaries) {
+  if (trainArgType && useGoldArgBoundaries && useGoldPredicate) {
     //train and test the argClassifier Given the ground truth Boundaries (i.e. no negative class).
     argumentTypeLearner.setModelDir("models_aTr")
     argumentTypeLearner.learn(100)
@@ -71,15 +73,6 @@ object pipelineApp extends App {
     relations.populate(negativePalmerTestCandidates, train = false)
 
   }
-  println("all relations number after population:" + srlDataModel.relations().size)
-  if (trainPredicates) {
-    predicateClassifier.setModelDir("models_dTr")
-    println("Training predicate identifier")
-    predicateClassifier.learn(100, predicates.trainingSet)
-    predicateClassifier.save()
-    print("isPredicate test results:")
-    predicateClassifier.test(predicates.testingSet)
-  }
 
   if (trainArgIdentifier && useGoldPredicate) {
     argumentXuIdentifierGivenApredicate.setModelDir("models_bTr")
@@ -90,15 +83,7 @@ object pipelineApp extends App {
     argumentXuIdentifierGivenApredicate.save()
   }
 
-  if (trainArgIdentifier && !useGoldPredicate) {
-    argumentXuIdentifierGivenApredicate.setModelDir("models_eTr")
-    println("Training argument identifier")
-    argumentXuIdentifierGivenApredicate.learn(100)
-    print("isArgument test results:")
-    argumentXuIdentifierGivenApredicate.test()
-    argumentXuIdentifierGivenApredicate.save()
-  }
-  if (trainArgType && useGoldPredicate) {
+  if (trainArgType && useGoldPredicate && !useGoldArgBoundaries ) {
     argumentTypeLearner.setModelDir("models_cTr")
     println("Training argument classifier")
     argumentTypeLearner.learn(100)
@@ -108,6 +93,26 @@ object pipelineApp extends App {
     argumentTypeLearner.test()
     argumentTypeLearner.save()
   }
+
+  println("all relations number after population:" + srlDataModel.relations().size)
+  if (trainPredicates && !useGoldPredicate) {
+    predicateClassifier.setModelDir("models_dTr")
+    println("Training predicate identifier")
+    predicateClassifier.learn(100, predicates.trainingSet)
+    predicateClassifier.save()
+    print("isPredicate test results:")
+    predicateClassifier.test(predicates.testingSet)
+  }
+
+  if (trainArgIdentifier && !useGoldPredicate) {
+    argumentXuIdentifierGivenApredicate.setModelDir("models_eTr")
+    println("Training argument identifier")
+    argumentXuIdentifierGivenApredicate.learn(100)
+    print("isArgument test results:")
+    argumentXuIdentifierGivenApredicate.test()
+    argumentXuIdentifierGivenApredicate.save()
+  }
+
   if (trainArgType && !useGoldPredicate) {
     argumentTypeLearner.setModelDir("models_fTr")
     println("Training argument classifier")
