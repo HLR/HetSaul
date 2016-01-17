@@ -22,6 +22,8 @@
         <script src="@routes.Assets.versioned("javascripts/ace/mode-java.js")" type="text/javascript" charset="utf-8"></script>
         <script src="@routes.Assets.versioned("javascripts/ace/theme-twilight.js")" type="text/javascript" charset="utf-8"></script>
         <script src="@routes.Assets.versioned("javascripts/sigma.min.js")" type="text/javascript" charset="utf-8"></script>
+        <script src="@routes.Assets.versioned("javascripts/jquery-1.12.0.min.js")" type="text/javascript" charset="utf-8"></script>
+
     </head>
     <body>
         <div class="page-header">
@@ -65,14 +67,34 @@
                 </div>
             </div>
 
-            <div class="panel-body" style="float : right ;width: 50%">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">Data Model Graph</h3>
+            <div class="tabs">
+                <ul class="tab-links">
+                    <li class="active"><a href="#tab1">Data Model</a></li>
+                    <li><a href="#tab2">Populated Data Model</a></li>
+                    <li><a href="#tab3">Running Result</a></li>
+                </ul>
+
+                <div class="tab-content">
+                    <div id="tab1" class="tab active">
+                        <div class="panel panel-default">
+                            <div class="panel-body" id="graphParent" style="height: 350px; text-align: center">
+                                <div id="graphContainer"></div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="panel-body" id="graphParent" style="height: 335px; text-align: center">
-                        <div id="graphContainer"></div>
+
+                    <div id="tab2" class="tab">
+
                     </div>
+
+                    <div id="tab3" class="tab">
+                        <div class="panel panel-default">
+                            <div class="panel-body" id="graphParent" style="height: 350px; text-align: center">
+                                <div id="graphContainer"></div>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>
