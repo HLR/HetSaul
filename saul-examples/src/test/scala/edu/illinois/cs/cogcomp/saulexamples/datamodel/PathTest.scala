@@ -47,7 +47,7 @@ class PathTest extends FlatSpec with Matchers {
     pathAB.map(_._1) should be(Seq("a" -> "b", "b" -> "c"))
   }
 
-  "finding two hop path with limitation" should "return should return the path" in {
+  "finding two hop path with limitation of 1" should "return nothing" in {
     import TestGraph._
 
     val pathAB = Path.findPath("a", n, "c", maxLength = 1)
@@ -55,4 +55,11 @@ class PathTest extends FlatSpec with Matchers {
     pathAB.map(_._1) should be(Seq.empty)
   }
 
+  "finding two hop path with limitation of 2" should "return the path" in {
+    import TestGraph._
+
+    val pathAB = Path.findPath("a", n, "c", maxLength = 2)
+    //    println("Path: " + pathAB.map(_._1).mkString(", "))
+    pathAB.map(_._1) should be(Seq("a" -> "b", "b" -> "c"))
+  }
 }
