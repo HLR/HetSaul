@@ -58,10 +58,9 @@ class QuantifierWrapper[T](val coll: Seq[T]) {
     coll.map(p).foldLeft[FirstOrderConstraint](__result)(makeConjunction)
   }
 
-  /** transfer the constraint to a constant,
-    * TODO: I'm worried about its performance, because otherwise(at most 10 will be O(n^10) thing to evaluate)
-    * One reason is that we use conjunction and disjunction in forall and exist
-    */
+  /** transfer the constraint to a constant */
+  // TODO: I'm worried about its performance, because otherwise(at most 10 will be O(n^10) thing to evaluate)
+  // One reason is that we use conjunction and disjunction in forall and exist
   def _atmost(n: Int)(p: T => FirstOrderConstraint): FirstOrderConstraint = {
     if (coll.count(p.andThen(_.evaluate())) <= n) {
       new FirstOrderConstant(true)
@@ -70,25 +69,23 @@ class QuantifierWrapper[T](val coll: Seq[T]) {
     }
   }
 
-  /** transfer the constraint to a constant,
-    * I'm worried about ths performance, because otherwise(at most 10 will be O(n^10) thing to evaluate)
-    * One reason is we use conjunction and disjunction in forall and exist
-    */
+  /** transfer the constraint to a constant */
   def _atleast(n: Int)(p: T => FirstOrderConstraint): FirstOrderConstraint = {
-    if (coll.count(p.andThen(_.evaluate())) >= n) {
+    val toBeCounted = p.andThen(a => a.evaluate())
+    val coun = coll.count(toBeCounted)
+    if (coun >= n) {
       new FirstOrderConstant(true)
     } else {
       new FirstOrderConstant(false)
     }
   }
-
 }
 
 class FirstOrderConstraints(val r: FirstOrderConstraint) {
 
-  def ==>(other: FirstOrderConstraint) = implies(other)
+  def ==>(other: FirstOrderConstraint) = new FirstOrderImplication(this.r, other)
 
-  def implies(other: FirstOrderConstraint) = new FirstOrderImplication(this.r, other)
+  //def implies(other: FirstOrderConstraint) = new FirstOrderImplication(this.r, other)
 
   def <==>(other: FirstOrderConstraint) = new FirstOrderDoubleImplication(this.r, other)
 
