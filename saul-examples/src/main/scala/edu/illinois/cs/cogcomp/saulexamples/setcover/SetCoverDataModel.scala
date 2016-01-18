@@ -16,7 +16,7 @@ object SetCoverSolverDataModel extends DataModel {
   val neighborhoods = node[Neighborhood]
 
   val cityContainsNeighborhoods = edge(cities, neighborhoods)
-
+  
   cityContainsNeighborhoods.populateWith((c, n) => c == n.getParentCity)
 
   /** definition of the constraints */
