@@ -24,7 +24,7 @@ import scala.collection.JavaConversions._
   */
 object populatemultiGraphwithSRLData {
 
-  def apply[T <: AnyRef](testOnly: Boolean = false, useGoldPredicate: Boolean = true, useGoldArgBoundaries: Boolean = true): List[srlMultiGraph] = {
+  def apply[T <: AnyRef](testOnly: Boolean = false, useGoldPredicate: Boolean = false, useGoldArgBoundaries: Boolean = false): List[srlMultiGraph] = {
 
     val logger: Logger = LoggerFactory.getLogger(this.getClass)
     val rm = new ExamplesConfigurator().getDefaultConfig
@@ -89,7 +89,7 @@ object populatemultiGraphwithSRLData {
     }
 
     val trainingFromSection = 2
-    val trainingToSection = 2
+    val trainingToSection = 21
 
     if (!testOnly) {
       logger.info("Reading training data from sections {} to {}", trainingFromSection, trainingToSection)
@@ -104,9 +104,9 @@ object populatemultiGraphwithSRLData {
       printNumbers(trainReader, "training")
       logger.info("Populating SRLDataModel with training data.")
 
-      (filteredTa.slice(0, 20)).foreach(a =>
+      (filteredTa).foreach(a =>
         {
-          val gr = new srlMultiGraph(parseViewName, frameManager)
+          var gr = new srlMultiGraph(parseViewName, frameManager)
           if (!useGoldPredicate) {
             gr.sentencesToTokens.addSensor(textAnnotationToTokens _)
             gr.sentences.populate(Seq(a))
@@ -117,12 +117,15 @@ object populatemultiGraphwithSRLData {
             gr.predicates.populate(negativePredicateTrain)
           } else
             gr.sentences.populate(Seq(a))
+         // println("gold relations for this train:" +gr.relations().size)
           if (!useGoldArgBoundaries) {
             val XuPalmerCandidateArgsTraining = gr.predicates.getTrainingInstances.flatMap(x => xuPalmerCandidate(x, (gr.sentences(x.getTextAnnotation) ~> gr.sentencesToStringTree).head))
-            val a = gr.relations() ~> gr.relationsToArguments prop gr.address
-            val negativePalmerTrainCandidates = XuPalmerCandidateArgsTraining.filterNot(cand => a.contains(gr.address(cand.getTarget)))
+            val ad = gr.relations() ~> gr.relationsToArguments prop gr.address
+            gr.sentencesToRelations.addSensor(textAnnotationToRelationMatch _)
+            val negativePalmerTrainCandidates = XuPalmerCandidateArgsTraining.filterNot(cand => ad.contains(gr.address(cand.getTarget)))
             gr.relations.populate(negativePalmerTrainCandidates)
           }
+         // println("all relations for this test:" +gr.relations().size)
           graphs = gr :: graphs
         })
       //x.populate(filteredTa)
@@ -147,9 +150,9 @@ object populatemultiGraphwithSRLData {
     printNumbers(testReader, "test")
 
     logger.info("Populating SRLDataModel with test data.")
-    (filteredTest.slice(0, 20)).foreach(a =>
+    (filteredTest).foreach(a =>
       {
-        val gr = new srlMultiGraph(parseViewName, frameManager)
+        var gr = new srlMultiGraph(parseViewName, frameManager)
         if (!useGoldPredicate) {
           gr.sentencesToTokens.addSensor(textAnnotationToTokens _)
           gr.sentences.populate(Seq(a), train = false)
@@ -160,12 +163,15 @@ object populatemultiGraphwithSRLData {
           gr.predicates.populate(negativePredicateTest, train = false)
         } else
           gr.sentences.populate(Seq(a), train = false)
+       // println("gold relations for this test:" +gr.relations().size)
         if (!useGoldArgBoundaries) {
           val XuPalmerCandidateArgsTesting = gr.predicates.getTestingInstances.flatMap(x => xuPalmerCandidate(x, (gr.sentences(x.getTextAnnotation) ~> gr.sentencesToStringTree).head))
-          val a = gr.relations() ~> gr.relationsToArguments prop gr.address
-          val negativePalmerTestCandidates = XuPalmerCandidateArgsTesting.filterNot(cand => a.contains(gr.address(cand.getTarget)))
+          val ad = gr.relations() ~> gr.relationsToArguments prop gr.address
+          gr.sentencesToRelations.addSensor(textAnnotationToRelationMatch _)
+          val negativePalmerTestCandidates = XuPalmerCandidateArgsTesting.filterNot(cand => ad.contains(gr.address(cand.getTarget)))
           gr.relations.populate(negativePalmerTestCandidates, train = false)
         }
+      //  println("all relations for this test:" +gr.relations().size)
         graphs = gr :: graphs
       })
     //x.populate(filteredTest, train = false)

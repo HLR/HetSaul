@@ -1,9 +1,9 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling
 
-import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{Relation, TextAnnotation}
+import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{ Relation, TextAnnotation }
 import edu.illinois.cs.cogcomp.saul.classifier.ConstrainedClassifier
 import edu.illinois.cs.cogcomp.saul.constraint.ConstraintTypeConversion._
-import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifiers.{argumentTypeLearner, argumentXuIdentifierGivenApredicate}
+import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifiers.{ argumentTypeLearner, argumentXuIdentifierGivenApredicate }
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlConstraints._
 /** Created by Parisa on 12/27/15.
   */

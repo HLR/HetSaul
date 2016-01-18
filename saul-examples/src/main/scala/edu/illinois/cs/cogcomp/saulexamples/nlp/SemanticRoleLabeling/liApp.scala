@@ -13,13 +13,13 @@ import scala.collection.JavaConversions._
   */
 object liApp extends App {
 
-  val aTr_lc="modelsRepeating/models_aTr/edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifiers.argumentTypeLearner$.lc"
-  val aTr_lex="modelsRepeating/models_aTr/edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifiers.argumentTypeLearner$.lex"
+  val aTr_lc = "modelsRepeating/models_aTr/edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifiers.argumentTypeLearner$.lc"
+  val aTr_lex = "modelsRepeating/models_aTr/edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifiers.argumentTypeLearner$.lex"
 
-  val useGoldPredicate= false
+  val useGoldPredicate = false
 
   srlDataModel.sentencesToTokens.addSensor(textAnnotationToTokens _)
-  populateGraphwithGoldSRL(srlDataModel, srlDataModel.sentences,testOnly = true)
+  populateGraphwithGoldSRL(srlDataModel, srlDataModel.sentences, testOnly = true)
   if (!useGoldPredicate) {
     val predicateTrainCandidates = tokens.getTrainingInstances.filter((x: Constituent) => posTag(x).startsWith("VB"))
       .map(c => c.cloneForNewView(ViewNames.SRL_VERB))
@@ -47,19 +47,19 @@ object liApp extends App {
 
   //Load independently trained models
 
-//  arg_Is_TypeConstraintClassifier.test()
+  //  arg_Is_TypeConstraintClassifier.test()
 
   print("argument identifier L+I model (join with classifciation) test results:")
 
- // arg_IdentifyConstraintClassifier.test()
+  // arg_IdentifyConstraintClassifier.test()
 
   print("argument classifier L+I model (join with classifciation) test results:")
 
- // arg_Is_TypeConstraintClassifier.test()
+  // arg_Is_TypeConstraintClassifier.test()
 
   print("argument classifier L+I model considering background knowledge  test results:")
 
-  argumentTypeLearner.load(aTr_lc,aTr_lex)
+  argumentTypeLearner.load(aTr_lc, aTr_lex)
 
   argTypeConstraintClassifier.test()
 

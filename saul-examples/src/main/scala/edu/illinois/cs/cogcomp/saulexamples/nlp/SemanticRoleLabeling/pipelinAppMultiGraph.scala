@@ -21,7 +21,7 @@ object pipelineAppMultiGraph extends App {
   val useGoldArgBoundaries = optBoolean("-goldBoundary=", false)
   val trainPredicates = optBoolean("-TrainPred=", false)
   val trainArgIdentifier = optBoolean("-TrainIdentifier=", false)
-  val trainArgType = optBoolean("-TrainType=", false)
+  val trainArgType = optBoolean("-TrainType=", true)
 
   var srlGraphs: List[srlMultiGraph] = populatemultiGraphwithSRLData(useGoldPredicate, useGoldArgBoundaries)
   logger.info("population finished.")
@@ -29,6 +29,7 @@ object pipelineAppMultiGraph extends App {
   println(srlGraphs.map(x => x.relations().size).sum)
   print(srlGraphs.map(x => (x.relations() ~> x.relationsToArguments).size).sum)
   logger.info("population finished")
+
   if (trainArgType && useGoldArgBoundaries && useGoldPredicate) {
     //train and test the argClassifier Given the ground truth Boundaries (i.e. no negative class).
     argumentTypeLearner.setModelDir("models_aTr")
@@ -80,10 +81,11 @@ object pipelineAppMultiGraph extends App {
   if (trainArgType && !useGoldPredicate) {
     argumentTypeLearner.setModelDir("models_fTr")
     println("Training argument classifier")
-    argumentTypeLearner.learn(100)
+    argumentTypeLearner.learn(11, srlGraphs.flatMap(x => x.relations.trainingSet))
     print("argument classifier test results:")
-    //  evaluation.Test(argumentLabelGold, typeArgumentPrediction, relations)
-    //argumentTypeLearner.test()
+    evaluation.Test(srlGraphs.head.argumentLabelGold, srlGraphs.head.typeArgumentPrediction,srlGraphs.flatMap(x => x.relations.testingSet))
+    println("\n =============================================================")
+    argumentTypeLearner.test(srlGraphs.flatMap(x => x.relations.testingSet))
     argumentTypeLearner.save()
   }
 }

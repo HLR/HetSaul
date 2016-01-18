@@ -145,7 +145,7 @@ object srlConstraints {
     }
     a
   }
-  val r_and_c_args = ConstrainedClassifier.constraintOf[TextAnnotation]{
+  val r_and_c_args = ConstrainedClassifier.constraintOf[TextAnnotation] {
     x => r_arg_Constraint(x) &&& c_arg_Constraint(x)
   }
   // end r-arg constraint
