@@ -1,5 +1,5 @@
 
-val cogcompNLPVersion = "3.0.14"
+val cogcompNLPVersion = "3.0.16"
 val cogcompPipelineVersion = "0.1.15"
 
 
