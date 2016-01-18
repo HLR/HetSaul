@@ -11,13 +11,14 @@ lazy val commonSettings = Seq(
   scalaVersion := "2.11.7",
   resolvers ++= Seq(
     Resolver.mavenLocal,
-    "CogcompSoftware" at "http://cogcomp.cs.illinois.edu/m2repo/"
+    "CogcompSoftware" at "http://cogcomp.cs.illinois.edu/m2repo/",
+    "Local Maven Repository" at "file:///shared/shelley/khashab2/.m2/"
   ),
   libraryDependencies ++= Seq(
     "edu.illinois.cs.cogcomp" % "illinois-core-utilities" % cogcompNLPVersion withSources,
     "com.gurobi" % "gurobi" % "6.0",
 //    "org.ojalgo" % "ojalgo" % "37.1.1",
-    "edu.illinois.cs.cogcomp" % "LBJava" % "1.2.4",
+    "edu.illinois.cs.cogcomp" % "LBJava" % "1.2.5",
     "org.apache.commons" % "commons-math3" % "3.0",
     "org.scalatest" % "scalatest_2.11" % "2.2.4"
   ),

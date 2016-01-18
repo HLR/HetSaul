@@ -1,6 +1,6 @@
 package edu.illinois.cs.cogcomp.saul.datamodel
 
-import edu.illinois.cs.cogcomp.lbjava.infer.OJalgoHook
+/*import edu.illinois.cs.cogcomp.lbjava.infer.OJalgoHook
 import org.scalatest.{ FlatSpec, Matchers }
 
 class OJAlgoHookTest extends FlatSpec with Matchers {
@@ -24,3 +24,4 @@ class OJAlgoHookTest extends FlatSpec with Matchers {
     ojaHook.getBooleanValue(1) should be(true)
   }
 }
+*/
