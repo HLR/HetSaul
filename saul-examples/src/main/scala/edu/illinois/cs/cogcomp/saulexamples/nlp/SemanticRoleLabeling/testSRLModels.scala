@@ -42,7 +42,7 @@ object testSRLModels extends App {
   //    modelsPath + ".argumentXuIdentifierGivenApredicate1$.lex"
   //  )
   //  argumentXuIdentifierGivenApredicate.test()
-  evaluation.Test(argumentLabelGold, argumentLabelGold, relations)
+  evaluation.Test(argumentLabelGold, argumentLabelGold, relations.getTestingInstances)
 
   // moved these from pipe to here
   //    if (trainArgIdWithCandidates || trainArgTypeWithCandidates) {

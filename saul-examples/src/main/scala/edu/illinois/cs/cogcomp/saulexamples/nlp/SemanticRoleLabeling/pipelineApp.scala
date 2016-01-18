@@ -6,15 +6,16 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling
 import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.Constituent
 import edu.illinois.cs.cogcomp.saul.evaluation.evaluation
-import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifiers.{predicateClassifier, argumentTypeLearner, argumentXuIdentifierGivenApredicate}
+import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifiers.{ predicateClassifier, argumentTypeLearner, argumentXuIdentifierGivenApredicate }
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlDataModel._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlSensors._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.commonSensors._
+import org.slf4j.{ LoggerFactory, Logger }
 
 import scala.collection.JavaConversions._
 
 object pipelineApp extends App {
-
+  val logger: Logger = LoggerFactory.getLogger(this.getClass)
   if (args.length > 0)
     println("Run with this parameters:\n -goldPred=true/false -goldBoundary=true/false -TrainPred=true/false" +
       " -TrainIdentifier=true/false -TrainType=true/false")
@@ -29,13 +30,10 @@ object pipelineApp extends App {
   val trainArgIdentifier = optBoolean("-TrainIdentifier=", false)
   val trainArgType = optBoolean("-TrainType=", false)
 
-
-
   if (!useGoldPredicate) {
     sentencesToTokens.addSensor(textAnnotationToTokens _)
   }
-  populateGraphwithGoldSRL(srlDataModel,sentences)
-
+  populateGraphwithGoldSRL(srlDataModel, sentences)
   if (!useGoldPredicate) {
     val predicateTrainCandidates = tokens.getTrainingInstances.filter((x: Constituent) => posTag(x).startsWith("VB"))
       .map(c => c.cloneForNewView(ViewNames.SRL_VERB))
@@ -51,27 +49,29 @@ object pipelineApp extends App {
     predicates.populate(negativePredicateTest, train = false)
   }
 
-  if (trainArgType && useGoldArgBoundaries && useGoldPredicate) {
-    //train and test the argClassifier Given the ground truth Boundaries (i.e. no negative class).
-    argumentTypeLearner.setModelDir("models_aTr")
-    argumentTypeLearner.learn(100)
-    evaluation.Test(argumentLabelGold, typeArgumentPrediction, relations)
-    // argumentTypeLearner.test()
-    argumentTypeLearner.save()
-  }
-
   if (!useGoldArgBoundaries && !trainPredicates) {
     val XuPalmerCandidateArgsTraining = predicates.getTrainingInstances.flatMap(x => xuPalmerCandidate(x, (sentences(x.getTextAnnotation) ~> sentencesToStringTree).head))
     val XuPalmerCandidateArgsTesting = predicates.getTestingInstances.flatMap(x => xuPalmerCandidate(x, (sentences(x.getTextAnnotation) ~> sentencesToStringTree).head))
 
     val a = relations() ~> relationsToArguments prop address
-
+    // sentencesToRelations.addSensor(textAnnotationToRelationMatch _)
     val negativePalmerTestCandidates = XuPalmerCandidateArgsTesting.filterNot(cand => a.contains(address(cand.getTarget)))
     val negativePalmerTrainCandidates = XuPalmerCandidateArgsTraining.filterNot(cand => a.contains(address(cand.getTarget)))
-
     relations.populate(negativePalmerTrainCandidates)
     relations.populate(negativePalmerTestCandidates, train = false)
 
+  }
+  println((sentences() ~> sentencesToRelations).size)
+  println(relations().size)
+  print((relations() ~> relationsToArguments).size)
+  logger.info("population finished")
+  if (trainArgType && useGoldArgBoundaries && useGoldPredicate) {
+    //train and test the argClassifier Given the ground truth Boundaries (i.e. no negative class).
+    argumentTypeLearner.setModelDir("models_aTr")
+    argumentTypeLearner.learn(100)
+    evaluation.Test(argumentLabelGold, typeArgumentPrediction, relations.getTestingInstances)
+    // argumentTypeLearner.test()
+    argumentTypeLearner.save()
   }
 
   if (trainArgIdentifier && useGoldPredicate) {
@@ -83,12 +83,12 @@ object pipelineApp extends App {
     argumentXuIdentifierGivenApredicate.save()
   }
 
-  if (trainArgType && useGoldPredicate && !useGoldArgBoundaries ) {
+  if (trainArgType && useGoldPredicate && !useGoldArgBoundaries) {
     argumentTypeLearner.setModelDir("models_cTr")
     println("Training argument classifier")
     argumentTypeLearner.learn(100)
     print("argument classifier test results:")
-    evaluation.Test(argumentLabelGold, typeArgumentPrediction, relations)
+    evaluation.Test(argumentLabelGold, typeArgumentPrediction, relations.getTestingInstances)
     println("\n =============================================================")
     argumentTypeLearner.test()
     argumentTypeLearner.save()
@@ -118,7 +118,7 @@ object pipelineApp extends App {
     println("Training argument classifier")
     argumentTypeLearner.learn(100)
     print("argument classifier test results:")
-    evaluation.Test(argumentLabelGold, typeArgumentPrediction, relations)
+    evaluation.Test(argumentLabelGold, typeArgumentPrediction, relations.getTestingInstances)
     //argumentTypeLearner.test()
     argumentTypeLearner.save()
   }
