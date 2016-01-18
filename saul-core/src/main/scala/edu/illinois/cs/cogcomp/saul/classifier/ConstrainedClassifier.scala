@@ -122,7 +122,6 @@ abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val dm: DataMo
     buildWithConstraint(inferenceCondition, onClassifier)(t)
   }
 
-
   def lbjClassifier = dm.property[T](dm.getNodeWithType[T], className)("*", "*") {
     x: T => buildWithConstraint(subjectTo.createInferenceCondition[T](this.dm).convertToType[T], onClassifier)(x)
   }
