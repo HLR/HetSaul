@@ -18,7 +18,7 @@ public abstract class JointTemplate<T> extends ILPInference {
     {
 
         //super(head, new OJalgoHook());
-        //super(head, new GurobiHook());
+        super(head, new GurobiHook());
 
 //        verbosity = 2;
 //        System.out.println(" NONEmpty Constructor " + head);

@@ -89,7 +89,7 @@ abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val dm: DataMo
         var inference = InferenceManager.get(name, head)
         if (inference == null) {
           inference = infer(head)
-          if(log)
+          if (log)
             println("Inference is NULL " + name)
           InferenceManager.put(name, inference)
         }
