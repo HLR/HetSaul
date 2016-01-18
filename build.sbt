@@ -5,7 +5,7 @@ val cogcompPipelineVersion = "0.1.15"
 
 lazy val root = (project in file(".")).
   aggregate(saulCore, saulExamples)
-
+ forcegc := false
 //
 lazy val commonSettings = Seq(
   organization := "edu.illinois.cs.cogcomp",
