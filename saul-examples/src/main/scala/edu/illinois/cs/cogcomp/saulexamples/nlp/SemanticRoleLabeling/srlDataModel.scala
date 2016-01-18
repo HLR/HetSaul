@@ -50,7 +50,6 @@ object srlDataModel extends DataModel {
   val relationsToArguments = edge(relations, arguments)
 
   sentencesToRelations.addSensor(textAnnotationToRelation _)
-  sentencesToRelations.addSensor(textAnnotationToRelationMatch _)
   relationsToArguments.addSensor(relToArgument _)
   relationsToPredicates.addSensor(relToPredicate _)
   sentencesToStringTree.addSensor(textAnnotationToStringTree _)

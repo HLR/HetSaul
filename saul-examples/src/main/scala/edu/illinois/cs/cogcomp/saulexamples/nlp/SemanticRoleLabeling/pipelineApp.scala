@@ -28,13 +28,14 @@ object pipelineApp extends App {
   val useGoldArgBoundaries = optBoolean("-goldBoundary=", false)
   val trainPredicates = optBoolean("-TrainPred=", false)
   val trainArgIdentifier = optBoolean("-TrainIdentifier=", false)
-  val trainArgType = optBoolean("-TrainType=", false)
+  val trainArgType = optBoolean("-TrainType=", true)
 
   if (!useGoldPredicate) {
     sentencesToTokens.addSensor(textAnnotationToTokens _)
   }
   populateGraphwithGoldSRL(srlDataModel, sentences)
   if (!useGoldPredicate) {
+
     val predicateTrainCandidates = tokens.getTrainingInstances.filter((x: Constituent) => posTag(x).startsWith("VB"))
       .map(c => c.cloneForNewView(ViewNames.SRL_VERB))
     val predicateTestCandidates = tokens.getTestingInstances.filter((x: Constituent) => posTag(x).startsWith("VB"))
@@ -44,8 +45,9 @@ object pipelineApp extends App {
       .filterNot(cand => (predicates() prop address).contains(address(cand)))
     val negativePredicateTest = predicates(predicateTestCandidates)
       .filterNot(cand => (predicates() prop address).contains(address(cand)))
-
+    logger.info("Populate the negative training predicate ...")
     predicates.populate(negativePredicateTrain)
+    logger.info("Populate the negative testing predicate ...")
     predicates.populate(negativePredicateTest, train = false)
   }
 
@@ -54,17 +56,18 @@ object pipelineApp extends App {
     val XuPalmerCandidateArgsTesting = predicates.getTestingInstances.flatMap(x => xuPalmerCandidate(x, (sentences(x.getTextAnnotation) ~> sentencesToStringTree).head))
 
     val a = relations() ~> relationsToArguments prop address
-    // sentencesToRelations.addSensor(textAnnotationToRelationMatch _)
+    sentencesToRelations.addSensor(textAnnotationToRelationMatch _)
     val negativePalmerTestCandidates = XuPalmerCandidateArgsTesting.filterNot(cand => a.contains(address(cand.getTarget)))
     val negativePalmerTrainCandidates = XuPalmerCandidateArgsTraining.filterNot(cand => a.contains(address(cand.getTarget)))
+    logger.info("Populate the negative training arguments...")
     relations.populate(negativePalmerTrainCandidates)
+    logger.info("Populate the negative testing arguments...")
     relations.populate(negativePalmerTestCandidates, train = false)
-
   }
-  println((sentences() ~> sentencesToRelations).size)
+  logger.info(""+(sentences() ~> sentencesToRelations).size)
   println(relations().size)
   print((relations() ~> relationsToArguments).size)
-  logger.info("population finished")
+  logger.info("population finished.")
   if (trainArgType && useGoldArgBoundaries && useGoldPredicate) {
     //train and test the argClassifier Given the ground truth Boundaries (i.e. no negative class).
     argumentTypeLearner.setModelDir("models_aTr")
