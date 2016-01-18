@@ -117,7 +117,7 @@ object populatemultiGraphwithSRLData {
             gr.predicates.populate(negativePredicateTrain)
           } else
             gr.sentences.populate(Seq(a))
-         // println("gold relations for this train:" +gr.relations().size)
+          // println("gold relations for this train:" +gr.relations().size)
           if (!useGoldArgBoundaries) {
             val XuPalmerCandidateArgsTraining = gr.predicates.getTrainingInstances.flatMap(x => xuPalmerCandidate(x, (gr.sentences(x.getTextAnnotation) ~> gr.sentencesToStringTree).head))
             val ad = gr.relations() ~> gr.relationsToArguments prop gr.address
@@ -125,7 +125,7 @@ object populatemultiGraphwithSRLData {
             val negativePalmerTrainCandidates = XuPalmerCandidateArgsTraining.filterNot(cand => ad.contains(gr.address(cand.getTarget)))
             gr.relations.populate(negativePalmerTrainCandidates)
           }
-         // println("all relations for this test:" +gr.relations().size)
+          // println("all relations for this test:" +gr.relations().size)
           graphs = gr :: graphs
         })
       //x.populate(filteredTa)
@@ -163,7 +163,7 @@ object populatemultiGraphwithSRLData {
           gr.predicates.populate(negativePredicateTest, train = false)
         } else
           gr.sentences.populate(Seq(a), train = false)
-       // println("gold relations for this test:" +gr.relations().size)
+        // println("gold relations for this test:" +gr.relations().size)
         if (!useGoldArgBoundaries) {
           val XuPalmerCandidateArgsTesting = gr.predicates.getTestingInstances.flatMap(x => xuPalmerCandidate(x, (gr.sentences(x.getTextAnnotation) ~> gr.sentencesToStringTree).head))
           val ad = gr.relations() ~> gr.relationsToArguments prop gr.address
@@ -171,7 +171,7 @@ object populatemultiGraphwithSRLData {
           val negativePalmerTestCandidates = XuPalmerCandidateArgsTesting.filterNot(cand => ad.contains(gr.address(cand.getTarget)))
           gr.relations.populate(negativePalmerTestCandidates, train = false)
         }
-      //  println("all relations for this test:" +gr.relations().size)
+        //  println("all relations for this test:" +gr.relations().size)
         graphs = gr :: graphs
       })
     //x.populate(filteredTest, train = false)
