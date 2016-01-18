@@ -1,12 +1,7 @@
 package edu.illinois.cs.cogcomp.saulexamples.setcover
 
-import java.io.PrintStream
-
-import edu.illinois.cs.cogcomp.lbjava.classify.{ DiscretePrimitiveStringFeature, ScoreSet, FeatureVector }
-import edu.illinois.cs.cogcomp.lbjava.learn.Learner
 import edu.illinois.cs.cogcomp.saul.classifier.ConstrainedClassifier
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
-
 import edu.illinois.cs.cogcomp.saul.constraint.ConstraintTypeConversion._
 
 object SetCoverSolverDataModel extends DataModel {
@@ -23,7 +18,7 @@ object SetCoverSolverDataModel extends DataModel {
   val containStation = new ContainsStation()
 
   def atLeastANeighborOfNeighborhoodIsCovered = { n: Neighborhood =>
-    n.getNeighbors._exists { neighbor: Neighborhood => containStation on neighbor isTrue }
+    n.getNeighbors._atleast(1) { neighbor: Neighborhood => containStation on neighbor isTrue }
   }
 
   def neighborhoodContainsStation = { n: Neighborhood =>
