@@ -112,4 +112,14 @@ final class Compiler(rootDir: String, completeClasspath: String, reporterCallbac
     obj.instance
   }
 
+  def executeWithoutLog(file: Any) : Unit = {
+    //val cls : Class[_] = Class.forName(className,true,classLoader)
+    val cls = file.getClass()
+    cls.getMethods().find(x=>x.getName eq "main") match{
+      case Some(x) => x.invoke(file, null)
+      case _=>
+    }
+
+  }
+
 }

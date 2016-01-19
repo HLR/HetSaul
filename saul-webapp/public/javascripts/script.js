@@ -152,7 +152,7 @@ var updateCode = function(event){
     if (event == 0) {
         rURL = '/compileCode';
     } else if (event == 1) {
-        rURL = '/populateData'
+        rURL = '/populate'
     } else {
         rURL = '/runCode';
     }
