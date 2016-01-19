@@ -38,31 +38,25 @@ object ConstraintTypeConversion {
   implicit def scalaCollToMyQuantifierWrapper[T](coll: Seq[T]): QuantifierWrapper[T] = {
     new QuantifierWrapper[T](coll)
   }
-
 }
 
+// TODO: one should be able to replace fold with reduce and remove ___result; right?
 class QuantifierWrapper[T](val coll: Seq[T]) {
   def _exists(p: T => FirstOrderConstraint): FirstOrderConstraint = {
     val __result: FirstOrderConstraint = new FirstOrderConstant(false)
-    def makeDisjunction(c1: FirstOrderConstraint, c2: FirstOrderConstraint): FirstOrderConstraint = {
-      new FirstOrderDisjunction(c1, c2)
-    }
-    coll.map(p).foldLeft[FirstOrderConstraint](__result)(makeDisjunction)
+    coll.map(p).foldLeft[FirstOrderConstraint](__result)(new FirstOrderDisjunction(_, _))
   }
 
   def _forall(p: T => FirstOrderConstraint): FirstOrderConstraint = {
     val __result: FirstOrderConstraint = new FirstOrderConstant(true)
-    def makeConjunction(c1: FirstOrderConstraint, c2: FirstOrderConstraint): FirstOrderConstraint = {
-      new FirstOrderConjunction(c1, c2)
-    }
-    coll.map(p).foldLeft[FirstOrderConstraint](__result)(makeConjunction)
+    coll.map(p).foldLeft[FirstOrderConstraint](__result)(new FirstOrderConjunction(_, _))
   }
 
   /** transfer the constraint to a constant */
   // TODO: I'm worried about its performance, because otherwise(at most 10 will be O(n^10) thing to evaluate)
   // One reason is that we use conjunction and disjunction in forall and exist
   def _atmost(n: Int)(p: T => FirstOrderConstraint): FirstOrderConstraint = {
-    if (coll.count(p.andThen(_.evaluate())) <= n) {
+    if (coll.map(p).count(_.evaluate()) <= n) {
       new FirstOrderConstant(true)
     } else {
       new FirstOrderConstant(false)
@@ -71,9 +65,7 @@ class QuantifierWrapper[T](val coll: Seq[T]) {
 
   /** transfer the constraint to a constant */
   def _atleast(n: Int)(p: T => FirstOrderConstraint): FirstOrderConstraint = {
-    val toBeCounted = p.andThen(a => a.evaluate())
-    val coun = coll.count(toBeCounted)
-    if (coun >= n) {
+    if (coll.map(p).count(_.evaluate()) >= n) {
       new FirstOrderConstant(true)
     } else {
       new FirstOrderConstant(false)
@@ -85,21 +77,11 @@ class FirstOrderConstraints(val r: FirstOrderConstraint) {
 
   def ==>(other: FirstOrderConstraint) = new FirstOrderImplication(this.r, other)
 
-  //def implies(other: FirstOrderConstraint) = new FirstOrderImplication(this.r, other)
-
   def <==>(other: FirstOrderConstraint) = new FirstOrderDoubleImplication(this.r, other)
-
-  //  def iff(other: FirstOrderConstraint) = new FirstOrderDoubleImplication(this.r, other)
-
-  //  def unary_! = new FirstOrderNegation(this.r)
 
   def not = new FirstOrderNegation(this.r)
 
-  //  def &&&(other: FirstOrderConstraint) = and(other)
-
   def and(other: FirstOrderConstraint) = new FirstOrderConjunction(this.r, other)
-
-  //  def |||(other: FirstOrderConstraint) = or(other)
 
   def or(other: FirstOrderConstraint) = new FirstOrderDisjunction(this.r, other)
 
@@ -115,12 +97,13 @@ class LHSFirstOrderEqualityWithValueLBP(cls: Learner, t: AnyRef) {
   def is(v: String): FirstOrderConstraint = {
     new FirstOrderEqualityWithValue(true, lbjRepr, v)
   }
-  def is(v: LHSFirstOrderEqualityWithValueLBP): FirstOrderConstraint = { //not sure if this works correctly
+
+  //TODO: not sure if this works correctly. Make sure it works.
+  def is(v: LHSFirstOrderEqualityWithValueLBP): FirstOrderConstraint = {
     new FirstOrderEqualityWithVariable(true, lbjRepr, v.lbjRepr)
   }
 
   def isTrue: FirstOrderConstraint = is("true")
 
   def isNotTrue: FirstOrderConstraint = is("false")
-
 }

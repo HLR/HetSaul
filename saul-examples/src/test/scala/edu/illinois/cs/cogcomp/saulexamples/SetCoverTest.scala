@@ -8,7 +8,7 @@ class SetCoverTest extends FlatSpec with Matchers {
 
   "SetCover " should " be solved correctly for example.txt " in {
     SetCoverSolverDataModel.clearInstances
-    val citiesInstance = new City("./data/SetCover/example.txt")
+    val citiesInstance = new City("saul-examples/src/main/resources/SetCover/example.txt")
     val neighborhoodInstances = citiesInstance.getNeighborhoods.toList
 
     SetCoverSolverDataModel.cities populate List(citiesInstance)
@@ -28,7 +28,7 @@ class SetCoverTest extends FlatSpec with Matchers {
 
   "SetCover " should " be solved correctly for example2.txt " in {
     SetCoverSolverDataModel.clearInstances
-    val citiesInstance = new City("./data/SetCover/example2.txt")
+    val citiesInstance = new City("saul-examples/src/main/resources/SetCover/example2.txt")
     val neighborhoodInstances = citiesInstance.getNeighborhoods.toList
 
     SetCoverSolverDataModel.cities populate List(citiesInstance)
@@ -41,5 +41,21 @@ class SetCoverTest extends FlatSpec with Matchers {
     citiesInstance.getNeighborhoods.forall { n =>
       containsStationConstraint.classifier.discreteValue(n) == neighborhoodLabels(n.getNumber).toString
     } should be(true)
-   }
+  }
+
+  "SetCover " should " be solved correctly for example3.txt " in {
+    SetCoverSolverDataModel.clearInstances
+    val citiesInstance = new City("saul-examples/src/main/resources/SetCover/example3.txt")
+    val neighborhoodInstances = citiesInstance.getNeighborhoods.toList
+
+    SetCoverSolverDataModel.cities populate List(citiesInstance)
+    SetCoverSolverDataModel.neighborhoods populate neighborhoodInstances
+    SetCoverSolverDataModel.cityContainsNeighborhoods.populateWith(_ == _.getParentCity)
+
+    val neighborhoodLabels = Map(1 -> false, 2 -> false, 3 -> true)
+
+    citiesInstance.getNeighborhoods.forall { n =>
+      containsStationConstraint.classifier.discreteValue(n) == neighborhoodLabels(n.getNumber).toString
+    } should be(true)
+  }
 }

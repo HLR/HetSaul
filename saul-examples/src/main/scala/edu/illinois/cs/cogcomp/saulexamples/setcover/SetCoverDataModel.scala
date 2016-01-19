@@ -18,7 +18,7 @@ object SetCoverSolverDataModel extends DataModel {
   val containStation = new ContainsStation()
 
   def atLeastANeighborOfNeighborhoodIsCovered = { n: Neighborhood =>
-    n.getNeighbors._atleast(1) { neighbor: Neighborhood => containStation on neighbor isTrue }
+    n.getNeighbors._exists { neighbor: Neighborhood => containStation on neighbor isTrue }
   }
 
   def neighborhoodContainsStation = { n: Neighborhood =>

@@ -3,7 +3,7 @@ package edu.illinois.cs.cogcomp.saulexamples.setcover
 import scala.collection.JavaConversions._
 
 object SetCoverApp {
-  val cityInstances = new City("./data/SetCover/example2.txt")
+  val cityInstances = new City("saul-examples/src/main/resources/SetCover/example.txt")
   val neighborhoodInstances = cityInstances.getNeighborhoods.toList
 
   def main(args: Array[String]) {

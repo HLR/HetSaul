@@ -8,8 +8,6 @@ import edu.illinois.cs.cogcomp.saul.constraint.LfsConstraint
 
 import scala.reflect.ClassTag
 
-/** Created by haowu on 1/29/15.
-  */
 abstract class InferenceCondition[INPUT <: AnyRef, HEAD <: AnyRef](val dm: DataModel)(
   implicit
   val inputTag: ClassTag[INPUT],

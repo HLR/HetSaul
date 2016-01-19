@@ -16,7 +16,6 @@ public abstract class JointTemplate<T> extends ILPInference {
 
     public JointTemplate(T head)
     {
-
         super(head, new OJalgoHook());
         //super(head, new GurobiHook());
 
