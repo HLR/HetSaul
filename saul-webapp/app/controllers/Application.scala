@@ -24,6 +24,7 @@ object Application {
   val completeClasspath = (List(
     "scala.tools.nsc.Interpreter",
     "scala.AnyVal",
+    "edu.illinois.cs.cogcomp.saulexamples.nlp.EmailSpam.SpamApp",
     "edu.illinois.cs.cogcomp.saul.datamodel.DataModel",
     "edu.illinois.cs.cogcomp.lbjava.parse.Parser",
     "edu.illinois.cs.cogcomp.core.datastructures.textannotation.TextAnnotation",
@@ -88,7 +89,7 @@ class Application extends Controller {
 
       case Some(x) => x match {
 
-        case model: DataModel => dataModelJsonInterface.getJson(model)
+        case model: DataModel => dataModelJsonInterface.getSchemaJson(model)
         case _ => Json.toJson("Error")
       }
       case _ => Json.toJson("No DataModel found.")
@@ -96,7 +97,23 @@ class Application extends Controller {
   }
 
   private def populateModel(scalaInstances: Iterable[Any], fileMap: Map[String, String], compiler: Compiler): JsValue = {
-    Eval.eval(scalaInstances, fileMap, compiler)
+    scalaInstances find (x => classExecutor.containsMain(x)) match{
+      case Some(x) =>{
+        compiler.executeWithoutLog(x)
+        scalaInstances find (x => x match {
+          case model: DataModel => true
+          case _ => false
+        }) match{
+          case Some(x) => x match{
+            case model: DataModel => dataModelJsonInterface.getPopulatedInstancesJson(model)
+            case _=> Json.toJson("Error")
+          }
+          case _ => Json.toJson("No DataModel found.")
+        }
+      }
+      case _ => Json.toJson("No main method found.")
+    }
+    //Eval.eval(scalaInstances, fileMap, compiler)
   }
 
   private def runMain(scalaInstances: Iterable[Any]): JsValue = {

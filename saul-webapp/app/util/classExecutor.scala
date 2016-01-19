@@ -36,4 +36,5 @@ object classExecutor {
     val status = cmd ! outputLogger
     (outBuffer.toString(), errBuffer.toString(), status)
   }
+
 }
