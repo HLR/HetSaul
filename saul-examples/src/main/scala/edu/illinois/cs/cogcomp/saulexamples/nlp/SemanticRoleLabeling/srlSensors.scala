@@ -74,7 +74,7 @@ object srlSensors {
   }
 
   def fexFeatureExtractor(x: Constituent, fex: FeatureExtractor): String = {
-    FeatureUtilities.getFeatureSet(fex, x).mkString(",")
+    FeatureUtilities.getFeatureSet(fex, x).mkString
   }
 
   def fexContextFeats(x: Constituent, featureExtractor: WordFeatureExtractor): String = {

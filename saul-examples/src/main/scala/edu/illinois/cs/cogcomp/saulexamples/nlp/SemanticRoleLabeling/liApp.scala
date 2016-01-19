@@ -7,41 +7,45 @@ import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlConstrai
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlDataModel._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlSensors._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.commonSensors._
+import org.slf4j.{ Logger, LoggerFactory }
 
 import scala.collection.JavaConversions._
 /** Created by Parisa on 12/27/15.
   */
 object liApp extends App {
 
+  val logger: Logger = LoggerFactory.getLogger(this.getClass)
   val aTr_lc = "modelsRepeating/models_aTr/edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifiers.argumentTypeLearner$.lc"
   val aTr_lex = "modelsRepeating/models_aTr/edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifiers.argumentTypeLearner$.lex"
 
-  val useGoldPredicate = false
+  val useGoldPredicate = true
+  val useGoldBoundaries = true
 
+  logger.info("Add the token generation sensor to the graph..")
   srlDataModel.sentencesToTokens.addSensor(textAnnotationToTokens _)
+  logger.info("populate the gold srl data...")
   populateGraphwithGoldSRL(srlDataModel, srlDataModel.sentences, testOnly = true)
   if (!useGoldPredicate) {
-    val predicateTrainCandidates = tokens.getTrainingInstances.filter((x: Constituent) => posTag(x).startsWith("VB"))
-      .map(c => c.cloneForNewView(ViewNames.SRL_VERB))
+
     val predicateTestCandidates = tokens.getTestingInstances.filter((x: Constituent) => posTag(x).startsWith("VB"))
       .map(c => c.cloneForNewView(ViewNames.SRL_VERB))
 
-    val negativePredicateTrain = predicates(predicateTrainCandidates)
-      .filterNot(cand => (predicates() prop address).contains(address(cand)))
     val negativePredicateTest = predicates(predicateTestCandidates)
       .filterNot(cand => (predicates() prop address).contains(address(cand)))
-
-    predicates.populate(negativePredicateTrain)
+    logger.info("populate the negative predicates ...")
     predicates.populate(negativePredicateTest, train = false)
   }
-  val XuPalmerCandidateArgsTesting = predicates.getTestingInstances.flatMap(x => xuPalmerCandidate(x, (sentences(x.getTextAnnotation) ~> sentencesToStringTree).head))
+  logger.info("populate the negative arguments:")
+  if (!useGoldBoundaries) {
+    val XuPalmerCandidateArgsTesting = predicates.getTestingInstances.flatMap(x => xuPalmerCandidate(x, (sentences(x.getTextAnnotation) ~> sentencesToStringTree).head))
 
-  val a = relations() ~> relationsToArguments prop address
-  val b = relations() ~> relationsToPredicates prop address
+    val a = relations() ~> relationsToArguments prop address
+    val b = relations() ~> relationsToPredicates prop address
 
-  val negativePalmerTestCandidates = XuPalmerCandidateArgsTesting.filterNot(cand => a.contains(address(cand.getTarget)) && b.contains(address(cand.getSource)))
+    val negativePalmerTestCandidates = XuPalmerCandidateArgsTesting.filterNot(cand => a.contains(address(cand.getTarget)) && b.contains(address(cand.getSource)))
 
-  relations.populate(negativePalmerTestCandidates, train = false)
+    relations.populate(negativePalmerTestCandidates, train = false)
+  }
 
   println("all relations number after population:" + srlDataModel.relations().size)
 
@@ -49,19 +53,21 @@ object liApp extends App {
 
   //  arg_Is_TypeConstraintClassifier.test()
 
-  print("argument identifier L+I model (join with classifciation) test results:")
+  // print("argument identifier L+I model (join with classifciation) test results:")
 
   // arg_IdentifyConstraintClassifier.test()
 
-  print("argument classifier L+I model (join with classifciation) test results:")
+  // print("argument classifier L+I model (join with classifciation) test results:")
 
   // arg_Is_TypeConstraintClassifier.test()
 
   print("argument classifier L+I model considering background knowledge  test results:")
 
   argumentTypeLearner.load(aTr_lc, aTr_lex)
+  argumentTypeLearner.test()
 
   argTypeConstraintClassifier.test()
+  logger.info("finished!")
 
   //TODO add more variations with combination of constraints
 }

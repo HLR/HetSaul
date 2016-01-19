@@ -127,7 +127,7 @@ object populatemultiGraphwithSRLData {
           }
           // println("all relations for this test:" +gr.relations().size)
           graphs = gr :: graphs
-          if (graphs.size % 1000 == 0) logger.info("loaded graphs in memory:"+ graphs.size)
+          if (graphs.size % 1000 == 0) logger.info("loaded graphs in memory:" + graphs.size)
         })
       //x.populate(filteredTa)
       logger.info("Number of SRLDataModel sentences: {}", graphs.map(x => x.sentences().size).sum)
