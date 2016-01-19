@@ -138,24 +138,27 @@ var getAllFiles = function(){
     
 }
 
-/**
- * @param {boolean} isRun indicates if the code should be run after compilation
- */
 var updateCode = function(event){
+
+    //jsRoutes.controllers.Application.updateCode($("#code1").text()).ajax(callback);
+    var rURL;
+    var onSuccess;
+    if (event == 0) {
+        rURL = '/compileCode';
+        onSuccess = onCompileSuccess;
+    } else if (event == 1) {
+        rURL = '/populate'
+        onSuccess = onPopulateSuccess;
+    } else {
+        rURL = '/runCode';
+        onSuccess = onRunSuccess;
+    }
+
     var callback = {
         success : onSuccess,
         error : onError
     }
-    
-    //jsRoutes.controllers.Application.updateCode($("#code1").text()).ajax(callback);
-    var rURL;
-    if (event == 0) {
-        rURL = '/compileCode';
-    } else if (event == 1) {
-        rURL = '/populate'
-    } else {
-        rURL = '/runCode';
-    }
+
     $.ajax({
         type : 'POST',
         url : rURL,
@@ -169,9 +172,9 @@ var updateCode = function(event){
         });
 };
 
-var generateSchemaGraphFromJson = function(data){
-    $('#graphContainer').remove(); 
-    $('#graphParent').html('<div id="graphContainer"></div>');
+var generateSchemaGraphFromJson = function(data, event){
+    $('#graphContainer').remove();
+    $('#graphParent' + event).html('<div id="graphContainer"></div>');
     var s = new sigma('graphContainer');
     var nodeId = 0;
     var nodeDict = {};
@@ -229,21 +232,24 @@ var generateSchemaGraphFromJson = function(data){
 jQuery(document).ready(function() {
     jQuery('.tabs .tab-links a').on('click', function(e)  {
         var currentAttrValue = jQuery(this).attr('href');
-
-        // Show/Hide Tabs
-        jQuery('.tabs ' + currentAttrValue).show().siblings().hide();
-
-        // Change/remove current tab to active
-        jQuery(this).parent('li').addClass('active').siblings().removeClass('active');
-
+        changeTab(currentAttrValue)
         e.preventDefault();
     });
 });
 
-var onSuccess = function(data){
+var changeTab = function(currentAttrValue) {
+
+    // Show/Hide Tabs
+    jQuery('.tabs ' + currentAttrValue).show().siblings().hide();
+
+    // Change/remove current tab to active
+    jQuery(this).parent('li').addClass('active').siblings().removeClass('active');
+
+}
+
+var alertError = function(data) {
     alert(JSON.stringify(data));
     if(data['error']){
-
         var message = "";
         for(var index in data['error']){
             for(var index2 in data['error'][index]){
@@ -255,8 +261,24 @@ var onSuccess = function(data){
     }else{
         $("#errors").hide();
     }
-    generateSchemaGraphFromJson(data);
 }
+
+var onCompileSuccess = function(data){
+    alertError(data);
+    changeTab("#tab1")
+    generateSchemaGraphFromJson(data, 1);
+}
+
+var onPopulateSuccess = function(data) {
+    alertError(data);
+    changeTab("#tab2")
+    generateSchemaGraphFromJson(data, 2);
+}
+
+var onRunSuccess = function(data) {
+    alertError(data);
+}
+
 var onError = function(data){
     alert("error"+data);
 }
