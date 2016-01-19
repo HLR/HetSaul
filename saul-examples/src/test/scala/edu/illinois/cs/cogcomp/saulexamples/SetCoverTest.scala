@@ -52,7 +52,7 @@ class SetCoverTest extends FlatSpec with Matchers {
     SetCoverSolverDataModel.neighborhoods populate neighborhoodInstances
     SetCoverSolverDataModel.cityContainsNeighborhoods.populateWith(_ == _.getParentCity)
 
-    val neighborhoodLabels = Map(1 -> false, 2 -> false, 3 -> true)
+    val neighborhoodLabels = Map(1 -> true, 2 -> false, 3 -> false)
 
     citiesInstance.getNeighborhoods.forall { n =>
       containsStationConstraint.classifier.discreteValue(n) == neighborhoodLabels(n.getNumber).toString
