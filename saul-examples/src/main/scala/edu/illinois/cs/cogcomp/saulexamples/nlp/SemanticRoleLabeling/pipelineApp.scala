@@ -15,20 +15,30 @@ import scala.collection.JavaConversions._
 
 object pipelineApp extends App {
 
-  if (args.length > 0)
-    println("Run with this parameters:\n -goldPred=true/false -goldBoundary=true/false -TrainPred= true/false" +
+  if (args.length == 0) {
+    println("Usage parameters:\n -goldPred=true/false -goldBoundary=true/false -TrainPred= true/false" +
       " -TrainIdentifier=true/false -TrainType=true/false")
+    sys.exit()
+  }
   def optArg(prefix: String) = args.find { _.startsWith(prefix) }.map { _.replaceFirst(prefix, "") }
   def optBoolean(prefix: String, default: Boolean) = optArg(prefix).map((x: String) => {
     if (x.trim == "true")
       true else false
   }).getOrElse(default)
 
-  val useGoldPredicate = optBoolean("-goldPred=", false)
-  val useGoldArgBoundaries = optBoolean("-goldBoundary=", false)
-  val trainPredicates = optBoolean("-TrainPred=", false)
-  val trainArgIdentifier = optBoolean("-TrainIdentifier=", false)
-  val trainArgType = optBoolean("-TrainType=", false)
+  val useGoldPredicate = optBoolean("-goldPred=", default = false)
+  val useGoldArgBoundaries = optBoolean("-goldBoundary=", default = false)
+  val trainPredicates = optBoolean("-TrainPred=", default = false)
+  val trainArgIdentifier = optBoolean("-TrainIdentifier=", default = false)
+  val trainArgType = optBoolean("-TrainType=", default = false)
+
+  println("Using the following parameters:" +
+    "\n\tgoldPred: " + useGoldPredicate +
+    "\n\tgoldBoundary: " + useGoldArgBoundaries +
+    "\n\tTrainPred: " + trainPredicates +
+    "\n\tTrainIdentifier: " + trainArgIdentifier +
+    "\n\tTrainType: " + trainArgType)
+
   if (!useGoldPredicate) {
     srlDataModel.sentencesToTokens.addSensor(textAnnotationToTokens _)
   }
@@ -54,7 +64,6 @@ object pipelineApp extends App {
     argumentTypeLearner.setModelDir("models_aTr")
     argumentTypeLearner.learn(100)
     evaluation.Test(argumentLabelGold, typeArgumentPrediction, relations)
-    // argumentTypeLearner.test()
     argumentTypeLearner.save()
   }
 
@@ -69,9 +78,9 @@ object pipelineApp extends App {
 
     relations.populate(negativePalmerTrainCandidates)
     relations.populate(negativePalmerTestCandidates, train = false)
-
   }
   println("all relations number after population:" + srlDataModel.relations().size)
+
   if (trainPredicates) {
     predicateClassifier.setModelDir("models_dTr")
     println("Training predicate identifier")
@@ -81,8 +90,9 @@ object pipelineApp extends App {
     predicateClassifier.test(predicates.testingSet)
   }
 
-  if (trainArgIdentifier && useGoldPredicate) {
-    argumentXuIdentifierGivenApredicate.setModelDir("models_bTr")
+  if (trainArgIdentifier) {
+    if (useGoldPredicate) argumentXuIdentifierGivenApredicate.setModelDir("models_bTr")
+    else argumentXuIdentifierGivenApredicate.setModelDir("models_eTr")
     println("Training argument identifier")
     argumentXuIdentifierGivenApredicate.learn(100)
     print("isArgument test results:")
@@ -90,31 +100,13 @@ object pipelineApp extends App {
     argumentXuIdentifierGivenApredicate.save()
   }
 
-  if (trainArgIdentifier && !useGoldPredicate) {
-    argumentXuIdentifierGivenApredicate.setModelDir("models_eTr")
-    println("Training argument identifier")
-    argumentXuIdentifierGivenApredicate.learn(100)
-    print("isArgument test results:")
-    argumentXuIdentifierGivenApredicate.test()
-    argumentXuIdentifierGivenApredicate.save()
-  }
-  if (trainArgType && useGoldPredicate) {
-    argumentTypeLearner.setModelDir("models_cTr")
+  if (trainArgType) {
+    if (useGoldPredicate) argumentTypeLearner.setModelDir("models_cTr")
+    else argumentTypeLearner.setModelDir("models_fTr")
     println("Training argument classifier")
     argumentTypeLearner.learn(100)
     print("argument classifier test results:")
     evaluation.Test(argumentLabelGold, typeArgumentPrediction, relations)
-    println("\n =============================================================")
-    argumentTypeLearner.test()
-    argumentTypeLearner.save()
-  }
-  if (trainArgType && !useGoldPredicate) {
-    argumentTypeLearner.setModelDir("models_fTr")
-    println("Training argument classifier")
-    argumentTypeLearner.learn(100)
-    print("argument classifier test results:")
-    evaluation.Test(argumentLabelGold, typeArgumentPrediction, relations)
-    //argumentTypeLearner.test()
     argumentTypeLearner.save()
   }
 }
