@@ -341,7 +341,7 @@ trait DataModel {
 object dataModelJsonInterface {
 
   import play.api.libs.json._
-  def getPopulatedInstancesJson(dm: DataModel) : JsValue = {
+  def getPopulatedInstancesJson(dm: DataModel): JsValue = {
 
     val declaredFields = dm.getClass.getDeclaredFields
     val nodes = declaredFields.filter(_.getType.getSimpleName == "Node")
@@ -363,40 +363,41 @@ object dataModelJsonInterface {
       }
     }
 
-    var edgesJson = List[(String,String)]()
+    var edgesJson = List[(String, String)]()
 
-    for ((name,edge) <- edgesObjs){
-     for((start,ends) <- edge.asInstanceOf[Edge[_, _]].forward.index){
+    for ((name, edge) <- edgesObjs) {
+      for ((start, ends) <- edge.asInstanceOf[Edge[_, _]].forward.index) {
 
-      for (end <- ends){
-        edgesJson = (start.toString,end.toString) :: edgesJson
+        for (end <- ends) {
+          edgesJson = (start.toString, end.toString) :: edgesJson
+        }
       }
-     }
     }
 
-    val nodesJson = nodesObjs.map{ case (name,node)=>
-      (name,node.asInstanceOf[Node[_]].getAllInstances.map(x=>x.toString).toArray)
+    val nodesJson = nodesObjs.map {
+      case (name, node) =>
+        (name, node.asInstanceOf[Node[_]].getAllInstances.map(x => x.toString).toArray)
     } toMap
 
-    var propertiesJson = List[(String,String)]()
+    var propertiesJson = List[(String, String)]()
 
-    for(p <- properties){
+    for (p <- properties) {
       p.setAccessible(true)
       val propertyObj = p.get(dm).asInstanceOf[NodeProperty[AnyRef]]
       nodesObjs.find { case (_, x) => x == propertyObj.node } match {
-            case Some((nodeName, node)) => {
-              propertiesJson = node.asInstanceOf[Node[_]].getAllInstances.map(x=>x.toString).toList.zip(node.asInstanceOf[Node[AnyRef]].getAllInstances.map(x =>propertyObj.apply(x).toString).toList) ::: propertiesJson
-              
-            }
+        case Some((nodeName, node)) => {
+          propertiesJson = node.asInstanceOf[Node[_]].getAllInstances.map(x => x.toString).toList.zip(node.asInstanceOf[Node[AnyRef]].getAllInstances.map(x => propertyObj.apply(x).toString).toList) ::: propertiesJson
 
-          }
-      
+        }
+
+      }
+
     }
     println(propertiesJson)
     JsObject(Seq(
-      "nodes"-> Json.toJson(nodesJson),
-    "edges" -> Json.toJson(edgesJson.groupBy(_._1).map { case (k,v) => (k,v.map(_._2))}),
-    "properties" -> Json.toJson(propertiesJson.toMap)
+      "nodes" -> Json.toJson(nodesJson),
+      "edges" -> Json.toJson(edgesJson.groupBy(_._1).map { case (k, v) => (k, v.map(_._2)) }),
+      "properties" -> Json.toJson(propertiesJson.toMap)
     ))
   }
   def getSchemaJson(dm: DataModel): JsValue = {
