@@ -392,7 +392,7 @@ object dataModelJsonInterface {
       }
 
     }
-    println(propertiesJson)
+
     JsObject(Seq(
       "nodes" -> Json.toJson(nodesJson),
       "edges" -> Json.toJson(edgesJson.groupBy(_._1).map { case (k, v) => (k, v.map(_._2)) }),

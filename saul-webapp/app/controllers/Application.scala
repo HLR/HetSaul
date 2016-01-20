@@ -97,16 +97,16 @@ class Application extends Controller {
   }
 
   private def populateModel(scalaInstances: Iterable[Any], fileMap: Map[String, String], compiler: Compiler): JsValue = {
-    scalaInstances find (x => classExecutor.containsMain(x)) match{
-      case Some(x) =>{
+    scalaInstances find (x => classExecutor.containsMain(x)) match {
+      case Some(x) => {
         compiler.executeWithoutLog(x)
         scalaInstances find (x => x match {
           case model: DataModel => true
           case _ => false
-        }) match{
-          case Some(x) => x match{
+        }) match {
+          case Some(x) => x match {
             case model: DataModel => dataModelJsonInterface.getPopulatedInstancesJson(model)
-            case _=> Json.toJson("Error")
+            case _ => Json.toJson("Error")
           }
           case _ => Json.toJson("No DataModel found.")
         }
