@@ -98,12 +98,8 @@ object srlDataModel extends DataModel {
     x: Constituent => fexFeatureExtractor(x, new ParsePath(parseViewName))
   }
 
-  val subcategorizationRelation = property(relations, "subcat") {
-    x: Relation => fexFeatureExtractor(x.getTarget, new SubcategorizationFrame(parseViewName))
-  }
-
   val phraseTypeRelation = property(relations, "phraseType") {
-    x: Relation => fexFeatureExtractor(x.getTarget, new ParsePhraseType(parseViewName))
+    x: Relation => fexFeatureExtractor(x.getTarget, new ParsePhraseTypeOnly(parseViewName))
   }
 
   val headwordRelation = property(relations, "head") {
