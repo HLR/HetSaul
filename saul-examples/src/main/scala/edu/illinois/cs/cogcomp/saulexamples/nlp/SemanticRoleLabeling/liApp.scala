@@ -6,7 +6,7 @@ import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifi
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlDataModel._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlSensors._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.commonSensors._
-import org.slf4j.{Logger, LoggerFactory}
+import org.slf4j.{ Logger, LoggerFactory }
 
 import scala.collection.JavaConversions._
 /** Created by Parisa on 12/27/15.
@@ -64,7 +64,7 @@ object liApp extends App {
 
   argumentTypeLearner.load(aTr_lc, aTr_lex)
 
-//  argTypeConstraintClassifier.test()
+  //  argTypeConstraintClassifier.test()
   argumentTypeLearner.test()
   logger.info("finished!")
 
