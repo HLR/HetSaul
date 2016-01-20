@@ -3,11 +3,10 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling
 import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.Constituent
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifiers.argumentTypeLearner
-import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlConstraintClassifiers.argTypeConstraintClassifier
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlDataModel._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlSensors._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.commonSensors._
-import org.slf4j.{ Logger, LoggerFactory }
+import org.slf4j.{Logger, LoggerFactory}
 
 import scala.collection.JavaConversions._
 /** Created by Parisa on 12/27/15.
@@ -15,8 +14,8 @@ import scala.collection.JavaConversions._
 object liApp extends App {
 
   val logger: Logger = LoggerFactory.getLogger(this.getClass)
-  val aTr_lc = "modelsRepeating/models_aTr/edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifiers.argumentTypeLearner$.lc"
-  val aTr_lex = "modelsRepeating/models_aTr/edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifiers.argumentTypeLearner$.lex"
+  val aTr_lc = "models/models_aTr/edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifiers.argumentTypeLearner$.lc"
+  val aTr_lex = "models/models_aTr/edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifiers.argumentTypeLearner$.lex"
 
   val useGoldPredicate = true
   val useGoldBoundaries = true
@@ -65,7 +64,7 @@ object liApp extends App {
 
   argumentTypeLearner.load(aTr_lc, aTr_lex)
 
-  argTypeConstraintClassifier.test()
+//  argTypeConstraintClassifier.test()
   argumentTypeLearner.test()
   logger.info("finished!")
 
