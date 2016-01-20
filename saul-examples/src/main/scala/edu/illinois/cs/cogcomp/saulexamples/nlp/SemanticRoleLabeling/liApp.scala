@@ -14,10 +14,10 @@ import scala.collection.JavaConversions._
 object liApp extends App {
 
   val logger: Logger = LoggerFactory.getLogger(this.getClass)
-  val aTr_lc = "models/models_aTr/edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifiers.argumentTypeLearner$.lc"
-  val aTr_lex = "models/models_aTr/edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifiers.argumentTypeLearner$.lex"
+  val aTr_lc = "modelsRepeating/models_aTr_Chris/edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifiers.argumentTypeLearner$.lc"
+  val aTr_lex = "modelsRepeating/models_aTr_Chris/edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifiers.argumentTypeLearner$.lex"
 
-  val useGoldPredicate = true
+  val useGoldPredicate = false
   val useGoldBoundaries = true
 
   logger.info("Add the token generation sensor to the graph..")
@@ -64,8 +64,13 @@ object liApp extends App {
 
   argumentTypeLearner.load(aTr_lc, aTr_lex)
 
+  //evaluation.Test(argumentLabelGold, typeArgumentPrediction, relations.getTestingInstances)
+
+  //test(testData: Iterable[T], prediction: Property[T], groundTruth: Property[T])
+
   //  argTypeConstraintClassifier.test()
-  argumentTypeLearner.test()
+  argumentTypeLearner.test(relations.getTestingInstances, argumentLabelGold, typeArgumentPrediction, exclude = "candidate")
+  //argumentTypeLearner.test(exclude="candidate")
   logger.info("finished!")
 
   //TODO add more variations with combination of constraints
