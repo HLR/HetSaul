@@ -63,7 +63,7 @@ object pipelineApp extends App {
     //train and test the argClassifier Given the ground truth Boundaries (i.e. no negative class).
     argumentTypeLearner.setModelDir("models_aTr")
     argumentTypeLearner.learn(100)
-    evaluation.Test(argumentLabelGold, typeArgumentPrediction, relations)
+    evaluation.Test(argumentLabelGold, typeArgumentPrediction, relations.getTestingInstances)
     argumentTypeLearner.save()
   }
 
@@ -106,7 +106,7 @@ object pipelineApp extends App {
     println("Training argument classifier")
     argumentTypeLearner.learn(100)
     print("argument classifier test results:")
-    evaluation.Test(argumentLabelGold, typeArgumentPrediction, relations)
+    evaluation.Test(argumentLabelGold, typeArgumentPrediction, relations.getTestingInstances)
     argumentTypeLearner.save()
   }
 }
