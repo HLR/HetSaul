@@ -227,7 +227,7 @@ abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val dm: DataMo
     //       (t,classifier.discreteValue(t))
     //    }.foreach(println)
 
-    val tester = TestDiscrete.testDiscrete(classifier, onClassifier.getLabeler, testReader)
+    val tester = TestDiscrete.testDiscrete(new TestDiscrete(), classifier, onClassifier.getLabeler, testReader, true, 1)
     tester.printPerformance(System.out)
     val ret = tester.getLabels.map({
       label => (label, (tester.getF1(label), tester.getPrecision(label), tester.getRecall(label)))

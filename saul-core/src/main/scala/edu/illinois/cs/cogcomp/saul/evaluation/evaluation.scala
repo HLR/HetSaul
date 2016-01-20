@@ -1,14 +1,12 @@
 package edu.illinois.cs.cogcomp.saul.evaluation
 
-import edu.illinois.cs.cogcomp.saul.datamodel.node.Node
 import edu.illinois.cs.cogcomp.saul.datamodel.property.Property
 
 /** Created by Parisa on 1/4/16.
   */
 object evaluation {
 
-  def Test[T <: AnyRef](ground_truth: Property[T], actual: Property[T], ds: Node[T]): Unit = {
-    val r1 = ds.getTestingInstances
+  def Test[T <: AnyRef](ground_truth: Property[T], actual: Property[T], r1: Iterable[T]): Unit = {
     def allmeasures(className: String, tp: Double, fp: Double, tn: Double, fn: Double) = {
       println("\n---------------------------------------------------------------------------")
 
