@@ -172,13 +172,62 @@ var updateCode = function(event){
         });
 };
 
-var generateSchemaGraphFromJson = function(data, event){
+var generatePopulatedGraphFromJson = function(data) {
     $('#graphContainer').remove();
-    $('#graphParent' + event).html('<div id="graphContainer"></div>');
+    $('#graphParent1').html('<div id="graphContainer"></div>');
+    var s = new sigma('graphContainer');
+    var nodeId = 0;
+    var nodeDict = {};
+    var totalNumNodes = function(data) {
+        var count = 0;
+        for(var nodeGroup in data[nodes]) {
+            count += nodeGroup.length;
+        }
+        return count;
+    }
+
+    for(var nodeGroup in data['nodes']) {
+        var colorGroup = ["#ffff66", "#ff99bb"];
+        var nodeGroupCount = 0;
+        for(var nodeGroup in data['nodes']) {
+            nodeGroupCount++;
+            for(var node in data['nodes'][nodeGroup]) {
+                nodeDict[data['nodes'][nodeGroup][node]] = 'n' + ++nodeId;
+                s.graph.addNode({
+                    id: 'n' + nodeId,
+                    label: node,
+                    size: 3,
+                    x: Math.cos(2 * nodeId * Math.PI / totalNumNodes),
+                    y: Math.sin(2 * nodeId * Math.PI / totalNumNodes),
+                    color: colorGroup[nodeGroupCount % colorGroup.length]
+                });
+            };
+        };
+    };
+
+    var edgeId = 0;
+    for(var source in data['edges']) {
+        for(var targetNode in data['edges'][source]) {
+            s.graph.addEdge({
+                id: 'e' + edgeId++,
+                source: nodeDict[source],
+                target: nodeDict[data['edges'][source][targetNode]]
+            });
+        }
+    };
+
+    s.refresh();
+    $("#graphContainer").css("position","absolute");
+}
+
+var generateSchemaGraphFromJson = function(data){
+    $('#graphContainer').remove();
+    $('#graphParent1').html('<div id="graphContainer"></div>');
     var s = new sigma('graphContainer');
     var nodeId = 0;
     var nodeDict = {};
     var nodePropertyCount = {};
+
     for(var node in data['nodes']){
         nodePropertyCount[data['nodes'][node]] = 0;
         nodeDict[data['nodes'][node]] = 'n'+ ++nodeId;
@@ -190,8 +239,8 @@ var generateSchemaGraphFromJson = function(data, event){
             y: Math.sin(2 * nodeId * Math.PI / data['nodes'].length),
             color: "#ec5148"
         });
-
     };
+
     var edgeId = 0;
     for(var edge in data['edges']){
         s.graph.addEdge({
@@ -203,10 +252,10 @@ var generateSchemaGraphFromJson = function(data, event){
     };
 
     var getNodeByLabel = function(label){
-
         var id = nodeDict[label];
         return s.graph.nodes(id);
     }
+
     //generate properties nodes and edges
     for(var property in data['properties']){
         ++nodePropertyCount[data['properties'][property]];
@@ -225,6 +274,7 @@ var generateSchemaGraphFromJson = function(data, event){
             target: 'p' + property + nodePropertyCount[data['properties'][property]]
         });
     }
+
     s.refresh();
     $("#graphContainer").css("position","absolute");
 }
@@ -232,18 +282,18 @@ var generateSchemaGraphFromJson = function(data, event){
 jQuery(document).ready(function() {
     jQuery('.tabs .tab-links a').on('click', function(e)  {
         var currentAttrValue = jQuery(this).attr('href');
-        changeTab(currentAttrValue)
+        changeTab(currentAttrValue, this)
         e.preventDefault();
     });
 });
 
-var changeTab = function(currentAttrValue) {
+var changeTab = function(currentAttrValue, component) {
 
     // Show/Hide Tabs
     jQuery('.tabs ' + currentAttrValue).show().siblings().hide();
 
     // Change/remove current tab to active
-    jQuery(this).parent('li').addClass('active').siblings().removeClass('active');
+    jQuery(component).parent('li').addClass('active').siblings().removeClass('active');
 
 }
 
@@ -266,13 +316,13 @@ var alertError = function(data) {
 var onCompileSuccess = function(data){
     alertError(data);
     changeTab("#tab1")
-    generateSchemaGraphFromJson(data, 1);
+    generateSchemaGraphFromJson(data);
 }
 
 var onPopulateSuccess = function(data) {
     alertError(data);
     changeTab("#tab2")
-    generateSchemaGraphFromJson(data, 2);
+    generatePopulatedGraphFromJson(data);
 }
 
 var onRunSuccess = function(data) {
