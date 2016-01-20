@@ -64,9 +64,9 @@ object liApp extends App {
   print("argument classifier L+I model considering background knowledge  test results:")
 
   argumentTypeLearner.load(aTr_lc, aTr_lex)
-  argumentTypeLearner.test()
 
   argTypeConstraintClassifier.test()
+  argumentTypeLearner.test()
   logger.info("finished!")
 
   //TODO add more variations with combination of constraints

@@ -10,7 +10,7 @@ import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlConstrai
 object srlConstraintClassifiers {
 
   object argTypeConstraintClassifier extends ConstrainedClassifier[Relation, TextAnnotation](srlDataModel, argumentTypeLearner) {
-    def subjectTo = r_and_c_args
+    def subjectTo = r_and_c_args_GB
   }
 
   object arg_Is_TypeConstraintClassifier extends ConstrainedClassifier[Relation, Relation](srlDataModel, argumentTypeLearner) {

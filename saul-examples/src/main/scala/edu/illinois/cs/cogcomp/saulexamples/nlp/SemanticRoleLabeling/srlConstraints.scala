@@ -149,4 +149,99 @@ object srlConstraints {
     x => r_arg_Constraint(x) &&& c_arg_Constraint(x)
   }
   // end r-arg constraint
+
+  val r_arg_Constraint_GB = ConstrainedClassifier.constraintOf[TextAnnotation] {
+    var a: FirstOrderConstraint = new FirstOrderConstant(true)
+    x: TextAnnotation => {
+      val values = Array("R-A1", "R-A2", "R-A3", "R-A4", "R-A5", "R-AA")
+      x.getView(ViewNames.SRL_VERB).asInstanceOf[PredicateArgumentView].getPredicates.foreach {
+        y =>
+          {
+            val argCandList = (predicates(y) ~> -relationsToPredicates).toList
+            argCandList.foreach {
+              t: Relation =>
+                {
+                  for (i <- 0 until values.length - 1)
+                    a = a &&& ((argumentTypeLearner on t) is values(i)) ==>
+                      argCandList._exists {
+                        k: Relation => (argumentTypeLearner on k) is values(i).substring(2)
+                      }
+                }
+            }
+          }
+      }
+    }
+    a
+  } // end r-arg constraint
+  val c_arg_Constraint_GB = ConstrainedClassifier.constraintOf[TextAnnotation] {
+    var a: FirstOrderConstraint = new FirstOrderConstant(true)
+    x: TextAnnotation => {
+      val values = Array("C-A1", "C-A2", "C-A3", "C-A4", "C-A5", "C-AA")
+      x.getView(ViewNames.SRL_VERB).asInstanceOf[PredicateArgumentView].getPredicates.foreach {
+        y =>
+          {
+            val argCandList = (predicates(y) ~> -relationsToPredicates).toList
+            argCandList.foreach {
+              t: Relation =>
+                {
+                  for (i <- 0 until values.length - 1)
+                    a = a &&& ((argumentTypeLearner on t) is values(i)) ==>
+                      argCandList._exists {
+                        k: Relation => (argumentTypeLearner on k) is values(i).substring(2)
+                      }
+                }
+            }
+          }
+      }
+    }
+    a
+  }
+
+  val r_and_c_args_GB = ConstrainedClassifier.constraintOf[TextAnnotation] {
+    x => r_arg_Constraint_GB(x) &&& c_arg_Constraint_GB(x) &&& legal_arguments_Constraint_GB(x) &&& noDuplicate_GB(x)
+  }
+
+  val legal_arguments_Constraint_GB = ConstrainedClassifier.constraintOf[TextAnnotation] {
+    var a: FirstOrderConstraint = new FirstOrderConstant(true)
+    x: TextAnnotation => {
+
+      x.getView(ViewNames.SRL_VERB).asInstanceOf[PredicateArgumentView].getPredicates.foreach {
+        y =>
+          {
+            val argCandList = (predicates(y) ~> -relationsToPredicates).toList
+            val argLegalList = legalArguments(y)
+            argCandList.foreach {
+              z =>
+                a = a &&& argLegalList._exists {
+                  t: String => argumentTypeLearner on z is t
+                }
+            }
+          }
+      }
+    }
+    a
+  }
+
+  val noDuplicate_GB = ConstrainedClassifier.constraintOf[TextAnnotation] {
+    // Predicates have atmost one argument of each type i.e. there is no two arguments of the same type for each predicate
+    val values = Array("A0", "A1", "A2", "A3", "A4", "A5", "AA")
+    var a: FirstOrderConstraint = new FirstOrderConstant(true)
+    x: TextAnnotation => {
+      //using TextAnnotation
+      x.getView(ViewNames.SRL_VERB).asInstanceOf[PredicateArgumentView].getPredicates.foreach {
+        //using the graph
+        //(sentences(x) ~> sentencesToRelations ~> relationsToPredicates).foreach {
+        y =>
+          {
+            val argCandList = (predicates(y) ~> -relationsToPredicates).toList
+            for (t1 <- 0 until argCandList.size - 1)
+              for (t2 <- t1 + 1 until argCandList.size) {
+                a = a &&& (((argumentTypeLearner on argCandList.get(t1)) in values) ==> (((argumentTypeLearner on argCandList.get(t1)) isNot (argumentTypeLearner on argCandList.get(t2)))))
+              }
+          }
+      }
+      a
+    }
+  }
 } // end srlConstainrs
+
