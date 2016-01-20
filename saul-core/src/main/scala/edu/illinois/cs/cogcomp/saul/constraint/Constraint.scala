@@ -43,33 +43,43 @@ object ConstraintTypeConversion {
 // TODO: one should be able to replace fold with reduce and remove ___result; right?
 class QuantifierWrapper[T](val coll: Seq[T]) {
   def _exists(p: T => FirstOrderConstraint): FirstOrderConstraint = {
-    val __result: FirstOrderConstraint = new FirstOrderConstant(false)
-    coll.map(p).foldLeft[FirstOrderConstraint](__result)(new FirstOrderDisjunction(_, _))
+    val dummyConstraint = new FirstOrderConstant(false)
+    coll.map(p).foldLeft[FirstOrderConstraint](dummyConstraint)(new FirstOrderDisjunction(_, _))
   }
 
   def _forall(p: T => FirstOrderConstraint): FirstOrderConstraint = {
-    val __result: FirstOrderConstraint = new FirstOrderConstant(true)
-    coll.map(p).foldLeft[FirstOrderConstraint](__result)(new FirstOrderConjunction(_, _))
+    val dummyConstraint = new FirstOrderConstant(true)
+    coll.map(p).foldLeft[FirstOrderConstraint](dummyConstraint)(new FirstOrderConjunction(_, _))
   }
 
-  /** transfer the constraint to a constant */
-  // TODO: I'm worried about its performance, because otherwise(at most 10 will be O(n^10) thing to evaluate)
-  // One reason is that we use conjunction and disjunction in forall and exist
+  /** transfer the constraint to a constant
+    * These functions can be slow, if not used properly
+    * The best performance is when n is too big (close to the size of the collection) or too small
+    */
   def _atmost(n: Int)(p: T => FirstOrderConstraint): FirstOrderConstraint = {
-    if (coll.map(p).count(_.evaluate()) <= n) {
-      new FirstOrderConstant(true)
-    } else {
-      new FirstOrderConstant(false)
-    }
+    val constraintCombinations = coll.map(p).combinations(n)
+    val listOfConjunctions = for {
+      constraints <- constraintCombinations
+      dummyConstraint = new FirstOrderConstant(false)
+    } yield constraints.foldLeft[FirstOrderConstraint](dummyConstraint)(new FirstOrderDisjunction(_, _))
+
+    val dummyConstraint = new FirstOrderConstant(true)
+    listOfConjunctions.toList.map(new FirstOrderNegation(_)).foldLeft[FirstOrderConstraint](dummyConstraint)(new FirstOrderConjunction(_, _))
   }
 
-  /** transfer the constraint to a constant */
+  /** transfer the constraint to a constant
+    * These functions can be slow, if not used properly
+    * The best performance is when n is too big (close to the size of the collection) or too small
+    */
   def _atleast(n: Int)(p: T => FirstOrderConstraint): FirstOrderConstraint = {
-    if (coll.map(p).count(_.evaluate()) >= n) {
-      new FirstOrderConstant(true)
-    } else {
-      new FirstOrderConstant(false)
-    }
+    val constraintCombinations = coll.map(p).combinations(n)
+    val listOfConjunctions = for {
+      constraints <- constraintCombinations
+      dummyConstraint = new FirstOrderConstant(true)
+    } yield constraints.foldLeft[FirstOrderConstraint](dummyConstraint)(new FirstOrderConjunction(_, _))
+
+    val dummyConstraint = new FirstOrderConstant(false)
+    listOfConjunctions.toList.foldLeft[FirstOrderConstraint](dummyConstraint)(new FirstOrderDisjunction(_, _))
   }
 }
 
@@ -106,4 +116,11 @@ class LHSFirstOrderEqualityWithValueLBP(cls: Learner, t: AnyRef) {
   def isTrue: FirstOrderConstraint = is("true")
 
   def isNotTrue: FirstOrderConstraint = is("false")
+
+  // TODO: use reduce instead of fold
+  def contains(values: Set[String]): FirstOrderConstraint = {
+    val singleConditions = values.map { v: String => is(v) }
+    val __result: FirstOrderConstraint = new FirstOrderConstant(true)
+    singleConditions.foldLeft[FirstOrderConstraint](__result)(new FirstOrderDisjunction(_, _))
+  }
 }
