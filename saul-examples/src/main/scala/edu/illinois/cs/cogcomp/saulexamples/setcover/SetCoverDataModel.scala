@@ -31,9 +31,15 @@ object SetCoverSolverDataModel extends DataModel {
     }
   }
 
-  val containsStationConstrint = ConstrainedClassifier.constraint[City] { x: City => allCityNeiborhoodsAreCovered(x) }
+  def someCityNeiborhoodsAreCovered = { x: City =>
+    x.getNeighborhoods._atleast(2) { n: Neighborhood =>
+      neighborhoodContainsStation(n) //or atLeastANeighborOfNeighborhoodIsCovered(n)
+    }
+  }
+
+  val containsStationConstaint = ConstrainedClassifier.constraint[City] { x: City => allCityNeiborhoodsAreCovered(x) }
 }
 
 object containsStationConstraint extends ConstrainedClassifier[Neighborhood, City](SetCoverSolverDataModel, new ContainsStation()) {
-  override def subjectTo = SetCoverSolverDataModel.containsStationConstrint
+  override def subjectTo = SetCoverSolverDataModel.containsStationConstaint
 }

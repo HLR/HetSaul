@@ -15,6 +15,9 @@ class ContainsStation extends Learner("ilp.ContainsStation") {
 
   override def equals(o: Any): Boolean = { getClass == o.getClass }
 
+  /** The reason for true to be -1 is because the internal optimization by default finds the maximizer, while in this
+    * problem we are looking for a minimizer
+    */
   override def scores(example: AnyRef): ScoreSet = {
     val result: ScoreSet = new ScoreSet
     result.put("false", 0)

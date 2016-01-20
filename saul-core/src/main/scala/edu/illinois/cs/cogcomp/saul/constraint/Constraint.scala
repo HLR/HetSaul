@@ -57,14 +57,14 @@ class QuantifierWrapper[T](val coll: Seq[T]) {
     * The best performance is when n is too big (close to the size of the collection) or too small
     */
   def _atmost(n: Int)(p: T => FirstOrderConstraint): FirstOrderConstraint = {
-    val constraintCombinations = coll.map(p).combinations(n)
+    val constraintCombinations = coll.map(p).combinations(n + 1)
     val listOfConjunctions = for {
       constraints <- constraintCombinations
-      dummyConstraint = new FirstOrderConstant(false)
-    } yield constraints.foldLeft[FirstOrderConstraint](dummyConstraint)(new FirstOrderDisjunction(_, _))
+      dummyConstraint = new FirstOrderConstant(true)
+    } yield constraints.foldLeft[FirstOrderConstraint](dummyConstraint)(new FirstOrderConjunction(_, _))
 
-    val dummyConstraint = new FirstOrderConstant(true)
-    listOfConjunctions.toList.map(new FirstOrderNegation(_)).foldLeft[FirstOrderConstraint](dummyConstraint)(new FirstOrderConjunction(_, _))
+    val dummyConstraint = new FirstOrderConstant(false)
+    new FirstOrderNegation(listOfConjunctions.toList.foldLeft[FirstOrderConstraint](dummyConstraint)(new FirstOrderDisjunction(_, _)))
   }
 
   /** transfer the constraint to a constant
@@ -89,7 +89,7 @@ class FirstOrderConstraints(val r: FirstOrderConstraint) {
 
   def <==>(other: FirstOrderConstraint) = new FirstOrderDoubleImplication(this.r, other)
 
-  def not = new FirstOrderNegation(this.r)
+  def unary_! = new FirstOrderNegation(this.r)
 
   def and(other: FirstOrderConstraint) = new FirstOrderConjunction(this.r, other)
 
@@ -120,7 +120,7 @@ class LHSFirstOrderEqualityWithValueLBP(cls: Learner, t: AnyRef) {
   // TODO: use reduce instead of fold
   def contains(values: Set[String]): FirstOrderConstraint = {
     val singleConditions = values.map { v: String => is(v) }
-    val __result: FirstOrderConstraint = new FirstOrderConstant(true)
-    singleConditions.foldLeft[FirstOrderConstraint](__result)(new FirstOrderDisjunction(_, _))
+    val dummyConstraint = new FirstOrderConstant(true)
+    singleConditions.foldLeft[FirstOrderConstraint](dummyConstraint)(new FirstOrderDisjunction(_, _))
   }
 }

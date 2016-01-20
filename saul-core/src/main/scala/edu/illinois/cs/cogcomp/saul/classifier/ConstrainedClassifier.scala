@@ -34,6 +34,9 @@ abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val dm: DataMo
 
   val pathToHead: Option[Symbol] = None
 
+  /** syntactic suger to create simple calls to the function */
+  def apply(example: AnyRef): String = classifier.discreteValue(example: AnyRef)
+
   def findHead(x: T): Option[HEAD] = {
 
     if (tType.equals(headType)) {
