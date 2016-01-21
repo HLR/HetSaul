@@ -1,3 +1,6 @@
+var colors = ["#000000", "#FFFF00", "#1CE6FF", "#FF34FF", "#FF4A46", "#008941", "#006FA6", "#A30059",
+        "#FFDBE5", "#7A4900", "#0000A6", "#63FFAC", "#B79762", "#004D43", "#8FB0FF", "#997D87"];
+
 $(document).ready(function(){
 
         $("#errors").hide();
@@ -173,35 +176,44 @@ var updateCode = function(event){
 };
 
 var generatePopulatedGraphFromJson = function(data) {
-    $('#graphContainer').remove();
-    $('#graphParent1').html('<div id="graphContainer"></div>');
-    var s = new sigma('graphContainer');
+
+    $('#populatedGraphContainer').remove();
+    $('#graphParent2').html('<div id="populatedGraphContainer"></div>');
+    var s = new sigma({renderer: {
+        container: document.getElementById('populatedGraphContainer'),
+        type: 'canvas'
+    },
+        settings: {
+        edgeLabelSize: 'proportional',
+        labelThreshold: 0
+    }});
     var nodeId = 0;
     var nodeDict = {};
-    var totalNumNodes = function(data) {
-        var count = 0;
-        for(var nodeGroup in data[nodes]) {
-            count += nodeGroup.length;
-        }
-        return count;
-    }
-
+    var nodePropertyCount = {};
+    var totalNumNodes = 0;
     for(var nodeGroup in data['nodes']) {
-        var colorGroup = ["#ffff66", "#ff99bb"];
-        var nodeGroupCount = 0;
-        for(var nodeGroup in data['nodes']) {
-            nodeGroupCount++;
-            for(var node in data['nodes'][nodeGroup]) {
-                nodeDict[data['nodes'][nodeGroup][node]] = 'n' + ++nodeId;
-                s.graph.addNode({
-                    id: 'n' + nodeId,
-                    label: node,
-                    size: 3,
-                    x: Math.cos(2 * nodeId * Math.PI / totalNumNodes),
-                    y: Math.sin(2 * nodeId * Math.PI / totalNumNodes),
-                    color: colorGroup[nodeGroupCount % colorGroup.length]
-                });
-            };
+        totalNumNodes += data['nodes'][nodeGroup].length;
+    }
+    var getNodeByLabel = function(label){
+        var id = nodeDict[label];
+        return s.graph.nodes(id);
+    }
+    var nodeGroupCount = 0;
+    for(var nodeGroup in data['nodes']) {
+
+        nodeGroupCount++;
+        for(var node in data['nodes'][nodeGroup]) {
+            nodePropertyCount[data['nodes'][nodeGroup][node]] = 0;
+            nodeDict[data['nodes'][nodeGroup][node]] = 'n' + ++nodeId;
+            s.graph.addNode({
+                id: 'n' + nodeId,
+                label: data['nodes'][nodeGroup][node],
+                size: 3,
+                x: Math.cos(2 * nodeId * Math.PI / totalNumNodes),
+                y: Math.sin(2 * nodeId * Math.PI / totalNumNodes),
+                color: colors[nodeGroupCount % colors.length]
+            });
+            
         };
     };
 
@@ -211,19 +223,50 @@ var generatePopulatedGraphFromJson = function(data) {
             s.graph.addEdge({
                 id: 'e' + edgeId++,
                 source: nodeDict[source],
-                target: nodeDict[data['edges'][source][targetNode]]
+                target: nodeDict[data['edges'][source][targetNode]],
+                type: 'curve'
             });
         }
     };
 
+    var propertyCount = 0
+    for(var node in data['properties']){
+        for(var propertyIndex in data['properties'][node]){
+            propertyCount ++;
+            ++nodePropertyCount[node];
+            var parentNode = getNodeByLabel(node);
+            s.graph.addNode({
+                id: 'p' + propertyCount,
+                label: data['properties'][node][propertyIndex],
+                size: 1,
+                x: parentNode.x + 0.5 * Math.cos(2 * nodePropertyCount[node] * Math.PI / 6),
+                y: parentNode.y + 0.5 * Math.sin(2 * nodePropertyCount[node] * Math.PI / 6),
+                color: colors[propertyCount % colors.length]
+            });
+            s.graph.addEdge({
+                id: 'e'+ edgeId++,
+                source: nodeDict[node],
+                target: 'p' + propertyCount,
+                type: 'curve'
+            });
+        }
+    }
+
     s.refresh();
-    $("#graphContainer").css("position","absolute");
+    $("#populatedGraphContainer").css("position","absolute");
 }
 
 var generateSchemaGraphFromJson = function(data){
-    $('#graphContainer').remove();
-    $('#graphParent1').html('<div id="graphContainer"></div>');
-    var s = new sigma('graphContainer');
+    $('#schemaGraphContainer').remove();
+    $('#graphParent1').html('<div id="schemaGraphContainer"></div>');
+    var s = new sigma({renderer: {
+        container: document.getElementById('schemaGraphContainer'),
+        type: 'canvas'
+    },
+        settings: {
+        edgeLabelSize: 'proportional',
+        labelThreshold: 0
+    }});
     var nodeId = 0;
     var nodeDict = {};
     var nodePropertyCount = {};
@@ -247,7 +290,8 @@ var generateSchemaGraphFromJson = function(data){
             id: 'e'+ edgeId++,
             // Reference extremities:
             source: nodeDict[data['edges'][edge][0]],
-            target: nodeDict[data['edges'][edge][1]]
+            target: nodeDict[data['edges'][edge][1]],
+            type: 'curve'
         });
     };
 
@@ -271,29 +315,30 @@ var generateSchemaGraphFromJson = function(data){
         s.graph.addEdge({
             id: 'e'+ edgeId++,
             source: nodeDict[data['properties'][property]],
-            target: 'p' + property + nodePropertyCount[data['properties'][property]]
+            target: 'p' + property + nodePropertyCount[data['properties'][property]],
+            type: 'curve'
         });
     }
 
     s.refresh();
-    $("#graphContainer").css("position","absolute");
+    $("#schemaGraphContainer").css("position","absolute");
 }
 
 jQuery(document).ready(function() {
-    jQuery('.tabs .tab-links a').on('click', function(e)  {
+    $('.tabs .tab-links a').on('click', function(e)  {
         var currentAttrValue = jQuery(this).attr('href');
-        changeTab(currentAttrValue, this)
+        changeTab(currentAttrValue)
         e.preventDefault();
     });
 });
 
-var changeTab = function(currentAttrValue, component) {
+var changeTab = function(currentAttrValue) {
 
     // Show/Hide Tabs
-    jQuery('.tabs ' + currentAttrValue).show().siblings().hide();
+    $('.tabs #' + currentAttrValue).show().siblings().hide();
+    $("." + currentAttrValue).addClass('active');
+    $("." + currentAttrValue).siblings().removeClass('active');
 
-    // Change/remove current tab to active
-    jQuery(component).parent('li').addClass('active').siblings().removeClass('active');
 
 }
 
@@ -315,13 +360,13 @@ var alertError = function(data) {
 
 var onCompileSuccess = function(data){
     alertError(data);
-    changeTab("#tab1")
+    changeTab("tab1")
     generateSchemaGraphFromJson(data);
 }
 
 var onPopulateSuccess = function(data) {
     alertError(data);
-    changeTab("#tab2")
+    changeTab("tab2")
     generatePopulatedGraphFromJson(data);
 }
 
