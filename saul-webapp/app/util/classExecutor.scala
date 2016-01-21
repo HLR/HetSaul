@@ -27,15 +27,11 @@ object classExecutor {
   def execute(className: String, classPath: String): (List[String], List[String], Int) = {
 
     val cmd = Seq("scala", "-cp", classPath, className)
-    val outBuffer = List[String]()
-    val errBuffer = List[String]()
+    var outBuffer = List[String]()
+    var errBuffer = List[String]()
     val outputLogger = ProcessLogger(
-      line => outBuffer :: line
-
-      line => {
-        errBuffer :: line
-        Unit
-      }
+      (line: String) => { outBuffer = outBuffer :+ line },
+      (line: String) => { errBuffer = errBuffer :+ line }
     )
     val status = cmd ! outputLogger
     (outBuffer, errBuffer, status)

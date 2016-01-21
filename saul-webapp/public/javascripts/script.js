@@ -194,7 +194,7 @@ var generatePopulatedGraphFromJson = function(data) {
     for(var nodeGroup in data['nodes']) {
         totalNumNodes += data['nodes'][nodeGroup].length;
     }
-<<<<<<< HEAD
+
     var getNodeByLabel = function(label){
         var id = nodeDict[label];
         return s.graph.nodes(id);
@@ -216,26 +216,6 @@ var generatePopulatedGraphFromJson = function(data) {
             });
             
         };
-=======
-
-    var colorGroup = ["#ffff66", "#ff99bb"];
-    var nodeGroupCount = 0;
-    for(var nodeGroup in data['nodes']) {
-    nodeGroupCount++;
-    for(var node in data['nodes'][nodeGroup]) {
-                alert(data['nodes'][nodeGroup][node])
-                nodeDict[data['nodes'][nodeGroup][node]] = 'n' + ++nodeId;
-                s.graph.addNode({
-                    id: 'n' + nodeId,
-                    label: data['nodes'][nodeGroup][node],
-                    size: 3,
-                    x: Math.cos(2 * nodeId * Math.PI / totalNumNodes),
-                    y: Math.sin(2 * nodeId * Math.PI / totalNumNodes),
-                    color: colorGroup[nodeGroupCount % colorGroup.length]
-                });
-            };
-
->>>>>>> Implement running app front end
     };
 
     var edgeId = 0;
@@ -250,7 +230,7 @@ var generatePopulatedGraphFromJson = function(data) {
             });
         }
     };
-<<<<<<< HEAD
+
 
     var propertyCount = 0
     for(var node in data['properties']){
@@ -275,8 +255,6 @@ var generatePopulatedGraphFromJson = function(data) {
         }
     }
 
-=======
->>>>>>> Implement running app front end
     s.refresh();
     $("#populatedGraphContainer").css("position","absolute");
 }
@@ -350,11 +328,10 @@ var generateSchemaGraphFromJson = function(data){
 }
 
 var displayOutput = function(data) {
-    document.getElementById('tab3').innerHTML = '';
-    var para = document.createElement("P");
-    var text = document.createTextNode(data["stdout"]);
-    para.appendChild(text)
-    document.getElementById('tab3').appendChild(para)
+    var stdout = $("<p></p>").text("stdout: " + data["stdout"]);
+    var stderr = $("<p></p>").text("stderr: " + data["stderr"]);
+    $("#tab3").append(stdout);
+    $("#tab3").append(stderr);
 }
 
 jQuery(document).ready(function() {
@@ -376,7 +353,7 @@ var changeTab = function(currentAttrValue) {
 }
 
 var alertError = function(data) {
-    alert(JSON.stringify(data));
+    //alert(JSON.stringify(data));
     if(data['error']){
         var message = "";
         for(var index in data['error']){
@@ -393,27 +370,19 @@ var alertError = function(data) {
 
 var onCompileSuccess = function(data){
     alertError(data);
-<<<<<<< HEAD
-    changeTab("tab1")
-=======
-    //changeTab("#tab1")
->>>>>>> Implement running app front end
+    changeTab("tab1");
     generateSchemaGraphFromJson(data);
 }
 
 var onPopulateSuccess = function(data) {
     alertError(data);
-<<<<<<< HEAD
-    changeTab("tab2")
-=======
-    //changeTab("#tab2")
->>>>>>> Implement running app front end
+    changeTab("tab2");
     generatePopulatedGraphFromJson(data);
 }
 
 var onRunSuccess = function(data) {
     alertError(data);
-    //changeTab("#tab3")
+    changeTab("tab3");
     displayOutput(data)
 }
 
