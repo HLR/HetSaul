@@ -22,6 +22,8 @@
         <script src="@routes.Assets.versioned("javascripts/ace/mode-java.js")" type="text/javascript" charset="utf-8"></script>
         <script src="@routes.Assets.versioned("javascripts/ace/theme-twilight.js")" type="text/javascript" charset="utf-8"></script>
         <script src="@routes.Assets.versioned("javascripts/sigma.min.js")" type="text/javascript" charset="utf-8"></script>
+                <script src="@routes.Assets.versioned("javascripts/plugins/settings.js")" type="text/javascript" charset="utf-8"></script>
+        <script src="@routes.Assets.versioned("javascripts/plugins/sigma.canvas.edges.labels.curve.js")" type="text/javascript" charset="utf-8"></script>
         <script src="@routes.Assets.versioned("javascripts/jquery-1.12.0.min.js")" type="text/javascript" charset="utf-8"></script>
 
     </head>
@@ -69,30 +71,30 @@
 
             <div class="tabs">
                 <ul class="tab-links">
-                    <li class="active"><a href="#tab1">Data Model</a></li>
-                    <li><a href="#tab2">Populated Data Model</a></li>
-                    <li><a href="#tab3">Running Result</a></li>
+                    <li class="active tab1"><a href="tab1">Data Model</a></li>
+                    <li class="tab2"><a href="tab2">Populated Data Model</a></li>
+                    <li class="tab3"><a href="tab3">Running Result</a></li>
                 </ul>
 
                 <div class="tab-content">
                     <div id="tab1" class="tab active">
                         <div class="panel panel-default">
-                            <div class="panel-body" id="graphParent" style="height: 350px; text-align: center">
-                                <div id="graphContainer"></div>
+                            <div class="panel-body" id="graphParent1" style="height: 350px; text-align: center">
+                                <div id="schemaGraphContainer"></div>
                             </div>
                         </div>
                     </div>
 
                     <div id="tab2" class="tab">
+                        <div class="panel panel-default">
+                            <div class="panel-body" id="graphParent2" style="height: 350px; text-align: center">
+                                <div id="populatedGraphContainer"></div>
 
+                            </div>
+                        </div>
                     </div>
 
                     <div id="tab3" class="tab">
-                        <div class="panel panel-default">
-                            <div class="panel-body" id="graphParent" style="height: 350px; text-align: center">
-                                <div id="graphContainer"></div>
-                            </div>
-                        </div>
                     </div>
 
                 </div>

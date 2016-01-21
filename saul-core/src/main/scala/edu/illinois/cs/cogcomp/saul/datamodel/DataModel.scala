@@ -393,11 +393,11 @@ object dataModelJsonInterface {
       }
 
     }
-    println(propertiesJson)
+
     JsObject(Seq(
       "nodes" -> Json.toJson(nodesJson),
       "edges" -> Json.toJson(edgesJson.groupBy(_._1).map { case (k, v) => (k, v.map(_._2)) }),
-      "properties" -> Json.toJson(propertiesJson.toMap)
+      "properties" -> Json.toJson(propertiesJson.groupBy(_._1).map { case (k, v) => (k, v.map(_._2)) })
     ))
   }
   def getSchemaJson(dm: DataModel): JsValue = {

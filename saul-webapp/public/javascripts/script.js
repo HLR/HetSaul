@@ -1,3 +1,6 @@
+var colors = ["#000000", "#FFFF00", "#1CE6FF", "#FF34FF", "#FF4A46", "#008941", "#006FA6", "#A30059",
+        "#FFDBE5", "#7A4900", "#0000A6", "#63FFAC", "#B79762", "#004D43", "#8FB0FF", "#997D87"];
+
 $(document).ready(function(){
 
         $("#errors").hide();
@@ -138,24 +141,27 @@ var getAllFiles = function(){
     
 }
 
-/**
- * @param {boolean} isRun indicates if the code should be run after compilation
- */
 var updateCode = function(event){
+
+    //jsRoutes.controllers.Application.updateCode($("#code1").text()).ajax(callback);
+    var rURL;
+    var onSuccess;
+    if (event == 0) {
+        rURL = '/compileCode';
+        onSuccess = onCompileSuccess;
+    } else if (event == 1) {
+        rURL = '/populate'
+        onSuccess = onPopulateSuccess;
+    } else {
+        rURL = '/runCode';
+        onSuccess = onRunSuccess;
+    }
+
     var callback = {
         success : onSuccess,
         error : onError
     }
-    
-    //jsRoutes.controllers.Application.updateCode($("#code1").text()).ajax(callback);
-    var rURL;
-    if (event == 0) {
-        rURL = '/compileCode';
-    } else if (event == 1) {
-        rURL = '/populate'
-    } else {
-        rURL = '/runCode';
-    }
+
     $.ajax({
         type : 'POST',
         url : rURL,
@@ -169,13 +175,127 @@ var updateCode = function(event){
         });
 };
 
-var generateSchemaGraphFromJson = function(data){
-    $('#graphContainer').remove(); 
-    $('#graphParent').html('<div id="graphContainer"></div>');
-    var s = new sigma('graphContainer');
+var generatePopulatedGraphFromJson = function(data) {
+
+    $('#populatedGraphContainer').remove();
+    $('#graphParent2').html('<div id="populatedGraphContainer"></div>');
+    var s = new sigma({renderer: {
+        container: document.getElementById('populatedGraphContainer'),
+        type: 'canvas'
+    },
+        settings: {
+        edgeLabelSize: 'proportional',
+        labelThreshold: 0
+    }});
     var nodeId = 0;
     var nodeDict = {};
     var nodePropertyCount = {};
+    var totalNumNodes = 0;
+    for(var nodeGroup in data['nodes']) {
+        totalNumNodes += data['nodes'][nodeGroup].length;
+    }
+<<<<<<< HEAD
+    var getNodeByLabel = function(label){
+        var id = nodeDict[label];
+        return s.graph.nodes(id);
+    }
+    var nodeGroupCount = 0;
+    for(var nodeGroup in data['nodes']) {
+
+        nodeGroupCount++;
+        for(var node in data['nodes'][nodeGroup]) {
+            nodePropertyCount[data['nodes'][nodeGroup][node]] = 0;
+            nodeDict[data['nodes'][nodeGroup][node]] = 'n' + ++nodeId;
+            s.graph.addNode({
+                id: 'n' + nodeId,
+                label: data['nodes'][nodeGroup][node],
+                size: 3,
+                x: Math.cos(2 * nodeId * Math.PI / totalNumNodes),
+                y: Math.sin(2 * nodeId * Math.PI / totalNumNodes),
+                color: colors[nodeGroupCount % colors.length]
+            });
+            
+        };
+=======
+
+    var colorGroup = ["#ffff66", "#ff99bb"];
+    var nodeGroupCount = 0;
+    for(var nodeGroup in data['nodes']) {
+    nodeGroupCount++;
+    for(var node in data['nodes'][nodeGroup]) {
+                alert(data['nodes'][nodeGroup][node])
+                nodeDict[data['nodes'][nodeGroup][node]] = 'n' + ++nodeId;
+                s.graph.addNode({
+                    id: 'n' + nodeId,
+                    label: data['nodes'][nodeGroup][node],
+                    size: 3,
+                    x: Math.cos(2 * nodeId * Math.PI / totalNumNodes),
+                    y: Math.sin(2 * nodeId * Math.PI / totalNumNodes),
+                    color: colorGroup[nodeGroupCount % colorGroup.length]
+                });
+            };
+
+>>>>>>> Implement running app front end
+    };
+
+    var edgeId = 0;
+    for(var source in data['edges']) {
+        for(var targetNode in data['edges'][source]) {
+
+            s.graph.addEdge({
+                id: 'e' + edgeId++,
+                source: nodeDict[source],
+                target: nodeDict[data['edges'][source][targetNode]],
+                type: 'curve'
+            });
+        }
+    };
+<<<<<<< HEAD
+
+    var propertyCount = 0
+    for(var node in data['properties']){
+        for(var propertyIndex in data['properties'][node]){
+            propertyCount ++;
+            ++nodePropertyCount[node];
+            var parentNode = getNodeByLabel(node);
+            s.graph.addNode({
+                id: 'p' + propertyCount,
+                label: data['properties'][node][propertyIndex],
+                size: 1,
+                x: parentNode.x + 0.5 * Math.cos(2 * nodePropertyCount[node] * Math.PI / 6),
+                y: parentNode.y + 0.5 * Math.sin(2 * nodePropertyCount[node] * Math.PI / 6),
+                color: colors[propertyCount % colors.length]
+            });
+            s.graph.addEdge({
+                id: 'e'+ edgeId++,
+                source: nodeDict[node],
+                target: 'p' + propertyCount,
+                type: 'curve'
+            });
+        }
+    }
+
+=======
+>>>>>>> Implement running app front end
+    s.refresh();
+    $("#populatedGraphContainer").css("position","absolute");
+}
+
+var generateSchemaGraphFromJson = function(data){
+    $('#schemaGraphContainer').remove();
+    $('#graphParent1').html('<div id="schemaGraphContainer"></div>');
+    var s = new sigma({renderer: {
+        container: document.getElementById('schemaGraphContainer'),
+        type: 'canvas'
+    },
+        settings: {
+        edgeLabelSize: 'proportional',
+        labelThreshold: 0
+    }});
+    var nodeId = 0;
+    var nodeDict = {};
+    var nodePropertyCount = {};
+
     for(var node in data['nodes']){
         nodePropertyCount[data['nodes'][node]] = 0;
         nodeDict[data['nodes'][node]] = 'n'+ ++nodeId;
@@ -187,23 +307,24 @@ var generateSchemaGraphFromJson = function(data){
             y: Math.sin(2 * nodeId * Math.PI / data['nodes'].length),
             color: "#ec5148"
         });
-
     };
+
     var edgeId = 0;
     for(var edge in data['edges']){
         s.graph.addEdge({
             id: 'e'+ edgeId++,
             // Reference extremities:
             source: nodeDict[data['edges'][edge][0]],
-            target: nodeDict[data['edges'][edge][1]]
+            target: nodeDict[data['edges'][edge][1]],
+            type: 'curve'
         });
     };
 
     var getNodeByLabel = function(label){
-
         var id = nodeDict[label];
         return s.graph.nodes(id);
     }
+
     //generate properties nodes and edges
     for(var property in data['properties']){
         ++nodePropertyCount[data['properties'][property]];
@@ -219,31 +340,44 @@ var generateSchemaGraphFromJson = function(data){
         s.graph.addEdge({
             id: 'e'+ edgeId++,
             source: nodeDict[data['properties'][property]],
-            target: 'p' + property + nodePropertyCount[data['properties'][property]]
+            target: 'p' + property + nodePropertyCount[data['properties'][property]],
+            type: 'curve'
         });
     }
+
     s.refresh();
-    $("#graphContainer").css("position","absolute");
+    $("#schemaGraphContainer").css("position","absolute");
+}
+
+var displayOutput = function(data) {
+    document.getElementById('tab3').innerHTML = '';
+    var para = document.createElement("P");
+    var text = document.createTextNode(data["stdout"]);
+    para.appendChild(text)
+    document.getElementById('tab3').appendChild(para)
 }
 
 jQuery(document).ready(function() {
-    jQuery('.tabs .tab-links a').on('click', function(e)  {
+    $('.tabs .tab-links a').on('click', function(e)  {
         var currentAttrValue = jQuery(this).attr('href');
-
-        // Show/Hide Tabs
-        jQuery('.tabs ' + currentAttrValue).show().siblings().hide();
-
-        // Change/remove current tab to active
-        jQuery(this).parent('li').addClass('active').siblings().removeClass('active');
-
+        changeTab(currentAttrValue)
         e.preventDefault();
     });
 });
 
-var onSuccess = function(data){
+var changeTab = function(currentAttrValue) {
+
+    // Show/Hide Tabs
+    $('.tabs #' + currentAttrValue).show().siblings().hide();
+    $("." + currentAttrValue).addClass('active');
+    $("." + currentAttrValue).siblings().removeClass('active');
+
+
+}
+
+var alertError = function(data) {
     alert(JSON.stringify(data));
     if(data['error']){
-
         var message = "";
         for(var index in data['error']){
             for(var index2 in data['error'][index]){
@@ -255,8 +389,34 @@ var onSuccess = function(data){
     }else{
         $("#errors").hide();
     }
+}
+
+var onCompileSuccess = function(data){
+    alertError(data);
+<<<<<<< HEAD
+    changeTab("tab1")
+=======
+    //changeTab("#tab1")
+>>>>>>> Implement running app front end
     generateSchemaGraphFromJson(data);
 }
+
+var onPopulateSuccess = function(data) {
+    alertError(data);
+<<<<<<< HEAD
+    changeTab("tab2")
+=======
+    //changeTab("#tab2")
+>>>>>>> Implement running app front end
+    generatePopulatedGraphFromJson(data);
+}
+
+var onRunSuccess = function(data) {
+    alertError(data);
+    //changeTab("#tab3")
+    displayOutput(data)
+}
+
 var onError = function(data){
     alert("error"+data);
 }
