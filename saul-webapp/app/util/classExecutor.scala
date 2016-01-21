@@ -24,17 +24,21 @@ object classExecutor {
     * @return Output from STDOUT, output from STDERR, value return on exit
     */
   //TODO: further handle exception
-  def execute(className: String, classPath: String): (String, String, Int) = {
+  def execute(className: String, classPath: String): (List[String], List[String], Int) = {
 
     val cmd = Seq("scala", "-cp", classPath, className)
-    val outBuffer = new StringBuilder
-    val errBuffer = new StringBuilder
+    val outBuffer = List[String]()
+    val errBuffer = List[String]()
     val outputLogger = ProcessLogger(
-      line => outBuffer.append(line),
-      line => errBuffer.append(line)
+      line => outBuffer :: line
+
+      line => {
+        errBuffer :: line
+        Unit
+      }
     )
     val status = cmd ! outputLogger
-    (outBuffer.toString(), errBuffer.toString(), status)
+    (outBuffer, errBuffer, status)
   }
 
 }
