@@ -3,6 +3,7 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling
 import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.Constituent
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifiers.argumentTypeLearner
+import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlConstraintClassifiers.argTypeConstraintClassifier
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlDataModel._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlSensors._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.commonSensors._
@@ -68,7 +69,7 @@ object liApp extends App {
 
   //test(testData: Iterable[T], prediction: Property[T], groundTruth: Property[T])
 
-  //  argTypeConstraintClassifier.test()
+  argTypeConstraintClassifier.test()
   argumentTypeLearner.test(relations.getTestingInstances, argumentLabelGold, typeArgumentPrediction, exclude = "candidate")
   //argumentTypeLearner.test(exclude="candidate")
   logger.info("finished!")
