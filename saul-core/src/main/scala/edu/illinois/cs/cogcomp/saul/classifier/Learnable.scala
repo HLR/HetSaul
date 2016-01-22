@@ -38,8 +38,7 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
   def combinedProperties = if (label != null) new CombinedDiscreteProperty[T](this.feature.filterNot(_.name == label.name))
   else new CombinedDiscreteProperty[T](this.feature)
 
-  //combinedProperty.makeClassifierWithName("")
-  def lbpFeatures = combinedProperties.makeClassifierWithName("featureExtractor")
+  def lbpFeatures = combinedProperties.classifier
 
   /** classifier need to be defined by the user */
   val classifier: Learner
