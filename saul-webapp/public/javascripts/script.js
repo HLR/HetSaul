@@ -3,6 +3,17 @@ var colors = ["#000000", "#FFFF00", "#1CE6FF", "#FF34FF", "#FF4A46", "#008941", 
 
 $(document).ready(function(){
 
+  sigma.classes.graph.addMethod('neighbors', function(nodeId) {
+    var k,
+        neighbors = {},
+        index = this.allNeighborsIndex[nodeId] || {};
+
+    for (k in index)
+      neighbors[k] = this.nodesIndex[k];
+
+    return neighbors;
+  });
+
         $("#errors").hide();
         setEditor("editor1","scala"); 
         $("#fileList").children("li").each(function(){
@@ -175,6 +186,54 @@ var updateCode = function(event){
         });
 };
 
+var enableColoringNeighbors = function(s){
+    s.graph.nodes().forEach(function(n) {
+        n.originalColor = n.color;
+      });
+      s.graph.edges().forEach(function(e) {
+        e.originalColor = e.color;
+      });
+
+      // When a node is clicked, we check for each node
+      // if it is a neighbor of the clicked one. If not,
+      // we set its color as grey, and else, it takes its
+      // original color.
+      // We do the same for the edges, and we only keep
+      // edges that have both extremities colored.
+      s.bind('clickNode', function(e) {
+        var nodeId = e.data.node.id,
+            toKeep = s.graph.neighbors(nodeId);
+        toKeep[nodeId] = e.data.node;
+
+        s.graph.nodes().forEach(function(n) {
+          if (toKeep[n.id])
+            n.color = n.originalColor;
+          else
+            n.color = '#eee';
+        });
+
+        s.graph.edges().forEach(function(e) {
+          if (toKeep[e.source] && toKeep[e.target])
+            e.color = e.originalColor;
+          else
+            e.color = '#eee';
+        });
+        s.refresh();
+    });
+
+        s.bind('clickStage', function(e) {
+        s.graph.nodes().forEach(function(n) {
+          n.color = n.originalColor;
+        });
+
+        s.graph.edges().forEach(function(e) {
+          e.color = e.originalColor;
+        });
+
+        // Same as in the previous event:
+        s.refresh();
+      });
+}
 var generatePopulatedGraphFromJson = function(data) {
 
     $('#populatedGraphContainer').remove();
@@ -255,6 +314,7 @@ var generatePopulatedGraphFromJson = function(data) {
         }
     }
 
+    enableColoringNeighbors(s);
     s.refresh();
     $("#populatedGraphContainer").css("position","absolute");
 }
@@ -323,6 +383,7 @@ var generateSchemaGraphFromJson = function(data){
         });
     }
 
+    enableColoringNeighbors(s);
     s.refresh();
     $("#schemaGraphContainer").css("position","absolute");
 }
