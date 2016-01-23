@@ -92,26 +92,32 @@ var enableEditingTabName = function(tab){
     tab.append(input);
 
     input.select();
-    input.blur(function() {
-        var text = $('#tempName').val();
-        var label = $('#tempName').parent().find("a");
-        var idx = tab.attr('id').slice(-1);
-        if(endsWith(text,".java")) {
-            label.text(text);
-            changeEditorMode(ace.edit("editor"+idx),"java");
-        }
-        if(endsWith(text,".scala")){
-            label.text(text);
-            changeEditorMode(ace.edit("editor"+idx),"scala");
-        }
+    input.bind('blur keyup',function(e) {  
+        if (e.type == 'blur' || e.keyCode == '13'){
+            var text = $('#tempName').val();
+            var label = $('#tempName').parent().find("a");
+            var idx = tab.attr('id').slice(-1);
+            if(endsWith(text,".java")) {
+                label.text(text);
+                changeEditorMode(ace.edit("editor"+idx),"java");
+            }
+            if(endsWith(text,".scala")){
+                label.text(text);
+                changeEditorMode(ace.edit("editor"+idx),"scala");
+            }
 
-        label.show();
-        $('#tempName').remove()
+            label.show();
+            $('#tempName').remove()
+            $("#fileList .active").removeData("executing");
+
+        }
      });
 }
 var installTabClickedAction = function(tab){
     tab.click(function(){
-
+        var $this = $(this);
+        if ($this.data("executing")) return;
+        $this.data("executing", true);
         if($(this).hasClass("active")){
         
             //edit the file name

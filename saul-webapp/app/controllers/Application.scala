@@ -16,6 +16,7 @@ import scala.tools.nsc.reporters.{ Reporter, AbstractReporter }
 
 import util.reflectUtils._
 import util.classExecutor
+import util.IOUtils
 
 object Application {
 
@@ -39,11 +40,9 @@ class Application extends Controller {
   import Application._
 
   val compiler = new Compiler(rootDir, completeClasspath, getScalaCompilerReporter)
-  //val saulExternalLibs = new File(classPathOfClass("edu.illinois.cs.cogcomp.lbjava.parse.Parser")(0)).getParentFile().getParentFile().getParentFile().getPath()
-  //val resolvedSaulExternalLibs = if(saulExternalLibs.endsWith(File.separator)) (saulExternalLibs+"*") else (saulExternalLibs + File.separator + "*")
 
   def index = Action { implicit request =>
-    Ok(views.html.main("Your new application is ready."))
+    Ok(views.html.main("Saul Visualization Web Interface"))
   }
 
   def acceptDisplayModel = Action(parse.json) { implicit request =>
@@ -59,6 +58,8 @@ class Application extends Controller {
   }
 
   private def execute(event: Event, request: Request[JsValue]) = {
+    //new File(rootDir).mkdirs()
+    IOUtils.cleanUpTmpFolder(rootDir)
     request.body match {
       case files: JsObject => {
         val fileMap = files.as[Map[String, String]]
@@ -145,8 +146,9 @@ class Application extends Controller {
 
   private def compile(fileMap: Map[String, String]) = {
 
+
     val (javaFiles, scalaFiles) = fileMap partition {
-      case (k, _) => k contains ".java"
+      case (k, v) => k contains ".java"
     }
 
     compiler.compileJava(javaFiles)
