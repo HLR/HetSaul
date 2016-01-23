@@ -20,9 +20,8 @@ object IOUtils {
     } toList
   }*/
 
-  def cleanUpTmpFolder() = {
-    val file: File = new File("/tmp")
-    cleanUpFolder(file)
+  def cleanUpTmpFolder(DirPath : String) = {
+    cleanUpFolder(new File(DirPath))
   }
   def cleanUpFolder(file: File): Array[(String, Boolean)] = {
     Option(file.listFiles).map(_.flatMap(f => cleanUpFolder(f))).getOrElse(Array()) :+ (file.getPath -> file.delete)
