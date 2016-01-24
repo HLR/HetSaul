@@ -10,9 +10,6 @@ import edu.illinois.cs.cogcomp.saul.datamodel.node.{ JoinNode, Node }
 import edu.illinois.cs.cogcomp.saul.datamodel.edge.{ SymmetricEdge, AsymmetricEdge, Edge, Link }
 import java.lang.reflect.ParameterizedType
 
-import edu.illinois.cs.cogcomp.saul.util.webVisualizer
-
-import scala.collection.mutable.MapBuilder
 import scala.collection.mutable.ListBuffer
 import scala.reflect.ClassTag
 
@@ -367,11 +364,25 @@ object dataModelJsonInterface {
 
     var edgesJson = List[(String, String)]()
 
+    val selectedNodes = nodesObjs.flatMap {
+      case (name, node) => {
+        node.asInstanceOf[Node[_]].getAllInstances.map(x => x.toString).toSet[String]
+      }
+    }
+
+    selectedNodes.foreach(x => {
+      println(x)
+    })
     for ((name, edge) <- edgesObjs) {
       for ((start, ends) <- edge.asInstanceOf[Edge[_, _]].forward.index) {
 
-        for (end <- ends) {
-          edgesJson = (start.toString, end.toString) :: edgesJson
+        if (selectedNodes contains start) {
+          for (end <- ends) {
+
+            if (selectedNodes contains end) {
+              edgesJson = (start.toString, end.toString) :: edgesJson
+            }
+          }
         }
       }
     }
@@ -389,36 +400,16 @@ object dataModelJsonInterface {
       nodesObjs.find { case (_, x) => x == propertyObj.node } match {
         case Some((nodeName, node)) => {
           propertiesJson = node.asInstanceOf[Node[_]].getAllInstances.map(x => x.toString).toList.zip(node.asInstanceOf[Node[AnyRef]].getAllInstances.map(x => propertyObj.apply(x).toString).toList) ::: propertiesJson
-
         }
-
       }
-
     }
 
-    if (webVisualizer.isInitiated) { /*
-      val selectedNodes = webVisualizer.NODES
-      var nodeNameToObject = Map[AnyRef, String]()
-      nodes.foreach(n => {
-        nodeNameToObject = nodeNameToObject + ((n.get(dm), n.getName))
-      })
-      var selectedNodeJson = Map[String, Array[String]]()
-      selectedNodes.foreach(n =>
-        selectedNodeJson = selectedNodeJson + ((nodeNameToObject.apply(n), n.getAllInstances.map(x => x.toString).toArray))
-      )
-      selectedNodes.foreach(n => println(n.getAllInstances))*/
-      JsObject(Seq(
-        "nodes" -> Json.toJson(nodesJson),
-        "edges" -> Json.toJson(Array[String]()),
-        "properties" -> Json.toJson(Array[String]())
-      ))
-    } else {
-      JsObject(Seq(
-        "nodes" -> Json.toJson(nodesJson),
-        "edges" -> Json.toJson(edgesJson.groupBy(_._1).map { case (k, v) => (k, v.map(_._2)) }),
-        "properties" -> Json.toJson(propertiesJson.groupBy(_._1).map { case (k, v) => (k, v.map(_._2)) })
-      ))
-    }
+    JsObject(Seq(
+      "nodes" -> Json.toJson(nodesJson),
+      "edges" -> Json.toJson(edgesJson.groupBy(_._1).map { case (k, v) => (k, v.map(_._2)) }),
+      "properties" -> Json.toJson(propertiesJson.groupBy(_._1).map { case (k, v) => (k, v.map(_._2)) })
+    ))
+
   }
   def getSchemaJson(dm: DataModel): JsValue = {
     val declaredFields = dm.getClass.getDeclaredFields
