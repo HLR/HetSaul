@@ -15,8 +15,7 @@ import scala.tools.nsc.Settings
 import scala.tools.nsc.reporters.{ Reporter, AbstractReporter }
 
 import util.reflectUtils._
-import util.classExecutor
-import util.IOUtils
+import util.{ visualizer, classExecutor, IOUtils }
 
 object Application {
 
@@ -107,7 +106,10 @@ class Application extends Controller {
           case _ => false
         }) match {
           case Some(x) => x match {
-            case model: DataModel => dataModelJsonInterface.getPopulatedInstancesJson(model)
+            case model: DataModel => {
+              visualizer(model)
+              dataModelJsonInterface.getPopulatedInstancesJson(model)
+            }
             case _ => Json.toJson("Error")
           }
           case _ => Json.toJson("No DataModel found.")
