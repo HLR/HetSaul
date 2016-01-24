@@ -348,13 +348,14 @@ object dataModelJsonInterface {
     val edges = declaredFields.filter(_.getType.getSimpleName == "Edge")
     val properties = declaredFields.filter(_.getType.getSimpleName.contains("Property")).filterNot(_.getName.contains("$module"))
 
-    //get a name-field tuple
     val nodesObjs = nodes.map { n =>
       {
         n.setAccessible(true)
         (n.getName, n.get(dm))
       }
-    }
+    } filter (t => {
+      dm.NODES contains t._2
+    })
 
     val edgesObjs = edges.map { n =>
       {
@@ -371,9 +372,6 @@ object dataModelJsonInterface {
       }
     }
 
-    selectedNodes.foreach(x => {
-      println(x)
-    })
     for ((name, edge) <- edgesObjs) {
       for ((start, ends) <- edge.asInstanceOf[Edge[_, _]].forward.index) {
 
@@ -400,7 +398,13 @@ object dataModelJsonInterface {
       val propertyObj = p.get(dm).asInstanceOf[NodeProperty[AnyRef]]
       nodesObjs.find { case (_, x) => x == propertyObj.node } match {
         case Some((nodeName, node)) => {
-          propertiesJson = node.asInstanceOf[Node[_]].getAllInstances.map(x => x.toString).toList.zip(node.asInstanceOf[Node[AnyRef]].getAllInstances.map(x => propertyObj.apply(x).toString).toList) ::: propertiesJson
+
+          propertiesJson = node.asInstanceOf[Node[_]]
+            .getAllInstances.map(x => x.toString)
+            .toList.zip(node.asInstanceOf[Node[AnyRef]]
+              .getAllInstances
+              .map(x => propertyObj.apply(x).toString).toList) ::: propertiesJson
+
         }
       }
     }
