@@ -10,6 +10,9 @@ import edu.illinois.cs.cogcomp.saul.datamodel.node.{ JoinNode, Node }
 import edu.illinois.cs.cogcomp.saul.datamodel.edge.{ SymmetricEdge, AsymmetricEdge, Edge, Link }
 import java.lang.reflect.ParameterizedType
 
+import edu.illinois.cs.cogcomp.saul.util.webVisualizer
+
+import scala.collection.mutable.MapBuilder
 import scala.collection.mutable.ListBuffer
 import scala.reflect.ClassTag
 
@@ -394,11 +397,29 @@ object dataModelJsonInterface {
 
     }
 
-    JsObject(Seq(
-      "nodes" -> Json.toJson(nodesJson),
-      "edges" -> Json.toJson(edgesJson.groupBy(_._1).map { case (k, v) => (k, v.map(_._2)) }),
-      "properties" -> Json.toJson(propertiesJson.groupBy(_._1).map { case (k, v) => (k, v.map(_._2)) })
-    ))
+    if (webVisualizer.isInitiated) { /*
+      val selectedNodes = webVisualizer.NODES
+      var nodeNameToObject = Map[AnyRef, String]()
+      nodes.foreach(n => {
+        nodeNameToObject = nodeNameToObject + ((n.get(dm), n.getName))
+      })
+      var selectedNodeJson = Map[String, Array[String]]()
+      selectedNodes.foreach(n =>
+        selectedNodeJson = selectedNodeJson + ((nodeNameToObject.apply(n), n.getAllInstances.map(x => x.toString).toArray))
+      )
+      selectedNodes.foreach(n => println(n.getAllInstances))*/
+      JsObject(Seq(
+        "nodes" -> Json.toJson(nodesJson),
+        "edges" -> Json.toJson(Array[String]()),
+        "properties" -> Json.toJson(Array[String]())
+      ))
+    } else {
+      JsObject(Seq(
+        "nodes" -> Json.toJson(nodesJson),
+        "edges" -> Json.toJson(edgesJson.groupBy(_._1).map { case (k, v) => (k, v.map(_._2)) }),
+        "properties" -> Json.toJson(propertiesJson.groupBy(_._1).map { case (k, v) => (k, v.map(_._2)) })
+      ))
+    }
   }
   def getSchemaJson(dm: DataModel): JsValue = {
     val declaredFields = dm.getClass.getDeclaredFields
