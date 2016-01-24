@@ -3,7 +3,6 @@ package controllers
 import controllers.Event._
 
 import edu.illinois.cs.cogcomp.saul.datamodel.{ DataModel, dataModelJsonInterface }
-import edu.illinois.cs.cogcomp.saul.util.webVisualizer
 
 import play.api.mvc._
 import play.api.libs.json.{ JsValue, JsObject, Json }
@@ -31,7 +30,8 @@ object Application {
     "edu.illinois.cs.cogcomp.lbjava.parse.Parser",
     "edu.illinois.cs.cogcomp.core.datastructures.textannotation.TextAnnotation",
     "edu.illinois.cs.cogcomp.nlp.pipeline.IllinoisPipelineFactory",
-    "edu.illinois.cs.cogcomp.curator.CuratorFactory"
+    "edu.illinois.cs.cogcomp.curator.CuratorFactory",
+    "util.visualizer"
   ).flatMap(x => classPathOfClass(x)) ::: List(rootDir)).mkString(File.pathSeparator)
 
 }
