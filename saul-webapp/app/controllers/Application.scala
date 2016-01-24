@@ -3,6 +3,7 @@ package controllers
 import controllers.Event._
 
 import edu.illinois.cs.cogcomp.saul.datamodel.{ DataModel, dataModelJsonInterface }
+import edu.illinois.cs.cogcomp.saul.util.webVisualizer
 
 import play.api.mvc._
 import play.api.libs.json.{ JsValue, JsObject, Json }
@@ -145,7 +146,6 @@ class Application extends Controller {
   }
 
   private def compile(fileMap: Map[String, String]) = {
-
 
     val (javaFiles, scalaFiles) = fileMap partition {
       case (k, v) => k contains ".java"
