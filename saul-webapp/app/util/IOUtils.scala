@@ -20,7 +20,7 @@ object IOUtils {
     } toList
   }*/
 
-  def cleanUpTmpFolder(DirPath : String) = {
+  def cleanUpTmpFolder(DirPath: String) = {
     cleanUpFolder(new File(DirPath))
   }
   def cleanUpFolder(file: File): Array[(String, Boolean)] = {

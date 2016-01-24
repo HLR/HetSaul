@@ -15,8 +15,7 @@ import scala.tools.nsc.Settings
 import scala.tools.nsc.reporters.{ Reporter, AbstractReporter }
 
 import util.reflectUtils._
-import util.classExecutor
-import util.IOUtils
+import util.{ visualizer, classExecutor, IOUtils }
 
 object Application {
 
@@ -30,7 +29,8 @@ object Application {
     "edu.illinois.cs.cogcomp.lbjava.parse.Parser",
     "edu.illinois.cs.cogcomp.core.datastructures.textannotation.TextAnnotation",
     "edu.illinois.cs.cogcomp.nlp.pipeline.IllinoisPipelineFactory",
-    "edu.illinois.cs.cogcomp.curator.CuratorFactory"
+    "edu.illinois.cs.cogcomp.curator.CuratorFactory",
+    "util.visualizer"
   ).flatMap(x => classPathOfClass(x)) ::: List(rootDir)).mkString(File.pathSeparator)
 
 }
@@ -106,7 +106,10 @@ class Application extends Controller {
           case _ => false
         }) match {
           case Some(x) => x match {
-            case model: DataModel => dataModelJsonInterface.getPopulatedInstancesJson(model)
+            case model: DataModel => {
+              visualizer(model)
+              dataModelJsonInterface.getPopulatedInstancesJson(model)
+            }
             case _ => Json.toJson("Error")
           }
           case _ => Json.toJson("No DataModel found.")
@@ -145,7 +148,6 @@ class Application extends Controller {
   }
 
   private def compile(fileMap: Map[String, String]) = {
-
 
     val (javaFiles, scalaFiles) = fileMap partition {
       case (k, v) => k contains ".java"

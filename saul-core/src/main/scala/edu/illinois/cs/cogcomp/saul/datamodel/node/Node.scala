@@ -48,11 +48,15 @@ class Node[T <: AnyRef](val keyFunc: T => Any = (x: T) => x, val tag: ClassTag[T
   }
 
   def clear = {
+    clearData
+    for (e <- incoming) e.clear
+    for (e <- outgoing) e.clear
+  }
+
+  def clearData = {
     collection.clear()
     trainingSet.clear()
     testingSet.clear()
-    for (e <- incoming) e.clear
-    for (e <- outgoing) e.clear
   }
 
   var count = 0

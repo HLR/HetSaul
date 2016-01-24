@@ -348,13 +348,14 @@ object dataModelJsonInterface {
     val edges = declaredFields.filter(_.getType.getSimpleName == "Edge")
     val properties = declaredFields.filter(_.getType.getSimpleName.contains("Property")).filterNot(_.getName.contains("$module"))
 
-    //get a name-field tuple
     val nodesObjs = nodes.map { n =>
       {
         n.setAccessible(true)
         (n.getName, n.get(dm))
       }
-    }
+    } filter (t => {
+      dm.NODES contains t._2
+    })
 
     val edgesObjs = edges.map { n =>
       {
@@ -365,11 +366,22 @@ object dataModelJsonInterface {
 
     var edgesJson = List[(String, String)]()
 
+    val selectedNodes = nodesObjs.flatMap {
+      case (name, node) => {
+        node.asInstanceOf[Node[_]].getAllInstances.map(x => x.toString).toSet[String]
+      }
+    }
+
     for ((name, edge) <- edgesObjs) {
       for ((start, ends) <- edge.asInstanceOf[Edge[_, _]].forward.index) {
 
-        for (end <- ends) {
-          edgesJson = (start.toString, end.toString) :: edgesJson
+        if (selectedNodes contains start) {
+          for (end <- ends) {
+
+            if (selectedNodes contains end) {
+              edgesJson = (start.toString, end.toString) :: edgesJson
+            }
+          }
         }
       }
     }
@@ -386,12 +398,15 @@ object dataModelJsonInterface {
       val propertyObj = p.get(dm).asInstanceOf[NodeProperty[AnyRef]]
       nodesObjs.find { case (_, x) => x == propertyObj.node } match {
         case Some((nodeName, node)) => {
-          propertiesJson = node.asInstanceOf[Node[_]].getAllInstances.map(x => x.toString).toList.zip(node.asInstanceOf[Node[AnyRef]].getAllInstances.map(x => propertyObj.apply(x).toString).toList) ::: propertiesJson
+
+          propertiesJson = node.asInstanceOf[Node[_]]
+            .getAllInstances.map(x => x.toString)
+            .toList.zip(node.asInstanceOf[Node[AnyRef]]
+              .getAllInstances
+              .map(x => propertyObj.apply(x).toString).toList) ::: propertiesJson
 
         }
-
       }
-
     }
 
     JsObject(Seq(
@@ -399,6 +414,7 @@ object dataModelJsonInterface {
       "edges" -> Json.toJson(edgesJson.groupBy(_._1).map { case (k, v) => (k, v.map(_._2)) }),
       "properties" -> Json.toJson(propertiesJson.groupBy(_._1).map { case (k, v) => (k, v.map(_._2)) })
     ))
+
   }
   def getSchemaJson(dm: DataModel): JsValue = {
     val declaredFields = dm.getClass.getDeclaredFields
