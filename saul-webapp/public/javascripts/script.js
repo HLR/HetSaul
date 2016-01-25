@@ -252,6 +252,7 @@ var generatePopulatedGraphFromJson = function(data) {
         edgeLabelSize: 'proportional',
         labelThreshold: 0
     }});
+    var dragListener = sigma.plugins.dragNodes(s, s.renderers[0]);
     var nodeId = 0;
     var nodeDict = {};
     var nodePropertyCount = {};
@@ -336,6 +337,8 @@ var generateSchemaGraphFromJson = function(data){
         edgeLabelSize: 'proportional',
         labelThreshold: 0
     }});
+
+    var dragListener = sigma.plugins.dragNodes(s, s.renderers[0]);
     var nodeId = 0;
     var nodeDict = {};
     var nodePropertyCount = {};
