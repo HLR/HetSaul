@@ -33,6 +33,18 @@ class propertyTest extends FlatSpec with Matchers {
     stringPropertyWithCache(new toyClass).mkString should be("cachedValue")
     stringPropertyWithCache(new toyClass).mkString should be("cachedValue")
   }
+
+  "properties" should "use reasonable default names if not specified" in {
+    object testModel extends DataModel {
+      val n = node[String]
+
+      val p1 = property(n) { s: String => s.length }
+      val p2 = property(n) { s: String => s.length == 2 }
+      val p3 = property(n) { s: String => s.take(1) }
+
+      Set(p1.name, p2.name, p3.name).size should be(3)
+    }
+  }
 }
 
 object toyDataModel extends DataModel {
