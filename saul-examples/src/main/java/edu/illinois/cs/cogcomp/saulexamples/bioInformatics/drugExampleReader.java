@@ -8,7 +8,6 @@ import java.util.Collections;
 
 
 public class drugExampleReader {
-  //  int currentInstanceId=0;
 
     public ArrayList<Patient> patientCollection =new ArrayList<Patient>();
     public ArrayList<PatientGene> samplGExCollection =new ArrayList<PatientGene>();
@@ -232,38 +231,6 @@ public class drugExampleReader {
         return null;
     }
 
-       /* public void close() {
-        }
-        public Object next() {
-
-            if (currentInstanceId < joinedSampleCollection.size()) {
-
-                sample file = joinedSampleCollection.get(currentInstanceId++);
-
-//			String[] split = file.getPath().split(File.separator);
-
-                //		String label = split[split.length - 2];
-
-                return file;//Document(file, label);
-            } else
-                return null;
-        }*/
-
-     //   public void reset() {
-        //    currentInstanceId = 0;
-      //  }
-
-        /*public static void main(String[] args) throws Exception{
-            System.out.println("here");
-            dragExampleReader cr=new dragExampleReader("/Users/Parisa/Documents/KnowEng/veda.cs.uiuc.edu/KnowEnG_Challenge1/processed_data/hidden/individual_samples.txt","/Users/Parisa/Documents/KnowEng/veda.cs.uiuc.edu/KnowEnG_Challenge1/processed_data/released/training/auc_response.txt","/Users/Parisa/Documents/KnowEng/veda.cs.uiuc.edu/KnowEnG_Challenge1/processed_data/released/training/gene2med_probe_expr.txt");
-            System.out.println("here");
-            //cr.readData("/home/roth/rsamdan2/Project/EMStructuredPrediction/UnsupRelationExtraction/data/conll04.corp");
-         //   cr.printData();
-
-        }
-*/
-
-
-    }
+}
 
 

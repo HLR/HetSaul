@@ -352,6 +352,7 @@ object dataModelJsonInterface {
       (n.getName, n.get(dm))
     } filter (t =>
       dm.NODES contains t._2)
+    
     val invertedNodesMap: Map[Object, String] = nodesObjs.map(_.swap).toMap
 
     val edgesObjs = edges.map { n =>

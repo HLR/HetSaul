@@ -3,6 +3,7 @@ package edu.illinois.cs.cogcomp.saulexamples.bioInformatics.regressionModel
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
 import edu.illinois.cs.cogcomp.saulexamples.bioInformatics._
 import bioSensors._
+import edu.illinois.cs.cogcomp.saulexamples.bioInformatics.regressionModel.Classifiers.dResponseClassifier
 import scala.collection.JavaConversions._
 /** Created by Parisa on 6/24/15.
   */
@@ -66,5 +67,9 @@ object knowEngDataModel extends DataModel {
   }
   val textSimilarity = property(geneGene) {
     x: GeneGene => x.STRING_textmining
+  }
+
+  val responsePrediction = property(patientDrug) {
+    x: PatientDrug => dResponseClassifier(x)
   }
 }
