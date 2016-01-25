@@ -91,9 +91,9 @@ class Application extends Controller {
       case Some(x) => x match {
 
         case model: DataModel => dataModelJsonInterface.getSchemaJson(model)
-        case _ => Json.toJson("Error")
+        case _ => getErrorJson(Json.toJson("Error"))
       }
-      case _ => Json.toJson("No DataModel found.")
+      case _ => getErrorJson(Json.toJson("No DataModel found."))
     }
   }
 
@@ -110,12 +110,12 @@ class Application extends Controller {
               visualizer(model)
               dataModelJsonInterface.getPopulatedInstancesJson(model)
             }
-            case _ => Json.toJson("Error")
+            case _ => getErrorJson(Json.toJson("Error"))
           }
-          case _ => Json.toJson("No DataModel found.")
+          case _ => getErrorJson(Json.toJson("No DataModel found."))
         }
       }
-      case _ => Json.toJson("No main method found.")
+      case _ => getErrorJson(Json.toJson("No main method found.(Try changing the filename if you are certain you have a main method)"))
     }
     //Eval.eval(scalaInstances, fileMap, compiler)
   }
@@ -139,7 +139,7 @@ class Application extends Controller {
           case _ => Json.toJson("Error.")
         }
       }
-      case None => Json.toJson("No main method found.")
+      case None => getErrorJson(Json.toJson("No main method found.(Try changing the filename if you are certain you have a main method)"))
     }
   }
 
@@ -159,7 +159,7 @@ class Application extends Controller {
       Left(compiler.compileScala(scalaFiles))
     } catch {
       case errors: CompilerException => Right(getErrorJson(Json.toJson(errors.messages)))
-      case _ => Right(Json.toJson("Unknown exception."))
+      case unknown => throw unknown//Right(Json.toJson("Unknown exception."))
     }
   }
 

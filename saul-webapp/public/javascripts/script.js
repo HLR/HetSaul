@@ -423,13 +423,17 @@ var changeTab = function(currentAttrValue) {
 }
 
 var alertError = function(data) {
-    //alert(JSON.stringify(data));
+    alert(JSON.stringify(data));
     if(data['error']){
         var message = "";
-        for(var index in data['error']){
-            for(var index2 in data['error'][index]){
-                message += data['error'][index][index2] + "<br>";
+        if(data['error'].constructor === Array){
+            for(var index in data['error']){
+                for(var index2 in data['error'][index]){
+                    message += data['error'][index][index2] + "<br>";
+                }
             }
+        }else{
+                message += data['error'] + "<br>";
         }
         $("#errors").html(message);
         $("#errors").show();
