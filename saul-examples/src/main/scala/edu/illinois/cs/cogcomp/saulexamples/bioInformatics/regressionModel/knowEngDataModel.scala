@@ -38,10 +38,12 @@ object knowEngDataModel extends DataModel {
   }
 
   val gene_GoTerm = property(genes) {
-    x: Gene => x.GO_term.toList
+    x: Gene => if (x.GO_term==null)
+    List("") else (x.GO_term.toList)
   }
   val gene_KEGG = property(genes) {
-    x: Gene => x.KEGG.toList
+    x: Gene => if (x.KEGG==null)
+      List("") else x.KEGG.toList
   }
   val gene_motif = property(genes) {
     x: Gene => x.motif_u5_gc.doubleValue()
