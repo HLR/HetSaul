@@ -19,11 +19,9 @@ class PathTest extends FlatSpec with Matchers {
     import TestGraph._
 
     val pathAB = Path.findPath("a", n, "b")
-    //    println("Path: " + pathAB.map(_._1).mkString(", "))
     pathAB.map(_._1) should be(Seq("a" -> "b"))
 
     val pathBC = Path.findPath("b", n, "c")
-    //    println("Path: " + pathBC.map(_._1).mkString(", "))
     pathBC.map(_._1) should be(Seq("b" -> "c"))
   }
 
@@ -31,11 +29,9 @@ class PathTest extends FlatSpec with Matchers {
     import TestGraph._
 
     val pathAB = Path.findPath("b", n, "a")
-    //    println("Path: " + pathAB.map(_._1).mkString(", "))
     pathAB.map(_._1) should be(Seq.empty)
 
     val pathBC = Path.findPath("c", n, "b")
-    //    println("Path: " + pathBC.map(_._1).mkString(", "))
     pathBC.map(_._1) should be(Seq.empty)
   }
 
@@ -43,7 +39,6 @@ class PathTest extends FlatSpec with Matchers {
     import TestGraph._
 
     val pathAB = Path.findPath("a", n, "c")
-    //    println("Path: " + pathAB.map(_._1).mkString(", "))
     pathAB.map(_._1) should be(Seq("a" -> "b", "b" -> "c"))
   }
 
@@ -51,7 +46,6 @@ class PathTest extends FlatSpec with Matchers {
     import TestGraph._
 
     val pathAB = Path.findPath("a", n, "c", maxLength = 1)
-    //    println("Path: " + pathAB.map(_._1).mkString(", "))
     pathAB.map(_._1) should be(Seq.empty)
   }
 
@@ -59,7 +53,6 @@ class PathTest extends FlatSpec with Matchers {
     import TestGraph._
 
     val pathAB = Path.findPath("a", n, "c", maxLength = 2)
-    //    println("Path: " + pathAB.map(_._1).mkString(", "))
     pathAB.map(_._1) should be(Seq("a" -> "b", "b" -> "c"))
   }
 }

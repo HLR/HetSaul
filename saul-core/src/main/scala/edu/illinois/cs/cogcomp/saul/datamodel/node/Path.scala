@@ -9,20 +9,6 @@ import scala.collection.mutable
 /** @author sameer
   * @since 1/17/16.
   */
-//case class Path[S, I, T](link: (S, I), edge: Edge[S, I], rest: Path[I, _, T]) {
-//  def length: Int = 1 + rest.length
-//  def instances: Seq[(Any, Node[_])] = Seq(link._2 -> edge.to) ++ rest.instances
-//  def edges: Seq[Edge[_, _]] = Seq(edge) ++ rest.edges
-//}
-//
-//case class SingleLink[S, T](l: (S, T), e: Edge[S, T]) extends Path[S,T,T](l, e, null) {
-//  override def length: Int = 1
-//
-//  override def edges: Seq[Edge[_, _]] = Seq(edge)
-//
-//  override def instances: Seq[(Any, Node[_])] = Seq(l._2 -> edge.to)
-//}
-
 object Path {
 
   type Path[S <: AnyRef, T <: AnyRef] = ((S, T), Edge[S, T])
@@ -34,16 +20,14 @@ object Path {
     if (maxLength <= 0) {
       return None
     }
-    val visited = curr.flatMap(p => Seq(p._1._1, p._1._2)).toSet[AnyRef]
-    for (o <- snode.outgoing) {
-      for (i <- o.forward.neighborsOf(s)) {
-        if (i == t) {
-          // found the final link!
-          return Some(curr ++ Seq((s -> t) -> o.asInstanceOf[Edge[AnyRef, AnyRef]]))
-        }
-        if (!visited(i.asInstanceOf[AnyRef])) {
-          queue += State(i.asInstanceOf[AnyRef], o.to.asInstanceOf[Node[AnyRef]], t, maxLength - 1, curr ++ Seq((s -> i.asInstanceOf[AnyRef]) -> o.asInstanceOf[Edge[AnyRef, AnyRef]]))
-        }
+    val visited = curr.flatMap { case ((beg, end), _) => Seq(beg, end) }.toSet[AnyRef]
+    for (o <- snode.outgoing; i <- o.forward.neighborsOf(s)) {
+      if (i == t) {
+        // found the final link!
+        return Some(curr ++ Seq((s -> t) -> o.asInstanceOf[Edge[AnyRef, AnyRef]]))
+      }
+      if (!visited(i.asInstanceOf[AnyRef])) {
+        queue += State(i.asInstanceOf[AnyRef], o.to.asInstanceOf[Node[AnyRef]], t, maxLength - 1, curr ++ Seq((s -> i.asInstanceOf[AnyRef]) -> o.asInstanceOf[Edge[AnyRef, AnyRef]]))
       }
     }
     None
