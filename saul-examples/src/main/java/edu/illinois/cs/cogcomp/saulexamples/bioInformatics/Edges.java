@@ -1,6 +1,4 @@
 package edu.illinois.cs.cogcomp.saulexamples.bioInformatics;
-import edu.illinois.cs.cogcomp.saulexamples.bioInformatics.Gene;
-import edu.illinois.cs.cogcomp.saulexamples.bioInformatics.GeneGene;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -20,7 +18,6 @@ public class Edges {
   Double edge_weight;
   String edge_type;
    }
- // ArrayList<KNedge> edgeCollection=new ArrayList<KNedge>();
   public ArrayList<Gene> geneCollection = new ArrayList<Gene>();
   public  ArrayList<GeneGene>   edgeCollection = new ArrayList<GeneGene>();
 

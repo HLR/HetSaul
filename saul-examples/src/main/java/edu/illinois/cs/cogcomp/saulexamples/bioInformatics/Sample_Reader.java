@@ -16,7 +16,7 @@ public class Sample_Reader {
         String[] columns = line.split("\t|\n");
         if (columns.length >= 4) {
             o.sampleID = columns[0];
-            //  o.patient_id= columns[1];// caled lable-ID
+            //  o.patient_id= columns[1];
             //  o.GMID=columns[2];
             //  o.WeiID=columns[3];
             //  o.batch=columns[4];
@@ -50,7 +50,6 @@ public class Sample_Reader {
             Patient x = makeElement(line);
             if (x != null)
                 patientCollection.add(x);
-            //	print_sample_element(x);
-        }
+               }
     }
 }
