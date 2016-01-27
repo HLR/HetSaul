@@ -19,7 +19,7 @@ object srlConstraints {
     {
       var a: FirstOrderConstraint = null
       x: TextAnnotation => {
-         a = new FirstOrderConstant(true)
+        a = new FirstOrderConstant(true)
         //using TextAnnotation
         x.getView(ViewNames.SRL_VERB).asInstanceOf[PredicateArgumentView].getPredicates.foreach {
           //using the graph
@@ -105,7 +105,7 @@ object srlConstraints {
   val r_arg_Constraint = ConstrainedClassifier.constraintOf[TextAnnotation] {
     var a: FirstOrderConstraint = null
     x: TextAnnotation => {
-       a  = new FirstOrderConstant(true)
+      a = new FirstOrderConstant(true)
       val values = Array("R-A1", "R-A2", "R-A3", "R-A4", "R-A5")
       x.getView(ViewNames.SRL_VERB).asInstanceOf[PredicateArgumentView].getPredicates.foreach {
         y =>
@@ -129,7 +129,7 @@ object srlConstraints {
   val c_arg_Constraint = ConstrainedClassifier.constraintOf[TextAnnotation] {
     var a: FirstOrderConstraint = null
     x: TextAnnotation => {
-      a  = new FirstOrderConstant(true)
+      a = new FirstOrderConstant(true)
       val values = Array("C-A1", "C-A2", "C-A3", "C-A4", "C-A5")
       x.getView(ViewNames.SRL_VERB).asInstanceOf[PredicateArgumentView].getPredicates.foreach {
         y =>
@@ -160,8 +160,8 @@ object srlConstraints {
     var a: FirstOrderConstraint = null
 
     x: TextAnnotation => {
-      a= new FirstOrderConstant(true)
-    val values = Array("R-A1", "R-A2", "R-A3", "R-A4", "R-A5", "R-AA")
+      a = new FirstOrderConstant(true)
+      val values = Array("R-A1", "R-A2", "R-A3", "R-A4", "R-A5", "R-AA")
       x.getView(ViewNames.SRL_VERB).asInstanceOf[PredicateArgumentView].getPredicates.foreach {
         y =>
           {
@@ -184,7 +184,7 @@ object srlConstraints {
   val c_arg_Constraint_GB = ConstrainedClassifier.constraintOf[TextAnnotation] {
     var a: FirstOrderConstraint = null
     x: TextAnnotation => {
-      a  = new FirstOrderConstant(true)
+      a = new FirstOrderConstant(true)
       val values = Array("C-A1", "C-A2", "C-A3", "C-A4", "C-A5", "C-AA")
       x.getView(ViewNames.SRL_VERB).asInstanceOf[PredicateArgumentView].getPredicates.foreach {
         y =>
@@ -211,7 +211,7 @@ object srlConstraints {
   val legal_arguments_Constraint_GB = ConstrainedClassifier.constraintOf[TextAnnotation] {
     var a: FirstOrderConstraint = null
     x: TextAnnotation => {
-    a = new FirstOrderConstant(true)
+      a = new FirstOrderConstant(true)
       x.getView(ViewNames.SRL_VERB).asInstanceOf[PredicateArgumentView].getPredicates.foreach {
         y =>
           {
@@ -251,7 +251,6 @@ object srlConstraints {
       a
     }
   }
-
 
   val r_and_c_args_GB = ConstrainedClassifier.constraintOf[TextAnnotation] {
     x =>

@@ -7,7 +7,7 @@ import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlConstrai
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlDataModel._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlSensors._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.commonSensors._
-import org.slf4j.{Logger, LoggerFactory}
+import org.slf4j.{ Logger, LoggerFactory }
 
 import scala.collection.JavaConversions._
 /** Created by Parisa on 12/27/15.
