@@ -94,7 +94,7 @@ object populateGraphwithGoldSRL extends App {
     }
 
     val trainingFromSection = 2
-    val trainingToSection = 2
+    val trainingToSection = 21
 
     if (!testOnly) {
       logger.info("Reading training data from sections {} to {}", trainingFromSection, trainingToSection)
