@@ -5,6 +5,7 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling
 
 import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.Constituent
+import edu.illinois.cs.cogcomp.core.experiments.NotificationSender
 import edu.illinois.cs.cogcomp.saul.evaluation.evaluation
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifiers.{ argumentTypeLearner, argumentXuIdentifierGivenApredicate, predicateClassifier }
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlDataModel._
@@ -38,6 +39,17 @@ object pipelineApp extends App {
     "\n\tTrainPred: " + trainPredicates +
     "\n\tTrainIdentifier: " + trainArgIdentifier +
     "\n\tTrainType: " + trainArgType)
+
+  val expName = {
+    if (trainArgType && useGoldArgBoundaries) "aTr"
+    else if (trainArgIdentifier && useGoldPredicate) "bTr"
+    else if (trainArgType && useGoldPredicate) "cTr"
+    else if (trainPredicates) "dTr"
+    else if (trainArgIdentifier && !useGoldPredicate) "eTr"
+    else if (trainArgType && !useGoldPredicate) "fTr"
+  }
+  val notifier: NotificationSender = new NotificationSender("../data/notifier.key", "Saul", "SRL " + expName)
+  val startTime = System.currentTimeMillis()
 
   if (!useGoldPredicate) {
     srlDataModel.sentencesToTokens.addSensor(textAnnotationToTokens _)
@@ -109,4 +121,7 @@ object pipelineApp extends App {
     evaluation.Test(argumentLabelGold, typeArgumentPrediction, relations.getTestingInstances)
     argumentTypeLearner.save()
   }
+
+  val endTime = System.currentTimeMillis()
+  notifier.notify("Took " + ((endTime - startTime) / 60000) + " minutes")
 }
