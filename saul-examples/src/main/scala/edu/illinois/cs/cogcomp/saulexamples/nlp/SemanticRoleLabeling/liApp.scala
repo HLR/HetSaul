@@ -15,8 +15,10 @@ import scala.collection.JavaConversions._
 object liApp extends App {
 
   val logger: Logger = LoggerFactory.getLogger(this.getClass)
-  val aTr_lc = "modelsRepeating/models_aTr_Chris/edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifiers.argumentTypeLearner$.lc"
-  val aTr_lex = "modelsRepeating/models_aTr_Chris/edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifiers.argumentTypeLearner$.lex"
+  private val rootModelDir: String = "../models/models_aTr_Chris/"
+  val aTr_lc = rootModelDir + "edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifiers.argumentTypeLearner$.lc"
+  val aTr_lex = rootModelDir + "edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifiers.argumentTypeLearner$.lex"
+  val aTr_pred = rootModelDir + "classifier-predictions.txt"
 
   val useGoldPredicate = false
   val useGoldBoundaries = true
@@ -69,8 +71,8 @@ object liApp extends App {
 
   //test(testData: Iterable[T], prediction: Property[T], groundTruth: Property[T])
 
-  argTypeConstraintClassifier.test()
-  argumentTypeLearner.test(relations.getTestingInstances, argumentLabelGold, typeArgumentPrediction, exclude = "candidate")
+  argTypeConstraintClassifier.test(aTr_pred, 100)
+  //argumentTypeLearner.test(relations.getTestingInstances, argumentLabelGold, typeArgumentPrediction, exclude = "candidate")
   //argumentTypeLearner.test(exclude="candidate")
   logger.info("finished!")
 

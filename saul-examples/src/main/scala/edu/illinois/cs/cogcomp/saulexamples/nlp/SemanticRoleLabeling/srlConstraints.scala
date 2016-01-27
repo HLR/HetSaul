@@ -181,16 +181,16 @@ object srlConstraints {
         y =>
           {
             val argCandList = (predicates(y) ~> -relationsToPredicates).toList
-            argCandList.sortBy(x=>x.getTarget.getStartSpan)
+            argCandList.sortBy(x => x.getTarget.getStartSpan)
             argCandList.zipWithIndex.foreach {
-             case (t,ind) =>
-                 {
-                   if (ind>0)
-                   for (i <- 0 until values.length - 1)
-                    a = a &&& ((argumentTypeLearner on t) is values(i)) ==>
-                      argCandList.subList(0,ind)._exists {
-                        k: Relation => (argumentTypeLearner on k) is values(i).substring(2)
-                      }
+              case (t, ind) =>
+                {
+                  if (ind > 0)
+                    for (i <- 0 until values.length - 1)
+                      a = a &&& ((argumentTypeLearner on t) is values(i)) ==>
+                        argCandList.subList(0, ind)._exists {
+                          k: Relation => (argumentTypeLearner on k) is values(i).substring(2)
+                        }
                 }
             }
           }

@@ -4,6 +4,7 @@ import edu.illinois.cs.cogcomp.lbjava.classify.TestDiscrete
 import edu.illinois.cs.cogcomp.lbjava.infer.{ FirstOrderConstraint, InferenceManager }
 import edu.illinois.cs.cogcomp.lbjava.learn.Learner
 import edu.illinois.cs.cogcomp.lbjava.parse.Parser
+import edu.illinois.cs.cogcomp.saul.TestWithStorage
 import edu.illinois.cs.cogcomp.saul.classifier.infer.InferenceCondition
 import edu.illinois.cs.cogcomp.saul.constraint.LfsConstraint
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
@@ -186,7 +187,7 @@ abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val dm: DataMo
 
   }
 
-  def test(): List[(String, (Double, Double, Double))] = {
+  def test(outFile: String = null, outputGranularity: Int = 0): List[(String, (Double, Double, Double))] = {
 
     val allHeads = this.dm.getNodeWithType[HEAD].getTestingInstances
     //    allHeads foreach( t => println(s"  [HEAD]  Using thie head ${t} "))
@@ -200,35 +201,21 @@ abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val dm: DataMo
       }
 
     }
-
-    //    val data : List[T] =
-
-    //    data foreach( t => println(s"  Using thie one ${t} "))
-
-    //    val data =
-
-    //    println(data.size)
-    test(data)
+    test(data, outFile, outputGranularity)
   }
 
   /** Test with given data, use internally
-    * @param testData
+    *
+    * @param testData The input data as an `Iterable` of type `T`
+    * @param outFile The file to write the predictions (can be `null`)
     * @return List of (label, (f1,precision,recall))
     */
-  def test(testData: Iterable[T]): List[(String, (Double, Double, Double))] = {
+  def test(testData: Iterable[T], outFile: String, outputGranularity: Int): List[(String, (Double, Double, Double))] = {
     println()
     val testReader = new LBJIteratorParserScala[T](testData)
-    //    println("Here is the test!")
     testReader.reset()
-
-    //    testData.toList.map{
-    //     t : T =>
-    //       println(s"Eval ${t}")
-    //       (t,classifier.discreteValue(t))
-    //    }.foreach(println)
-
-    val tester = TestDiscrete.testDiscrete(new TestDiscrete(), classifier, onClassifier.getLabeler, testReader, true, 1)
-    tester.printPerformance(System.out)
+    val tester: TestDiscrete = new TestDiscrete()
+    TestWithStorage.test(tester, classifier, onClassifier.getLabeler, testReader, outFile, outputGranularity)
     val ret = tester.getLabels.map({
       label => (label, (tester.getF1(label), tester.getPrecision(label), tester.getRecall(label)))
     })
