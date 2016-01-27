@@ -17,8 +17,9 @@ object srlConstraints {
   val noOverlap = ConstrainedClassifier.constraintOf[TextAnnotation] {
     // here this constituent is a sentence
     {
-      var a: FirstOrderConstraint = new FirstOrderConstant(true)
+      var a: FirstOrderConstraint = null
       x: TextAnnotation => {
+         a = new FirstOrderConstant(true)
         //using TextAnnotation
         x.getView(ViewNames.SRL_VERB).asInstanceOf[PredicateArgumentView].getPredicates.foreach {
           //using the graph
@@ -44,8 +45,9 @@ object srlConstraints {
 
   val noDuplicate = ConstrainedClassifier.constraintOf[TextAnnotation] {
     // Predicates have atmost one argument of each type i.e. there is no two arguments of the same type for each predicate
-    var a: FirstOrderConstraint = new FirstOrderConstant(true)
+    var a: FirstOrderConstraint = null
     x: TextAnnotation => {
+      a = new FirstOrderConstant(true)
       //using TextAnnotation
       x.getView(ViewNames.SRL_VERB).asInstanceOf[PredicateArgumentView].getPredicates.foreach {
         //using the graph
@@ -80,8 +82,9 @@ object srlConstraints {
   }
 
   val legal_arguments_Constraint = ConstrainedClassifier.constraintOf[TextAnnotation] {
-    var a: FirstOrderConstraint = new FirstOrderConstant(true)
+    var a: FirstOrderConstraint = null
     x: TextAnnotation => {
+      a = new FirstOrderConstant(true)
 
       x.getView(ViewNames.SRL_VERB).asInstanceOf[PredicateArgumentView].getPredicates.foreach {
         y =>
@@ -100,8 +103,9 @@ object srlConstraints {
     a
   }
   val r_arg_Constraint = ConstrainedClassifier.constraintOf[TextAnnotation] {
-    var a: FirstOrderConstraint = new FirstOrderConstant(true)
+    var a: FirstOrderConstraint = null
     x: TextAnnotation => {
+       a  = new FirstOrderConstant(true)
       val values = Array("R-A1", "R-A2", "R-A3", "R-A4", "R-A5")
       x.getView(ViewNames.SRL_VERB).asInstanceOf[PredicateArgumentView].getPredicates.foreach {
         y =>
@@ -123,8 +127,9 @@ object srlConstraints {
     a
   } // end r-arg constraint
   val c_arg_Constraint = ConstrainedClassifier.constraintOf[TextAnnotation] {
-    var a: FirstOrderConstraint = new FirstOrderConstant(true)
+    var a: FirstOrderConstraint = null
     x: TextAnnotation => {
+      a  = new FirstOrderConstant(true)
       val values = Array("C-A1", "C-A2", "C-A3", "C-A4", "C-A5")
       x.getView(ViewNames.SRL_VERB).asInstanceOf[PredicateArgumentView].getPredicates.foreach {
         y =>
@@ -151,9 +156,12 @@ object srlConstraints {
   // end r-arg constraint
 
   val r_arg_Constraint_GB = ConstrainedClassifier.constraintOf[TextAnnotation] {
-    var a: FirstOrderConstraint = new FirstOrderConstant(true)
+
+    var a: FirstOrderConstraint = null
+
     x: TextAnnotation => {
-      val values = Array("R-A1", "R-A2", "R-A3", "R-A4", "R-A5", "R-AA")
+      a= new FirstOrderConstant(true)
+    val values = Array("R-A1", "R-A2", "R-A3", "R-A4", "R-A5", "R-AA")
       x.getView(ViewNames.SRL_VERB).asInstanceOf[PredicateArgumentView].getPredicates.foreach {
         y =>
           {
@@ -174,8 +182,9 @@ object srlConstraints {
     a
   } // end r-arg constraint
   val c_arg_Constraint_GB = ConstrainedClassifier.constraintOf[TextAnnotation] {
-    var a: FirstOrderConstraint = new FirstOrderConstant(true)
+    var a: FirstOrderConstraint = null
     x: TextAnnotation => {
+      a  = new FirstOrderConstant(true)
       val values = Array("C-A1", "C-A2", "C-A3", "C-A4", "C-A5", "C-AA")
       x.getView(ViewNames.SRL_VERB).asInstanceOf[PredicateArgumentView].getPredicates.foreach {
         y =>
@@ -199,14 +208,10 @@ object srlConstraints {
     a
   }
 
-  val r_and_c_args_GB = ConstrainedClassifier.constraintOf[TextAnnotation] {
-    x => r_arg_Constraint_GB(x) &&& c_arg_Constraint_GB(x) &&& legal_arguments_Constraint_GB(x) &&& noDuplicate_GB(x)
-  }
-
   val legal_arguments_Constraint_GB = ConstrainedClassifier.constraintOf[TextAnnotation] {
-    var a: FirstOrderConstraint = new FirstOrderConstant(true)
+    var a: FirstOrderConstraint = null
     x: TextAnnotation => {
-
+    a = new FirstOrderConstant(true)
       x.getView(ViewNames.SRL_VERB).asInstanceOf[PredicateArgumentView].getPredicates.foreach {
         y =>
           {
@@ -227,8 +232,9 @@ object srlConstraints {
   val noDuplicate_GB = ConstrainedClassifier.constraintOf[TextAnnotation] {
     // Predicates have atmost one argument of each type i.e. there is no two arguments of the same type for each predicate
     val values = Array("A0", "A1", "A2", "A3", "A4", "A5", "AA")
-    var a: FirstOrderConstraint = new FirstOrderConstant(true)
+    var a: FirstOrderConstraint = null
     x: TextAnnotation => {
+      a = new FirstOrderConstant(true)
       //using TextAnnotation
       x.getView(ViewNames.SRL_VERB).asInstanceOf[PredicateArgumentView].getPredicates.foreach {
         //using the graph
@@ -245,5 +251,12 @@ object srlConstraints {
       a
     }
   }
+
+
+  val r_and_c_args_GB = ConstrainedClassifier.constraintOf[TextAnnotation] {
+    x =>
+      r_arg_Constraint_GB(x) &&& c_arg_Constraint_GB(x) &&& legal_arguments_Constraint_GB(x) &&& noDuplicate_GB(x)
+  }
+
 } // end srlConstainrs
 

@@ -24,7 +24,7 @@ public abstract class JointTemplate<T> extends ILPInference {
     {
 
         super(head, new GurobiHook());
-//        verbosity = 2;
+      //  verbosity = 2;
 //        System.out.println(" NONEmpty Constructor " + head);
 
 //        System.out.println();
@@ -35,7 +35,6 @@ public abstract class JointTemplate<T> extends ILPInference {
 //        tType = (Class<T>) head.getClass();
 
     }
-
 
 //    public JointTemplate<T> init(T head){
 //
