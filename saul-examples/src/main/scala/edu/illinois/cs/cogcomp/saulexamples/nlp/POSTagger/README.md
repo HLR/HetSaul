@@ -16,7 +16,8 @@ here is based of the following paper:
 
 ## Performance
 The data for the experiments was extracted from the Penn Treebank WSJ and Brown corpora. The training corpus consists 
-of 1044112 words. The test corpus consists of 129654 words of which 3331 are unknown words (that is, they do not occur in the training corpus
+of 1,044,112 words. The test corpus consists of 129,654 words of which 3,331 are unknown words (that is, they do not occur in the training corpus).
+
 The accuracy on the test test data is 96.439%.  
 
 ## Using it in your project
