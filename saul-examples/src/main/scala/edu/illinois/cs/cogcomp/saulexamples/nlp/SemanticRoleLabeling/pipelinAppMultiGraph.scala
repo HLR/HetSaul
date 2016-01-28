@@ -23,7 +23,7 @@ object pipelineAppMultiGraph extends App {
   val trainArgIdentifier = optBoolean("-TrainIdentifier=", false)
   val trainArgType = optBoolean("-TrainType=", true)
 
-  var srlGraphs: List[srlMultiGraph] = populatemultiGraphwithSRLData(useGoldPredicate, useGoldArgBoundaries)
+  var srlGraphs: List[srlMultiGraph] = populatemultiGraphwithSRLData(true, useGoldPredicate, useGoldArgBoundaries)
   logger.info("population finished.")
   println(srlGraphs.map(x => (x.sentences() ~> x.sentencesToRelations).size).sum)
   println(srlGraphs.map(x => x.relations().size).sum)

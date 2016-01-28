@@ -8,48 +8,41 @@ import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlDataMode
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlSensors._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.commonSensors._
 import org.slf4j.{ Logger, LoggerFactory }
-
-import scala.collection.JavaConversions._
 /** Created by Parisa on 12/27/15.
   */
 object liApp extends App {
 
   val logger: Logger = LoggerFactory.getLogger(this.getClass)
-  private val rootModelDir: String = "../models/models_aTr_Chris/"
+  private val rootModelDir: String = "./models/modelsRepeating/models_aTr_Chris/"
   val aTr_lc = rootModelDir + "edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifiers.argumentTypeLearner$.lc"
   val aTr_lex = rootModelDir + "edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifiers.argumentTypeLearner$.lex"
   val aTr_pred = rootModelDir + "classifier-predictions.txt"
 
   val useGoldPredicate = false
-  val useGoldBoundaries = true
+  val useGoldBoundaries = false
 
   logger.info("Add the token generation sensor to the graph..")
   srlDataModel.sentencesToTokens.addSensor(textAnnotationToTokens _)
   logger.info("populate the gold srl data...")
   populateGraphwithGoldSRL(srlDataModel, srlDataModel.sentences, testOnly = true)
+
   if (!useGoldPredicate) {
 
     val predicateTestCandidates = tokens.getTestingInstances.filter((x: Constituent) => posTag(x).startsWith("VB"))
       .map(c => c.cloneForNewView(ViewNames.SRL_VERB))
-
-    val negativePredicateTest = predicates(predicateTestCandidates)
-      .filterNot(cand => (predicates() prop address).contains(address(cand)))
     logger.info("populate the negative predicates ...")
-    predicates.populate(negativePredicateTest, train = false)
+    predicates.populate(predicateTestCandidates, train = false)
   }
-  logger.info("populate the negative arguments:")
+
   if (!useGoldBoundaries) {
+    logger.info("generate the negative arguments:")
     val XuPalmerCandidateArgsTesting = predicates.getTestingInstances.flatMap(x => xuPalmerCandidate(x, (sentences(x.getTextAnnotation) ~> sentencesToStringTree).head))
-
-    val a = relations() ~> relationsToArguments prop address
-    val b = relations() ~> relationsToPredicates prop address
-
-    val negativePalmerTestCandidates = XuPalmerCandidateArgsTesting.filterNot(cand => a.contains(address(cand.getTarget)) && b.contains(address(cand.getSource)))
-
-    relations.populate(negativePalmerTestCandidates, train = false)
+    sentencesToRelations.addSensor(textAnnotationToRelationMatch _)
+    logger.info("populate the negative arguments:")
+    relations.populate(XuPalmerCandidateArgsTesting, train = false)
   }
 
-  println("all relations number after population:" + srlDataModel.relations().size)
+  logger.info("all relations number after population:" + srlDataModel.relations().size)
 
   //Load independently trained models
 

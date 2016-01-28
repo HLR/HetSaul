@@ -12,8 +12,6 @@ import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlDataMode
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlSensors._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.commonSensors._
 
-import scala.collection.JavaConversions._
-
 object pipelineApp extends App {
 
   if (args.length == 0) {
@@ -31,7 +29,7 @@ object pipelineApp extends App {
   val useGoldArgBoundaries = optBoolean("-goldBoundary=", default = false)
   val trainPredicates = optBoolean("-TrainPred=", default = false)
   val trainArgIdentifier = optBoolean("-TrainIdentifier=", default = false)
-  val trainArgType = optBoolean("-TrainType=", default = false)
+  val trainArgType = optBoolean("-TrainType=", default = true)
 
   println("Using the following parameters:" +
     "\n\tgoldPred: " + useGoldPredicate +
@@ -62,13 +60,8 @@ object pipelineApp extends App {
     val predicateTestCandidates = tokens.getTestingInstances.filter((x: Constituent) => posTag(x).startsWith("VB"))
       .map(c => c.cloneForNewView(ViewNames.SRL_VERB))
 
-    val negativePredicateTrain = predicates(predicateTrainCandidates)
-      .filterNot(cand => (predicates() prop address).contains(address(cand)))
-    val negativePredicateTest = predicates(predicateTestCandidates)
-      .filterNot(cand => (predicates() prop address).contains(address(cand)))
-
-    predicates.populate(negativePredicateTrain)
-    predicates.populate(negativePredicateTest, train = false)
+    predicates.populate(predicateTrainCandidates)
+    predicates.populate(predicateTestCandidates, train = false)
   }
 
   if (trainArgType && useGoldArgBoundaries) {
@@ -83,13 +76,10 @@ object pipelineApp extends App {
     val XuPalmerCandidateArgsTraining = predicates.getTrainingInstances.flatMap(x => xuPalmerCandidate(x, (sentences(x.getTextAnnotation) ~> sentencesToStringTree).head))
     val XuPalmerCandidateArgsTesting = predicates.getTestingInstances.flatMap(x => xuPalmerCandidate(x, (sentences(x.getTextAnnotation) ~> sentencesToStringTree).head))
 
-    val a = relations() ~> relationsToArguments prop address
+    sentencesToRelations.addSensor(textAnnotationToRelationMatch _)
 
-    val negativePalmerTestCandidates = XuPalmerCandidateArgsTesting.filterNot(cand => a.contains(address(cand.getTarget)))
-    val negativePalmerTrainCandidates = XuPalmerCandidateArgsTraining.filterNot(cand => a.contains(address(cand.getTarget)))
-
-    relations.populate(negativePalmerTrainCandidates)
-    relations.populate(negativePalmerTestCandidates, train = false)
+    relations.populate(XuPalmerCandidateArgsTraining)
+    relations.populate(XuPalmerCandidateArgsTesting, train = false)
   }
   println("all relations number after population:" + srlDataModel.relations().size)
 

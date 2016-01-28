@@ -26,21 +26,22 @@ object srlDataModel extends DataModel {
 
   val frameManager: SRLFrameManager = new SRLFrameManager(rm.getString(ExamplesConfigurator.PROPBANK_HOME.key))
 
-  val predicates = node[Constituent]
+  val predicates = node[Constituent]((x: Constituent) => x.getTextAnnotation.getCorpusId + ":" + x.getTextAnnotation.getId + ":" + x.getSpan)
 
-  val arguments = node[Constituent]
+  val arguments = node[Constituent]((x: Constituent) => x.getTextAnnotation.getCorpusId + ":" + x.getTextAnnotation.getId + ":" + x.getSpan)
 
-  val relations = node[Relation]
+  val relations = node[Relation]((x: Relation) => "S" + x.getSource.getTextAnnotation.getCorpusId + ":" + x.getSource.getTextAnnotation.getId + ":" + x.getSource.getSpan +
+    "D" + x.getTarget.getTextAnnotation.getCorpusId + ":" + x.getTarget.getTextAnnotation.getId + ":" + x.getTarget.getSpan)
 
   //val onTheFlyRelationNode= join(predicates, arguments)
 
-  val sentences = node[TextAnnotation]
+  val sentences = node[TextAnnotation]((x: TextAnnotation) => x.getCorpusId + ":" + x.getId)
 
   val trees = node[Tree[Constituent]]
 
   val stringTree = node[Tree[String]]
 
-  val tokens = node[Constituent]
+  val tokens = node[Constituent]((x: Constituent) => x.getTextAnnotation.getCorpusId + ":" + x.getTextAnnotation.getId + ":" + x.getSpan)
 
   val sentencesToTrees = edge(sentences, trees)
   val sentencesToStringTree = edge(sentences, stringTree)
