@@ -71,6 +71,10 @@ class Node[T <: AnyRef](val keyFunc: T => Any = (x: T) => x, val tag: ClassTag[T
 
   def contains(t: T): Boolean = collection.contains(keyFunc(t))
 
+  def containsUntyped(t: Any): Boolean = if (t.isInstanceOf[T]) {
+    contains(t.asInstanceOf[T])
+  } else false
+
   def addInstance(t: T, train: Boolean = true) = {
     if (!contains(t)) {
       val order = incrementCount()

@@ -269,9 +269,8 @@ trait DataModel {
     }
   }
 
-  def property[T <: AnyRef](node: Node[T], name: String) = new PropertyApply[T](node, name, cache = false, ordered = false)
-  def property[T <: AnyRef](node: Node[T], name: String, cache: Boolean) = new PropertyApply[T](node, name, cache, ordered = false)
-  def property[T <: AnyRef](node: Node[T], name: String, cache: Boolean, ordered: Boolean) = new PropertyApply[T](node, name, cache, ordered)
+  def property[T <: AnyRef](node: Node[T], name: String = "prop" + PROPERTIES.size, cache: Boolean = false, ordered: Boolean = false) =
+    new PropertyApply[T](node, name, cache, ordered)
 
   def clearPropertyCache[T](): Unit = {
     propertyCacheList.foreach(_.asInstanceOf[collection.mutable.HashMap[T, Any]].clear)
