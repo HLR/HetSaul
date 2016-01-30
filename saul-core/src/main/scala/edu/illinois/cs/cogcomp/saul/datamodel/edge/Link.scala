@@ -7,15 +7,35 @@ import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 
 class Link[A <: AnyRef, B <: AnyRef](val from: Node[A], val to: Node[B], val name: Option[Symbol]) {
-  val index = new mutable.HashMap[A, mutable.LinkedHashSet[B]]
+  type keyA = Any
+  type keyB = Any
+  val index = new mutable.HashMap[keyA, mutable.LinkedHashSet[keyB]]
+  val pairMap = new mutable.HashMap[keyA, ArrayBuffer[B]]
+  val pairs = new ArrayBuffer[(A, B)]
   val indexWithId = new mutable.HashMap[Int, mutable.LinkedHashSet[Int]]
 
-  def neighborsOf(t: A): Iterable[B] = index.getOrElse(t, Seq.empty)
-  def +=(a: A, b: B) = index.getOrElseUpdate(a, new mutable.LinkedHashSet) += b
-  def ++=(a: A, bs: Iterable[B]) = index.getOrElseUpdate(a, new mutable.LinkedHashSet) ++= bs
+  def neighborsOf(a: A): Iterable[B] = pairMap.getOrElse(from.keyFunc(a), Seq.empty).toSet
+
+  def +=(a: A, b: B) = {
+    val kA = from.keyFunc(a)
+    val kB = to.keyFunc(b)
+    if (!index.contains(kA)) {
+      index(kA) = new mutable.LinkedHashSet
+      pairMap(kA) = new ArrayBuffer[B]
+    }
+    val (setKeyB, listB) = index(kA) -> pairMap(kA)
+    if (!setKeyB(kB)) {
+      setKeyB += kB
+      listB += b
+      pairs += a -> b
+    }
+  }
+
+  def ++=(a: A, bs: Iterable[B]) = bs.foreach(b => this += (a, b))
 
   def clear = {
     index.clear()
+    pairMap.clear()
     indexWithId.clear()
   }
 
@@ -24,15 +44,17 @@ class Link[A <: AnyRef, B <: AnyRef](val from: Node[A], val to: Node[B], val nam
 
   def addSensor(f: A => Iterable[B]) = sensors += f
 
+  @deprecated("Figure out how this interacts with keyFunc")
   def deriveIndexWithId() = {
-    index.foreach {
-      case (fromInstance, toInstances) =>
+    pairs.foreach {
+      case (fromInstance, toInstance) =>
         val fromId = from.reverseOrderingMap(fromInstance)
-        val toIds = toInstances.map(to.reverseOrderingMap(_))
-        indexWithId.put(fromId, toIds)
+        val toId = to.reverseOrderingMap(toInstance)
+        indexWithId.getOrElseUpdate(fromId, new mutable.LinkedHashSet) += toId
     }
   }
 
+  @deprecated("Figure out how this interacts with keyFunc")
   def writeIndexWithId(out: ExceptionlessOutputStream) = {
     out.writeInt(indexWithId.size)
     indexWithId.foreach {
@@ -46,6 +68,7 @@ class Link[A <: AnyRef, B <: AnyRef](val from: Node[A], val to: Node[B], val nam
     }
   }
 
+  @deprecated("Figure out how this interacts with keyFunc")
   def loadIndexWithId(in: ExceptionlessInputStream) = {
     val indexWithIdSize = in.readInt()
     (0 until indexWithIdSize).foreach {
@@ -113,7 +136,7 @@ trait Edge[T <: AnyRef, U <: AnyRef] {
 
   def unary_- : Edge[U, T]
 
-  def links = forward.index.map((p) => p._2.map(b => p._1 -> b)).flatten.toSeq
+  def links = forward.pairs.toSeq
 
   def addSensor(f: (T, U) => Boolean) = matchers += f
 
@@ -121,13 +144,9 @@ trait Edge[T <: AnyRef, U <: AnyRef] {
 
   def addSensor(sensor: (T) => U)(implicit d: DummyImplicit) = forward.addSensor(a => Seq(sensor(a)))
 
-  // def addSensor(sensor: (T) => Option[U])(implicit d1: DummyImplicit, d2: DummyImplicit) = forward.addSensor((a => sensor(a).toList))
-
   def addReverseSensor(sensor: (T) => Iterable[U]) = forward.addSensor(sensor)
 
   def addReverseSensor(sensor: (T) => U)(implicit d: DummyImplicit) = forward.addSensor(a => Seq(sensor(a)))
-
-  // def addReverseSensor(sensor: (T) => Option[U])(implicit d1: DummyImplicit, d2: DummyImplicit) = forward.addSensor((a => sensor(a).toList))
 
   def populateUsingFrom(t: T, train: Boolean = true): Unit = {
     forward.sensors foreach (f => {
