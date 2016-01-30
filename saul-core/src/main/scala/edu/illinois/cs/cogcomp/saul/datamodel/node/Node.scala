@@ -75,26 +75,34 @@ class Node[T <: AnyRef](val keyFunc: T => Any = (x: T) => x, val tag: ClassTag[T
     contains(t.asInstanceOf[T])
   } else false
 
-  def addInstance(t: T, train: Boolean = true) = {
+  def addInstance(t: T, train: Boolean = true, populateEdge: Boolean = true) = {
     if (!contains(t)) {
       val order = incrementCount()
       if (train) this.trainingSet += t else this.testingSet += t
       this.collection(keyFunc(t)) = t
       this.orderingMap += (order -> t)
       this.reverseOrderingMap += (t -> order)
-      outgoing.foreach(_.populateUsingFrom(t, train))
-      incoming.foreach(_.populateUsingTo(t, train))
-      joinNodes.foreach(_.addFromChild(this, t, train))
+      if (populateEdge) {
+        outgoing.foreach(_.populateUsingFrom(t, train))
+        incoming.foreach(_.populateUsingTo(t, train))
+      }
+      joinNodes.foreach(_.addFromChild(this, t, train, populateEdge))
     }
   }
 
+  def populateFrom(n: Node[_]): Unit = {
+    populate(n.getTrainingInstances.map(_.asInstanceOf[T]), true, false)
+    populate(n.getTestingInstances.map(_.asInstanceOf[T]), false, false)
+  }
+
   /** Operator for adding a sequence of T into my table. */
-  def populate(ts: Iterable[T], train: Boolean = true) = {
-    ts.foreach(addInstance(_, train))
+  def populate(ts: Iterable[T], train: Boolean = true, populateEdge: Boolean = true) = {
+    ts.foreach(addInstance(_, train, populateEdge))
   }
 
   /** Relational operators */
   val nodeOfTypeT = this
+  type instanceType = T
 
   def apply() = NodeSet(this)
   def apply(t: T) = SingletonSet(this, t)
@@ -247,35 +255,35 @@ class Node[T <: AnyRef](val keyFunc: T => Any = (x: T) => x, val tag: ClassTag[T
 
 class JoinNode[A <: AnyRef, B <: AnyRef](val na: Node[A], val nb: Node[B], matcher: (A, B) => Boolean, tag: ClassTag[(A, B)]) extends Node[(A, B)](p => na.keyFunc(p._1) -> nb.keyFunc(p._2), tag) {
 
-  def addFromChild[T <: AnyRef](node: Node[T], t: T, train: Boolean = true) = {
+  def addFromChild[T <: AnyRef](node: Node[T], t: T, train: Boolean = true, populateEdge: Boolean = true) = {
     node match {
-      case this.na => matchAndAddChildrenA(t.asInstanceOf[A], train)
-      case this.nb => matchAndAddChildrenB(t.asInstanceOf[B], train)
+      case this.na => matchAndAddChildrenA(t.asInstanceOf[A], train, populateEdge)
+      case this.nb => matchAndAddChildrenB(t.asInstanceOf[B], train, populateEdge)
     }
   }
 
-  private def matchAndAddChildrenA(a: A, train: Boolean = true): Unit = {
+  private def matchAndAddChildrenA(a: A, train: Boolean = true, populateEdge: Boolean = true): Unit = {
     val instances = if (train) nb.getTrainingInstances else nb.getTestingInstances
     for ((a, b) <- instances.filter(matcher(a, _)).map(a -> _)) {
       if (!contains(a -> b))
-        this addInstance (a -> b, train)
+        this addInstance (a -> b, train, populateEdge)
     }
   }
 
-  private def matchAndAddChildrenB(b: B, train: Boolean = true): Unit = {
+  private def matchAndAddChildrenB(b: B, train: Boolean = true, populateEdge: Boolean = true): Unit = {
     val instances = if (train) na.getTrainingInstances else na.getTestingInstances
     for ((a, b) <- instances.filter(matcher(_, b)).map(_ -> b)) {
       if (!contains(a -> b))
-        this addInstance (a -> b, train)
+        this addInstance (a -> b, train, populateEdge)
     }
   }
 
-  override def addInstance(t: (A, B), train: Boolean): Unit = {
+  override def addInstance(t: (A, B), train: Boolean, populateEdge: Boolean = true): Unit = {
     assert(matcher(t._1, t._2))
     if (!contains(t)) {
-      super.addInstance(t, train)
-      na.addInstance(t._1, train)
-      nb.addInstance(t._2, train)
+      super.addInstance(t, train, populateEdge)
+      na.addInstance(t._1, train, populateEdge)
+      nb.addInstance(t._2, train, populateEdge)
     }
   }
 }
