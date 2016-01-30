@@ -7,21 +7,34 @@ object visualizer {
 
   var dm: DataModel = null
   var propertySet: PropertySet[String, String] = null
+  var instanceSet: InstanceSet[String] = null
 
   def apply(dm: DataModel): Unit = {
     this.dm = dm
-    if (propertySet != null) {
+    if (instanceSet != null) {
+      visualize(instanceSet)
+    } else if (propertySet != null) {
       visualize(propertySet)
     }
   }
 
   def visualize(instanceSet: InstanceSet[String]): Unit = {
-    val sourceNode = instanceCache.node
-    val targetNode = instanceSet.node
-    sourceNode.clearData
-    sourceNode.populate(instanceCache.instances)
-    targetNode.clearData
-    targetNode.populate(instanceSet.instances)
+
+    this.instanceSet = instanceSet
+
+    if (dm != null) {
+      val sourceNode = instanceCache.node
+      val targetNode = instanceSet.node
+
+      dm.NODES --= dm.NODES.filter(n =>
+        n != sourceNode && n != targetNode)
+      if (sourceNode != null) {
+        sourceNode.clearData
+        sourceNode.populate(instanceCache.instances)
+      }
+      targetNode.clearData
+      targetNode.populate(instanceSet.instances)
+    }
   }
 
   def visualize(propertySet: PropertySet[String, String]): Unit = {

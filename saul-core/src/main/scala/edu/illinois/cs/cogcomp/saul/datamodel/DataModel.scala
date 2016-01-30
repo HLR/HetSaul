@@ -352,7 +352,7 @@ object dataModelJsonInterface {
       (n.getName, n.get(dm))
     } filter (t =>
       dm.NODES contains t._2)
-    
+
     val invertedNodesMap: Map[Object, String] = nodesObjs.map(_.swap).toMap
 
     val edgesObjs = edges.map { n =>
@@ -361,9 +361,9 @@ object dataModelJsonInterface {
     }
 
     var edgesJson = List[(String, String)]()
-
+    //Change back to x.hashCode.toString after testing
     val selectedNodes = nodesObjs.flatMap {
-      case (name, node) => node.asInstanceOf[Node[_]].getAllInstances.map(x => name + x.hashCode.toString).toSet[String]
+      case (name, node) => node.asInstanceOf[Node[_]].getAllInstances.map(x => x.toString).toSet[String]
     }
 
     for {
@@ -407,6 +407,7 @@ object dataModelJsonInterface {
               .map(x => propertyObj.apply(x).toString).toList) ::: propertiesJson
 
         }
+        case None =>
       }
     }
 

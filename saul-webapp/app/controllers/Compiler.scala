@@ -24,7 +24,13 @@ final class Compiler(rootDir: String, completeClasspath: String, reporterCallbac
 
   val root: File = new File(rootDir); // On Windows running on C:\, this is C:\java.
   val rootURL = root.toURI.toURL
-  val classLoader = URLClassLoader.newInstance(Array(rootURL), this.getClass().getClassLoader());
+  var classLoader:URLClassLoader = null
+
+  initializeClassLoader
+
+  private def initializeClassLoader = {
+    classLoader = URLClassLoader.newInstance(Array(rootURL), this.getClass().getClassLoader())
+  }
 
   def compileJava(files: Map[String, String]): Unit = {
     play.api.Logger.info("Compiling Java code.")
@@ -51,11 +57,10 @@ final class Compiler(rootDir: String, completeClasspath: String, reporterCallbac
   }
 
   def compileScala(files: Map[String, String]): Iterable[Any] = files map {
-
     case (name, code) => {
 
       play.api.Logger.info("Compiling Scala code.")
-
+      initializeClassLoader
       val sourceFiles = files map { x: (String, String) =>
         x match {
           case (k, v) => new BatchSourceFile("(inline)", v)
