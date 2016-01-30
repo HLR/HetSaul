@@ -2,62 +2,66 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.RewriteBa
 
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
 import edu.illinois.cs.cogcomp.saulexamples.EntityMentionRelation.datastruct.{ ConllRawSentence, ConllRawToken, ConllRelation }
+import edu.illinois.cs.cogcomp.saulexamples.EntityMentionRelation.reader.Conll04_ReaderNew
 import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.entityRelationSensors
+import entityRelationSensors._
+import scala.collection.JavaConversions._
 
 object entityRelationBasicDataModel extends DataModel {
 
-  /** Nodes */
-  val tokens = node[ConllRawToken]
+  /** Nodes & Edges */
+  val tokens = node[ConllRawToken]((x:ConllRawToken) => x.wordId+":"+x.sentId)
+  val sentences = node[ConllRawSentence] ((x:ConllRawSentence) => x.sentId)
+  val pairs = node[ConllRelation] ((x: ConllRelation)=> x.wordId1+":"+x.wordId2+":"+x.sentId)
 
-  val sentences = node[ConllRawSentence]
+  val sentenceToToken = edge(sentences,tokens)
+  val sentencesToPairs = edge (sentences,pairs)
+  val pairTo1stArg = edge(pairs, tokens)
+  val pairTo2ndArg = edge(pairs, tokens)
+  val tokenToPair = edge(tokens, pairs)
 
-  val pairs = node[ConllRelation]
-
-  val RelationToPer = edge(tokens, pairs)
-
-  val RelationToOrg = edge(tokens, pairs)
-
-  val tokenContainsInSentence = edge(tokens, pairs)
-
+  sentenceToToken.addSensor(sentenceToTokens_GS _)
+  sentencesToPairs.addSensor(sentenceToRelation_GS _)
+  pairTo1stArg.addSensor(relationTosecondArg_MS _)
+  pairTo2ndArg.addSensor(relationTosecondArg_MS _)
+ 
   /** Properties */
-  val pos = property(tokens, "pos") {
-    t: ConllRawToken => t.POS :: Nil
+  val pos = property(tokens) {
+    t: ConllRawToken => t.POS
   }
 
-  val word = property(tokens, "word") {
+  val word = property(tokens) {
     t: ConllRawToken => t.getWords(false).toList
   }
-  val phrase = property(tokens, "phrase") {
-    t: ConllRawToken => t.phrase :: Nil
+  val phrase = property(tokens) {
+    t: ConllRawToken => t.phrase
   }
 
-  val tokenSurface = property(tokens, "tokenSurface") {
+  val tokenSurface = property(tokens) {
     t: ConllRawToken => t.getWords(false).toList.mkString(" ")
   }
 
-  val containsSubPhraseMent = property(tokens, "containsSubPhraseMent") {
+  val containsSubPhraseMent = property(tokens) {
     t: ConllRawToken => t.getWords(false).exists(_.contains("ment")).toString
   }
 
-  val containsSubPhraseIng = property(tokens, "containsSubPhraseIng") {
+  val containsSubPhraseIng = property(tokens) {
     t: ConllRawToken => t.getWords(false).exists(_.contains("ing")).toString
   }
-
-  import entityRelationSensors._
-
-  val containsInCityList = property(tokens, "containsInCityList") {
-    t: ConllRawToken => cityGazetSensor.isContainedIn(t).toString
+  
+  val containsInCityList = property(tokens) {
+    t: ConllRawToken => cityGazetSensor.isContainedIn(t)
   }
 
-  val containsInPersonList = property(tokens, "containsInCityList") {
-    t: ConllRawToken => personGazetSensor.containsAny(t).toString
+  val containsInPersonList = property(tokens) {
+    t: ConllRawToken => personGazetSensor.containsAny(t)
   }
 
-  val wordLen = property(tokens, "wordLen") {
+  val wordLen = property(tokens) {
     t: ConllRawToken => t.getLength
   }
 
-  val relFeature = property(pairs, "reltokenSurface") {
+  val relFeature = property(pairs) {
     token: ConllRelation =>
       {
           "w1-word-" + token.e1.phrase :: "w2-word-" + token.e2.phrase ::
@@ -70,7 +74,7 @@ object entityRelationBasicDataModel extends DataModel {
       }
   }
 
-  val relPos = property(pairs, "reltokenSurface") {
+  val relPos = property(pairs) {
     rela: ConllRelation =>
       val e1 = rela.e1
       val e2 = rela.e2
@@ -86,11 +90,17 @@ object entityRelationBasicDataModel extends DataModel {
   }
 
   /** Labeler Properties  */
-  val entityType = property(tokens, "entityType") {
+  val entityType = property(tokens) {
     t: ConllRawToken => t.entType
   }
 
-  val relationType = property(pairs, "relationType") {
+  val relationType = property(pairs) {
     r: ConllRelation => r.relType
+  }
+
+  def populateWithConll() = {
+    val reader = new Conll04_ReaderNew("./data/EntityMentionRelation/conll04.corp", "Token")
+    val trainSentences = reader.sentences.toList
+    sentences populate trainSentences.slice(0,5)
   }
 }

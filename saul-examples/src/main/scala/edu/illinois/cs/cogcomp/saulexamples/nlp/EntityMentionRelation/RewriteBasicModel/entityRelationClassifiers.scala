@@ -10,7 +10,6 @@ object entityRelationClassifiers {
 
   object orgClassifier extends Learnable[ConllRawToken](entityRelationBasicDataModel) {
     def label: Property[ConllRawToken] = entityType is "Org"
-    //override def feature = using(word)
     override lazy val classifier = new SparseNetworkLearner()
   }
 
@@ -25,11 +24,11 @@ object entityRelationClassifiers {
   }
 
   object worksForClassifier extends Learnable[ConllRelation](entityRelationBasicDataModel) {
-    override def label: Property[ConllRelation] = relationType is "Work_For"
+    def label: Property[ConllRelation] = relationType is "Work_For"
     override lazy val classifier = new SparseNetworkLearner()
   }
   object livesInClassifier extends Learnable[ConllRelation](entityRelationBasicDataModel) {
-    override def label: Property[ConllRelation] = relationType is "Live_In"
+    def label: Property[ConllRelation] = relationType is "Live_In"
     override lazy val classifier = new SparseNetworkLearner()
   }
 }

@@ -15,40 +15,6 @@ object myConfiguration {
 
 object entityRelationApp {
 
-  def trainIndepedent(it: Int): Unit = {
-    println("Indepent Training with iteration " + it)
-    PersonClassifier.learn(it)
-    PersonClassifier.test()
-
-    orgClassifier.learn(it)
-    orgClassifier.test()
-
-    LocClassifier.learn(it)
-    LocClassifier.test()
-
-    workForClassifier.learn(it)
-    workForClassifier.test()
-
-    LivesInClassifier.learn(it)
-    LivesInClassifier.test()
-
-    //    locatedInClassifier.crossValidation(it)
-    //    locatedInClassifier.test()
-  }
-
-  def cv(it: Int): Unit = {
-
-    println("Running CV " + it)
-
-    PersonClassifier.crossValidation(it)
-    orgClassifier.crossValidation(it)
-    LocClassifier.crossValidation(it)
-
-    workForClassifier.crossValidation(it)
-    LivesInClassifier.crossValidation(it)
-
-  }
-
   def trainJoint(preIt: Int, it: Int): Unit = {
     println("Joint Training with Pretraint " + preIt)
     println("Joint Training with iteration " + it)
@@ -60,13 +26,7 @@ object entityRelationApp {
     //    JointTrain.train[ConllRelation](ErDataModelExample,  P_O_relationClassifier  :: LiveIn_P_O_relationClassifier ::Nil,it)
   }
 
-  def forgotEverything() = {
 
-    PersonClassifier.forget()
-    orgClassifier.forget()
-    //    PersonClassifier.forgot()
-    workForClassifier.forget()
-  }
 
   val pipeLine = myConfiguration.pipeLine
 
@@ -80,13 +40,12 @@ object entityRelationApp {
 
     val it = myConfiguration.iterations
 
-    forgotEverything()
     entityRelationDataModel.read(fold)
 
     val testRels = entityRelationDataModel.getNodeWithType[ConllRelation].getTestingInstances.toList //.map( ErDataModelExample.getFromRelation[ConllRelation,ConllRawToken](_)  ).flatten
     val testTokens = entityRelationDataModel.getNodeWithType[ConllRawToken].getTestingInstances.toList //.map( ErDataModelExample.getFromRelation[ConllRelation,ConllRawToken](_)  ).flatten
 
-    trainIndepedent(it)
+   // trainIndepedent(it)
 
     println(Console.BLUE + "Peop")
     JointTrain.testClassifiers(PersonClassifier.classifier, (entityType is "Peop").classifier, testTokens)
