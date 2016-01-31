@@ -75,6 +75,14 @@ trait Edge[T <: AnyRef, U <: AnyRef] {
     backward += (u, t)
   }
 
+  def populateFrom(e: Edge[_, _]): Unit = {
+    e.links.foreach {
+      case (a, b) => {
+        this += (a.asInstanceOf[T], b.asInstanceOf[U])
+      }
+    }
+  }
+
   def clear: Unit = {
     forward.clear
     backward.clear
