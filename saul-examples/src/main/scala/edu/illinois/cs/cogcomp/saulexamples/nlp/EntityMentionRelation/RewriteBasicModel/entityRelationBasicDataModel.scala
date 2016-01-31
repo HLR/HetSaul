@@ -10,15 +10,15 @@ import scala.collection.JavaConversions._
 object entityRelationBasicDataModel extends DataModel {
 
   /** Nodes & Edges */
-  val tokens = node[ConllRawToken]((x:ConllRawToken) => x.wordId+":"+x.sentId)
+  val tokens = node[ConllRawToken]//((x:ConllRawToken) => x.wordId+":"+x.sentId)
   val sentences = node[ConllRawSentence] ((x:ConllRawSentence) => x.sentId)
   val pairs = node[ConllRelation] ((x: ConllRelation)=> x.wordId1+":"+x.wordId2+":"+x.sentId)
 
-  val sentenceToToken = edge(sentences,tokens)
-  val sentencesToPairs = edge (sentences,pairs)
-  val pairTo1stArg = edge(pairs, tokens)
-  val pairTo2ndArg = edge(pairs, tokens)
-  val tokenToPair = edge(tokens, pairs)
+  val sentenceToToken = edge(sentences,tokens,'SenToTok)
+  val sentencesToPairs = edge (sentences,pairs,'SenToPair)
+  val pairTo1stArg = edge(pairs, tokens,'PairToA1)
+  val pairTo2ndArg = edge(pairs, tokens,'PairToA2)
+  val tokenToPair = edge(tokens, pairs,'TokToPair)
 
   sentenceToToken.addSensor(sentenceToTokens_GS _)
   sentencesToPairs.addSensor(sentenceToRelation_GS _)
@@ -101,6 +101,6 @@ object entityRelationBasicDataModel extends DataModel {
   def populateWithConll() = {
     val reader = new Conll04_ReaderNew("./data/EntityMentionRelation/conll04.corp", "Token")
     val trainSentences = reader.sentences.toList
-    sentences populate trainSentences.slice(0,5)
+    sentences populate trainSentences.slice(0,10)
   }
 }
