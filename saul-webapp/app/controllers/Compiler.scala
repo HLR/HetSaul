@@ -24,7 +24,7 @@ final class Compiler(rootDir: String, completeClasspath: String, reporterCallbac
 
   val root: File = new File(rootDir); // On Windows running on C:\, this is C:\java.
   val rootURL = root.toURI.toURL
-  var classLoader:URLClassLoader = null
+  var classLoader: URLClassLoader = null
 
   initializeClassLoader
 

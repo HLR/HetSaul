@@ -353,6 +353,8 @@ object dataModelJsonInterface {
     } filter (t =>
       dm.NODES contains t._2)
 
+    for (n <- dm.NODES) { for (i <- n.getAllInstances) println(i) }
+
     val invertedNodesMap: Map[Object, String] = nodesObjs.map(_.swap).toMap
 
     val edgesObjs = edges.map { n =>
@@ -361,7 +363,7 @@ object dataModelJsonInterface {
     }
 
     var edgesJson = List[(String, String)]()
-    //Change back to x.hashCode.toString after testing
+
     val selectedNodes = nodesObjs.flatMap {
       case (name, node) => node.asInstanceOf[Node[_]].getAllInstances.map(x => x.toString).toSet[String]
     }
@@ -369,22 +371,26 @@ object dataModelJsonInterface {
     for {
       (name, edge) <- edgesObjs;
       (start, ends) <- edge.asInstanceOf[Edge[_, _]].forward.index
+      if selectedNodes contains start
     } {
-      val from = invertedNodesMap.get(edge.asInstanceOf[Edge[_, _]].from) match{
-          case Some(v) => v + start.hashCode.toString
-          case _ => ""
+
+      val from = invertedNodesMap.get(edge.asInstanceOf[Edge[_, _]].from) match {
+        case Some(v) => v + start.hashCode.toString
+        case _ => ""
       }
       if (selectedNodes contains from) {
-        for (end <- ends ) {
-          val to = invertedNodesMap.get(edge.asInstanceOf[Edge[_, _]].to) match{
+        for (end <- ends) {
+          val to = invertedNodesMap.get(edge.asInstanceOf[Edge[_, _]].to) match {
             case Some(v) => v + end.hashCode.toString
             case _ => ""
           }
-          if(selectedNodes contains to){
+          if (selectedNodes contains to) {
             edgesJson = (from, to) :: edgesJson
+
           }
         }
       }
+
     }
 
     val nodesJson = nodesObjs.map {
@@ -399,7 +405,6 @@ object dataModelJsonInterface {
       val propertyObj = p.get(dm).asInstanceOf[NodeProperty[AnyRef]]
       nodesObjs.find { case (_, x) => x == propertyObj.node } match {
         case Some((nodeName, node)) => {
-
           propertiesJson = node.asInstanceOf[Node[_]]
             .getAllInstances.map(x => nodeName + x.hashCode.toString)
             .toList.zip(node.asInstanceOf[Node[AnyRef]]

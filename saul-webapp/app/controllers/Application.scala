@@ -67,6 +67,7 @@ class Application extends Controller {
         val compilationResult = compile(fileMap)
         compilationResult match {
           case Left(scalaInstances) => {
+            visualizer.init()
             event match {
               case DisplayModel() => Ok(displayModel(scalaInstances))
               case PopulateData() => Ok(populateModel(scalaInstances, fileMap, compiler))
