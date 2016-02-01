@@ -4,7 +4,7 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling
   */
 
 import edu.illinois.cs.cogcomp.saul.evaluation.evaluation
-import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifiers.{predicateClassifier, argumentXuIdentifierGivenApredicate, argumentTypeLearner}
+import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifiers.{argumentTypeLearner, argumentXuIdentifierGivenApredicate, predicateClassifier}
 import org.slf4j.{Logger, LoggerFactory}
 
 object pipelineAppMultiGraph extends App {
@@ -12,15 +12,15 @@ object pipelineAppMultiGraph extends App {
   if (args.length == 0){
     println("Usage parameters:\n -goldPred=true/false -goldBoundary=true/false -TrainPred=true/false" +
       " -TrainIdentifier=true/false -TrainType=true/false")
-   // sys.exit()
+    //sys.exit()
   }
   def optArg(prefix: String) = args.find { _.startsWith(prefix) }.map { _.replaceFirst(prefix, "") }
   def optBoolean(prefix: String, default: Boolean) = optArg(prefix).map((x: String) => {
     if (x.trim == "true") true else false
   }).getOrElse(default)
 
-  val useGoldPredicate = optBoolean("-goldPred=", false)
-  val useGoldArgBoundaries = optBoolean("-goldBoundary=", false)
+  val useGoldPredicate = optBoolean("-goldPred=", true)
+  val useGoldArgBoundaries = optBoolean("-goldBoundary=", true)
   val trainPredicates = optBoolean("-TrainPred=", false)
   val trainArgIdentifier = optBoolean("-TrainIdentifier=", false)
   val trainArgType = optBoolean("-TrainType=", true)
@@ -33,10 +33,10 @@ object pipelineAppMultiGraph extends App {
     "\n\tTrainType: " + trainArgType)
 
   val expName = {
-    if (trainArgType && useGoldArgBoundaries) "aTr"
-    else if (trainArgIdentifier && useGoldPredicate) "bTr"
-    else if (trainArgType && useGoldPredicate) "cTr"
-    else if (trainPredicates) "dTr"
+    if (trainArgType && useGoldArgBoundaries && useGoldPredicate) "aTr"
+    else if (trainArgIdentifier && useGoldPredicate && useGoldPredicate) "bTr"
+    else if (trainArgType && useGoldPredicate && !useGoldArgBoundaries) "cTr"
+    else if (trainPredicates && useGoldPredicate) "dTr"
     else if (trainArgIdentifier && !useGoldPredicate) "eTr"
     else if (trainArgType && !useGoldPredicate) "fTr"
   }
@@ -53,9 +53,8 @@ object pipelineAppMultiGraph extends App {
   if (trainArgType && useGoldArgBoundaries && useGoldPredicate) {
     //train and test the argClassifier Given the ground truth Boundaries (i.e. no negative class).
     argumentTypeLearner.setModelDir("models_aTr")
-    argumentTypeLearner.learn(10, relations.trainingSet)
-    evaluation.Test(argumentLabelGold, typeArgumentPrediction, srlGraphs.relations.testingSet)
-    argumentTypeLearner.test(relations.testingSet)
+    argumentTypeLearner.learn(100, relations.trainingSet)
+    argumentTypeLearner.test()
     argumentTypeLearner.save()
   }
 

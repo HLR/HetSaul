@@ -29,9 +29,10 @@ object populatemultiGraphwithSRLData {
     val logger: Logger = LoggerFactory.getLogger(this.getClass)
     val rm = new ExamplesConfigurator().getDefaultConfig
     val frameManager: SRLFrameManager = new SRLFrameManager(rm.getString(ExamplesConfigurator.PROPBANK_HOME.key))
-    var graphs: srlMultiGraph = new srlMultiGraph()
+
     val useCurator = rm.getBoolean(ExamplesConfigurator.USE_CURATOR)
     val parseViewName = rm.getString(ExamplesConfigurator.SRL_PARSE_VIEW)
+    val graphs: srlMultiGraph = new srlMultiGraph(parseViewName,frameManager)
     val annotatorService = useCurator match {
       case true =>
         val nonDefaultProps = new Properties()
@@ -89,7 +90,7 @@ object populatemultiGraphwithSRLData {
     }
 
     val trainingFromSection = 2
-    val trainingToSection = 21
+    val trainingToSection = 2
     var gr: srlMultiGraph = null
     if (!testOnly) {
       logger.info("Reading training data from sections {} to {}", trainingFromSection, trainingToSection)
@@ -123,14 +124,14 @@ object populatemultiGraphwithSRLData {
           }
           // println("all relations for this test:" +gr.relations().size)
           graphs.addFromModel(gr)
-          if (graphs.sentences().size % 50 == 0) logger.info("loaded graphs in memory:" + graphs.sentences().size)
+          if (graphs.sentences().size % 1000 == 0) logger.info("loaded graphs in memory:" + graphs.sentences().size)
         })
       //x.populate(filteredTa)
       //      logger.info("Number of SRLDataModel sentences: {}", graphs.map(x => x.sentences().size).sum)
       //      logger.debug("Number of SRLDataModel predicates: {}", graphs.map(x => x.predicates().size).sum)
       //      logger.debug("Number of SRLDataModel arguments: {}", graphs.map(x => x.arguments().size).sum)
       //      logger.debug("Number of SRLDataModel relations: {}", graphs.map(x => x.relations().size).sum)
-    } else {
+    }
       val testSection = 23
       val testReader = new SRLDataReader(
         rm.getString(ExamplesConfigurator.TREEBANK_HOME.key),
@@ -170,7 +171,7 @@ object populatemultiGraphwithSRLData {
       //    logger.debug("Number of SRLDataModel predicates (w/ test data): {}", graphs.map(x => x.predicates.testingSet.size).sum)
       //    logger.debug("Number of SRLDataModel arguments (w/ test data): {}", graphs.map(x => x.arguments.testingSet.size).sum)
       //    logger.debug("Number of SRLDataModel relations (w/ test data): {}", graphs.map(x => x.relations.testingSet.size).sum)
-    }
+
     graphs
   }
 
