@@ -115,11 +115,12 @@ var enableEditingTabName = function(tab){
 }
 var installTabClickedAction = function(tab){
     tab.click(function(){
-        var $this = $(this);
-        if ($this.data("executing")) return;
-        $this.data("executing", true);
+
         if($(this).hasClass("active")){
         
+            var $this = $(this);
+            if ($this.data("executing")) return;
+            $this.data("executing", true);
             //edit the file name
             enableEditingTabName($(this));
         }
@@ -250,9 +251,16 @@ var generatePopulatedGraphFromJson = function(data) {
     },
         settings: {
         edgeLabelSize: 'proportional',
-        labelThreshold: 0
+        labelThreshold: 10
     }});
     var dragListener = sigma.plugins.dragNodes(s, s.renderers[0]);
+    /*dragListener.bind('drag', function(event) {
+        s.graph.neighbors(event.node.id).forEach(function(e) {
+            e.x = event.node.x;
+            e.y = event.node.y;
+        })
+    });
+*/
     var nodeId = 0;
     var nodeDict = {};
     var nodePropertyCount = {};
@@ -276,8 +284,8 @@ var generatePopulatedGraphFromJson = function(data) {
                 id: 'n' + nodeId,
                 label: data['nodes'][nodeGroup][node],
                 size: 3,
-                x: Math.cos(2 * nodeId * Math.PI / totalNumNodes),
-                y: Math.sin(2 * nodeId * Math.PI / totalNumNodes),
+                x: (totalNumNodes > 30 ? 3*(3+(nodeId / 30)) : 1) * Math.cos(2 * nodeId * Math.PI / (totalNumNodes > 30 ? 30 : totalNumNodes)),
+                y: (totalNumNodes > 30 ? 3*(3+(nodeId / 30)) : 1) * Math.sin(2 * nodeId * Math.PI / (totalNumNodes > 30 ? 30 : totalNumNodes)),
                 color: colors[nodeGroupCount % colors.length]
             });
             
@@ -308,8 +316,8 @@ var generatePopulatedGraphFromJson = function(data) {
                 id: 'p' + propertyCount,
                 label: data['properties'][node][propertyIndex],
                 size: 1,
-                x: parentNode.x + 0.5 * Math.cos(2 * nodePropertyCount[node] * Math.PI / 6),
-                y: parentNode.y + 0.5 * Math.sin(2 * nodePropertyCount[node] * Math.PI / 6),
+                x: parentNode.x + 1 * Math.cos(2 * nodePropertyCount[node] * Math.PI / 6),
+                y: parentNode.y + 1 * Math.sin(2 * nodePropertyCount[node] * Math.PI / 6),
                 color: colors[propertyCount % colors.length]
             });
             s.graph.addEdge({
@@ -424,6 +432,7 @@ var changeTab = function(currentAttrValue) {
 
 var alertError = function(data) {
     alert(JSON.stringify(data));
+    console.log(JSON.stringify(data));
     if(data['error']){
         var message = "";
         if(data['error'].constructor === Array){

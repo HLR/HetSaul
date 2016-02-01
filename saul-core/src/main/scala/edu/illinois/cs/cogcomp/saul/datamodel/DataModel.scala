@@ -370,9 +370,19 @@ object dataModelJsonInterface {
       (name, edge) <- edgesObjs;
       (start, ends) <- edge.asInstanceOf[Edge[_, _]].forward.index
     } {
-      if (selectedNodes contains start) {
-        for (end <- ends if selectedNodes contains end) {
-          edgesJson = (invertedNodesMap.get(edge.asInstanceOf[Edge[_, _]].from) + start.hashCode.toString, invertedNodesMap.get(edge.asInstanceOf[Edge[_, _]].to) + end.hashCode.toString) :: edgesJson
+      val from = invertedNodesMap.get(edge.asInstanceOf[Edge[_, _]].from) match{
+          case Some(v) => v + start.hashCode.toString
+          case _ => ""
+      }
+      if (selectedNodes contains from) {
+        for (end <- ends ) {
+          val to = invertedNodesMap.get(edge.asInstanceOf[Edge[_, _]].to) match{
+            case Some(v) => v + end.hashCode.toString
+            case _ => ""
+          }
+          if(selectedNodes contains to){
+            edgesJson = (from, to) :: edgesJson
+          }
         }
       }
     }
