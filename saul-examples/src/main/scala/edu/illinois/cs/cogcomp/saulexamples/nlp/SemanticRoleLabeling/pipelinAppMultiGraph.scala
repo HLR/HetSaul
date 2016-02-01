@@ -3,7 +3,6 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling
 /** Created by Parisa on 1/14/16.
   */
 
-import edu.illinois.cs.cogcomp.saul.evaluation.evaluation
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifiers.{argumentTypeLearner, argumentXuIdentifierGivenApredicate, predicateClassifier}
 import org.slf4j.{Logger, LoggerFactory}
 
@@ -12,7 +11,7 @@ object pipelineAppMultiGraph extends App {
   if (args.length == 0){
     println("Usage parameters:\n -goldPred=true/false -goldBoundary=true/false -TrainPred=true/false" +
       " -TrainIdentifier=true/false -TrainType=true/false")
-    //sys.exit()
+    sys.exit()
   }
   def optArg(prefix: String) = args.find { _.startsWith(prefix) }.map { _.replaceFirst(prefix, "") }
   def optBoolean(prefix: String, default: Boolean) = optArg(prefix).map((x: String) => {
@@ -72,9 +71,9 @@ object pipelineAppMultiGraph extends App {
     println("Training argument classifier")
     argumentTypeLearner.learn(100)
     print("argument classifier test results:")
-    //  evaluation.Test(argumentLabelGold, typeArgumentPrediction, relations)
     println("\n =============================================================")
     argumentTypeLearner.test()
+    argumentTypeLearner.test(relations.testingSet, typeArgumentPrediction, argumentLabelGold,"candidate")
     argumentTypeLearner.save()
   }
 
@@ -102,7 +101,7 @@ object pipelineAppMultiGraph extends App {
     println("Training argument classifier")
     argumentTypeLearner.learn(100, relations.trainingSet)
     print("argument classifier test results:")
-    evaluation.Test(argumentLabelGold, typeArgumentPrediction, relations.testingSet)
+    argumentTypeLearner.test(relations.testingSet, typeArgumentPrediction, argumentLabelGold,"candidate")
     println("\n =============================================================")
     argumentTypeLearner.test(relations.testingSet)
     argumentTypeLearner.save()
