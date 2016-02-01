@@ -2,8 +2,6 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling
 
 import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.Constituent
-import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifiers.argumentTypeLearner
-import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlConstraintClassifiers.argTypeConstraintClassifier
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlDataModel._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlSensors._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.commonSensors._
@@ -43,7 +41,10 @@ object liApp extends App {
   }
 
   logger.info("all relations number after population:" + srlDataModel.relations().size)
-
+  logger.info("all sentences number after population:" + srlDataModel.sentences().size)
+  logger.info("all predicates number after population:" + srlDataModel.predicates().size)
+  logger.info("all arguments number after population:" + srlDataModel.arguments().size)
+  logger.info("all tokens number after population:" + srlDataModel.tokens().size)
   //Load independently trained models
 
   //  arg_Is_TypeConstraintClassifier.test()
@@ -56,18 +57,18 @@ object liApp extends App {
 
   // arg_Is_TypeConstraintClassifier.test()
 
-  print("argument classifier L+I model considering background knowledge  test results:")
+  //print("argument classifier L+I model considering background knowledge  test results:")
 
-  argumentTypeLearner.load(aTr_lc, aTr_lex)
+  //argumentTypeLearner.load(aTr_lc, aTr_lex)
 
   //evaluation.Test(argumentLabelGold, typeArgumentPrediction, relations.getTestingInstances)
 
   //test(testData: Iterable[T], prediction: Property[T], groundTruth: Property[T])
 
-  argTypeConstraintClassifier.test(aTr_pred, 100)
+  //argTypeConstraintClassifier.test(aTr_pred, 100)
   //argumentTypeLearner.test(relations.getTestingInstances, argumentLabelGold, typeArgumentPrediction, exclude = "candidate")
   //argumentTypeLearner.test(exclude="candidate")
-  logger.info("finished!")
+  // logger.info("finished!")
 
   //TODO add more variations with combination of constraints
 }

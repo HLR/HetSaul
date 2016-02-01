@@ -4,14 +4,16 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling
   */
 
 import edu.illinois.cs.cogcomp.saul.evaluation.evaluation
-import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifiers.{ argumentTypeLearner, argumentXuIdentifierGivenApredicate, predicateClassifier }
-import org.slf4j.{ LoggerFactory, Logger }
+import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifiers.{predicateClassifier, argumentXuIdentifierGivenApredicate, argumentTypeLearner}
+import org.slf4j.{Logger, LoggerFactory}
 
 object pipelineAppMultiGraph extends App {
   val logger: Logger = LoggerFactory.getLogger(this.getClass)
-  if (args.length > 0)
-    println("Run with this parameters:\n -goldPred=true/false -goldBoundary=true/false -TrainPred=true/false" +
+  if (args.length == 0){
+    println("Usage parameters:\n -goldPred=true/false -goldBoundary=true/false -TrainPred=true/false" +
       " -TrainIdentifier=true/false -TrainType=true/false")
+   // sys.exit()
+  }
   def optArg(prefix: String) = args.find { _.startsWith(prefix) }.map { _.replaceFirst(prefix, "") }
   def optBoolean(prefix: String, default: Boolean) = optArg(prefix).map((x: String) => {
     if (x.trim == "true") true else false
@@ -23,19 +25,37 @@ object pipelineAppMultiGraph extends App {
   val trainArgIdentifier = optBoolean("-TrainIdentifier=", false)
   val trainArgType = optBoolean("-TrainType=", true)
 
-  var srlGraphs: List[srlMultiGraph] = populatemultiGraphwithSRLData(true, useGoldPredicate, useGoldArgBoundaries)
-  logger.info("population finished.")
-  println(srlGraphs.map(x => (x.sentences() ~> x.sentencesToRelations).size).sum)
-  println(srlGraphs.map(x => x.relations().size).sum)
-  print(srlGraphs.map(x => (x.relations() ~> x.relationsToArguments).size).sum)
-  logger.info("population finished")
+  logger.info("Using the following parameters:" +
+    "\n\tgoldPred: " + useGoldPredicate +
+    "\n\tgoldBoundary: " + useGoldArgBoundaries +
+    "\n\tTrainPred: " + trainPredicates +
+    "\n\tTrainIdentifier: " + trainArgIdentifier +
+    "\n\tTrainType: " + trainArgType)
 
+  val expName = {
+    if (trainArgType && useGoldArgBoundaries) "aTr"
+    else if (trainArgIdentifier && useGoldPredicate) "bTr"
+    else if (trainArgType && useGoldPredicate) "cTr"
+    else if (trainPredicates) "dTr"
+    else if (trainArgIdentifier && !useGoldPredicate) "eTr"
+    else if (trainArgType && !useGoldPredicate) "fTr"
+  }
+  val startTime = System.currentTimeMillis()
+  logger.info("population starts.")
+
+  val srlGraphs = populatemultiGraphwithSRLData(false, useGoldPredicate, useGoldArgBoundaries)
+ import srlGraphs._
+  logger.info("population finished.")
+  println("sen:"+(sentences()~> sentencesToRelations).size)
+  println("rel:"+relations().size)
+  print("arg"+arguments().size)
+  print("tok"+srlGraphs.tokens().size)
   if (trainArgType && useGoldArgBoundaries && useGoldPredicate) {
     //train and test the argClassifier Given the ground truth Boundaries (i.e. no negative class).
     argumentTypeLearner.setModelDir("models_aTr")
-    argumentTypeLearner.learn(10, srlGraphs.flatMap(x => x.relations.trainingSet))
-    evaluation.Test(srlGraphs.head.argumentLabelGold, srlGraphs.head.typeArgumentPrediction, srlGraphs.flatMap(x => x.relations.testingSet))
-    argumentTypeLearner.test(srlGraphs.flatMap((x => x.relations.testingSet)))
+    argumentTypeLearner.learn(10, relations.trainingSet)
+    evaluation.Test(argumentLabelGold, typeArgumentPrediction, srlGraphs.relations.testingSet)
+    argumentTypeLearner.test(relations.testingSet)
     argumentTypeLearner.save()
   }
 
@@ -59,7 +79,7 @@ object pipelineAppMultiGraph extends App {
     argumentTypeLearner.save()
   }
 
-  println("all relations number after population:" + srlDataModel.relations().size)
+  //println("all relations number after population:" + srlDataModel.relations().size)
   if (trainPredicates && !useGoldPredicate) {
     predicateClassifier.setModelDir("models_dTr")
     println("Training predicate identifier")
@@ -81,11 +101,11 @@ object pipelineAppMultiGraph extends App {
   if (trainArgType && !useGoldPredicate) {
     argumentTypeLearner.setModelDir("models_fTr")
     println("Training argument classifier")
-    argumentTypeLearner.learn(100, srlGraphs.flatMap(x => x.relations.trainingSet))
+    argumentTypeLearner.learn(100, relations.trainingSet)
     print("argument classifier test results:")
-    evaluation.Test(srlGraphs.head.argumentLabelGold, srlGraphs.head.typeArgumentPrediction, srlGraphs.flatMap(x => x.relations.testingSet))
+    evaluation.Test(argumentLabelGold, typeArgumentPrediction, relations.testingSet)
     println("\n =============================================================")
-    argumentTypeLearner.test(srlGraphs.flatMap(x => x.relations.testingSet))
+    argumentTypeLearner.test(relations.testingSet)
     argumentTypeLearner.save()
   }
 }

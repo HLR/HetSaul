@@ -12,25 +12,24 @@ import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlSensors.
 
 import scala.collection.JavaConversions._
 
-/** Created by Parisa on 1/17/16.
-  */
-class srlMultiGraph(parseViewName: String, frameManager: SRLFrameManager) extends DataModel {
+class srlMultiGraph(parseViewName: String = null, frameManager: SRLFrameManager = null) extends DataModel {
 
-  val predicates = node[Constituent]
+  val predicates = node[Constituent]((x: Constituent) => x.getTextAnnotation.getCorpusId + ":" + x.getTextAnnotation.getId + ":" + x.getSpan)
 
-  val arguments = node[Constituent]
+  val arguments = node[Constituent]((x: Constituent) => x.getTextAnnotation.getCorpusId + ":" + x.getTextAnnotation.getId + ":" + x.getSpan)
 
-  val relations = node[Relation]
+  val relations = node[Relation]((x: Relation) => "S" + x.getSource.getTextAnnotation.getCorpusId + ":" + x.getSource.getTextAnnotation.getId + ":" + x.getSource.getSpan +
+    "D" + x.getTarget.getTextAnnotation.getCorpusId + ":" + x.getTarget.getTextAnnotation.getId + ":" + x.getTarget.getSpan)
 
   //val onTheFlyRelationNode= join(predicates, arguments)
 
-  val sentences = node[TextAnnotation]
+  val sentences = node[TextAnnotation]((x: TextAnnotation) => x.getCorpusId + ":" + x.getId)
 
   val trees = node[Tree[Constituent]]
 
   val stringTree = node[Tree[String]]
 
-  val tokens = node[Constituent]
+  val tokens = node[Constituent]((x: Constituent) => x.getTextAnnotation.getCorpusId + ":" + x.getTextAnnotation.getId + ":" + x.getSpan)
 
   val sentencesToTrees = edge(sentences, trees)
   val sentencesToStringTree = edge(sentences, stringTree)
@@ -89,9 +88,9 @@ class srlMultiGraph(parseViewName: String, frameManager: SRLFrameManager) extend
     x: Constituent => fexFeatureExtractor(x, new ParsePath(parseViewName))
   }
 
-  val subcategorizationRelation = property(relations, "subcat") {
-    x: Relation => fexFeatureExtractor(x.getTarget, new SubcategorizationFrame(parseViewName))
-  }
+  //  val subcategorizationRelation = property(relations, "subcat") {
+  //    x: Relation => fexFeatureExtractor(x.getTarget, new SubcategorizationFrame(parseViewName))
+  //  }
 
   val phraseTypeRelation = property(relations, "phraseType") {
     x: Relation => fexFeatureExtractor(x.getTarget, new ParsePhraseType(parseViewName))

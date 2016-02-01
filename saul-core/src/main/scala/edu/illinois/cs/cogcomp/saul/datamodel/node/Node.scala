@@ -75,8 +75,12 @@ class Node[T <: AnyRef](val keyFunc: T => Any = (x: T) => x, val tag: ClassTag[T
     contains(t.asInstanceOf[T])
   } else false
 
-  def addInstance(t: T, train: Boolean = true, populateEdge: Boolean = true) = {
-    if (!contains(t)) {
+  def addInstance(t: T, train: Boolean = true, populateEdge: Boolean = true, duplicationCheck: Boolean = true) = {
+    var flag = true
+    if (duplicationCheck == true)
+      flag = !contains(t)
+
+    if (flag) {
       val order = incrementCount()
       if (train) this.trainingSet += t else this.testingSet += t
       this.collection(keyFunc(t)) = t
@@ -91,13 +95,13 @@ class Node[T <: AnyRef](val keyFunc: T => Any = (x: T) => x, val tag: ClassTag[T
   }
 
   def populateFrom(n: Node[_]): Unit = {
-    populate(n.getTrainingInstances.map(_.asInstanceOf[T]), true, false)
-    populate(n.getTestingInstances.map(_.asInstanceOf[T]), false, false)
+    populate(n.getTrainingInstances.map(_.asInstanceOf[T]), true, false, duplicateCheck = false)
+    populate(n.getTestingInstances.map(_.asInstanceOf[T]), false, false, duplicateCheck = false)
   }
 
   /** Operator for adding a sequence of T into my table. */
-  def populate(ts: Iterable[T], train: Boolean = true, populateEdge: Boolean = true) = {
-    ts.foreach(addInstance(_, train, populateEdge))
+  def populate(ts: Iterable[T], train: Boolean = true, populateEdge: Boolean = true, duplicateCheck: Boolean = true) = {
+    ts.foreach(addInstance(_, train, populateEdge, duplicateCheck))
   }
 
   /** Relational operators */
@@ -278,7 +282,7 @@ class JoinNode[A <: AnyRef, B <: AnyRef](val na: Node[A], val nb: Node[B], match
     }
   }
 
-  override def addInstance(t: (A, B), train: Boolean, populateEdge: Boolean = true): Unit = {
+  override def addInstance(t: (A, B), train: Boolean, populateEdge: Boolean = true, duplicationCheck: Boolean = true): Unit = {
     assert(matcher(t._1, t._2))
     if (!contains(t)) {
       super.addInstance(t, train, populateEdge)
