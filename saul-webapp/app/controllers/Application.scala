@@ -25,6 +25,7 @@ object Application {
     "scala.tools.nsc.Interpreter",
     "scala.AnyVal",
     "edu.illinois.cs.cogcomp.saulexamples.nlp.EmailSpam.SpamApp",
+    "edu.illinois.cs.cogcomp.saulexamples.bioInformatics.regressionModel.myApp",
     "edu.illinois.cs.cogcomp.saul.datamodel.DataModel",
     "edu.illinois.cs.cogcomp.lbjava.parse.Parser",
     "edu.illinois.cs.cogcomp.core.datastructures.textannotation.TextAnnotation",
@@ -66,6 +67,7 @@ class Application extends Controller {
         val compilationResult = compile(fileMap)
         compilationResult match {
           case Left(scalaInstances) => {
+            visualizer.init()
             event match {
               case DisplayModel() => Ok(displayModel(scalaInstances))
               case PopulateData() => Ok(populateModel(scalaInstances, fileMap, compiler))
@@ -159,7 +161,7 @@ class Application extends Controller {
       Left(compiler.compileScala(scalaFiles))
     } catch {
       case errors: CompilerException => Right(getErrorJson(Json.toJson(errors.messages)))
-      case unknown => throw unknown//Right(Json.toJson("Unknown exception."))
+      case unknown => throw unknown //Right(Json.toJson("Unknown exception."))
     }
   }
 

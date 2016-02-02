@@ -9,8 +9,8 @@ object classExecutor {
   def containsMain(clazz: Any): Boolean = {
     clazz match {
       case ob: Object => {
-        for(method <- ob.getClass.getMethods()){
-          println(method.getName)
+        for (method <- ob.getClass.getMethods()) {
+          //println(method.getName)
         }
         val mainEntry = ob.getClass.getMethods find (x => x.getName eq "main")
         mainEntry match {
