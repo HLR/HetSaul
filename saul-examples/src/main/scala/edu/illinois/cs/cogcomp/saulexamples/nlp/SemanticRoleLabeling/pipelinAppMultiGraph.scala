@@ -50,7 +50,6 @@ object pipelineAppMultiGraph extends App {
   print("arg"+arguments().size)
   print("tok"+srlGraphs.tokens().size)
   if (trainArgType && useGoldArgBoundaries && useGoldPredicate) {
-    //train and test the argClassifier Given the ground truth Boundaries (i.e. no negative class).
     argumentTypeLearner.setModelDir("models_aTr")
     argumentTypeLearner.learn(100, relations.trainingSet)
     argumentTypeLearner.test()
@@ -70,21 +69,18 @@ object pipelineAppMultiGraph extends App {
     argumentTypeLearner.setModelDir("models_cTr")
     println("Training argument classifier")
     argumentTypeLearner.learn(100)
-    print("argument classifier test results:")
-    println("\n =============================================================")
-    argumentTypeLearner.test()
-    argumentTypeLearner.test(relations.testingSet, typeArgumentPrediction, argumentLabelGold,"candidate")
     argumentTypeLearner.save()
-  }
+    print("argument classifier test results:")
+    argumentTypeLearner.test(relations.testingSet, typeArgumentPrediction, argumentLabelGold,"candidate")
+    }
 
-  //println("all relations number after population:" + srlDataModel.relations().size)
-  if (trainPredicates && !useGoldPredicate) {
+   if (trainPredicates && !useGoldPredicate) {
     predicateClassifier.setModelDir("models_dTr")
     println("Training predicate identifier")
-    //   predicateClassifier.learn(100, predicates.trainingSet)
+    predicateClassifier.learn(100, predicates.trainingSet)
     predicateClassifier.save()
     print("isPredicate test results:")
-    //   predicateClassifier.test(predicates.testingSet)
+    predicateClassifier.test(predicates.testingSet)
   }
 
   if (trainArgIdentifier && !useGoldPredicate) {
