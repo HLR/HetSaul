@@ -17,7 +17,7 @@ object SpamApp {
 
   def main(args: Array[String]): Unit = {
     /** Choose the experiment you're interested in by changing the following line */
-    val testType = SpamExperimentType.TestSerializatin
+    val testType = SpamExperimentType.TrainAndTest
 
     testType match {
       case SpamExperimentType.TrainAndTest => TrainAndTestSpamClassifier()
