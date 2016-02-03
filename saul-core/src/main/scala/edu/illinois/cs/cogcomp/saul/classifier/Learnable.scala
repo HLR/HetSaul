@@ -102,6 +102,16 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
 
   def save(): Unit = {
     removeModelFiles()
+/*
+    val dummyClassifier = new SparseNetworkLearner
+    classifier.setExtractor(dummyClassifier)
+    classifier.setLabeler(dummyClassifier)
+    classifier.save()
+
+    // after saving, get rid of the dummy classifier in the Extractor and Labeler:
+    setExtractor()
+    setLabeler()
+*/
     val cloneClasifier = classifier.clone().asInstanceOf[Learner]
     val dummyClassifier = new SparseNetworkLearner
     cloneClasifier.setExtractor(dummyClassifier)
