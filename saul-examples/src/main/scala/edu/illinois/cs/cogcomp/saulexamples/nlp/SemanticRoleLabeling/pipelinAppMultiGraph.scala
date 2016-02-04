@@ -3,12 +3,12 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling
 /** Created by Parisa on 1/14/16.
   */
 
-import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifiers.{argumentTypeLearner, argumentXuIdentifierGivenApredicate, predicateClassifier}
-import org.slf4j.{Logger, LoggerFactory}
+import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifiers.{ argumentTypeLearner, argumentXuIdentifierGivenApredicate, predicateClassifier }
+import org.slf4j.{ Logger, LoggerFactory }
 
 object pipelineAppMultiGraph extends App {
   val logger: Logger = LoggerFactory.getLogger(this.getClass)
-  if (args.length == 0){
+  if (args.length == 0) {
     println("Usage parameters:\n -goldPred=true/false -goldBoundary=true/false -TrainPred=true/false" +
       " -TrainIdentifier=true/false -TrainType=true/false")
     sys.exit()
@@ -43,12 +43,12 @@ object pipelineAppMultiGraph extends App {
   logger.info("population starts.")
 
   val srlGraphs = populatemultiGraphwithSRLData(false, useGoldPredicate, useGoldArgBoundaries)
- import srlGraphs._
+  import srlGraphs._
   logger.info("population finished.")
-  println("sen:"+(sentences()~> sentencesToRelations).size)
-  println("rel:"+relations().size)
-  print("arg"+arguments().size)
-  print("tok"+srlGraphs.tokens().size)
+  println("sen:" + (sentences() ~> sentencesToRelations).size)
+  println("rel:" + relations().size)
+  print("arg" + arguments().size)
+  print("tok" + srlGraphs.tokens().size)
   if (trainArgType && useGoldArgBoundaries && useGoldPredicate) {
     argumentTypeLearner.setModelDir("models_aTr")
     argumentTypeLearner.learn(100, relations.trainingSet)
@@ -71,10 +71,10 @@ object pipelineAppMultiGraph extends App {
     argumentTypeLearner.learn(100)
     argumentTypeLearner.save()
     print("argument classifier test results:")
-    argumentTypeLearner.test(relations.testingSet, typeArgumentPrediction, argumentLabelGold,"candidate")
-    }
+    argumentTypeLearner.test(relations.testingSet, typeArgumentPrediction, argumentLabelGold, "candidate")
+  }
 
-   if (trainPredicates && !useGoldPredicate) {
+  if (trainPredicates && !useGoldPredicate) {
     predicateClassifier.setModelDir("models_dTr")
     println("Training predicate identifier")
     predicateClassifier.learn(100, predicates.trainingSet)
@@ -98,7 +98,7 @@ object pipelineAppMultiGraph extends App {
     argumentTypeLearner.learn(100)
     print("argument classifier test results:")
     argumentTypeLearner.test()
-    argumentTypeLearner.test(relations.testingSet, typeArgumentPrediction, argumentLabelGold,"candidate")
+    argumentTypeLearner.test(relations.testingSet, typeArgumentPrediction, argumentLabelGold, "candidate")
     println("\n =============================================================")
     argumentTypeLearner.save()
   }

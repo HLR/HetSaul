@@ -2,24 +2,24 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling
 
 import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation._
-import edu.illinois.cs.cogcomp.lbjava.infer.{FirstOrderConstant, FirstOrderConstraint}
+import edu.illinois.cs.cogcomp.lbjava.infer.{ FirstOrderConstant, FirstOrderConstraint }
 import edu.illinois.cs.cogcomp.saul.classifier.ConstrainedClassifier
 import edu.illinois.cs.cogcomp.saul.constraint.ConstraintTypeConversion._
 import edu.illinois.cs.cogcomp.saulexamples.data.XuPalmerCandidateGenerator
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.liApp.srlGraphs._
-import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifiers.{argumentTypeLearner, argumentXuIdentifierGivenApredicate, predicateClassifier}
+import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifiers.{ argumentTypeLearner, argumentXuIdentifierGivenApredicate, predicateClassifier }
 
 import scala.collection.JavaConversions._
 /** Created by Parisa on 12/23/15.
   */
 object srlConstraints {
   val noOverlap = ConstrainedClassifier.constraintOf[TextAnnotation] {
-      {
+    {
       var a: FirstOrderConstraint = null
       x: TextAnnotation => {
         a = new FirstOrderConstant(true)
         (sentences(x) ~> sentencesToRelations ~> relationsToPredicates).foreach {
-           y =>
+          y =>
             {
               val argCandList = XuPalmerCandidateGenerator.generateCandidates(y, (sentences(y.getTextAnnotation) ~> sentencesToStringTree).head).
                 map(y => new Relation("candidate", y.cloneForNewView(y.getViewName), y.cloneForNewView(y.getViewName), 0.0))
@@ -38,7 +38,6 @@ object srlConstraints {
     }
   } //end of NoOverlap constraint
 
-
   val arg_IdentifierClassifier_Constraint = ConstrainedClassifier.constraintOf[Relation] {
 
     x: Relation =>
@@ -56,7 +55,6 @@ object srlConstraints {
       }
   }
 
-  
   val r_arg_Constraint = ConstrainedClassifier.constraintOf[TextAnnotation] {
 
     var a: FirstOrderConstraint = null
@@ -64,7 +62,7 @@ object srlConstraints {
     x: TextAnnotation => {
       a = new FirstOrderConstant(true)
       val values = Array("R-A1", "R-A2", "R-A3", "R-A4", "R-A5", "R-AA")
-      (sentences(x) ~> sentencesToRelations ~> relationsToPredicates).foreach{
+      (sentences(x) ~> sentencesToRelations ~> relationsToPredicates).foreach {
         y =>
           {
             val argCandList = (predicates(y) ~> -relationsToPredicates).toList
@@ -139,7 +137,7 @@ object srlConstraints {
     x: TextAnnotation => {
       a = new FirstOrderConstant(true)
       (sentences(x) ~> sentencesToRelations ~> relationsToPredicates).foreach {
-         y =>
+        y =>
           {
             val argCandList = (predicates(y) ~> -relationsToPredicates).toList
             for (t1 <- 0 until argCandList.size - 1)

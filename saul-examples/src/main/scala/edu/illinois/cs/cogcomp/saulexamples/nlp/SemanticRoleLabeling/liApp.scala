@@ -2,7 +2,7 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling
 
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifiers.argumentTypeLearner
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlConstraintClassifiers.argTypeConstraintClassifier
-import org.slf4j.{Logger, LoggerFactory}
+import org.slf4j.{ Logger, LoggerFactory }
 /** Created by Parisa on 12/27/15.
   */
 object liApp extends App {
@@ -42,7 +42,7 @@ object liApp extends App {
 
   //test(testData: Iterable[T], prediction: Property[T], groundTruth: Property[T])
 
-  argTypeConstraintClassifier.test(srlGraphs.relations.getTestingInstances, aTr_pred,100)//(aTr_pred, 100)
+  argTypeConstraintClassifier.test(srlGraphs.relations.getTestingInstances, aTr_pred, 100) //(aTr_pred, 100)
   //argumentTypeLearner.test(relations.getTestingInstances, argumentLabelGold, typeArgumentPrediction, exclude = "candidate")
   //argumentTypeLearner.test(exclude="candidate")
   // logger.info("finished!")
