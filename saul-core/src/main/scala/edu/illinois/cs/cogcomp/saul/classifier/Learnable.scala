@@ -101,11 +101,14 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
 
   def save(): Unit = {
     removeModelFiles()
-    val cloneClasifier = classifier.clone().asInstanceOf[Learner]
     val dummyClassifier = new SparseNetworkLearner
-    cloneClasifier.setExtractor(dummyClassifier)
-    cloneClasifier.setLabeler(dummyClassifier)
-    cloneClasifier.save()
+    classifier.setExtractor(dummyClassifier)
+    classifier.setLabeler(dummyClassifier)
+    classifier.save()
+
+    // after saving, get rid of the dummyClassifier in the classifier.
+    setExtractor()
+    setLabeler()
   }
 
   def load(lcFile: String, lexFile: String): Unit = {
