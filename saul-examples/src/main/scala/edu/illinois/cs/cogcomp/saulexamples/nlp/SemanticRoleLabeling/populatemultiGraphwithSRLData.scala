@@ -174,5 +174,4 @@ object populatemultiGraphwithSRLData {
 
     graphs
   }
-
 }

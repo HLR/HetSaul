@@ -5,12 +5,12 @@ import edu.illinois.cs.cogcomp.lbjava.learn.SparseAveragedPerceptron
 import edu.illinois.cs.cogcomp.saul.classifier.{ Learnable, SparseNetworkLBP }
 import edu.illinois.cs.cogcomp.saul.constraint.ConstraintTypeConversion._
 import edu.illinois.cs.cogcomp.saul.datamodel.property.Property
-import pipelineAppMultiGraph._
+import liApp._
 
 /** Created by Parisa on 12/30/15.
   */
 object srlClassifiers {
-  import pipelineAppMultiGraph.srlGraphs._
+  import srlGraphs._
   //TODO This needs to be overriden by the user; change it to be dynamic
   val parameters = new SparseAveragedPerceptron.Parameters()
   object predicateClassifier extends Learnable[Constituent](srlGraphs, parameters) {

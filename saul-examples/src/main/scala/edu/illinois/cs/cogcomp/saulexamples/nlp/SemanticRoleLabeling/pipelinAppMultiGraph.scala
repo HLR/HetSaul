@@ -95,11 +95,11 @@ object pipelineAppMultiGraph extends App {
   if (trainArgType && !useGoldPredicate) {
     argumentTypeLearner.setModelDir("models_fTr")
     println("Training argument classifier")
-    argumentTypeLearner.learn(100, relations.trainingSet)
+    argumentTypeLearner.learn(100)
     print("argument classifier test results:")
+    argumentTypeLearner.test()
     argumentTypeLearner.test(relations.testingSet, typeArgumentPrediction, argumentLabelGold,"candidate")
     println("\n =============================================================")
-    argumentTypeLearner.test(relations.testingSet)
     argumentTypeLearner.save()
   }
 }

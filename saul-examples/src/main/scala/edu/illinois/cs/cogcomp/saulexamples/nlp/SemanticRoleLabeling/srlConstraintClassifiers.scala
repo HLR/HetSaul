@@ -9,9 +9,9 @@ import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlConstrai
 /** Created by Parisa on 12/27/15.
   */
 object srlConstraintClassifiers {
-  import pipelineAppMultiGraph._
+  import liApp._
   object argTypeConstraintClassifier extends ConstrainedClassifier[Relation, TextAnnotation](srlGraphs, argumentTypeLearner) {
-    def subjectTo = r_and_c_args_GB
+    def subjectTo = r_and_c_args
   }
 
   object arg_Is_TypeConstraintClassifier extends ConstrainedClassifier[Relation, Relation](srlGraphs, argumentTypeLearner) {
