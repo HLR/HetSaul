@@ -4,38 +4,26 @@ import edu.illinois.cs.cogcomp.lbjava.util.{ ExceptionlessInputStream, Exception
 import edu.illinois.cs.cogcomp.saul.datamodel.node.Node
 
 import scala.collection.mutable
-import scala.collection.mutable.ArrayBuffer
+import scala.collection.mutable.{ LinkedHashSet => MutableSet, LinkedHashMap => MutableMap, ArrayBuffer }
 
 class Link[A <: AnyRef, B <: AnyRef](val from: Node[A], val to: Node[B], val name: Option[Symbol]) {
-  type keyA = Any
-  type keyB = Any
-  val index = new mutable.HashMap[keyA, mutable.LinkedHashSet[keyB]]
-  val pairMap = new mutable.HashMap[keyA, ArrayBuffer[B]]
-  val pairs = new ArrayBuffer[(A, B)]
-  val indexWithId = new mutable.HashMap[Int, mutable.LinkedHashSet[Int]]
+  val index = MutableMap[from.NT, MutableSet[to.NT]]()
+  val indexWithId = MutableMap[Int, MutableSet[Int]]()
 
-  def neighborsOf(a: A): Iterable[B] = pairMap.getOrElse(from.keyFunc(a), Seq.empty).toSet
+  def pairs = index.toSeq.flatMap({ case (a, bs) => bs.map(b => a.apply -> b.apply) })
+
+  def neighborsOf(a: A): Iterable[B] = index.getOrElse(from.toNT(a), Seq.empty).toSeq.map(_.apply)
 
   def +=(a: A, b: B) = {
-    val kA = from.keyFunc(a)
-    val kB = to.keyFunc(b)
-    if (!index.contains(kA)) {
-      index(kA) = new mutable.LinkedHashSet
-      pairMap(kA) = new ArrayBuffer[B]
-    }
-    val (setKeyB, listB) = index(kA) -> pairMap(kA)
-    if (!setKeyB(kB)) {
-      setKeyB += kB
-      listB += b
-      pairs += a -> b
-    }
+    val nta = from.toNT(a)
+    val ntb = to.toNT(b)
+    index.getOrElseUpdate(nta, MutableSet()) += ntb
   }
 
   def ++=(a: A, bs: Iterable[B]) = bs.foreach(b => this += (a, b))
 
   def clear = {
     index.clear()
-    pairMap.clear()
     indexWithId.clear()
   }
 
@@ -48,8 +36,8 @@ class Link[A <: AnyRef, B <: AnyRef](val from: Node[A], val to: Node[B], val nam
   def deriveIndexWithId() = {
     pairs.foreach {
       case (fromInstance, toInstance) =>
-        val fromId = from.reverseOrderingMap(fromInstance)
-        val toId = to.reverseOrderingMap(toInstance)
+        val fromId = from.reverseOrderingMap(from.toNT(fromInstance))
+        val toId = to.reverseOrderingMap(to.toNT(toInstance))
         indexWithId.getOrElseUpdate(fromId, new mutable.LinkedHashSet) += toId
     }
   }
