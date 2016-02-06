@@ -135,5 +135,18 @@ class NodeTest extends FlatSpec with Matchers {
     n1.populate(Seq("same1"))
     n1.getAllInstances.size should be(2)
     n2.getAllInstances.size should be(1)
+    clearInstances
+  }
+
+  "querying the edge" should "respect key functions" in {
+    import TestGraph._
+
+    n1.populate(Seq("test1"))
+    n1.getAllInstances.size should be(1)
+    n2.getAllInstances.size should be(1)
+    e.forward.neighborsOf("test2").size should be(0)
+    e.forward.neighborsOf("Test1").size should be(1)
+    e.backward.neighborsOf("test2").size should be(0)
+    e.backward.neighborsOf("Same").size should be(1)
   }
 }

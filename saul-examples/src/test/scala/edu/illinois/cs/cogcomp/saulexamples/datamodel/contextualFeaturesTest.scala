@@ -18,7 +18,7 @@ class contextualFeaturesTest extends FlatSpec with Matchers {
   }
   val graphObject = new TestGraphC()
   "finding the nodes in a window in the neighbohood" should "find the neighbors in a window" in {
-    graphObject.getNodeWithType[String].getWithWindow(graphObject.firstNames.getAllInstances.head, 0, 1).toSet should be(Set(Some("Dave"), Some("John")))
+    graphObject.getNodeWithType[String].getWithWindow(graphObject.firstNames.getAllInstances.head, 0, 1).toSet should be(Set(None, Some("Dave"), Some("John")))
     graphObject.firstNames.getWithWindow(graphObject.firstNames.getAllInstances.head, -2, 2).toSet should be(Set(None, Some("Dave"), Some("John"), Some("Mark")))
     graphObject.lastNames.getWithWindow(graphObject.lastNames.getAllInstances.head, -2, 2).toSet should be(Set(None, Some("Dell"), Some("Jacobs"), Some("Maron")))
     val query2 = graphObject.lastNames() prop graphObject.prefix
