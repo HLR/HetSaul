@@ -39,7 +39,7 @@ lazy val saulExamples = (project in file("saul-examples")).
     javaOptions += "-Xmx6g",
     libraryDependencies ++= Seq(
       "edu.illinois.cs.cogcomp" % "illinois-nlp-pipeline" % cogcompPipelineVersion,
-      "edu.illinois.cs.cogcomp" % "illinois-curator" % cogcompNLPVersion,
+      "edu.illinois.cs.cogcomp" % "illinois-curator" % "1.0.0",
       "edu.illinois.cs.cogcomp" % "illinois-edison" % cogcompNLPVersion,
       "edu.illinois.cs.cogcomp" % "illinois-nlp-readers" % "0.0.2-SNAPSHOT"
     )
