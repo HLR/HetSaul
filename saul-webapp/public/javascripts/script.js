@@ -309,12 +309,13 @@ var generatePopulatedGraphFromJson = function(data) {
     var propertyCount = 0
     for(var node in data['properties']){
         for(var propertyIndex in data['properties'][node]){
+            for(var pI in data['properties'][node][propertyIndex]){
             propertyCount ++;
             ++nodePropertyCount[node];
             var parentNode = getNodeByLabel(node);
             s.graph.addNode({
                 id: 'p' + propertyCount,
-                label: data['properties'][node][propertyIndex],
+                label: pI+": "+data['properties'][node][propertyIndex][pI],
                 size: 1,
                 x: parentNode.x + 1 * Math.cos(2 * nodePropertyCount[node] * Math.PI / 6),
                 y: parentNode.y + 1 * Math.sin(2 * nodePropertyCount[node] * Math.PI / 6),
@@ -326,6 +327,7 @@ var generatePopulatedGraphFromJson = function(data) {
                 target: 'p' + propertyCount,
                 type: 'curve'
             });
+            }
         }
     }
 

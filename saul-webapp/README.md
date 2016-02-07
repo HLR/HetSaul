@@ -8,3 +8,4 @@
 
 To stop it, use `Ctrl+D`
 
+Please read more about the webapp in the wiki page "Webapp usage instructions"
