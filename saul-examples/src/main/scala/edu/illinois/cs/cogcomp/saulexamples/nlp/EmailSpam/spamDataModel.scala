@@ -6,7 +6,6 @@ import edu.illinois.cs.cogcomp.saulexamples.data.Document
 import scala.collection.JavaConversions._
 
 object spamDataModel extends DataModel {
-
   val docs = node[Document]
 
   val wordFeature = property(docs, "wordF") {
