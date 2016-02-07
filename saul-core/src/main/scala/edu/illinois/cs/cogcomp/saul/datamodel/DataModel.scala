@@ -296,9 +296,8 @@ trait DataModel {
       val relatedProperties = PROPERTIES.filter(property => property.tag.equals(node.tag)).toList
       node.deriveInstances(relatedProperties)
     }
-    EDGES.foreach {
-      edge =>
-        edge.deriveIndexWithIds()
+    EDGES.foreach { edge =>
+      edge.deriveIndexWithIds()
     }
     hasDerivedInstances = true
   }
