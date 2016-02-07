@@ -38,8 +38,7 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
   def combinedProperties = if (label != null) new CombinedDiscreteProperty[T](this.feature.filterNot(_.name == label.name))
   else new CombinedDiscreteProperty[T](this.feature)
 
-  //combinedProperty.makeClassifierWithName("")
-  def lbpFeatures = combinedProperties.makeClassifierWithName("featureExtractor")
+  def lbpFeatures = combinedProperties.classifier
 
   /** classifier need to be defined by the user */
   val classifier: Learner
@@ -102,15 +101,33 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
 
   def save(): Unit = {
     removeModelFiles()
-    val cloneClasifier = classifier.clone().asInstanceOf[Learner]
     val dummyClassifier = new SparseNetworkLearner
-    cloneClasifier.setExtractor(dummyClassifier)
-    cloneClasifier.setLabeler(dummyClassifier)
-    cloneClasifier.save()
+    classifier.setExtractor(dummyClassifier)
+    classifier.setLabeler(dummyClassifier)
+    classifier.save()
+
+    // after saving, get rid of the dummyClassifier in the classifier.
+    setExtractor()
+    setLabeler()
   }
 
   def load(lcFile: String, lexFile: String): Unit = {
-    classifier.read(lcFile, lexFile)
+    // Read model file from JAR resources if available, else read from file.
+    val modelResourcesUrls = IOUtils.lsResources(getClass, lcFile)
+    if (modelResourcesUrls.size() == 1) {
+      classifier.readModel(modelResourcesUrls.get(0))
+    } else {
+      classifier.readModel(lcFile)
+    }
+
+    // Read lexicon file from JAR resources if available, else read from file.
+    val lexiconResourcesUrls = IOUtils.lsResources(getClass, lexFile)
+    if (lexiconResourcesUrls.size() == 1) {
+      classifier.readLexicon(lexiconResourcesUrls.get(0))
+    } else {
+      classifier.readLexicon(lexFile)
+    }
+
     setExtractor()
     setLabeler()
   }

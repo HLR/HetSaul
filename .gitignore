@@ -12,3 +12,5 @@ target/
 *.class
 annotation-cache/
 /config
+*/*.swp 
+*.swp
