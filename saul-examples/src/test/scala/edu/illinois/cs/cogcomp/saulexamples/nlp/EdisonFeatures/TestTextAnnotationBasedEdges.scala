@@ -1,7 +1,5 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.EdisonFeatures
 
-/** Created by Parisa on 2/7/16.
-  */
 import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
 import edu.illinois.cs.cogcomp.core.datastructures.trees.Tree
 import edu.illinois.cs.cogcomp.core.utilities.DummyTextAnnotationGenerator
@@ -11,12 +9,9 @@ import edu.illinois.cs.cogcomp.saulexamples.nlp.commonSensors._
 import org.scalatest.{ FlatSpec, Matchers }
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{ Constituent, Relation, TextAnnotation }
 
-/** Created by Parisa on 2/7/16.
-  */
-
 class TestTextAnnotationBasedEdges extends FlatSpec with Matchers {
 
-  class TestTextAnnotation extends DataModel {
+  object TestTextAnnotation extends DataModel {
     val predicates = node[Constituent]((x: Constituent) => x.getTextAnnotation.getCorpusId + ":" + x.getTextAnnotation.getId + ":" + x.getSpan)
 
     val arguments = node[Constituent]((x: Constituent) => x.getTextAnnotation.getCorpusId + ":" + x.getTextAnnotation.getId + ":" + x.getSpan)
@@ -51,14 +46,13 @@ class TestTextAnnotationBasedEdges extends FlatSpec with Matchers {
 
   val viewsToAdd = Array(ViewNames.LEMMA, ViewNames.POS, ViewNames.SHALLOW_PARSE, ViewNames.PARSE_GOLD, ViewNames.SRL_VERB)
   val ta: TextAnnotation = DummyTextAnnotationGenerator.generateAnnotatedTextAnnotation(viewsToAdd, false)
-  val gr = new TestTextAnnotation
-  import gr._
+  import TestTextAnnotation._
   sentencesToTokens.addSensor(textAnnotationToTokens _)
   sentences.populate(Seq(ta))
   val predicateTrainCandidates = tokens.getTrainingInstances.filter((x: Constituent) => posTag(x).startsWith("IN"))
     .map(c => c.cloneForNewView(ViewNames.SRL_VERB))
   predicates.populate(predicateTrainCandidates)
-  val XuPalmerCandidateArgsTraining = predicates.getTrainingInstances.flatMap(x => xuPalmerCandidate(x, (sentences(x.getTextAnnotation) ~> gr.sentencesToStringTree).head))
+  val XuPalmerCandidateArgsTraining = predicates.getTrainingInstances.flatMap(x => xuPalmerCandidate(x, (sentences(x.getTextAnnotation) ~> sentencesToStringTree).head))
   sentencesToRelations.addSensor(textAnnotationToRelationMatch _)
   relations.populate(XuPalmerCandidateArgsTraining)
 

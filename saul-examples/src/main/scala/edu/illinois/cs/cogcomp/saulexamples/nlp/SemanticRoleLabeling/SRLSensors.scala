@@ -10,9 +10,11 @@ import edu.illinois.cs.cogcomp.saulexamples.data.XuPalmerCandidateGenerator
 import scala.collection.JavaConversions._
 
 object srlSensors {
+
   def sentenceToGoldPredicates(ta: TextAnnotation): List[Constituent] = {
     ta.getView(ViewNames.SRL_VERB).asInstanceOf[PredicateArgumentView].getPredicates.toList
   }
+
   def relToPredicate(rel: Relation): Constituent = {
     rel.getSource
   }
@@ -36,6 +38,7 @@ object srlSensors {
   def textAnnotationToRelation(ta: TextAnnotation): List[Relation] = {
     ta.getView(ViewNames.SRL_VERB).getRelations.toList
   }
+
   def textAnnotationToRelationMatch(ta: TextAnnotation, r: Relation): Boolean = {
     (ta.getCorpusId + ":" + ta.getId).matches(r.getSource.getTextAnnotation.getCorpusId + ":" + r.getSource.getTextAnnotation.getId)
   }
@@ -69,8 +72,7 @@ object srlSensors {
 
   def xuPalmerCandidate(x: Constituent, y: Tree[String]): List[Relation] = {
     val p = XuPalmerCandidateGenerator.generateCandidates(x, y)
-    val z = p.map(y => new Relation("candidate", x.cloneForNewView(x.getViewName), y.cloneForNewView(y.getViewName), 0.0))
-    z.toList
+    p.map(y => new Relation("candidate", x.cloneForNewView(x.getViewName), y.cloneForNewView(y.getViewName), 0.0)).toList
   }
 
   def fexFeatureExtractor(x: Constituent, fex: FeatureExtractor): String = {
