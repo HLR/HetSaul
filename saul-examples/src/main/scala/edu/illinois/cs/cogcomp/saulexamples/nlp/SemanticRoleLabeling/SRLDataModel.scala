@@ -26,17 +26,17 @@ object SRLDataModel extends DataModel {
 
   val sentencesToRelations = edge(sentences, relations)
 
-  sentencesToRelations.addSensor(SRLSensors.textAnnotationToRelation _)
+  sentencesToRelations.addSensor(srlSensors.textAnnotationToRelation _)
 
   val sentencesToTrees = edge(sentences, trees)
   //TODO PARSE_GOLD is only good for training; for testing we need PARSE_STANFORD or PARSE_CHARNIAK
-  sentencesToTrees.addSensor(SRLSensors.textAnnotationToTree _)
+  sentencesToTrees.addSensor(srlSensors.textAnnotationToTree _)
 
   val relationsToArguments = edge(relations, arguments)
-  relationsToArguments.addSensor(SRLSensors.relToArgument _)
+  relationsToArguments.addSensor(srlSensors.relToArgument _)
 
   val relationsToPredicates = edge(relations, predicates)
-  relationsToPredicates.addSensor(SRLSensors.relToPredicate _)
+  relationsToPredicates.addSensor(srlSensors.relToPredicate _)
 
   val sentencesToTokens = edge(sentences, tokens)
   sentencesToTokens.addSensor(commonSensors.textAnnotationToTokens _)
