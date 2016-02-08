@@ -13,8 +13,8 @@ object liApp extends App {
   val aTr_lex = rootModelDir + "edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifiers.argumentTypeLearner$.lex"
   val aTr_pred = rootModelDir + "classifier-predictions.txt"
 
-  val useGoldPredicate = true
-  val useGoldBoundaries = true
+  val useGoldPredicate = false
+  val useGoldBoundaries = false
   val srlGraphs = populatemultiGraphwithSRLData(true, useGoldPredicate, useGoldBoundaries)
 
   logger.info("all relations number after population:" + srlGraphs.relations().size)

@@ -3,8 +3,8 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling
 /** Created by Parisa on 1/14/16.
   */
 
-import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifiers.{ argumentTypeLearner, argumentXuIdentifierGivenApredicate, predicateClassifier }
-import org.slf4j.{ Logger, LoggerFactory }
+import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifiers.{argumentTypeLearner, argumentXuIdentifierGivenApredicate, predicateClassifier}
+import org.slf4j.{Logger, LoggerFactory}
 
 object pipelineAppMultiGraph extends App {
   val logger: Logger = LoggerFactory.getLogger(this.getClass)
@@ -51,7 +51,7 @@ object pipelineAppMultiGraph extends App {
   print("tok" + srlGraphs.tokens().size)
   if (trainArgType && useGoldArgBoundaries && useGoldPredicate) {
     argumentTypeLearner.setModelDir("models_aTr")
-    argumentTypeLearner.learn(100, relations.trainingSet)
+    argumentTypeLearner.learn(100, relations.getTrainingInstances)
     argumentTypeLearner.test()
     argumentTypeLearner.save()
   }
@@ -71,16 +71,16 @@ object pipelineAppMultiGraph extends App {
     argumentTypeLearner.learn(100)
     argumentTypeLearner.save()
     print("argument classifier test results:")
-    argumentTypeLearner.test(relations.testingSet, typeArgumentPrediction, argumentLabelGold, "candidate")
+    argumentTypeLearner.test(relations.getTestingInstances, typeArgumentPrediction, argumentLabelGold, "candidate")
   }
 
   if (trainPredicates && !useGoldPredicate) {
     predicateClassifier.setModelDir("models_dTr")
     println("Training predicate identifier")
-    predicateClassifier.learn(100, predicates.trainingSet)
+    predicateClassifier.learn(100, predicates.getTrainingInstances)
     predicateClassifier.save()
     print("isPredicate test results:")
-    predicateClassifier.test(predicates.testingSet)
+    predicateClassifier.test(predicates.getTestingInstances)
   }
 
   if (trainArgIdentifier && !useGoldPredicate) {
@@ -98,7 +98,7 @@ object pipelineAppMultiGraph extends App {
     argumentTypeLearner.learn(100)
     print("argument classifier test results:")
     argumentTypeLearner.test()
-    argumentTypeLearner.test(relations.testingSet, typeArgumentPrediction, argumentLabelGold, "candidate")
+    argumentTypeLearner.test(relations.getTestingInstances, typeArgumentPrediction, argumentLabelGold, "candidate")
     println("\n =============================================================")
     argumentTypeLearner.save()
   }

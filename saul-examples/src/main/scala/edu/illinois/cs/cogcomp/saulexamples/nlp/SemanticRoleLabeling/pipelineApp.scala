@@ -86,10 +86,10 @@ object pipelineApp extends App {
   if (trainPredicates) {
     predicateClassifier.setModelDir("models_dTr")
     println("Training predicate identifier")
-    predicateClassifier.learn(100, predicates.trainingSet)
+    predicateClassifier.learn(100, predicates.getTestingInstances)
     predicateClassifier.save()
     print("isPredicate test results:")
-    predicateClassifier.test(predicates.testingSet)
+    predicateClassifier.test(predicates.getTestingInstances)
   }
 
   if (trainArgIdentifier) {
