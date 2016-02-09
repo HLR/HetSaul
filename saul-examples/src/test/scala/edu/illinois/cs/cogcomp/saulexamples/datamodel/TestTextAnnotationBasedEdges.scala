@@ -1,13 +1,13 @@
 package edu.illinois.cs.cogcomp.saulexamples.datamodel
 
 import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
-import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{Constituent, Relation, TextAnnotation}
+import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{ Constituent, Relation, TextAnnotation }
 import edu.illinois.cs.cogcomp.core.datastructures.trees.Tree
 import edu.illinois.cs.cogcomp.core.utilities.DummyTextAnnotationGenerator
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlSensors._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.commonSensors._
-import org.scalatest.{FlatSpec, Matchers}
+import org.scalatest.{ FlatSpec, Matchers }
 
 class TestTextAnnotationBasedEdges extends FlatSpec with Matchers {
 
@@ -56,7 +56,9 @@ class TestTextAnnotationBasedEdges extends FlatSpec with Matchers {
   sentencesToRelations.addSensor(textAnnotationToRelationMatch _)
   relations.populate(XuPalmerCandidateArgsTraining)
 
-  predicates().size should be ((relations() ~> relationsToPredicates).size)
-  (predicates()~> -relationsToPredicates).size should be (relations().size)
-  (predicates(predicates().head) ~> -relationsToPredicates).size should be(3)
+  "manually defined has codes" should "avoid duplications in edges and reverse edges" in {
+    predicates().size should be((relations() ~> relationsToPredicates).size)
+    (predicates() ~> -relationsToPredicates).size should be(relations().size)
+    (predicates(predicates().head) ~> -relationsToPredicates).size should be(4)
+  }
 }
