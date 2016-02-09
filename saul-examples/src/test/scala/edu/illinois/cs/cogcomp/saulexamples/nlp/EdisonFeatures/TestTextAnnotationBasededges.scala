@@ -6,12 +6,11 @@ import edu.illinois.cs.cogcomp.core.utilities.DummyTextAnnotationGenerator
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlSensors._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.commonSensors._
-import org.scalatest.{FlatSpec, Matchers}
-/**
- * Created by Parisa on 2/7/16.
- */
-import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{Constituent, Relation, TextAnnotation}
-class TestTextAnnotationBasedEdges extends FlatSpec with Matchers{
+import org.scalatest.{ FlatSpec, Matchers }
+/** Created by Parisa on 2/7/16.
+  */
+import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{ Constituent, Relation, TextAnnotation }
+class TestTextAnnotationBasedEdges extends FlatSpec with Matchers {
 
   class TestTextAnnotation extends DataModel {
     val predicates = node[Constituent]((x: Constituent) => x.getTextAnnotation.getCorpusId + ":" + x.getTextAnnotation.getId + ":" + x.getSpan)
@@ -48,7 +47,7 @@ class TestTextAnnotationBasedEdges extends FlatSpec with Matchers{
 
   val viewsToAdd = Array(ViewNames.LEMMA, ViewNames.POS, ViewNames.SHALLOW_PARSE, ViewNames.PARSE_GOLD, ViewNames.SRL_VERB)
   val ta: TextAnnotation = DummyTextAnnotationGenerator.generateAnnotatedTextAnnotation(viewsToAdd, false)
-  val gr=new TestTextAnnotation
+  val gr = new TestTextAnnotation
   import gr._
   sentencesToTokens.addSensor(textAnnotationToTokens _)
   sentences.populate(Seq(ta))
@@ -59,8 +58,6 @@ class TestTextAnnotationBasedEdges extends FlatSpec with Matchers{
   sentencesToRelations.addSensor(textAnnotationToRelationMatch _)
   relations.populate(XuPalmerCandidateArgsTraining)
 
-  predicates().size should be((relations()~>relationsToPredicates).size)
+  predicates().size should be((relations() ~> relationsToPredicates).size)
 }
-
-
 

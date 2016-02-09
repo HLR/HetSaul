@@ -3,8 +3,8 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling
 /** Created by Parisa on 1/14/16.
   */
 
-import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifiers.{argumentTypeLearner, argumentXuIdentifierGivenApredicate, predicateClassifier}
-import org.slf4j.{Logger, LoggerFactory}
+import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifiers.{ argumentTypeLearner, argumentXuIdentifierGivenApredicate, predicateClassifier }
+import org.slf4j.{ Logger, LoggerFactory }
 
 object pipelineAppMultiGraph extends App {
   val logger: Logger = LoggerFactory.getLogger(this.getClass)

@@ -91,7 +91,7 @@ object srlConstraints {
         y =>
           {
             val argCandList = (predicates(y) ~> -relationsToPredicates).toList
-            val sortedCandidates= argCandList.sortBy(x => x.getTarget.getStartSpan)
+            val sortedCandidates = argCandList.sortBy(x => x.getTarget.getStartSpan)
             sortedCandidates.zipWithIndex.foreach {
               case (t, ind) =>
                 {
