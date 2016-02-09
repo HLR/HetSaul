@@ -8,12 +8,12 @@ import org.slf4j.{ Logger, LoggerFactory }
 object liApp extends App {
 
   val logger: Logger = LoggerFactory.getLogger(this.getClass)
-  private val rootModelDir: String = "./models/models_aTr/"
+  private val rootModelDir: String = "./models/models_cTr_Chris/"
   val aTr_lc = rootModelDir + "edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifiers.argumentTypeLearner$.lc"
   val aTr_lex = rootModelDir + "edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifiers.argumentTypeLearner$.lex"
   val aTr_pred = rootModelDir + "classifier-predictions.txt"
 
-  val useGoldPredicate = false
+  val useGoldPredicate = true
   val useGoldBoundaries = false
   val srlGraphs = populatemultiGraphwithSRLData(true, useGoldPredicate, useGoldBoundaries)
 
@@ -43,7 +43,7 @@ object liApp extends App {
   //test(testData: Iterable[T], prediction: Property[T], groundTruth: Property[T])
 
   argTypeConstraintClassifier.test(srlGraphs.relations.getTestingInstances, aTr_pred, 100) //(aTr_pred, 100)
-  //argumentTypeLearner.test(relations.getTestingInstances, argumentLabelGold, typeArgumentPrediction, exclude = "candidate")
+  argumentTypeLearner.test(srlGraphs.relations.getTestingInstances, srlGraphs.argumentLabelGold, srlGraphs.typeArgumentPrediction, exclude = "candidate")
   //argumentTypeLearner.test(exclude="candidate")
   // logger.info("finished!")
 
