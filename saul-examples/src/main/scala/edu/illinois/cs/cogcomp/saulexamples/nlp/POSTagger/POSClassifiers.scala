@@ -1,7 +1,8 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.POSTagger
 
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.Constituent
-import edu.illinois.cs.cogcomp.lbjava.learn.{SparseAveragedPerceptron, SparseNetworkLearner}
+import edu.illinois.cs.cogcomp.lbj.pos.POSBaselineLearner
+import edu.illinois.cs.cogcomp.lbjava.learn.{ SparseAveragedPerceptron, SparseNetworkLearner }
 import edu.illinois.cs.cogcomp.saul.classifier.Learnable
 import edu.illinois.cs.cogcomp.saul.constraint.ConstraintTypeConversion._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.POSTagger.POSDataModel._
@@ -58,7 +59,6 @@ object POSClassifiers {
       p.thickness = 2
       baseLTU = new SparseAveragedPerceptron(p)
     }
-
   }
 
   object POSTaggerUnknown extends Learnable[Constituent](POSDataModel) {
@@ -71,20 +71,17 @@ object POSClassifiers {
       p.thickness = 4
       baseLTU = new SparseAveragedPerceptron(p)
     }
-
   }
 
   object BaselineClassifier extends Learnable[Constituent](POSDataModel) {
     def label = POSLabel
     override def feature = using(wordForm)
     override lazy val classifier = new POSBaselineLearner()
-
   }
 
   object MikheevClassifier extends Learnable[Constituent](POSDataModel) {
     def label = POSLabel
     override def feature = using(wordForm)
     override lazy val classifier = new MikheevLearner
-
   }
 }
