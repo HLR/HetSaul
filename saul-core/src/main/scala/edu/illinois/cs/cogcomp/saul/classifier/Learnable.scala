@@ -125,8 +125,28 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
     }
   }
 
+  /** Loads the model and lexicon for the classifier. Looks up in the local file system
+    * and the files are not found, looks up in the classpath JARs.
+    * @param lcFile The path of the model file
+    * @param lexFile The path of the lexicon file
+    */
   def load(lcFile: String, lexFile: String): Unit = {
-    classifier.read(lcFile, lexFile)
+    if (IOUtils.exists(lcFile))
+      classifier.readModel(lcFile)
+    else {
+      val modelResourcesUrls = IOUtils.lsResources(getClass, lcFile)
+      if (modelResourcesUrls.size() == 1)
+        classifier.readModel(modelResourcesUrls.get(0))
+      else logger.error("Cannot find model file: {}", lcFile)
+    }
+    if (IOUtils.exists(lcFile))
+      classifier.readLexicon(lexFile)
+    else {
+      val lexiconResourcesUrls = IOUtils.lsResources(getClass, lexFile)
+      if (lexiconResourcesUrls.size() == 1)
+        classifier.readLexicon(lexiconResourcesUrls.get(0))
+      else logger.error("Cannot find lexicon file {}", lexFile)
+    }
   }
 
   def load(lcFile: URL, lexFile: URL): Unit = {
