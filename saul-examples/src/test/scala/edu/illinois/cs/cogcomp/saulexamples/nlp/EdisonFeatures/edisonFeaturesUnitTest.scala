@@ -3,6 +3,7 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp.EdisonFeatures
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.TextAnnotation
 import edu.illinois.cs.cogcomp.saulexamples.nlp.CommonSensors
 import org.scalatest._
+import scala.collection.JavaConversions._
 
 class EdisonFeaturesUnitTest extends FlatSpec with Matchers {
 
