@@ -1,9 +1,8 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.EdisonFeatures
 
-import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{ TextAnnotation, Sentence }
-import edu.illinois.cs.cogcomp.saulexamples.nlp.commonSensors
+import edu.illinois.cs.cogcomp.core.datastructures.textannotation.TextAnnotation
+import edu.illinois.cs.cogcomp.saulexamples.nlp.CommonSensors
 import org.scalatest._
-
 import scala.collection.JavaConversions._
 
 class EdisonFeaturesUnitTest extends FlatSpec with Matchers {
@@ -24,11 +23,11 @@ class EdisonFeaturesUnitTest extends FlatSpec with Matchers {
   constituents.populate(constituentList)
 
   /** instantiating edges */
-  docToSen.populateWith(commonSensors.textAnnotationSentenceAlignment(_, _))
+  docToSen.populateWith(CommonSensors.textAnnotationSentenceAlignment(_, _))
 
-  senToCons.populateWith(commonSensors.sentenceConstituentAlignment(_, _))
+  senToCons.populateWith(CommonSensors.sentenceConstituentAlignment(_, _))
 
-  docToCons.populateWith(commonSensors.textAnnotationConstituentAlignment(_, _))
+  docToCons.populateWith(CommonSensors.textAnnotationConstituentAlignment(_, _))
 
   "querying on `Documents`, `TextAnnotation` and `Constituents`" should " work" in {
 
