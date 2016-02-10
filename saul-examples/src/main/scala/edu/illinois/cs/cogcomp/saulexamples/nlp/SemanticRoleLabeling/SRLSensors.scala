@@ -9,7 +9,7 @@ import edu.illinois.cs.cogcomp.saulexamples.data.XuPalmerCandidateGenerator
 
 import scala.collection.JavaConversions._
 
-object srlSensors {
+object SRLSensors {
 
   def sentenceToGoldPredicates(ta: TextAnnotation): List[Constituent] = {
     ta.getView(ViewNames.SRL_VERB).asInstanceOf[PredicateArgumentView].getPredicates.toList

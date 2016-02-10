@@ -38,7 +38,7 @@ object SRLApplication {
 
     // Exclude argument candidates (trees) that contain predicates
     val treeCandidates = trees().flatMap { tree =>
-      val subtrees = srlSensors.getSubtreeArguments(List(tree))
+      val subtrees = SRLSensors.getSubtreeArguments(List(tree))
       // First we need to get the list of predicates that are relevant to each tree
       val treePredicates = trees(tree) ~> -sentencesToTrees ~> sentencesToRelations ~> relationsToPredicates
       // Now we need to filter the trees based on whether they contain all predicates of the sentence

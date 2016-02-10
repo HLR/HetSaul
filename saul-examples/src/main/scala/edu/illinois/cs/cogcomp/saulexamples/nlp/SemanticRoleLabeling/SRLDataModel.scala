@@ -6,7 +6,7 @@ import edu.illinois.cs.cogcomp.core.datastructures.trees.Tree
 import edu.illinois.cs.cogcomp.nlp.corpusreaders.CoNLLColumnFormatReader
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
 
-import edu.illinois.cs.cogcomp.saulexamples.nlp.commonSensors
+import edu.illinois.cs.cogcomp.saulexamples.nlp.CommonSensors
 
 /** The SRL data model which contains all the entities needed to support the structured problem. */
 object SRLDataModel extends DataModel {
@@ -26,20 +26,20 @@ object SRLDataModel extends DataModel {
 
   val sentencesToRelations = edge(sentences, relations)
 
-  sentencesToRelations.addSensor(srlSensors.textAnnotationToRelation _)
+  sentencesToRelations.addSensor(SRLSensors.textAnnotationToRelation _)
 
   val sentencesToTrees = edge(sentences, trees)
   //TODO PARSE_GOLD is only good for training; for testing we need PARSE_STANFORD or PARSE_CHARNIAK
-  sentencesToTrees.addSensor(srlSensors.textAnnotationToTree _)
+  sentencesToTrees.addSensor(SRLSensors.textAnnotationToTree _)
 
   val relationsToArguments = edge(relations, arguments)
-  relationsToArguments.addSensor(srlSensors.relToArgument _)
+  relationsToArguments.addSensor(SRLSensors.relToArgument _)
 
   val relationsToPredicates = edge(relations, predicates)
-  relationsToPredicates.addSensor(srlSensors.relToPredicate _)
+  relationsToPredicates.addSensor(SRLSensors.relToPredicate _)
 
   val sentencesToTokens = edge(sentences, tokens)
-  sentencesToTokens.addSensor(commonSensors.textAnnotationToTokens _)
+  sentencesToTokens.addSensor(CommonSensors.textAnnotationToTokens _)
 
   val isPredicate = property(tokens, "p") {
     x: Constituent => x.getLabel.equals("Predicate")
