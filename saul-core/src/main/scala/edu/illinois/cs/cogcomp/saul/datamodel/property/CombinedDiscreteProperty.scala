@@ -29,11 +29,9 @@ case class CombinedDiscreteProperty[T <: AnyRef](
       }
 
       def classify(instance: AnyRef): FeatureVector = {
-
         val t: T = instance.asInstanceOf[T]
         val featureVector = new FeatureVector()
         atts.foreach(_.addToFeatureVector(t, featureVector))
-
         featureVector
       }
 
@@ -45,6 +43,10 @@ case class CombinedDiscreteProperty[T <: AnyRef](
         val result: util.LinkedList[Classifier] = new util.LinkedList[Classifier]()
         atts.foreach(x => result.add(x.classifier))
         result
+      }
+
+      override def discreteValue(example: AnyRef): String = {
+        atts.head(example.asInstanceOf[T]).asInstanceOf[String]
       }
     }
   }

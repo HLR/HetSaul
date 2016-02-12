@@ -1,5 +1,5 @@
-val cogcompNLPVersion = "3.0.10"
-val cogcompPipelineVersion = "0.1.14"
+val cogcompNLPVersion = "3.0.18"
+val cogcompPipelineVersion = "0.1.15"
 
 lazy val root = (project in file(".")).
   aggregate(saulCore, saulExamples)
@@ -13,12 +13,14 @@ lazy val commonSettings = Seq(
     Resolver.mavenLocal,
     "CogcompSoftware" at "http://cogcomp.cs.illinois.edu/m2repo/"
   ),
+  javaOptions ++= List("-Xmx6g"),
   libraryDependencies ++= Seq(
     "edu.illinois.cs.cogcomp" % "illinois-core-utilities" % cogcompNLPVersion withSources,
     "com.gurobi" % "gurobi" % "6.0",
     "org.apache.commons" % "commons-math3" % "3.0",
     "org.scalatest" % "scalatest_2.11" % "2.2.4"
   ),
+  fork in run := true,
   publishTo := Some(Resolver.sftp("CogcompSoftwareRepo", "bilbo.cs.illinois.edu", "/mounts/bilbo/disks/0/www/cogcomp/html/m2repo/"))
 )
 
@@ -36,12 +38,12 @@ lazy val saulExamples = (project in file("saul-examples")).
   settings(commonSettings: _*).
   settings(
     name := "saul-examples",
-    javaOptions += "-Xmx6g",
     libraryDependencies ++= Seq(
       "edu.illinois.cs.cogcomp" % "illinois-nlp-pipeline" % cogcompPipelineVersion,
-      "edu.illinois.cs.cogcomp" % "illinois-curator" % cogcompNLPVersion,
+      "edu.illinois.cs.cogcomp" % "illinois-curator" % "1.0.0",
       "edu.illinois.cs.cogcomp" % "illinois-edison" % cogcompNLPVersion,
-      "edu.illinois.cs.cogcomp" % "illinois-nlp-readers" % "0.0.2-SNAPSHOT"
+      "edu.illinois.cs.cogcomp" % "illinois-nlp-readers" % "0.0.2-SNAPSHOT", 
+      "edu.illinois.cs.cogcomp" % "saul-pos-tagger-models" % "1.0"
     )
   ).dependsOn(saulCore).aggregate(saulCore)
 

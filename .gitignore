@@ -15,3 +15,5 @@ annotation-cache/
 *.lc
 *.lex
 *~
+*/*.swp 
+*.swp

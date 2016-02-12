@@ -3,7 +3,7 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp.EdisonFeatures
 import edu.illinois.cs.cogcomp.annotation.BasicTextAnnotationBuilder
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.TextAnnotation
 import edu.illinois.cs.cogcomp.saulexamples.data.{ Document, DocumentReader }
-import edu.illinois.cs.cogcomp.saulexamples.nlp.commonSensors
+import edu.illinois.cs.cogcomp.saulexamples.nlp.CommonSensors
 
 import scala.collection.JavaConversions._
 
@@ -17,11 +17,11 @@ object edisonApp {
     val data: List[Document] = new DocumentReader("./data/20newsToy/train").docs.toList.slice(1, 3)
 
     /** this generates a list of strings each member is a textual content of a document */
-    val documentIndexPair = commonSensors.textCollection(data).zip(data.map(_.getGUID))
+    val documentIndexPair = CommonSensors.textCollection(data).zip(data.map(_.getGUID))
 
     val documentList = documentIndexPair.map {
       case (doc, id) =>
-        commonSensors.annotateRawWithCurator(doc, id)
+        CommonSensors.annotateRawWithCurator(doc, id)
       //commonSensors.annotateWithPipeline(doc, id)
     }
 
@@ -37,11 +37,11 @@ object edisonApp {
     constituents.populate(constituentList)
 
     /** instantiating edges */
-    docToSen.populateWith(commonSensors.textAnnotationSentenceAlignment(_, _))
+    docToSen.populateWith(CommonSensors.textAnnotationSentenceAlignment(_, _))
 
-    senToCons.populateWith(commonSensors.sentenceConstituentAlignment(_, _))
+    senToCons.populateWith(CommonSensors.sentenceConstituentAlignment(_, _))
 
-    docToCons.populateWith(commonSensors.textAnnotationConstituentAlignment(_, _))
+    docToCons.populateWith(CommonSensors.textAnnotationConstituentAlignment(_, _))
 
     /** query edges */
     val sentencesQueriedFromDocs = docToSen.forward.neighborsOf(documentList.head)
