@@ -1,5 +1,5 @@
 # Saul Project 
-[![Build Status](http://128.174.241.91:8080/buildStatus/icon?job=saul)](http://128.174.241.91:8080/job/saul)
+[![Build Status](https://semaphoreci.com/api/v1/projects/3a8f460c-fd44-42e2-bedb-70611d83a15c/658568/badge.svg)](https://semaphoreci.com/christos-c/saul)
 
 [![Travis Build Status](https://magnum.travis-ci.com/IllinoisCogComp/saul.svg?token=sh2TUxymJtwGcwzpH5oQ&branch=master)](https://magnum.travis-ci.com/IllinoisCogComp/saul)
  

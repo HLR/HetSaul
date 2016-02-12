@@ -8,7 +8,7 @@ import edu.illinois.cs.cogcomp.saul.datamodel.property.features.real._
 import edu.illinois.cs.cogcomp.saul.datamodel.property.{ EvaluatedProperty, Property }
 import edu.illinois.cs.cogcomp.saul.datamodel.node.{ JoinNode, Node }
 import edu.illinois.cs.cogcomp.saul.datamodel.edge.{ SymmetricEdge, AsymmetricEdge, Edge, Link }
-import java.lang.reflect.ParameterizedType
+import org.scalatest.fixture
 
 import scala.collection.mutable.ListBuffer
 import scala.reflect.ClassTag
@@ -34,6 +34,17 @@ trait DataModel {
   def clearInstances = {
     NODES.foreach(_.clear)
     EDGES.foreach(_.clear)
+  }
+
+  def addFromModel[T <: DataModel](dataModel: T): Unit = {
+    assert(this.NODES.size == dataModel.NODES.size)
+    for ((n1, n2) <- NODES.zip(dataModel.NODES)) {
+      n1.populateFrom(n2)
+    }
+    assert(this.EDGES.size == dataModel.EDGES.size)
+    for ((e1, e2) <- EDGES.zip(dataModel.EDGES)) {
+      e1.populateFrom(e2)
+    }
   }
 
   @deprecated("Use node.properties to get the properties for a specific node")
@@ -285,9 +296,8 @@ trait DataModel {
       val relatedProperties = PROPERTIES.filter(property => property.tag.equals(node.tag)).toList
       node.deriveInstances(relatedProperties)
     }
-    EDGES.foreach {
-      edge =>
-        edge.deriveIndexWithIds()
+    EDGES.foreach { edge =>
+      edge.deriveIndexWithIds()
     }
     hasDerivedInstances = true
   }

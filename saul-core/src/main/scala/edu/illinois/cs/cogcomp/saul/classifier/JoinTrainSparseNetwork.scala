@@ -187,25 +187,25 @@ object JoinTrainSparseNetwork {
                         } else {
 
                           /*if ( result.equals("false") && trueLabel.equals("true")   )
-                        {
-                          //                        println("demote !")
-                          //                        println("promote !")
+                    {
+                      //                        println("demote !")
+                      //                        println("promote !")
 
-                          val a  = typedC.onClassifier.getExampleArray(x)
-                          //.map({
-                          val a0 = a(0).asInstanceOf[Array[Int]]
-                          val a1 = a(1).asInstanceOf[Array[Double]]
-                          //                        typedC.onClassifier.asInstanceOf[LinearThresholdUnit].promote(a0,a1,0.1)
-                          //                      typedC.onClassifier.learn(x)
-                          typedC.onClassifier.asInstanceOf[LinearThresholdUnit].demote(a0,a1,0.1)
-                          //                      println("promote !")
-                          //                        typedC.onClassifier.learn(x)
+                      val a  = typedC.onClassifier.getExampleArray(x)
+                      //.map({
+                      val a0 = a(0).asInstanceOf[Array[Int]]
+                      val a1 = a(1).asInstanceOf[Array[Double]]
+                      //                        typedC.onClassifier.asInstanceOf[LinearThresholdUnit].promote(a0,a1,0.1)
+                      //                      typedC.onClassifier.learn(x)
+                      typedC.onClassifier.asInstanceOf[LinearThresholdUnit].demote(a0,a1,0.1)
+                      //                      println("promote !")
+                      //                        typedC.onClassifier.learn(x)
 
-                          //                      typedC.onClassifier.asInstanceOf[LinearThresholdUnit].demote(a0,a1,0.1)
-                        }else{
-                          //                                              println("Correct !")
-                        }
-                        //                    typedC.onClassifier.asInstanceOf[LinearThresholdUnit].doneLearning()*/
+                      //                      typedC.onClassifier.asInstanceOf[LinearThresholdUnit].demote(a0,a1,0.1)
+                    }else{
+                      //                                              println("Correct !")
+                    }
+                    //                    typedC.onClassifier.asInstanceOf[LinearThresholdUnit].doneLearning()*/
 
                         }
 
