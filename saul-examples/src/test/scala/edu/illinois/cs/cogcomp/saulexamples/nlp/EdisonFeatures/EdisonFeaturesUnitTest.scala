@@ -1,6 +1,6 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.EdisonFeatures
 
-import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{ TextAnnotation, Sentence }
+import edu.illinois.cs.cogcomp.core.datastructures.textannotation.TextAnnotation
 import edu.illinois.cs.cogcomp.saulexamples.nlp.commonSensors
 import org.scalatest._
 
@@ -24,11 +24,11 @@ class EdisonFeaturesUnitTest extends FlatSpec with Matchers {
   constituents.populate(constituentList)
 
   /** instantiating edges */
-  docToSen.populateWith(commonSensors.textAnnotationSentenceAlignment(_, _))
+  docToSen.populateWith(commonSensors.textAnnotationSentenceAlignment _)
 
-  senToCons.populateWith(commonSensors.sentenceConstituentAlignment(_, _))
+  senToCons.populateWith(commonSensors.sentenceConstituentAlignment _)
 
-  docToCons.populateWith(commonSensors.textAnnotationConstituentAlignment(_, _))
+  docToCons.populateWith(commonSensors.textAnnotationConstituentAlignment _)
 
   "querying on `Documents`, `TextAnnotation` and `Constituents`" should " work" in {
 
@@ -51,7 +51,7 @@ class EdisonFeaturesUnitTest extends FlatSpec with Matchers {
 
     docsQueriedFromSentences.map(_.toString).toSet should be(docsQueriesFromCons.map(_.toString).toSet)
 
-    /** querty properties */
+    /** query properties */
     val sentenceContentFromDoc = docToSen.to().prop(sentenceContent)
 
     val sentencesContentFromCons = senToCons.from().prop(sentenceContent)

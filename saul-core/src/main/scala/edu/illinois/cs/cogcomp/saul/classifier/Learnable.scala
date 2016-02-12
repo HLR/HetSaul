@@ -4,21 +4,21 @@ import java.io.File
 import java.net.URL
 
 import edu.illinois.cs.cogcomp.core.io.IOUtils
-import edu.illinois.cs.cogcomp.lbjava.classify.{ FeatureVector, TestDiscrete }
+import edu.illinois.cs.cogcomp.lbjava.classify.{FeatureVector, TestDiscrete}
 import edu.illinois.cs.cogcomp.lbjava.learn.Learner.Parameters
 import edu.illinois.cs.cogcomp.lbjava.learn._
 import edu.illinois.cs.cogcomp.lbjava.parse.Parser
 import edu.illinois.cs.cogcomp.lbjava.util.ExceptionlessOutputStream
 import edu.illinois.cs.cogcomp.saul.TestContinuous
-import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
-import edu.illinois.cs.cogcomp.saul.datamodel.property.{ CombinedDiscreteProperty, Property, PropertyWithWindow, RelationalFeature }
+import edu.illinois.cs.cogcomp.saul.datamodel.node.Node
+import edu.illinois.cs.cogcomp.saul.datamodel.property.{ CombinedDiscreteProperty, Property }
 import edu.illinois.cs.cogcomp.saul.lbjrelated.LBJLearnerEquivalent
 import edu.illinois.cs.cogcomp.saul.parser.LBJIteratorParserScala
-import org.slf4j.{ Logger, LoggerFactory }
+import org.slf4j.{Logger, LoggerFactory}
 
 import scala.reflect.ClassTag
 
-abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: Parameters = new Learner.Parameters)(implicit tag: ClassTag[T]) extends LBJLearnerEquivalent {
+abstract class Learnable[T <: AnyRef](val node: Node[T], val parameters: Parameters = new Learner.Parameters)(implicit tag: ClassTag[T]) extends LBJLearnerEquivalent {
   /** Whether to use caching */
   val useCache = false
 
@@ -27,13 +27,11 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
 
   var isTraining = false
 
-  val targetNode = datamodel.getNodeWithType[T]
-
-  def fromData = targetNode.getTrainingInstances
+  def fromData = node.getTrainingInstances
 
   def getClassNameForClassifier = this.getClass.getCanonicalName
 
-  def feature: List[Property[T]] = datamodel.getPropertiesForType[T]
+  def feature: List[Property[T]] = node.properties.toList
 
   /** filter out the label from the features */
   def combinedProperties = if (label != null) new CombinedDiscreteProperty[T](this.feature.filterNot(_.name == label.name))
@@ -137,19 +135,14 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
     load(lcFilePath.getPath, lexFilePath.getPath)
   }
 
-  def learn(iteration: Int, filePath: String = datamodel.defaultDIFilePath): Unit = {
+  def learn(iteration: Int): Unit = {
     createFiles()
     isTraining = true
     if (useCache) {
-      if (!datamodel.hasDerivedInstances) {
-        if (new File(filePath).exists()) {
-          datamodel.load(filePath)
-        } else {
-          datamodel.deriveInstances()
-          datamodel.write(filePath)
-        }
+      if (node.derivedInstances.isEmpty) {
+        logger.error("No cached data found. Please use dataModel.load()")
       }
-      learnWithDerivedInstances(iteration, targetNode.derivedInstances.values)
+      learnWithDerivedInstances(iteration, node.derivedInstances.values)
     } else {
       learn(iteration, this.fromData)
     }
@@ -172,7 +165,8 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
 
         if (remainingIteration > 1) {
           crTokenTest.reset()
-          datamodel.clearPropertyCache()
+          //TODO We need a solution for this
+          //datamodel.clearPropertyCache()
           learnAll(crTokenTest, remainingIteration - 1)
         }
       } else {
@@ -220,7 +214,7 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
     */
   def test(testData: Iterable[T] = null, prediction: Property[T] = null, groundTruth: Property[T] = null, exclude: String = ""): List[(String, (Double, Double, Double))] = {
     isTraining = false
-    val testReader = new LBJIteratorParserScala[T](if (testData == null) this.datamodel.getNodeWithType[T].getTestingInstances else testData)
+    val testReader = new LBJIteratorParserScala[T](if (testData == null) node.getTestingInstances else testData)
     testReader.reset()
     val tester = if (prediction == null && groundTruth == null)
       TestDiscrete.testDiscrete(classifier, classifier.getLabeler, testReader)
@@ -233,24 +227,12 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
     val ret = tester.getLabels.map { label => (label, (tester.getF1(label), tester.getPrecision(label), tester.getRecall(label))) }
     ret.toList
   }
-  def testContinuos(): Unit = {
-    isTraining = false
-    val data = this.datamodel.getNodeWithType[T].getTestingInstances
-    testContinuos(data)
-  }
 
-  def testContinuos(testData: Iterable[T]): Unit = {
+  def testContinuous(testData: Iterable[T] = null): Unit = {
     isTraining = false
-    println()
-    val testReader = new LBJIteratorParserScala[T](testData)
+    val testReader = new LBJIteratorParserScala[T](if (testData == null) node.getTestingInstances else testData)
     testReader.reset()
-    val tester = new TestContinuous(classifier, classifier.getLabeler, testReader)
-    // tester.printPerformance(System.out)
-    //val ret = tester.getLabels.map({
-    // label => (label , (tester.getF1(label),tester.getPrecision(label),tester.getRecall(label)))
-    // })
-
-    //ret toList
+    new TestContinuous(classifier, classifier.getLabeler, testReader)
   }
 
   def chunkData(ts: List[Iterable[T]], i: Int, curr: Int, acc: (Iterable[T], Iterable[T])): (Iterable[T], Iterable[T]) = {
@@ -327,54 +309,10 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
     })
   }
 
-  /** Label property foor users classifier */
+  /** Label property for users classifier */
   def label: Property[T]
-
-  /** A windows of properties
-    *
-    * @param before always negative (or 0)
-    * @param after always positive (or 0)
-    */
-  def windowWithIn[U <: AnyRef](before: Int, after: Int, properties: List[Property[T]])(implicit uTag: ClassTag[U]): Property[T] = {
-    val fls = datamodel.getRelatedFieldsBetween[T, U]
-    getWindowWithFilters(before, after, fls.map(e => (t: T) => e.neighborsOf(t).head), properties)
-  }
-
-  def window(before: Int, after: Int)(properties: List[Property[T]]): Property[T] = {
-    getWindowWithFilters(before, after, Nil, properties)
-  }
-
-  private def getWindowWithFilters(before: Int, after: Int, filters: Iterable[T => Any], properties: List[Property[T]]): Property[T] = {
-    new PropertyWithWindow[T](this.datamodel, before, after, filters, properties)
-  }
 
   def using(properties: List[Property[T]]*): List[Property[T]] = {
     properties.toList.flatten
-  }
-
-  def nextWithIn[U <: AnyRef](properties: List[Property[T]])(implicit uTag: ClassTag[U]): Property[T] = {
-    this.windowWithIn[U](0, 1, properties.toList)
-  }
-
-  def prevWithIn[U <: AnyRef](property: Property[T]*)(implicit uTag: ClassTag[U]): Property[T] = {
-    this.windowWithIn[U](-1, 0, property.toList)
-  }
-
-  def nextOf(properties: List[Property[T]]): Property[T] = {
-    window(0, 1)(properties)
-  }
-
-  def prevOf(properties: List[Property[T]]): Property[T] = {
-    window(0, 1)(properties)
-  }
-
-  def relationalProperty[U <: AnyRef](implicit uTag: ClassTag[U]): Property[T] = {
-    val fts: List[Property[U]] = this.datamodel.getPropertiesForType[U]
-    relationalProperty[U](fts)
-  }
-
-  def relationalProperty[U <: AnyRef](ls: List[Property[U]])(implicit uTag: ClassTag[U]): Property[T] = {
-    val fts = this.datamodel.getPropertiesForType[U]
-    new RelationalFeature[T, U](this.datamodel, fts)
   }
 }

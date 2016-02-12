@@ -2,12 +2,13 @@ package edu.illinois.cs.cogcomp.saulexamples.setcover
 
 import edu.illinois.cs.cogcomp.saul.classifier.ConstrainedClassifier
 import edu.illinois.cs.cogcomp.saul.constraint.ConstraintTypeConversion._
+import edu.illinois.cs.cogcomp.saulexamples.setcover.setCoverSolverDataModel._
 
 import scala.collection.JavaConversions._
 
 object setCoverApp {
-  val cities = new City("./data/SetCover/example.txt")
-  val ns = cities.getNeighborhoods.toList
+  val cityInst = new City("./data/SetCover/example.txt")
+  val ns = cityInst.getNeighborhoods.toList
 
   val containsStationConstrint = ConstrainedClassifier.constraintOf[City]({
     x: City =>
@@ -22,19 +23,19 @@ object setCoverApp {
       }
   })
 
-  println(containsStationConstrint.createInferenceCondition[Neighborhood](setCoverSolverDataModel).subjectTo.evalDiscreteValue(cities))
+  println(containsStationConstrint.createInferenceCondition[Neighborhood].subjectTo.evalDiscreteValue(cityInst))
 
   def main(args: Array[String]) {
-    setCoverSolverDataModel.cities populate List(cities)
-    setCoverSolverDataModel.neighborhoods populate ns
-    setCoverSolverDataModel.cityContainsNeighborhoods.populateWith(_ == _.getParentCity)
+    cities populate List(cityInst)
+    neighborhoods populate ns
+    cityContainsNeighborhoods.populateWith(_ == _.getParentCity)
 
-    println(setCoverSolverDataModel.getFromRelation[City, Neighborhood](cities))
-    println(setCoverSolverDataModel.getFromRelation[Neighborhood, City](ns.head))
+    println(cities(cityInst) ~> cityContainsNeighborhoods)
+    println(neighborhoods(ns.head) ~> -cityContainsNeighborhoods)
 
-    cities.getNeighborhoods.foreach {
+    cityInst.getNeighborhoods.foreach {
       n => println(n.getNumber + ": " + containsStationConstraint.classifier.discreteValue(n))
     }
-    println(containsStationConstraint.getCandidates(cities))
+    println(containsStationConstraint.getCandidates(cityInst))
   }
 }

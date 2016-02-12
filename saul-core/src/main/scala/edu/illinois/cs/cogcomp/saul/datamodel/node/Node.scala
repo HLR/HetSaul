@@ -114,8 +114,8 @@ class Node[T <: AnyRef](val keyFunc: T => Any = (x: T) => x, val tag: ClassTag[T
   }
 
   def populateFrom(n: Node[_]): Unit = {
-    populate(n.getTrainingInstances.map(_.asInstanceOf[T]), true, false)
-    populate(n.getTestingInstances.map(_.asInstanceOf[T]), false, false)
+    populate(n.getTrainingInstances.map(_.asInstanceOf[T]), train = true, populateEdge = false)
+    populate(n.getTestingInstances.map(_.asInstanceOf[T]), train = false, populateEdge = false)
   }
 
   /** Operator for adding a sequence of T into my table. */

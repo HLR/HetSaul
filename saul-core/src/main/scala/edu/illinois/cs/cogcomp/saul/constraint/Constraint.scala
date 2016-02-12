@@ -6,8 +6,8 @@ import edu.illinois.cs.cogcomp.saul.datamodel.property.Property
 import edu.illinois.cs.cogcomp.saul.lbjrelated.LBJLearnerEquivalent
 
 /** Created by kordjam on 11/11/14.
-  * We need to define the langauge of constraints here to work with the first order constraints that are programmed in
-  * our main LBP script. The wrapper just gives us a java firstorderconstraint object in the shell of an scala object.
+  * We need to define the language of constraints here to work with the first order constraints that are programmed in
+  * our main LBP script. The wrapper just gives us a java `FirstOrderConstraint` object in the shell of an scala object.
   * in this way our language works on scala objects.
   */
 
@@ -62,7 +62,7 @@ class QuantifierWrapper[T](val coll: Seq[T]) {
   }
 
   /** transfer the constraint to a constant,
-    * I'm worried about ths performance, because otherwise(at most 10 will be O(n^10) thing to evaluate)
+    * I'm worried about ths performance, because otherwise(at most 10 will be O(n&#94;10) thing to evaluate)
     * One reason is we use conjunction and disjunction in forall and exist
     */
   def _atMost(n: Int)(p: T => FirstOrderConstraint): FirstOrderConstraint = {
@@ -74,7 +74,7 @@ class QuantifierWrapper[T](val coll: Seq[T]) {
   }
 
   /** transfer the constraint to a constant,
-    * I'm worried about ths performance, because otherwise(at most 10 will be O(n^10) thing to evaluate)
+    * I'm worried about ths performance, because otherwise(at most 10 will be O(n&#94;10) thing to evaluate)
     * One reason is we use conjunction and disjunction in forall and exist
     */
   def _atLeast(n: Int)(p: T => FirstOrderConstraint): FirstOrderConstraint = {

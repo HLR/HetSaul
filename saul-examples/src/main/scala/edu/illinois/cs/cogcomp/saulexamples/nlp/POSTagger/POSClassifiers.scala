@@ -49,7 +49,7 @@ object POSClassifiers {
     POSTaggerUnknown.save()
   }
 
-  object POSTaggerKnown extends Learnable[Constituent](POSDataModel) {
+  object POSTaggerKnown extends Learnable[Constituent](tokens) {
     def label = POSLabel
     override def feature = using(wordForm, baselineTarget, labelTwoBefore, labelOneBefore,
       labelOneAfter, labelTwoAfter, L2bL1b, L1bL1a, L1aL2a)
@@ -59,10 +59,10 @@ object POSClassifiers {
       p.thickness = 2
       baseLTU = new SparseAveragedPerceptron(p)
     }
-    override val loggging = true
+    override val logging = true
   }
 
-  object POSTaggerUnknown extends Learnable[Constituent](POSDataModel) {
+  object POSTaggerUnknown extends Learnable[Constituent](tokens) {
     def label = POSLabel
     override def feature = using(wordForm, baselineTarget, labelTwoBeforeU, labelOneBeforeU,
       labelOneAfterU, labelTwoAfterU, L2bL1bU, L1bL1aU, L1aL2aU, suffixFeatures)
@@ -72,20 +72,20 @@ object POSClassifiers {
       p.thickness = 4
       baseLTU = new SparseAveragedPerceptron(p)
     }
-    override val loggging = true
+    override val logging = true
   }
 
-  object BaselineClassifier extends Learnable[Constituent](POSDataModel) {
+  object BaselineClassifier extends Learnable[Constituent](tokens) {
     def label = POSLabel
     override def feature = using(wordForm)
     override lazy val classifier = new POSBaselineLearner()
-    override val loggging = true
+    override val logging = true
   }
 
-  object MikheevClassifier extends Learnable[Constituent](POSDataModel) {
+  object MikheevClassifier extends Learnable[Constituent](tokens) {
     def label = POSLabel
     override def feature = using(wordForm)
     override lazy val classifier = new MikheevLearner
-    override val loggging = true
+    override val logging = true
   }
 }

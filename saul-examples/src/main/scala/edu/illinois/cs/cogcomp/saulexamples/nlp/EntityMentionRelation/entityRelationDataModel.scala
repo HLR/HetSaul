@@ -1,11 +1,11 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation
 
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
-import edu.illinois.cs.cogcomp.saulexamples.EntityMentionRelation.datastruct.{ ConllRawSentence, ConllRawToken, ConllRelation }
+import edu.illinois.cs.cogcomp.saulexamples.EntityMentionRelation.datastruct.{ConllRawSentence, ConllRawToken, ConllRelation}
 import edu.illinois.cs.cogcomp.saulexamples.EntityMentionRelation.reader.Conll04_ReaderNew
 
 import scala.collection.JavaConversions._
-import scala.collection.mutable.{ Map => MutableMap }
+import scala.collection.mutable.{Map => MutableMap}
 import scala.util.Random
 
 object entityRelationDataModel extends DataModel {
@@ -24,10 +24,23 @@ object entityRelationDataModel extends DataModel {
   //('sid === 'sid, 'e2id === 'wordid)//TODO check the runtime problem with the new edge implementation
   val tokenContainsInSentence = edge(tokens, pairedRelations, 'sid) //('sid === 'sid)//TODO check the runtime problem with the new edge implementation
 
+  val tokenToToken = edge(tokens,tokens,'SenToTok)
+
   /** Properties */
   val pos = property(tokens, "pos") {
     t: ConllRawToken => t.POS :: Nil
   }
+
+  /** NB: The window does NOT include the target token */
+  val posWindow = property(tokens, "posWindow") {
+    t: ConllRawToken =>
+      "t+1" + (tokens(tokens(t) ~> tokenToToken) prop pos).head.head ::
+        "t+2" + (tokens(tokens(t) ~> tokenToToken ~> tokenToToken) prop pos).head.head ::
+        "t-1" + (tokens(tokens(t) ~> -tokenToToken) prop pos).head.head ::
+        "t-2" + (tokens(tokens(t) ~> -tokenToToken ~> -tokenToToken) prop pos).head.head ::
+        Nil
+  }
+
   val word = property(tokens, "word") {
     t: ConllRawToken => t.getWords(false).toList
   }

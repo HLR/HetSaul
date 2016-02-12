@@ -2,8 +2,9 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp.DataModelTests
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation._
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
 import edu.illinois.cs.cogcomp.saulexamples.data.Document
+import edu.illinois.cs.cogcomp.saulexamples.nlp.commonSensors
 
-import scala.collection.mutable.{ Map => MutableMap }
+import scala.collection.mutable.{Map => MutableMap}
 
 object modelWithSensors extends DataModel {
 
@@ -22,12 +23,14 @@ object modelWithSensors extends DataModel {
     x: TextAnnotation => x.getNumberOfSentences.toString
   }
 
-  val sentenceFeatureExample = property(sentence, "sentnce") {
+  val sentenceFeatureExample = property(sentence, "sentence") {
     x: Sentence => x.getText
   }
 
   /** Edge Types */
-  val docTosen = edge(document, sentence)
-  val SenToCons = edge(document, constituent)
+  val docToSen = edge(document, sentence)
+  docToSen.addSensor(commonSensors.getSentences _)
+  val senToCons = edge(document, constituent)
+  senToCons.addSensor(commonSensors.textAnnotationToTokens _)
 }
 

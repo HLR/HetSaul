@@ -1,10 +1,10 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.trainingparadigm
 
-import edu.illinois.cs.cogcomp.saulexamples.EntityMentionRelation.datastruct.{ ConllRawToken, ConllRelation }
+import edu.illinois.cs.cogcomp.saul.classifier.JointTrain
+import edu.illinois.cs.cogcomp.saulexamples.EntityMentionRelation.datastruct.ConllRelation
 import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.entityRelationClassifiers._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.entityRelationDataModel
 import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.entityRelationDataModel._
-import edu.illinois.cs.cogcomp.saul.classifier.JointTrain
 
 /** Created by Parisa on 5/6/15.
   */
@@ -20,9 +20,7 @@ object JoinTraining {
       //workForClassifier.learn(preTrainIteration)
       // LivesInClassifier.learn(preTrainIteration)
     }
-
-    JointTrain.train[ConllRelation](entityRelationDataModel, PerConstraintClassifier :: orgConstraintClassifier :: LocConstraintClassifier :: P_O_relationClassifier :: LiveIn_P_O_relationClassifier :: Nil, jointTrainIteration)
-    //    JointTrain.train[ConllRelation](entityRelationDataModel,  P_O_relationClassifier  :: LiveIn_P_O_relationClassifier ::Nil,it)
+    JointTrain.train[ConllRelation](pairedRelations, PerConstraintClassifier :: orgConstraintClassifier :: LocConstraintClassifier :: P_O_relationClassifier :: LiveIn_P_O_relationClassifier :: Nil, jointTrainIteration)
   }
 
   def forgetEverything() = {
@@ -34,12 +32,11 @@ object JoinTraining {
   }
 
   def main(args: Array[String]) {
-
     forgetEverything()
     entityRelationDataModel.readAll()
 
-    val testRels = entityRelationDataModel.getNodeWithType[ConllRelation].getTestingInstances.toList
-    val testTokens = entityRelationDataModel.getNodeWithType[ConllRawToken].getTestingInstances.toList
+    val testRels = pairedRelations.getTestingInstances.toList
+    val testTokens = tokens.getTestingInstances.toList
 
     trainJoint(preTrainIteration = 1, jointTrainIteration = 5)
 
@@ -67,7 +64,5 @@ object JoinTraining {
     JointTrain.testClassifiers(LivesInClassifier.classifier, (relationType is "Live_In").classifier, testRels)
     println(Console.RED + "Live_In")
     JointTrain.testClassifiers(LiveIn_P_O_relationClassifier.classifier, (relationType is "Live_In").classifier, testRels)
-
   }
-
 }

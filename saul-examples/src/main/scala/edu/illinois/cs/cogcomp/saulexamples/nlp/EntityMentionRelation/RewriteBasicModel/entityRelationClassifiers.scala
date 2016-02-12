@@ -9,27 +9,27 @@ import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.RewriteBas
 
 object entityRelationClassifiers {
 
-  object orgClassifier extends Learnable[ConllRawToken](entityRelationBasicDataModel) {
+  object orgClassifier extends Learnable[ConllRawToken](tokens) {
     def label: Property[ConllRawToken] = entityType is "Org"
     override def feature = using(word)
     override lazy val classifier = new SparseNetworkLearner()
   }
 
-  object personClassifier extends Learnable[ConllRawToken](entityRelationBasicDataModel) {
+  object personClassifier extends Learnable[ConllRawToken](tokens) {
     def label: Property[ConllRawToken] = entityType is "Peop"
     override lazy val classifier = new SparseNetworkLearner()
   }
 
-  object locationClassifier extends Learnable[ConllRawToken](entityRelationBasicDataModel) {
+  object locationClassifier extends Learnable[ConllRawToken](tokens) {
     def label: Property[ConllRawToken] = entityType is "Loc"
     override lazy val classifier = new SparseNetworkLearner()
   }
 
-  object worksForClassifier extends Learnable[ConllRelation](entityRelationBasicDataModel) {
+  object worksForClassifier extends Learnable[ConllRelation](pairs) {
     override def label: Property[ConllRelation] = relationType is "Work_For"
     override lazy val classifier = new SparseNetworkLearner()
   }
-  object livesInClassifier extends Learnable[ConllRelation](entityRelationBasicDataModel) {
+  object livesInClassifier extends Learnable[ConllRelation](pairs) {
     override def label: Property[ConllRelation] = relationType is "Live_In"
     override lazy val classifier = new SparseNetworkLearner()
   }

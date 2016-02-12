@@ -40,38 +40,5 @@ object entityRelationConstraints {
           ((PersonClassifier on x.e1) isTrue)
       }
   }
-  //TODO these commented out codes probably should be used in new examples
-  //  val Per_Org=ConstraintClassifier.constraintOf[ConllRelation]  {
-  //    x:ConllRelation=>{
-  //      {OrgWorkFor on x &&& PersonWorkFor(x)}
-  //    }
-  //  }
-
-  //
-  //  val LocatedInConstrint = ConstraintClassifier.constraintOf[ConllRelation] {
-  //    x: ConllRelation => {
-  //      ((locatedInClassifier on x) isTrue) ==> (
-  //        ((PersonClassifier on x) is "Loc") ||| ((orgClassifier on x) is "Org")
-  //          &&& ((LocClassifier on x) is "Loc"))
-  //    }
-  //  }
-  //  val Org_basedConstrint = ConstraintClassifier.constraintOf[ConllRelation] {
-  //    x: ConllRelation => {
-  //      ((org_baseClassifier on x) is "OrgBased_In") ==> (
-  //        ((orgClassifier on x) is "Org")
-  //          &&& ((LocClassifier on x) is "Loc"))
-  //    }
-  //  }
-  //
-  //  val workForSentenceLevel = ConstraintClassifier.constraintOf[ConllRawSentence] {
-  //    x: ConllRawSentence => {
-  //      x.relations _forAll {
-  //        n: ConllRelation => {
-  //          Per_Org(n)
-  //        }
-  //      }
-  //    }
-  //  }
-
 }
 

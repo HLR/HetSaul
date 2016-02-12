@@ -1,14 +1,11 @@
 package edu.illinois.cs.cogcomp.saul.datamodel
 
-import edu.illinois.cs.cogcomp.lbjava.util.{ ExceptionlessInputStream, ExceptionlessOutputStream }
-import edu.illinois.cs.cogcomp.saul.datamodel.edge.{ AsymmetricEdge, Edge, Link, SymmetricEdge }
-import edu.illinois.cs.cogcomp.saul.datamodel.node.{ NodeProperty, JoinNode, Node }
+import edu.illinois.cs.cogcomp.lbjava.util.{ExceptionlessInputStream, ExceptionlessOutputStream}
+import edu.illinois.cs.cogcomp.saul.datamodel.edge.{AsymmetricEdge, Edge, Link, SymmetricEdge}
+import edu.illinois.cs.cogcomp.saul.datamodel.node.{JoinNode, Node, NodeProperty}
+import edu.illinois.cs.cogcomp.saul.datamodel.property.EvaluatedProperty
 import edu.illinois.cs.cogcomp.saul.datamodel.property.features.discrete._
 import edu.illinois.cs.cogcomp.saul.datamodel.property.features.real._
-import edu.illinois.cs.cogcomp.saul.datamodel.property.{ EvaluatedProperty, Property }
-import edu.illinois.cs.cogcomp.saul.datamodel.node.{ JoinNode, Node }
-import edu.illinois.cs.cogcomp.saul.datamodel.edge.{ SymmetricEdge, AsymmetricEdge, Edge, Link }
-import org.scalatest.fixture
 
 import scala.collection.mutable.ListBuffer
 import scala.reflect.ClassTag
@@ -45,72 +42,6 @@ trait DataModel {
     for ((e1, e2) <- EDGES.zip(dataModel.EDGES)) {
       e1.populateFrom(e2)
     }
-  }
-
-  @deprecated("Use node.properties to get the properties for a specific node")
-  def getPropertiesForType[T <: AnyRef](implicit tag: ClassTag[T]): List[Property[T]] = {
-    this.PROPERTIES.filter(a => a.tag.equals(tag)).map(_.asInstanceOf[Property[T]]).toList
-  }
-
-  @deprecated("Use node.populate() instead.")
-  def populate[T <: AnyRef](node: Node[T], coll: Seq[T]) = {
-    node.populate(coll)
-  }
-
-  @deprecated
-  def getNodeWithType[T <: AnyRef](implicit tag: ClassTag[T]): Node[T] = {
-    this.NODES.filter {
-      e: Node[_] => tag.equals(e.tag)
-    }.head.asInstanceOf[Node[T]]
-  }
-
-  @deprecated
-  def getFromRelation[FROM <: AnyRef, NEED <: AnyRef](t: FROM)(implicit tag: ClassTag[FROM], headTag: ClassTag[NEED]): Iterable[NEED] = {
-    val dm = this
-    if (tag.equals(headTag)) {
-      Set(t.asInstanceOf[NEED])
-    } else {
-      val r = this.EDGES.filter {
-        r => r.from.tag.toString.equals(tag.toString) && r.to.tag.toString.equals(headTag.toString)
-      }
-      if (r.isEmpty) {
-        // reverse search
-        val r = this.EDGES.filter {
-          r => r.to.tag.toString.equals(tag.toString) && r.from.tag.toString.equals(headTag.toString)
-        }
-        if (r.isEmpty) {
-          throw new Exception(s"Failed to found relations between $tag to $headTag")
-        } else r flatMap (_.asInstanceOf[Edge[NEED, FROM]].backward.neighborsOf(t)) distinct
-      } else r flatMap (_.asInstanceOf[Edge[FROM, NEED]].forward.neighborsOf(t)) distinct
-    }
-  }
-
-  // TODO: comment this function
-  @deprecated
-  def getFromRelation[T <: AnyRef, HEAD <: AnyRef](name: Symbol, t: T)(implicit tag: ClassTag[T], headTag: ClassTag[HEAD]): Iterable[HEAD] = {
-    if (tag.equals(headTag)) {
-      List(t.asInstanceOf[HEAD])
-    } else {
-      val r = this.EDGES.filter {
-        r =>
-          r.to.tag.equals(tag) && r.from.tag.equals(headTag) && r.forward.name.isDefined && name.equals(r.forward.name.get)
-      }
-
-      // there must be only one such relation
-      if (r.isEmpty) {
-        throw new Exception(s"Failed to find any relation between $tag to $headTag")
-      } else if (r.size > 1) {
-        throw new Exception(s"Found too many relations between $tag to $headTag,\nPlease specify a name")
-      } else {
-        r.head.asInstanceOf[Link[T, HEAD]].neighborsOf(t)
-      }
-    }
-  }
-
-  @deprecated
-  def getRelatedFieldsBetween[T <: AnyRef, U <: AnyRef](implicit fromTag: ClassTag[T], toTag: ClassTag[U]): Iterable[Link[T, U]] = {
-    this.EDGES.filter(r => r.from.tag.equals(fromTag) && r.to.tag.equals(toTag)).map(_.forward.asInstanceOf[Link[T, U]]) ++
-      this.EDGES.filter(r => r.to.tag.equals(fromTag) && r.from.tag.equals(toTag)).map(_.backward.asInstanceOf[Link[T, U]])
   }
 
   def testWith[T <: AnyRef](coll: Seq[T])(implicit tag: ClassTag[T]) = {
