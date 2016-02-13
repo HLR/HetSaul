@@ -20,8 +20,9 @@
 #schemaGraphContainer{
     height: 100%;
 }
-
-
+.bb{
+    margin-left: 3px;
+}
 /*----- Tabs -----*/
 .tabs {
     width:50%;

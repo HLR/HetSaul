@@ -34,15 +34,42 @@ $(document).ready(function(){
         });
 
 
-        $("#plusFile").click(function(){
-            newFile(); 
+        $("#newmodel").click(function(){
+            var content = ["package test","","import edu.illinois.cs.cogcomp.saul.datamodel.DataModel","","object $$$$$$ extends DataModel {","","}"];
+             newFile(content);
+        });
+        $("#newcla").click(function(){
+             var content = ["package test","","import edu.illinois.cs.cogcomp.saul.classifier.Learnable","","object $$$$$$ {","","    object $$$$$$Classifier extends Learnable[???](yourDataModel) {","    ","    }","}"];
+             newFile(content);
+        });
+        $("#newapp").click(function(){
+             var content = ["package test","","object $$$$$$ {","","    def main(args: Array[String]) {","    ","    }","}"];
+             newFile(content);
+        });
+
+        $("#deleteFile").click(function(){
+            deleteFile();
         });
 })
 
-var setEditor = function(editorId,mode){
+var deleteFile = function(){
+                //switch to other tabs
+            $("#fileList").children(".active").each(function(){
+                $(this).remove();
+            });
+            $("#workspace").children(".active").each(function(){
+                $(this).remove();
+            });
+            $("#fileList").children("li").first().addClass("active");
+            $("#workspace").children().first().addClass("active");
+            $("#workspace").children().first().show();
+
+}
+var setEditor = function(editorId,mode, content){
     var editor = ace.edit(editorId);
     editor.setTheme("ace/theme/monokai");
     changeEditorMode(editor, mode);
+    if(content) editor.getSession().getDocument().insertLines(0,content);
     editor.focus();
 }
 
@@ -57,7 +84,8 @@ var changeEditorMode = function(editor, mode){
     }
     editor.getSession().setMode(new mode());
 }
-var newFile = function(){
+var newFile = function(content){
+    content = content || [];
     var li = $("<li class='active'><a href='#'></a></li>");
     var idx = $("#fileList").children("li").size() + 1;
     li.children().each(function(){
@@ -67,16 +95,17 @@ var newFile = function(){
     li.attr('id','fileName' + idx);
     $("#fileList").append(li);
     installTabClickedAction(li);
-    var code = $("<textarea class='code active' rows='18'></textarea>");
-    code.attr('id','code' + idx);
+
     $("#workspace").children(".active").each(function(){
         $(this).removeClass("active");
         $(this).hide();
     })
-    $("#workspace").append(code);
     var editor = $("<div class='editor active' id='editor"+idx+"'></div>");
     $("#workspace").append(editor);
-    setEditor("editor"+idx,"scala");
+    for(var line in content){
+        content[line] = content[line].replace("$$$$$$","test"+idx);
+    }
+    setEditor("editor"+idx,"scala",content);
 }
 
 //check string end with suffix
@@ -133,12 +162,12 @@ var installTabClickedAction = function(tab){
 
             tab.addClass("active");
 
-            var idx = tab.attr('id').slice(-1);
+            var idx = tab.attr('id').match(/\d+$/)[0];
             $("#workspace").children(".active").each(function(){
                 $(this).removeClass("active");
                 $(this).hide(); 
             })
-            $("#code"+idx).addClass("active");
+//            $("#code"+idx).addClass("active");
             $("#editor"+idx).show();
             $("#editor"+idx).addClass("active");
             ace.edit("editor"+idx).focus();
@@ -149,7 +178,7 @@ var installTabClickedAction = function(tab){
 var getAllFiles = function(){
     var files = {}
     $("#fileList").children("li").each(function(index){
-        var idx = $(this).attr('id').slice(-1);
+        var idx = $(this).attr('id').match(/\d+$/)[0];
         var codeId = "editor" + idx;
         var codeName = $(this).text();
         files[codeName] = ace.edit(codeId).getValue();
@@ -179,7 +208,7 @@ var updateCode = function(event){
         success : onSuccess,
         error : onError
     }
-
+    $("#pbar").show();
     $.ajax({
         type : 'POST',
         url : rURL,
@@ -454,23 +483,27 @@ var alertError = function(data) {
 }
 
 var onCompileSuccess = function(data){
+        $("#pbar").hide();
     alertError(data);
     changeTab("tab1");
     generateSchemaGraphFromJson(data);
 }
 
 var onPopulateSuccess = function(data) {
+    $("#pbar").hide();
     alertError(data);
     changeTab("tab2");
     generatePopulatedGraphFromJson(data);
 }
 
 var onRunSuccess = function(data) {
+    $("#pbar").hide();
     alertError(data);
     changeTab("tab3");
     displayOutput(data)
 }
 
 var onError = function(data){
+    $("#pbar").hide();
     alert("error"+data);
 }

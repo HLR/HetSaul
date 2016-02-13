@@ -51,14 +51,29 @@
                 </div>
             </nav>
             <div class="alert alert-danger" id="errors" role="alert"></div>
+            <div class="progress progress-striped active"  style="display:none;width:90%;margin-left:auto;margin-right:auto;" id="pbar" >
+  <div class="progress-bar progress-bar-striped active" role="progressbar"
+  aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width:100%">
+    <span class="sr-only">100% Complete</span>
+  </div>
+</div>
             <div class="panel-body" style="float : left ;width: 50%">
                 <ul class="nav nav-tabs" id="fileList">
                     <li class="active" id="fileName1"><a href="#">test.scala</a></li>
-                <button class="btn btn-default" id="uploadFile" style="float:right;"><span class="glyphicon glyphicon-floppy-open" aria-hidden="true"></span></button>
-                <button class="btn btn-default" id="plusFile"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button>
+                <button class="btn btn-danger bb" id="deleteFile" style="float:right;"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
+                <button class="btn btn-primary bb" id="uploadFile" style="float:right;"><span class="glyphicon glyphicon-floppy-open" aria-hidden="true"></span></button>
+                
+                <div class="dropdown bb" style="float:right;">
+                    <button class="btn btn-success dropdown-toggle bb" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="plusFile" ><span class="glyphicon glyphicon-plus"></span><span class="caret"></span></button>
+
+                    <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
+                      <li role="presentation"><a role="menuitem" tabindex="-1" href="#" id="newmodel">DataModel</a></li>
+                      <li role="presentation"><a role="menuitem" tabindex="-1" href="#" id="newcla">Classifier</a></li>
+                      <li role="presentation"><a role="menuitem" tabindex="-1" href="#" id="newapp">Main App</a></li>
+                    </ul>
+                </div>
                 </ul>
                 <div class="form-group" id="workspace">
-                    <textarea class="code active" rows="18" id="code1"></textarea>
                     <div id="editor1" class="editor active"></div>
                 </div>
                 <div style="text-align: center">
