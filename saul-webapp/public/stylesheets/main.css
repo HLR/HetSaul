@@ -9,6 +9,9 @@
 .editor{
     height: 400px;
 }
+.page-header{
+    padding-bottom: 20px;
+}
 
 .code{
     display: none;
@@ -27,6 +30,13 @@
 .tabs {
     width:50%;
     display:inline-block;
+}
+
+
+.well2{
+    margin-left: 5px;
+    display: inline-block;
+    min-height: 20px;
 }
 
     /*----- Tab Links -----*/

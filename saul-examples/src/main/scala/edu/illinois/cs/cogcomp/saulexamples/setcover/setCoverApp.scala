@@ -6,7 +6,7 @@ import edu.illinois.cs.cogcomp.saul.constraint.ConstraintTypeConversion._
 import scala.collection.JavaConversions._
 
 object setCoverApp {
-  val cities = new City("./data/SetCover/example.txt")
+  val cities = new City("../data/SetCover/example.txt")
   val ns = cities.getNeighborhoods.toList
 
   val containsStationConstrint = ConstrainedClassifier.constraintOf[City]({

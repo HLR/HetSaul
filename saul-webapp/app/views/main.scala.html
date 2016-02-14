@@ -39,17 +39,43 @@
                             <span class="icon-bar"></span>
                             <span class="icon-bar"></span>
                         </button>
-                        <a class="navbar-brand" href="/">Menu</a>
                     </div>
                     <div class="nav-collapse">
                         <ul class="nav navbar-nav">
-                            <li><a href="">Write code!</a></li>
-                            <li><a href="">How it works</a></li>
-                            <li><a href="">About</a></li>
+                            <li><a href="#">Playground</a></li>
+                            <li><a role="button" data-toggle="collapse" href="#collapseExamples" aria-expanded="true" aria-controls="collapseExamples">Examples</a></li>
+                            <li><a href="#">About</a></li>
                         </ul>
                     </div>
                 </div>
             </nav>
+            <div class="collapse in panel-collapse" id="collapseExamples">
+                <button type="button" class="btn btn-info well2" id="ToyExample">
+                    ToyExample
+                </button>
+                <button type="button" class="btn btn-info well2" id="EdisonFeatures">
+                    EdisonFeatures
+                </button>
+                <button type="button" class="btn btn-info well2" id="POSTagger">
+                    POSTagger
+                </button>
+                <button type="button" class="btn btn-info well2" id="EntityMentionRelation">
+                    EntityMentionRelation
+                </button>
+                <button type="button" class="btn btn-info well2" id="SemanticRoleLabeling">
+                    SemanticRoleLabeling
+                </button>
+                <button type="button" class="btn btn-info well2" id="SetCover">
+                    SetCover
+                </button>
+                <button type="button" class="btn btn-info well2" id="KnowEng">
+                    KnowEng
+                </button>
+                <button type="button" class="btn btn-info well2" id="EmailSpam">
+                    EmailSpam
+                </button>
+            </div>
+            </div>
             <div class="alert alert-danger" id="errors" role="alert"></div>
             <div class="progress progress-striped active"  style="display:none;width:90%;margin-left:auto;margin-right:auto;" id="pbar" >
   <div class="progress-bar progress-bar-striped active" role="progressbar"
@@ -114,6 +140,6 @@
 
                 </div>
             </div>
-        </div>
+        
     </body>
 </html>
