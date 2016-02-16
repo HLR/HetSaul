@@ -2,8 +2,9 @@ package edu.illinois.cs.cogcomp.saulexamples.bioInformatics.regressionModel
 
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
 import edu.illinois.cs.cogcomp.saulexamples.bioInformatics._
-import bioSensors._
 import edu.illinois.cs.cogcomp.saulexamples.bioInformatics.regressionModel.Classifiers.dResponseClassifier
+import edu.illinois.cs.cogcomp.saulexamples.bioInformatics.regressionModel.bioSensors._
+
 import scala.collection.JavaConversions._
 /** Created by Parisa on 6/24/15.
   */
@@ -26,7 +27,7 @@ object knowEngDataModel extends DataModel {
   geneGenes.addSensor(ggGeneMatchSensor _)
 
   val age = property(patients) {
-    x: Patient => x.age
+    x: Patient => x.age.toDouble
   }
   val gender = property(patients) {
     x: Patient => x.gender
@@ -67,6 +68,9 @@ object knowEngDataModel extends DataModel {
   }
   val textSimilarity = property(geneGene) {
     x: GeneGene => x.STRING_textmining
+  }
+  val cP1 = property(patientDrug) {
+    x: PatientDrug => (patientDrug(x) ~> pdPatient prop age).propValues.toList
   }
 
   val responsePrediction = property(patientDrug) {
