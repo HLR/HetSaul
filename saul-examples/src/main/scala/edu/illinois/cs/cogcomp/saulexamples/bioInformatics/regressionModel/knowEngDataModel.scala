@@ -69,7 +69,7 @@ object knowEngDataModel extends DataModel {
     x: GeneGene => x.STRING_textmining
   }
 
-  //val responsePrediction = property(patientDrug) {
-  //  x: PatientDrug => dResponseClassifier(x)
-  //}
+  val responsePrediction = property(patientDrug) {
+    x: PatientDrug => dResponseClassifier(x)
+  }
 }
