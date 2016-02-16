@@ -16,7 +16,6 @@ trait InstanceSet[T <: AnyRef] extends Iterable[T] {
       val node: Node[U] = edge.forward.to
       val tempInst = self.instances.flatMap(t => edge.forward.neighborsOf(t))
       val instances: Iterable[U] = tempInst.groupBy(x => edge.forward.to.keyFunc(x)).map(x => x._2.head)
-
     }
   }
 
