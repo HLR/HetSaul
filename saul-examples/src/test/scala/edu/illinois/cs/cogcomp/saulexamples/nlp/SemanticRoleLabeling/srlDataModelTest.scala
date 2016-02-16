@@ -3,6 +3,8 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling
 import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.TextAnnotation
 import edu.illinois.cs.cogcomp.core.utilities.DummyTextAnnotationGenerator
+import edu.illinois.cs.cogcomp.saulexamples.DummyTAGenerator
+import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlConstraintClassifiers.argTypeConstraintClassifier
 import org.scalatest.{ Matchers, FlatSpec }
 import srlDataModel._
 
@@ -89,5 +91,10 @@ class srlDataModelTest extends FlatSpec with Matchers {
   "hasNEG and hasMOD features of arg" should "be correct" in {
     (relations() prop containsNEG).toSet should be(Set("", ""))
     (relations() prop containsMOD).toSet should be(Set("", ""))
+  }
+
+  "" should "" in {
+    val ta = DummyTAGenerator.generateAnnotatedTextAnnotation(Array(ViewNames.SRL_VERB), true)
+    argTypeConstraintClassifier.test(sentences(ta)~>sentencesToRelations, "test_pred", 1)
   }
 }

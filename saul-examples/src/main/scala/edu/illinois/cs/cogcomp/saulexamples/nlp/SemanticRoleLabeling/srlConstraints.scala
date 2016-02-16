@@ -69,12 +69,13 @@ object srlConstraints {
             argCandList.foreach {
               t: Relation =>
                 {
-                  for (i <- 0 until values.length - 1)
+                  for (i <- 0 until values.length)
                     a = a &&& ((argumentTypeLearner on t) is values(i)) ==>
-                      argCandList._exists {
+                      argCandList.filterNot(x=> x.equals(t))._exists {
                         k: Relation => (argumentTypeLearner on k) is values(i).substring(2)
                       }
                 }
+            a
             }
           }
       }
@@ -96,12 +97,13 @@ object srlConstraints {
               case (t, ind) =>
                 {
                   if (ind > 0)
-                    for (i <- 0 until values.length - 1)
+                    for (i <- 0 until values.length)
                       a = a &&& ((argumentTypeLearner on t) is values(i)) ==>
-                        argCandList.subList(0, ind)._exists {
+                        sortedCandidates.subList(0, ind)._exists {
                           k: Relation => (argumentTypeLearner on k) is values(i).substring(2)
                         }
                 }
+
             }
           }
       }
@@ -120,13 +122,30 @@ object srlConstraints {
             val argLegalList = legalArguments(y)
             argCandList.foreach {
               z =>
-                a = a &&& argLegalList._exists {
-                  t: String => argumentTypeLearner on z is t
-                }
+                a =  ((argLegalList._exists {
+                  t: String => (argumentTypeLearner on z is t)
+                }) ||| (argumentTypeLearner on z is "candidate")) &&& a
             }
           }
       }
+   a
     }
+
+   /*
+      x: TextAnnotation => {
+
+        val first: FirstOrderConstraint = new FirstOrderConstant(true)
+
+        (for {
+          y <-  (sentences(x) ~> sentencesToRelations ~> relationsToPredicates)
+          argCandList = (predicates(y) ~> -relationsToPredicates).toList
+          argLegalList = legalArguments(y)
+          z <- argLegalList
+        } yield argLegalList._exists((t: String)=> argumentTypeLearner on z is t)).foldLeft(first) {
+          (r: FirstOrderConstraint, c) => r &&& c
+        }
+      }
+ */
     a
   }
 
@@ -140,10 +159,14 @@ object srlConstraints {
         y =>
           {
             val argCandList = (predicates(y) ~> -relationsToPredicates).toList
-            for (t1 <- 0 until argCandList.size - 1)
+            for (t1 <- 0 until argCandList.size - 1){
+              val b= (argumentTypeLearner on argCandList.get(t1)) in values
               for (t2 <- t1 + 1 until argCandList.size) {
-                a = a &&& (((argumentTypeLearner on argCandList.get(t1)) in values) ==> (((argumentTypeLearner on argCandList.get(t1)) isNot (argumentTypeLearner on argCandList.get(t2)))))
+                a = a &&& (((argumentTypeLearner on argCandList.get(t1)) isNot (argumentTypeLearner on argCandList.get(t2))))
+              a
               }
+              a= (b ==> a)
+            }
           }
       }
       a
