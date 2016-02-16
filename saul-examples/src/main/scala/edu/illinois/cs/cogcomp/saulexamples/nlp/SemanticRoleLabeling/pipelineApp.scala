@@ -8,9 +8,9 @@ import edu.illinois.cs.cogcomp.core.datastructures.textannotation.Constituent
 import edu.illinois.cs.cogcomp.core.experiments.NotificationSender
 import edu.illinois.cs.cogcomp.saul.evaluation.evaluation
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifiers.{ argumentTypeLearner, argumentXuIdentifierGivenApredicate, predicateClassifier }
-import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlDataModel._
-import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlSensors._
-import edu.illinois.cs.cogcomp.saulexamples.nlp.commonSensors._
+import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLDataModel._
+import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLSensors._
+import edu.illinois.cs.cogcomp.saulexamples.nlp.CommonSensors._
 
 object pipelineApp extends App {
 
@@ -50,9 +50,9 @@ object pipelineApp extends App {
   val startTime = System.currentTimeMillis()
 
   if (!useGoldPredicate) {
-    srlDataModel.sentencesToTokens.addSensor(textAnnotationToTokens _)
+    SRLDataModel.sentencesToTokens.addSensor(textAnnotationToTokens _)
   }
-  populateGraphwithGoldSRL(srlDataModel, srlDataModel.sentences)
+  populateGraphwithGoldSRL(SRLDataModel, SRLDataModel.sentences)
 
   if (!useGoldPredicate) {
     val predicateTrainCandidates = tokens.getTrainingInstances.filter((x: Constituent) => posTag(x).startsWith("VB"))
@@ -81,7 +81,7 @@ object pipelineApp extends App {
     relations.populate(XuPalmerCandidateArgsTraining)
     relations.populate(XuPalmerCandidateArgsTesting, train = false)
   }
-  println("all relations number after population:" + srlDataModel.relations().size)
+  println("all relations number after population:" + SRLDataModel.relations().size)
 
   if (trainPredicates) {
     predicateClassifier.setModelDir("models_dTr")

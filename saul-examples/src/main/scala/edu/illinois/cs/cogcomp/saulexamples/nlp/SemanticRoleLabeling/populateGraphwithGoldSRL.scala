@@ -26,7 +26,7 @@ import scala.collection.JavaConversions._
   */
 
 object populateGraphwithGoldSRL extends App {
-  import srlDataModel._
+  import SRLDataModel._
 
   def apply[T <: AnyRef](d: DataModel, x: Node[TextAnnotation], testOnly: Boolean = false) = {
     val logger: Logger = LoggerFactory.getLogger(this.getClass)

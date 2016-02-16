@@ -14,8 +14,8 @@ import edu.illinois.cs.cogcomp.nlp.pipeline.IllinoisPipelineFactory
 import edu.illinois.cs.cogcomp.nlp.utilities.ParseUtils
 import edu.illinois.cs.cogcomp.saulexamples.ExamplesConfigurator
 import edu.illinois.cs.cogcomp.saulexamples.data.{ SRLFrameManager, SRLDataReader }
-import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlSensors._
-import edu.illinois.cs.cogcomp.saulexamples.nlp.commonSensors._
+import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLSensors._
+import edu.illinois.cs.cogcomp.saulexamples.nlp.CommonSensors._
 import org.slf4j.{ Logger, LoggerFactory }
 
 import scala.collection.JavaConversions._

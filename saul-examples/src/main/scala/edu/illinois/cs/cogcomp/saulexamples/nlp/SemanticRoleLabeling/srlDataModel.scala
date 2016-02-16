@@ -10,7 +10,7 @@ import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
 import edu.illinois.cs.cogcomp.saulexamples.ExamplesConfigurator
 import edu.illinois.cs.cogcomp.saulexamples.data.SRLFrameManager
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifiers.{ argumentTypeLearner, argumentXuIdentifierGivenApredicate, predicateClassifier }
-import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlSensors._
+import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLSensors._
 
 import scala.collection.JavaConversions._
 
@@ -18,7 +18,7 @@ import scala.collection.JavaConversions._
   * @author Parisa Kordjamshidi
   * @author Christos Christodoulopoulos
   */
-object srlDataModel extends DataModel {
+object SRLDataModel extends DataModel {
 
   val rm: ResourceManager = new ExamplesConfigurator().getDefaultConfig
 

@@ -3,9 +3,9 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling
 import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.Constituent
 import edu.illinois.cs.cogcomp.saul.evaluation.evaluation
-import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlDataModel._
-import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlSensors._
-import edu.illinois.cs.cogcomp.saulexamples.nlp.commonSensors._
+import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLDataModel._
+import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLSensors._
+import edu.illinois.cs.cogcomp.saulexamples.nlp.CommonSensors._
 
 import scala.collection.JavaConversions._
 /** Created by Parisa on 1/5/16.
@@ -13,8 +13,8 @@ import scala.collection.JavaConversions._
 object testSRLModels extends App {
   var modelsPath = "./models/modelsFinal/edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLClassifiersForExperiment"
 
-  srlDataModel.sentencesToTokens.addSensor(textAnnotationToTokens _)
-  populateGraphwithGoldSRL(srlDataModel, srlDataModel.sentences, testOnly = true)
+  SRLDataModel.sentencesToTokens.addSensor(textAnnotationToTokens _)
+  populateGraphwithGoldSRL(SRLDataModel, SRLDataModel.sentences, testOnly = true)
 
   val predicateTestCandidates = tokens.getTestingInstances.filter((x: Constituent) => posTag(x).startsWith("VB"))
     .map(c => c.cloneForNewView(ViewNames.SRL_VERB))

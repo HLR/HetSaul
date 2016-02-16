@@ -6,7 +6,7 @@ import edu.illinois.cs.cogcomp.core.utilities.DummyTextAnnotationGenerator
 import edu.illinois.cs.cogcomp.saulexamples.DummyTAGenerator
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlConstraintClassifiers.argTypeConstraintClassifier
 import org.scalatest.{ Matchers, FlatSpec }
-import srlDataModel._
+import SRLDataModel._
 
 class srlDataModelTest extends FlatSpec with Matchers {
   val viewsToAdd = Array(ViewNames.LEMMA, ViewNames.POS, ViewNames.SHALLOW_PARSE, ViewNames.PARSE_GOLD, ViewNames.SRL_VERB)

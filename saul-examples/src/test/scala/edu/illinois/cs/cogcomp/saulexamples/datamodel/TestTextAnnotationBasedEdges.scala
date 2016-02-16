@@ -5,8 +5,8 @@ import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{ Constituent,
 import edu.illinois.cs.cogcomp.core.datastructures.trees.Tree
 import edu.illinois.cs.cogcomp.core.utilities.DummyTextAnnotationGenerator
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
-import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLSensors._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.CommonSensors._
+import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLSensors._
 import org.scalatest.{ FlatSpec, Matchers }
 
 class TestTextAnnotationBasedEdges extends FlatSpec with Matchers {

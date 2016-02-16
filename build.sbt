@@ -1,5 +1,5 @@
 val cogcompNLPVersion = "3.0.18"
-val cogcompPipelineVersion = "0.1.15"
+val cogcompPipelineVersion = "0.1.16"
 
 lazy val root = (project in file(".")).
   aggregate(saulCore, saulExamples)
