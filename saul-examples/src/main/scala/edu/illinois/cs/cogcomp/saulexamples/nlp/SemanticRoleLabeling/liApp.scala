@@ -44,7 +44,7 @@ object liApp extends App {
 
   argTypeConstraintClassifier.test(srlGraphs.relations.getTestingInstances, aTr_pred, 100) //(aTr_pred, 100)
   argumentTypeLearner.test(srlGraphs.relations.getTestingInstances, srlGraphs.typeArgumentPrediction, srlGraphs.argumentLabelGold, exclude = "candidate")
-  argumentTypeLearner.test(exclude="candidate")
+  argumentTypeLearner.test(exclude = "candidate")
   // logger.info("finished!")
 
   //TODO add more variations with combination of constraints

@@ -61,7 +61,7 @@ object srlConstraints {
 
     x: TextAnnotation => {
       a = new FirstOrderConstant(true)
-      val values = Array("R-A1", "R-A2", "R-A3", "R-A4", "R-A5", "R-AA","R-AM-ADV","R-AM-CAU","R-AM-EXT","R-AM-LOC","R-AM-MNR","R-AM-PNC")
+      val values = Array("R-A1", "R-A2", "R-A3", "R-A4", "R-A5", "R-AA", "R-AM-ADV", "R-AM-CAU", "R-AM-EXT", "R-AM-LOC", "R-AM-MNR", "R-AM-PNC")
       (sentences(x) ~> sentencesToRelations ~> relationsToPredicates).foreach {
         y =>
           {
@@ -71,11 +71,11 @@ object srlConstraints {
                 {
                   for (i <- 0 until values.length)
                     a = a &&& ((argumentTypeLearner on t) is values(i)) ==>
-                      argCandList.filterNot(x=> x.equals(t))._exists {
+                      argCandList.filterNot(x => x.equals(t))._exists {
                         k: Relation => (argumentTypeLearner on k) is values(i).substring(2)
                       }
                 }
-            a
+                a
             }
           }
       }
@@ -87,7 +87,7 @@ object srlConstraints {
     var a: FirstOrderConstraint = null
     x: TextAnnotation => {
       a = new FirstOrderConstant(true)
-      val values = Array("C-A1", "C-A2", "C-A3", "C-A4", "C-A5", "C-AA","C-AM-DIR","C-AM-LOC","C-AM-MNR","C-AM-NEG","C-AM-PNC")
+      val values = Array("C-A1", "C-A2", "C-A3", "C-A4", "C-A5", "C-AA", "C-AM-DIR", "C-AM-LOC", "C-AM-MNR", "C-AM-NEG", "C-AM-PNC")
       (sentences(x) ~> sentencesToRelations ~> relationsToPredicates).foreach {
         y =>
           {
@@ -122,7 +122,7 @@ object srlConstraints {
             val argLegalList = legalArguments(y)
             argCandList.foreach {
               z =>
-                a =  ((argLegalList._exists {
+                a = ((argLegalList._exists {
                   t: String => (argumentTypeLearner on z is t)
                 }) ||| (argumentTypeLearner on z is "candidate")) &&& a
             }
@@ -131,7 +131,7 @@ object srlConstraints {
 
     }
 
-   /*
+    /*
       x: TextAnnotation => {
 
         val first: FirstOrderConstraint = new FirstOrderConstant(true)
@@ -159,7 +159,7 @@ object srlConstraints {
         y =>
           {
             val argCandList = (predicates(y) ~> -relationsToPredicates).toList
-            for (t1 <- 0 until argCandList.size - 1){
+            for (t1 <- 0 until argCandList.size - 1) {
               for (t2 <- t1 + 1 until argCandList.size) {
                 a = a &&& (((argumentTypeLearner on argCandList.get(t1)) in values) ==> (((argumentTypeLearner on argCandList.get(t1)) isNot (argumentTypeLearner on argCandList.get(t2)))))
               }
