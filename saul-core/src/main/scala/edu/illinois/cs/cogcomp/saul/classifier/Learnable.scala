@@ -262,13 +262,13 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
     val ret = tester.getLabels.map { label => (label, (tester.getF1(label), tester.getPrecision(label), tester.getRecall(label))) }
     ret.toList
   }
-  def testContinuos(): Unit = {
+  def testContinuous(): Unit = {
     isTraining = false
     val data = this.datamodel.getNodeWithType[T].getTestingInstances
-    testContinuos(data)
+    testContinuous(data)
   }
 
-  def testContinuos(testData: Iterable[T]): Unit = {
+  def testContinuous(testData: Iterable[T]): Unit = {
     isTraining = false
     println()
     val testReader = new LBJIteratorParserScala[T](testData)
@@ -356,7 +356,7 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
     })
   }
 
-  /** Label property foor users classifier */
+  /** Label property for users classifier */
   def label: Property[T]
 
   /** A windows of properties

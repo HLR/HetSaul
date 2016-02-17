@@ -15,9 +15,12 @@ import java.util.Date;
  */
 public class TestWithStorage {
     public static void test(TestDiscrete tester, Classifier classifier, Classifier oracle,
-                            Parser parser, String outFile, int outputGranularity) {
+                            Parser parser, String outFile, int outputGranularity, String exclude) {
         int processed = 1;
         long totalTime = 0;
+        if (!exclude.isEmpty()) {
+            tester.addNull(exclude);
+        }
 
         for (Object example = parser.next(); example != null; example = parser.next(), ++processed) {
             if (processed % outputGranularity == 0)

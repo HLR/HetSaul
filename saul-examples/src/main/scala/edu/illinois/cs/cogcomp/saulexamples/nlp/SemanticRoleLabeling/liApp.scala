@@ -8,7 +8,7 @@ import org.slf4j.{ Logger, LoggerFactory }
 object liApp extends App {
 
   val logger: Logger = LoggerFactory.getLogger(this.getClass)
-  private val rootModelDir: String = "../models/models_cTr_Chris/"
+  private val rootModelDir: String = "./models/models_cTr_Chris/"
   val aTr_lc = rootModelDir + "edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifiers.argumentTypeLearner$.lc"
   val aTr_lex = rootModelDir + "edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifiers.argumentTypeLearner$.lex"
   val aTr_pred = rootModelDir + "classifier-predictions.txt"
@@ -41,9 +41,12 @@ object liApp extends App {
   //evaluation.Test(argumentLabelGold, typeArgumentPrediction, relations.getTestingInstances)
 
   //test(testData: Iterable[T], prediction: Property[T], groundTruth: Property[T])
+  logger.info("Join prediction: ")
 
-  argTypeConstraintClassifier.test(srlGraphs.relations.getTestingInstances, aTr_pred, 100) //(aTr_pred, 100)
-  argumentTypeLearner.test(srlGraphs.relations.getTestingInstances, srlGraphs.typeArgumentPrediction, srlGraphs.argumentLabelGold, exclude = "candidate")
+  argTypeConstraintClassifier.test(srlGraphs.relations.getTestingInstances.slice(1,20), aTr_pred, 100, exclude = "candidate") //(aTr_pred, 100)
+
+  logger.info("Independent prediction: ")
+
   argumentTypeLearner.test(exclude = "candidate")
   // logger.info("finished!")
 
