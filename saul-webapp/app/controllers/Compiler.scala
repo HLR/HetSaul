@@ -56,11 +56,12 @@ final class Compiler(rootDir: String, completeClasspath: String, reporterCallbac
 
   }
 
-  def compileScala(files: Map[String, String]): Iterable[Any] = files map {
+  def compileScala(files: Map[String, String]): Iterable[Any] = {
+    initializeClassLoader
+    files map {
     case (name, code) => {
 
       play.api.Logger.info("Compiling Scala code.")
-      initializeClassLoader
       val sourceFiles = files map { x: (String, String) =>
         x match {
           case (k, v) => new BatchSourceFile("(inline)", v)
@@ -94,6 +95,7 @@ final class Compiler(rootDir: String, completeClasspath: String, reporterCallbac
     }
 
   }
+}
 
   def getCurrentClasspath() = {
     val getDeclaredMethod: Method = new URLClassLoader(Array(rootURL)).getClass().getDeclaredMethod("getURLs")
@@ -110,11 +112,17 @@ final class Compiler(rootDir: String, completeClasspath: String, reporterCallbac
     //val constructor = clazz.getConstructor()
     //constructor.setAccessible(true)
     //val instance = constructor.newInstance()
-    val module = runtimeMirror.staticModule(packageName + "." + name(0))
+    try{
 
-    val obj = runtimeMirror.reflectModule(module)
+      val module = runtimeMirror.staticModule(packageName + "." + name(0))
 
-    obj.instance
+      val obj = runtimeMirror.reflectModule(module)
+      println(obj.instance)
+
+      obj.instance
+    }catch {
+        case _ => throw new CompilerException(List(List("Instantiation Error. Did you get the path to the training data correct?")))
+    }
   }
 
   def executeWithoutLog(file: Any): Unit = {

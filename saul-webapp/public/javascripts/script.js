@@ -93,8 +93,14 @@ $(document).ready(function(){
 
         $("#KnowEng").click(function(){
             deleteAllFiles();
-            var content = ["package test","","import edu.illinois.cs.cogcomp.saul.datamodel.DataModel","","object $$$$$$ extends DataModel {","","    val firstNames = node[String]","    val lastNames = node[String]","    val name = edge(firstNames,lastNames)","    val prefix = property(firstNames,\"prefix\")((s: String) => s.charAt(1).toString)","    val prefix2 = property(firstNames,\"prefix\")((s: String) => s.charAt(0).toString)","","    def main(args : Array[String]): Unit ={","        firstNames.populate(Seq(\"Dave\",\"John\",\"Mark\",\"Michael\"))","        lastNames.populate(Seq(\"Dell\",\"Jacobs\",\"Maron\",\"Mario\"))","        name.populateWith(_.charAt(0) == _.charAt(0))","    }","}"];
-            newFile(content);
+            var content = ["package test","","import edu.illinois.cs.cogcomp.saulexamples.bioInformatics._","/** Created by Parisa on 1/24/16. Modified by Joey on 2/16/16","  */","object bioSensors {","","  def patientDrugMatchSensor(x: PatientDrug, patient: Patient): Boolean = {","    x.pid == patient.patient_id","  }","  def pgPatientMatchSensor(x: PatientGene, patient: Patient): Boolean = {","    x.sample_ID == patient.patient_id","  }","","  def pgGeneMatchSensor(x: PatientGene, gene: Gene): Boolean = {","    x.Gene_ID == gene.GeneID","  }","  def ggGeneMatchSensor(x: GeneGene, gene: Gene): Boolean = {","    x.sink_nodeID == gene.GeneID || x.source_nodeID == gene.GeneID","  }","}"];
+            newFileWithFilename("bioSensors",content);
+            content = ["package test","","import edu.illinois.cs.cogcomp.lbjava.learn.StochasticGradientDescent","import edu.illinois.cs.cogcomp.saul.classifier.Learnable","import edu.illinois.cs.cogcomp.saulexamples.bioInformatics.PatientDrug","import test.knowEngDataModel._","import edu.illinois.cs.cogcomp.saul.constraint.ConstraintTypeConversion._","/** Created by Parisa on 6/25/15.","  */","object Classifiers {","  object dResponseClassifier extends Learnable[PatientDrug](knowEngDataModel) {","    def label = drugResponse","    override def feature = using(cP1)","    override lazy val classifier = new StochasticGradientDescent","  }","}",""];
+            newFileWithFilename("Classifiers",content);
+            content = ["package test","","import edu.illinois.cs.cogcomp.saul.datamodel.DataModel","import test.Classifiers.dResponseClassifier","import edu.illinois.cs.cogcomp.saulexamples.bioInformatics._","import test.bioSensors._","","import scala.collection.JavaConversions._","/** Created by Parisa on 6/24/15.","  */","object knowEngDataModel extends DataModel {","","  val patients = node[Patient]","  val genes = node[Gene]","  val patientGene = node[PatientGene]","  val patientDrug = node[PatientDrug]","  val geneGene = node[GeneGene]","","  val pdPatient = edge(patientDrug, patients)","  val pgPatient = edge(patientGene, patients)","  val pgGenes = edge(patientGene, genes)","  val geneGenes = edge(geneGene, genes)","","  pdPatient.addSensor(patientDrugMatchSensor _)","  pgPatient.addSensor(pgPatientMatchSensor _)","  pgGenes.addSensor(pgGeneMatchSensor _)","  geneGenes.addSensor(ggGeneMatchSensor _)","","  val age = property(patients) {","    x: Patient => x.age.toDouble","  }","  val gender = property(patients) {","    x: Patient => x.gender","  }","  val ethnicity = property(patients) {","    x: Patient => x.ethnicity","  }","  val geneName = property(genes) {","    x: Gene => x.GeneName","  }","","  val gene_GoTerm = property(genes) {","    x: Gene =>","      if (x.GO_term == null)","        List(\"\") else (x.GO_term.toList)","  }","  val gene_KEGG = property(genes) {","    x: Gene =>","      if (x.KEGG == null)","        List(\"\") else x.KEGG.toList","  }","  val gene_motif = property(genes) {","    x: Gene => x.motif_u5_gc.doubleValue()","  }","  val gene_pfam_domain = property(genes) {","    x: Gene => x.pfam_domain.doubleValue()","  }","","  val geneExpression = property(patientGene) {","    x: PatientGene => x.singleGeneExp.doubleValue()","  }","","  val drugResponse = property(patientDrug) {","    x: PatientDrug => x.response.doubleValue()","  }","  val similarity = property(geneGene) {","    x: GeneGene => x.similarity.doubleValue()","  }","  val textSimilarity = property(geneGene) {","    x: GeneGene => x.STRING_textmining","  }","  val cP1 = property(patientDrug) {","    x: PatientDrug => (patientDrug(x) ~> pdPatient prop age).propValues.toList","  }","","  val responsePrediction = property(patientDrug) {","    x: PatientDrug => dResponseClassifier(x)","  }","}"];
+            newFileWithFilename("knowEngDataModel",content);
+            content = ["package test","","import edu.illinois.cs.cogcomp.saul.datamodel.node.Path","import test.Classifiers.dResponseClassifier","import test.knowEngDataModel._","import edu.illinois.cs.cogcomp.saulexamples.bioInformatics.{ Gene, Edges, Sample_Reader, drugExampleReader }","","import scala.collection.JavaConversions._","/** Created by Parisa on 6/25/15.","  */","object myApp {","","  def main(args: Array[String]): Unit = {","","    val patients_data = new Sample_Reader(\"./data/biology/individual_samples.txt\").patientCollection.slice(0, 5)","    val patient_drug_data = new drugExampleReader().pdReader(\"./data/biology/auc_response.txt\").filter(x => x.drugId == \"D_0\").slice(0, 5)","    val GCollection = new Edges(\"./data/biology/edgesGG.txt\").geneCollection.slice(0, 10)","    val patient_gene_data = new drugExampleReader().pgReader(\"./data/biology/gene2med_probe_expr.txt\").filter((x => GCollection.exists(y => (y.GeneID.equals(x.Gene_ID))))).slice(0, 5)","    val GGCollection = new Edges(\"./data/biology/edgesGG.txt\").edgeCollection.slice(0, 20)","","    patients.populate(patients_data)","    patientDrug.populate(patient_drug_data)","    patientGene.populate(patient_gene_data)","    genes.populate(GCollection)","    geneGene.populate(GGCollection)","","    patientDrug().filter(x => drugResponse(x) > 12)","","    (patients() ~> -pgPatient ~> pgGenes) prop gene_KEGG","","    genes(genes().head) ~> -geneGenes prop textSimilarity","","    genes(Path.findPath(genes().head, genes, genes().head).asInstanceOf[Seq[Gene]]) prop gene_GoTerm","    //.filter(x=> gene_GoTerm(x.asInstanceOf[Gene]).equals(\"Go1\"))","","    dResponseClassifier.learn(1)","","    dResponseClassifier.testContinuos(patient_drug_data)","","  }","}"];
+            newFileWithFilename("myApp",content);
         });
 
         $("#EmailSpam").click(function(){
@@ -297,10 +303,10 @@ var updateCode = function(event){
 var enableColoringNeighbors = function(s){
     s.graph.nodes().forEach(function(n) {
         n.originalColor = n.color;
-      });
-      s.graph.edges().forEach(function(e) {
+    });
+    s.graph.edges().forEach(function(e) {
         e.originalColor = e.color;
-      });
+    });
 
       // When a node is clicked, we check for each node
       // if it is a neighbor of the clicked one. If not,
@@ -308,7 +314,12 @@ var enableColoringNeighbors = function(s){
       // original color.
       // We do the same for the edges, and we only keep
       // edges that have both extremities colored.
-      s.bind('clickNode', function(e) {
+    s.bind('overNode',function(e){
+        $("#nodevalue").text(e.data.node.label);
+    });
+
+    s.bind('clickNode', function(e) {
+
         var nodeId = e.data.node.id,
             toKeep = s.graph.neighbors(nodeId);
         toKeep[nodeId] = e.data.node;
@@ -329,7 +340,7 @@ var enableColoringNeighbors = function(s){
         s.refresh();
     });
 
-        s.bind('clickStage', function(e) {
+    s.bind('clickStage', function(e) {
         s.graph.nodes().forEach(function(n) {
           n.color = n.originalColor;
         });
@@ -340,7 +351,7 @@ var enableColoringNeighbors = function(s){
 
         // Same as in the previous event:
         s.refresh();
-      });
+    });
 }
 var generatePopulatedGraphFromJson = function(data) {
 

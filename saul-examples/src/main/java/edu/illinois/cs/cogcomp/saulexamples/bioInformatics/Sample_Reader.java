@@ -20,9 +20,9 @@ public class Sample_Reader {
             //  o.GMID=columns[2];
             //  o.WeiID=columns[3];
             //  o.batch=columns[4];
-            o.gender = columns[1];
-            o.age = columns[2];
-            o.ethnicity = columns[3];
+            o.gender = columns[5];
+            o.age = columns[6];
+            o.ethnicity = columns[7];
             //  o.hidden=columns[8];
 
             // o.cancer_type = columns[1];

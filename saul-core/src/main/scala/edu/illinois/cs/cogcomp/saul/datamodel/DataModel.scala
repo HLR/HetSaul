@@ -409,6 +409,7 @@ object dataModelJsonInterface {
 
     for (p <- properties) {
       p.setAccessible(true)
+      println(p.getName+"---------------------------------------------")
       val propertyObj = p.get(dm).asInstanceOf[NodeProperty[AnyRef]]
       nodesObjs.find { case (_, x) => x == propertyObj.node } match {
         case Some((nodeName, node)) => {
@@ -416,7 +417,7 @@ object dataModelJsonInterface {
             .getAllInstances.map(x => nodeName + x.hashCode.toString)
             .toList.zip(node.asInstanceOf[Node[AnyRef]]
               .getAllInstances
-              .map(x => Map(p.getName -> propertyObj.apply(x).toString))) ::: propertiesJson
+              .map(x => Map(p.getName -> propertyObj(x).toString))) ::: propertiesJson
 
         }
         case None =>
