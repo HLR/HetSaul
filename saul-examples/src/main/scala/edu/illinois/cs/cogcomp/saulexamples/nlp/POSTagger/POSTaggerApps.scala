@@ -8,7 +8,7 @@ import edu.illinois.cs.cogcomp.nlp.corpusreaders.PennTreebankPOSReader
 import edu.illinois.cs.cogcomp.saul.parser.LBJIteratorParserScala
 import edu.illinois.cs.cogcomp.saulexamples.nlp.POSTagger.POSClassifiers._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.POSTagger.POSDataModel._
-import edu.illinois.cs.cogcomp.saulexamples.nlp.commonSensors
+import edu.illinois.cs.cogcomp.saulexamples.nlp.CommonSensors
 
 import scala.collection.JavaConversions._
 
@@ -47,7 +47,7 @@ object POSTaggerApp {
 
     var sentenceId = 0
     val trainData = trainDataReader.getTextAnnotations.flatMap(p => {
-      val cons = commonSensors.textAnnotationToTokens(p)
+      val cons = CommonSensors.textAnnotationToTokens(p)
       sentenceId += 1
       //      Adding a dummy attribute so that hashCode is different for each constituent
       cons.foreach(c => c.addAttribute("SentenceId", sentenceId.toString))
@@ -57,7 +57,7 @@ object POSTaggerApp {
     val testDataReader = new PennTreebankPOSReader("test")
     testDataReader.readFile(POSConfigurator.testData.value)
     val testData = testDataReader.getTextAnnotations.flatMap(p => {
-      val cons = commonSensors.textAnnotationToTokens(p)
+      val cons = CommonSensors.textAnnotationToTokens(p)
       sentenceId += 1
       //      Adding a dummy attribute so that hashCode is different for each constituent
       cons.foreach(c => c.addAttribute("SentenceId", sentenceId.toString))
