@@ -43,7 +43,7 @@ object liApp extends App {
   //test(testData: Iterable[T], prediction: Property[T], groundTruth: Property[T])
   logger.info("Join prediction: ")
 
-  argTypeConstraintClassifier.test(srlGraphs.relations.getTestingInstances.slice(1, 20), aTr_pred, 100, exclude = "candidate") //(aTr_pred, 100)
+  argTypeConstraintClassifier.test(srlGraphs.relations.getTestingInstances, aTr_pred, 100, exclude = "candidate") //(aTr_pred, 100)
 
   logger.info("Independent prediction: ")
 
