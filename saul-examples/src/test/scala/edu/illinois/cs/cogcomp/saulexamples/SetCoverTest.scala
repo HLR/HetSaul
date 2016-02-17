@@ -6,9 +6,11 @@ import scala.collection.JavaConversions._
 
 class SetCoverTest extends FlatSpec with Matchers {
 
+  val prefix = "../saul-examples/src/main/resources/SetCover/"
+
   "SetCover " should " be solved correctly for example.txt " in {
     SetCoverSolverDataModel.clearInstances
-    val citiesInstance = new City("saul-examples/src/main/resources/SetCover/example.txt")
+    val citiesInstance = new City(prefix + "example.txt")
     val neighborhoodInstances = citiesInstance.getNeighborhoods.toList
 
     SetCoverSolverDataModel.cities populate List(citiesInstance)
@@ -28,7 +30,7 @@ class SetCoverTest extends FlatSpec with Matchers {
 
   "SetCover " should " be solved correctly for example2.txt " in {
     SetCoverSolverDataModel.clearInstances
-    val citiesInstance = new City("saul-examples/src/main/resources/SetCover/example2.txt")
+    val citiesInstance = new City(prefix + "example2.txt")
     val neighborhoodInstances = citiesInstance.getNeighborhoods.toList
 
     SetCoverSolverDataModel.cities populate List(citiesInstance)
@@ -45,7 +47,7 @@ class SetCoverTest extends FlatSpec with Matchers {
 
   "SetCover " should " be solved correctly for example3.txt " in {
     SetCoverSolverDataModel.clearInstances
-    val citiesInstance = new City("saul-examples/src/main/resources/SetCover/example3.txt")
+    val citiesInstance = new City(prefix + "example3.txt")
     val neighborhoodInstances = citiesInstance.getNeighborhoods.toList
 
     SetCoverSolverDataModel.cities populate List(citiesInstance)

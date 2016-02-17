@@ -1,4 +1,4 @@
-val cogcompNLPVersion = "3.0.13"
+val cogcompNLPVersion = "3.0.18"
 val cogcompPipelineVersion = "0.1.14"
 
 lazy val root = (project in file(".")).
@@ -15,13 +15,13 @@ lazy val commonSettings = Seq(
   ),
   javaOptions ++= List("-Xmx6g"),
   libraryDependencies ++= Seq(
-    "edu.illinois.cs.cogcomp" % "LBJava" % "1.2.5",
+    "edu.illinois.cs.cogcomp" % "LBJava" % "1.2.8",
     "edu.illinois.cs.cogcomp" % "illinois-core-utilities" % cogcompNLPVersion withSources,
     "com.gurobi" % "gurobi" % "6.0",
     "org.apache.commons" % "commons-math3" % "3.0",
     "org.scalatest" % "scalatest_2.11" % "2.2.4"
   ),
-  fork in run := true,
+  fork := true,
   publishTo := Some(Resolver.sftp("CogcompSoftwareRepo", "bilbo.cs.illinois.edu", "/mounts/bilbo/disks/0/www/cogcomp/html/m2repo/"))
 )
 

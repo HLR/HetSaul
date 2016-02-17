@@ -10,7 +10,7 @@ import scala.collection.JavaConversions._
 
 class InferenceQuantifierTests extends FlatSpec with Matchers {
 
-  object AtLeastSomeNeighborhoods extends DataModel {
+  object SomeDM extends DataModel {
 
     val cities = node[City]
 
@@ -44,28 +44,28 @@ class InferenceQuantifierTests extends FlatSpec with Matchers {
     }
   }
 
-  object atLeastSomeNeighborhoods extends ConstrainedClassifier[Neighborhood, City](AtLeastSomeNeighborhoods, new ContainsStation()) {
-    override def subjectTo = AtLeastSomeNeighborhoods.atLeastSomeNeighborsAreCoveredConstraint
+  object atLeastSomeNeighborhoods extends ConstrainedClassifier[Neighborhood, City](SomeDM, new ContainsStation()) {
+    override def subjectTo = SomeDM.atLeastSomeNeighborsAreCoveredConstraint
   }
 
-  object atLeastSomeNeighborhoodsUsingAtMost extends ConstrainedClassifier[Neighborhood, City](AtLeastSomeNeighborhoods, new ContainsStation()) {
-    override def subjectTo = AtLeastSomeNeighborhoods.atLeastSomeNeighborsAreCoveredConstraintUsingAtMost
+  object atLeastSomeNeighborhoodsUsingAtMost extends ConstrainedClassifier[Neighborhood, City](SomeDM, new ContainsStation()) {
+    override def subjectTo = SomeDM.atLeastSomeNeighborsAreCoveredConstraintUsingAtMost
   }
 
-  object allNeighborhoods extends ConstrainedClassifier[Neighborhood, City](AtLeastSomeNeighborhoods, new ContainsStation()) {
-    override def subjectTo = AtLeastSomeNeighborhoods.allNeighborsAreCoveredConstraint
+  object allNeighborhoods extends ConstrainedClassifier[Neighborhood, City](SomeDM, new ContainsStation()) {
+    override def subjectTo = SomeDM.allNeighborsAreCoveredConstraint
   }
 
-  object aSingleNeighborhood extends ConstrainedClassifier[Neighborhood, City](AtLeastSomeNeighborhoods, new ContainsStation()) {
-    override def subjectTo = AtLeastSomeNeighborhoods.singleNeighborsAreCoveredConstraint
+  object aSingleNeighborhood extends ConstrainedClassifier[Neighborhood, City](SomeDM, new ContainsStation()) {
+    override def subjectTo = SomeDM.singleNeighborsAreCoveredConstraint
   }
 
-  val cityInstances = new City("saul-examples/src/main/resources/SetCover/example.txt")
+  val cityInstances = new City("../saul-examples/src/main/resources/SetCover/example.txt")
   val neighborhoodInstances = cityInstances.getNeighborhoods.toList
 
-  AtLeastSomeNeighborhoods.cities populate List(cityInstances)
-  AtLeastSomeNeighborhoods.neighborhoods populate neighborhoodInstances
-  AtLeastSomeNeighborhoods.cityContainsNeighborhoods.populateWith(_ == _.getParentCity)
+  SomeDM.cities populate List(cityInstances)
+  SomeDM.neighborhoods populate neighborhoodInstances
+  SomeDM.cityContainsNeighborhoods.populateWith(_ == _.getParentCity)
 
   "Quantifier atleast " should " work " in {
     cityInstances.getNeighborhoods.count(n => atLeastSomeNeighborhoods(n) == "true") should be(2)
