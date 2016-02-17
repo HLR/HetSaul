@@ -8,7 +8,7 @@ import org.slf4j.{ Logger, LoggerFactory }
 object liApp extends App {
 
   val logger: Logger = LoggerFactory.getLogger(this.getClass)
-  private val rootModelDir: String = "./models/models_cTr_Chris/"
+  private val rootModelDir: String = "../models/models_fTr_Chris/"
   val aTr_lc = rootModelDir + "edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifiers.argumentTypeLearner$.lc"
   val aTr_lex = rootModelDir + "edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifiers.argumentTypeLearner$.lex"
   val aTr_pred = rootModelDir + "classifier-predictions.txt"
@@ -43,7 +43,7 @@ object liApp extends App {
   //test(testData: Iterable[T], prediction: Property[T], groundTruth: Property[T])
   logger.info("Join prediction: ")
 
-  argTypeConstraintClassifier.test(srlGraphs.relations.getTestingInstances.slice(1,20), aTr_pred, 100, exclude = "candidate") //(aTr_pred, 100)
+  argTypeConstraintClassifier.test(srlGraphs.relations.getTestingInstances.slice(1, 20), aTr_pred, 100, exclude = "candidate") //(aTr_pred, 100)
 
   logger.info("Independent prediction: ")
 

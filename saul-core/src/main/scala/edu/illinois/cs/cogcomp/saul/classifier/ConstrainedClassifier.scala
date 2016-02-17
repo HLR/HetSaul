@@ -188,7 +188,7 @@ abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val dm: DataMo
 
   }
 
-  def test(outFile: String = null, outputGranularity: Int = 0, exclude: String= ""): List[(String, (Double, Double, Double))] = {
+  def test(outFile: String = null, outputGranularity: Int = 0, exclude: String = ""): List[(String, (Double, Double, Double))] = {
 
     val allHeads = this.dm.getNodeWithType[HEAD].getTestingInstances
     //    allHeads foreach( t => println(s"  [HEAD]  Using thie head ${t} "))
@@ -211,12 +211,12 @@ abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val dm: DataMo
     * @param outFile The file to write the predictions (can be `null`)
     * @return List of (label, (f1,precision,recall))
     */
-  def test(testData: Iterable[T], outFile: String, outputGranularity: Int, exclude : String): List[(String, (Double, Double, Double))] = {
+  def test(testData: Iterable[T], outFile: String, outputGranularity: Int, exclude: String): List[(String, (Double, Double, Double))] = {
     println()
     val testReader = new LBJIteratorParserScala[T](testData)
     testReader.reset()
     val tester: TestDiscrete = new TestDiscrete()
-    TestWithStorage.test(tester, classifier, onClassifier.getLabeler, testReader, outFile, outputGranularity,exclude)
+    TestWithStorage.test(tester, classifier, onClassifier.getLabeler, testReader, outFile, outputGranularity, exclude)
     val ret = tester.getLabels.map({
       label => (label, (tester.getF1(label), tester.getPrecision(label), tester.getRecall(label)))
     })
