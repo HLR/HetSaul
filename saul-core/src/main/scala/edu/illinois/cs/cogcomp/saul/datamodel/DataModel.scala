@@ -409,7 +409,7 @@ object dataModelJsonInterface {
 
     for (p <- properties) {
       p.setAccessible(true)
-      println(p.getName+"---------------------------------------------")
+      println(p.getName + "---------------------------------------------")
       val propertyObj = p.get(dm).asInstanceOf[NodeProperty[AnyRef]]
       nodesObjs.find { case (_, x) => x == propertyObj.node } match {
         case Some((nodeName, node)) => {
