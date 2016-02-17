@@ -8,7 +8,7 @@ import org.slf4j.{ Logger, LoggerFactory }
 object liApp extends App {
 
   val logger: Logger = LoggerFactory.getLogger(this.getClass)
-  private val rootModelDir: String = "./models/models_cTr_Chris/"
+  private val rootModelDir: String = "../models/models_cTr_Chris/"
   val aTr_lc = rootModelDir + "edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifiers.argumentTypeLearner$.lc"
   val aTr_lex = rootModelDir + "edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifiers.argumentTypeLearner$.lex"
   val aTr_pred = rootModelDir + "classifier-predictions.txt"
