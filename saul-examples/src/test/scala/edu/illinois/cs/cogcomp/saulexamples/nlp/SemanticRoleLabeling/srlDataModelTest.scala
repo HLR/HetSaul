@@ -3,10 +3,8 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling
 import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.TextAnnotation
 import edu.illinois.cs.cogcomp.core.utilities.DummyTextAnnotationGenerator
-import edu.illinois.cs.cogcomp.saulexamples.DummyTAGenerator
-import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlConstraintClassifiers.argTypeConstraintClassifier
-import org.scalatest.{ Matchers, FlatSpec }
-import SRLDataModel._
+import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLDataModel._
+import org.scalatest.{FlatSpec, Matchers}
 
 class srlDataModelTest extends FlatSpec with Matchers {
   val viewsToAdd = Array(ViewNames.LEMMA, ViewNames.POS, ViewNames.SHALLOW_PARSE, ViewNames.PARSE_GOLD, ViewNames.SRL_VERB)
@@ -93,8 +91,4 @@ class srlDataModelTest extends FlatSpec with Matchers {
     (relations() prop containsMOD).toSet should be(Set("", ""))
   }
 
-  "" should "" in {
-    val ta = DummyTAGenerator.generateAnnotatedTextAnnotation(Array(ViewNames.SRL_VERB), true)
-    argTypeConstraintClassifier.test(sentences(ta)~>sentencesToRelations, "test_pred", 1)
-  }
 }

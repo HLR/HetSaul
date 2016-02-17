@@ -61,7 +61,7 @@ object srlConstraints {
 
     x: TextAnnotation => {
       a = new FirstOrderConstant(true)
-      val values = Array("R-A1", "R-A2", "R-A3", "R-A4", "R-A5", "R-AA")
+      val values = Array("R-A1", "R-A2", "R-A3", "R-A4", "R-A5", "R-AA","R-AM-ADV","R-AM-CAU","R-AM-EXT","R-AM-LOC","R-AM-MNR","R-AM-PNC")
       (sentences(x) ~> sentencesToRelations ~> relationsToPredicates).foreach {
         y =>
           {
@@ -87,7 +87,7 @@ object srlConstraints {
     var a: FirstOrderConstraint = null
     x: TextAnnotation => {
       a = new FirstOrderConstant(true)
-      val values = Array("C-A1", "C-A2", "C-A3", "C-A4", "C-A5", "C-AA")
+      val values = Array("C-A1", "C-A2", "C-A3", "C-A4", "C-A5", "C-AA","C-AM-DIR","C-AM-LOC","C-AM-MNR","C-AM-NEG","C-AM-PNC")
       (sentences(x) ~> sentencesToRelations ~> relationsToPredicates).foreach {
         y =>
           {
@@ -128,7 +128,7 @@ object srlConstraints {
             }
           }
       }
-   a
+
     }
 
    /*
@@ -160,12 +160,10 @@ object srlConstraints {
           {
             val argCandList = (predicates(y) ~> -relationsToPredicates).toList
             for (t1 <- 0 until argCandList.size - 1){
-              val b= (argumentTypeLearner on argCandList.get(t1)) in values
               for (t2 <- t1 + 1 until argCandList.size) {
-                a = a &&& (((argumentTypeLearner on argCandList.get(t1)) isNot (argumentTypeLearner on argCandList.get(t2))))
-              a
+                a = a &&& (((argumentTypeLearner on argCandList.get(t1)) in values) ==> (((argumentTypeLearner on argCandList.get(t1)) isNot (argumentTypeLearner on argCandList.get(t2)))))
               }
-              a= (b ==> a)
+
             }
           }
       }

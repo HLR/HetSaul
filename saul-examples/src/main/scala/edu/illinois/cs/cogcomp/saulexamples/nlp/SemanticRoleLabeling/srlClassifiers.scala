@@ -1,12 +1,11 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling
 
-import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{ Constituent, Relation }
-import edu.illinois.cs.cogcomp.lbjava.classify.{FeatureVector, Classifier}
+import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{Constituent, Relation}
 import edu.illinois.cs.cogcomp.lbjava.learn.SparseAveragedPerceptron
-import edu.illinois.cs.cogcomp.saul.classifier.{ Learnable, SparseNetworkLBP }
+import edu.illinois.cs.cogcomp.saul.classifier.{Learnable, SparseNetworkLBP}
 import edu.illinois.cs.cogcomp.saul.constraint.ConstraintTypeConversion._
 import edu.illinois.cs.cogcomp.saul.datamodel.property.Property
-import liApp._
+import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.liApp._
 
 /** Created by Parisa on 12/30/15.
   */
@@ -32,10 +31,7 @@ object srlClassifiers {
     override def feature = using(containsMOD, containsNEG, clauseFeatures, chunkPathPattern, chunkEmbedding, chunkLength,
       constituentLength, argPOSWindow, argWordWindow, headwordRelation, syntacticFrameRelation, pathRelation,
       phraseTypeRelation, predPosTag, predLemmaR, linearPosition)
-    override lazy val classifier = new Classifier() {
-      override def classify(o: scala.Any): FeatureVector = new FeatureVector(featureValue(discreteValue(o)))
-      override def discreteValue(o: scala.Any): String = argumentLabelGold(o.asInstanceOf[Relation])
-    }
+    override lazy val classifier = new SparseNetworkLBP
   }
 
   object argumentXuIdentifierGivenApredicate extends Learnable[Relation](srlGraphs, parameters) {
