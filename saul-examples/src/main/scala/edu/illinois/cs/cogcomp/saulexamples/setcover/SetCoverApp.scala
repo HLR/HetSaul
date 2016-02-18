@@ -13,7 +13,7 @@ object SetCoverApp {
 
     /** printing the labels for each nrighborhood (whether they are choosen to be covered by a station, or not) */
     cityInstances.getNeighborhoods.foreach {
-      n => println(n.getNumber + ": " + containsStationConstraint(n))
+      n => println(n.getNumber + ": " + ContainsStationConstraint(n))
     }
   }
 }

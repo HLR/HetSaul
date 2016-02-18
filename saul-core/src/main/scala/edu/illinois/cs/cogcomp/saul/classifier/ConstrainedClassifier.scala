@@ -1,7 +1,7 @@
 package edu.illinois.cs.cogcomp.saul.classifier
 
 import edu.illinois.cs.cogcomp.lbjava.classify.TestDiscrete
-import edu.illinois.cs.cogcomp.lbjava.infer.{ FirstOrderConstraint, InferenceManager }
+import edu.illinois.cs.cogcomp.lbjava.infer._
 import edu.illinois.cs.cogcomp.lbjava.learn.Learner
 import edu.illinois.cs.cogcomp.lbjava.parse.Parser
 import edu.illinois.cs.cogcomp.saul.classifier.infer.InferenceCondition
@@ -28,6 +28,8 @@ abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val dm: DataMo
 
   def subjectTo: LfsConstraint[HEAD]
 
+  def solver: ILPSolver = new GurobiHook()
+
   // TODO: add comments to this
   def filter(t: T, head: HEAD): Boolean = true
 
@@ -38,8 +40,9 @@ abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val dm: DataMo
   /** syntactic suger to create simple calls to the function */
   def apply(example: AnyRef): String = classifier.discreteValue(example: AnyRef)
 
-  def findHead(x: T): Option[HEAD] = {
+  override val classifier = lbjClassifier.classifier
 
+  def findHead(x: T): Option[HEAD] = {
     if (tType.equals(headType)) {
       Some(x.asInstanceOf[HEAD])
     } else {
@@ -126,11 +129,14 @@ abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val dm: DataMo
     buildWithConstraint(inferenceCondition, onClassifier)(t)
   }
 
-  def lbjClassifier = dm.property[T](dm.getNodeWithType[T], className)("*", "*") {
-    x: T => buildWithConstraint(subjectTo.createInferenceCondition[T](this.dm).convertToType[T], onClassifier)(x)
+  private def getSolverInstance = solver match {
+    case _: OJalgoHook => () => new OJalgoHook()
+    case _: GurobiHook => () => new GurobiHook()
   }
 
-  override val classifier = lbjClassifier.classifier
+  def lbjClassifier = dm.property[T](dm.getNodeWithType[T], className)("*", "*") {
+    x: T => buildWithConstraint(subjectTo.createInferenceCondition[T](this.dm, getSolverInstance()).convertToType[T], onClassifier)(x)
+  }
 
   def learn(it: Int): Unit = {
     val ds = dm.getNodeWithType[T].getTrainingInstances
@@ -179,6 +185,7 @@ abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val dm: DataMo
   }
 
   /** Test with given data, use internally
+    *
     * @param testData
     * @return List of (label, (f1,precision,recall))
     */

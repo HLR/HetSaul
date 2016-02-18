@@ -1,5 +1,6 @@
 package edu.illinois.cs.cogcomp.saulexamples
 
+import edu.illinois.cs.cogcomp.lbjava.infer.OJalgoHook
 import edu.illinois.cs.cogcomp.saul.classifier.ConstrainedClassifier
 import edu.illinois.cs.cogcomp.saul.constraint.ConstraintTypeConversion._
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
@@ -44,20 +45,24 @@ class InferenceQuantifierTests extends FlatSpec with Matchers {
     }
   }
 
-  object atLeastSomeNeighborhoods extends ConstrainedClassifier[Neighborhood, City](SomeDM, new ContainsStation()) {
+  object AtLeastSomeNeighborhoods extends ConstrainedClassifier[Neighborhood, City](SomeDM, new ContainsStation()) {
     override def subjectTo = SomeDM.atLeastSomeNeighborsAreCoveredConstraint
+    override val solver = new OJalgoHook
   }
 
-  object atLeastSomeNeighborhoodsUsingAtMost extends ConstrainedClassifier[Neighborhood, City](SomeDM, new ContainsStation()) {
+  object AtLeastSomeNeighborhoodsUsingAtMost extends ConstrainedClassifier[Neighborhood, City](SomeDM, new ContainsStation()) {
     override def subjectTo = SomeDM.atLeastSomeNeighborsAreCoveredConstraintUsingAtMost
+    override val solver = new OJalgoHook
   }
 
-  object allNeighborhoods extends ConstrainedClassifier[Neighborhood, City](SomeDM, new ContainsStation()) {
+  object AllNeighborhoods extends ConstrainedClassifier[Neighborhood, City](SomeDM, new ContainsStation()) {
     override def subjectTo = SomeDM.allNeighborsAreCoveredConstraint
+    override val solver = new OJalgoHook
   }
 
-  object aSingleNeighborhood extends ConstrainedClassifier[Neighborhood, City](SomeDM, new ContainsStation()) {
+  object ASingleNeighborhood extends ConstrainedClassifier[Neighborhood, City](SomeDM, new ContainsStation()) {
     override def subjectTo = SomeDM.singleNeighborsAreCoveredConstraint
+    override val solver = new OJalgoHook
   }
 
   val cityInstances = new City("../saul-examples/src/main/resources/SetCover/example.txt")
@@ -68,19 +73,19 @@ class InferenceQuantifierTests extends FlatSpec with Matchers {
   SomeDM.cityContainsNeighborhoods.populateWith(_ == _.getParentCity)
 
   "Quantifier atleast " should " work " in {
-    cityInstances.getNeighborhoods.count(n => atLeastSomeNeighborhoods(n) == "true") should be(2)
+    cityInstances.getNeighborhoods.count(n => AtLeastSomeNeighborhoods(n) == "true") should be(2)
   }
 
   // negation of atmost(2) is equivalent to atleast(2)
   "Quantifier atmost " should " work " in {
-    cityInstances.getNeighborhoods.count(n => atLeastSomeNeighborhoodsUsingAtMost(n) == "true") should be(3)
+    cityInstances.getNeighborhoods.count(n => AtLeastSomeNeighborhoodsUsingAtMost(n) == "true") should be(3)
   }
 
   "Quantifier forall " should " work " in {
-    cityInstances.getNeighborhoods.count(n => allNeighborhoods(n) == "true") should be(9)
+    cityInstances.getNeighborhoods.count(n => AllNeighborhoods(n) == "true") should be(9)
   }
 
   "Quantifier exists " should " work " in {
-    cityInstances.getNeighborhoods.count(n => aSingleNeighborhood(n) == "true") should be(1)
+    cityInstances.getNeighborhoods.count(n => ASingleNeighborhood(n) == "true") should be(1)
   }
 }

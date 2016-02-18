@@ -1,6 +1,6 @@
 package edu.illinois.cs.cogcomp.saulexamples
 
-import edu.illinois.cs.cogcomp.saulexamples.setcover.{ containsStationConstraint, Neighborhood, City, SetCoverSolverDataModel }
+import edu.illinois.cs.cogcomp.saulexamples.setcover.{ ContainsStationConstraint, Neighborhood, City, SetCoverSolverDataModel }
 import org.scalatest.{ Matchers, FlatSpec }
 import scala.collection.JavaConversions._
 
@@ -21,10 +21,10 @@ class SetCoverTest extends FlatSpec with Matchers {
       7 -> false, 8 -> false, 9 -> false)
 
     citiesInstance.getNeighborhoods.forall { n =>
-      containsStationConstraint(n) == neighborhoodLabels(n.getNumber).toString
+      ContainsStationConstraint(n) == neighborhoodLabels(n.getNumber).toString
     } should be(true)
     val neighborhoodOutput = "List(neighborhood #1, neighborhood #2, neighborhood #3, neighborhood #4, neighborhood #5, neighborhood #6, neighborhood #7, neighborhood #8, neighborhood #9)"
-    containsStationConstraint.getCandidates(citiesInstance).toString should be(neighborhoodOutput)
+    ContainsStationConstraint.getCandidates(citiesInstance).toString should be(neighborhoodOutput)
     SetCoverSolverDataModel.getFromRelation[City, Neighborhood](citiesInstance).toList.toString should be(neighborhoodOutput)
   }
 
@@ -41,7 +41,7 @@ class SetCoverTest extends FlatSpec with Matchers {
       5 -> false, 6 -> false, 7 -> false, 8 -> false)
 
     citiesInstance.getNeighborhoods.forall { n =>
-      containsStationConstraint(n) == neighborhoodLabels(n.getNumber).toString
+      ContainsStationConstraint(n) == neighborhoodLabels(n.getNumber).toString
     } should be(true)
   }
 
@@ -57,7 +57,7 @@ class SetCoverTest extends FlatSpec with Matchers {
     val neighborhoodLabels = Map(1 -> true, 2 -> false, 3 -> false)
 
     citiesInstance.getNeighborhoods.forall { n =>
-      containsStationConstraint(n) == neighborhoodLabels(n.getNumber).toString
+      ContainsStationConstraint(n) == neighborhoodLabels(n.getNumber).toString
     } should be(true)
   }
 }
