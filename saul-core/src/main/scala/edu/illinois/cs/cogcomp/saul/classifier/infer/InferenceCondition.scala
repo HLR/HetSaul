@@ -1,6 +1,6 @@
 package edu.illinois.cs.cogcomp.saul.classifier.infer
 
-import edu.illinois.cs.cogcomp.lbjava.infer.{ ILPSolver, OJalgoHook, ParameterizedConstraint }
+import edu.illinois.cs.cogcomp.lbjava.infer.{ ILPSolver, ParameterizedConstraint }
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
 import edu.illinois.cs.cogcomp.saul.constraint.LfsConstraint
 

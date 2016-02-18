@@ -116,11 +116,4 @@ class LHSFirstOrderEqualityWithValueLBP(cls: Learner, t: AnyRef) {
   def isTrue: FirstOrderConstraint = is("true")
 
   def isNotTrue: FirstOrderConstraint = is("false")
-
-  // TODO: use reduce instead of fold
-  def contains(values: Set[String]): FirstOrderConstraint = {
-    val singleConditions = values.map { v: String => is(v) }
-    val dummyConstraint = new FirstOrderConstant(true)
-    singleConditions.foldLeft[FirstOrderConstraint](dummyConstraint)(new FirstOrderDisjunction(_, _))
-  }
 }
