@@ -58,6 +58,10 @@ class Application extends Controller {
     execute(PopulateData(), request)
   }
 
+  def acceptQuery = Action(parse.json) { implicit request =>
+    Ok("blah")
+  }
+
   private def execute(event: Event, request: Request[JsValue]) = {
     //new File(rootDir).mkdirs()
     IOUtils.cleanUpTmpFolder(rootDir)
@@ -67,7 +71,6 @@ class Application extends Controller {
         val compilationResult = compile(fileMap)
         compilationResult match {
           case Left(scalaInstances) => {
-            visualizer.init()
             event match {
               case DisplayModel() => Ok(displayModel(scalaInstances))
               case PopulateData() => Ok(populateModel(scalaInstances, fileMap, compiler))
@@ -109,7 +112,6 @@ class Application extends Controller {
         }) match {
           case Some(x) => x match {
             case model: DataModel => {
-              visualizer(model)
               dataModelJsonInterface.getPopulatedInstancesJson(model)
             }
             case _ => getErrorJson(Json.toJson("Error"))
@@ -119,7 +121,10 @@ class Application extends Controller {
       }
       case _ => getErrorJson(Json.toJson("No main method found.(Try changing the filename if you are certain you have a main method)"))
     }
-    //Eval.eval(scalaInstances, fileMap, compiler)
+  }
+
+  private def query() = {
+
   }
 
   private def runMain(scalaInstances: Iterable[Any]): JsValue = {
