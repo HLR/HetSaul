@@ -2,7 +2,7 @@ package controllers
 
 import controllers.Event._
 
-import edu.illinois.cs.cogcomp.saul.datamodel.{ DataModel, dataModelJsonInterface }
+import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
 
 import play.api.mvc._
 import play.api.libs.json.{ JsValue, JsObject, Json }
@@ -15,7 +15,7 @@ import scala.tools.nsc.Settings
 import scala.tools.nsc.reporters.{ Reporter, AbstractReporter }
 
 import util.reflectUtils._
-import util.{ visualizer, classExecutor, IOUtils }
+import util.{ dataModelJsonInterface, visualizer, classExecutor, IOUtils }
 
 object Application {
 

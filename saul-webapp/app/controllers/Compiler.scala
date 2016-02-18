@@ -59,43 +59,43 @@ final class Compiler(rootDir: String, completeClasspath: String, reporterCallbac
   def compileScala(files: Map[String, String]): Iterable[Any] = {
     initializeClassLoader
     files map {
-    case (name, code) => {
+      case (name, code) => {
 
-      play.api.Logger.info("Compiling Scala code.")
-      val sourceFiles = files map { x: (String, String) =>
-        x match {
-          case (k, v) => new BatchSourceFile("(inline)", v)
+        play.api.Logger.info("Compiling Scala code.")
+        val sourceFiles = files map { x: (String, String) =>
+          x match {
+            case (k, v) => new BatchSourceFile("(inline)", v)
+          }
         }
+
+        val sett = new Settings()
+        sett.classpath.value = completeClasspath
+        sett.bootclasspath.value = sett.classpath.value
+        sett.outdir.value = "/tmp"
+
+        val reporter = reporterCallback(sett)
+        val g = new Global(sett, reporter)
+        val run = new g.Run
+        run.compileSources(sourceFiles.toList)
+
+        //Ignore warnings for now
+        if (reporter.hasErrors /*|| reporter.WARNING.count > 0*/ ) {
+          val msgs: List[List[String]] = reporter match {
+            case collector: MessageCollector =>
+              collector.messages.toList
+            case _ =>
+              List(List(reporter.toString))
+          }
+          //TODO: use case class for error handling
+          throw new CompilerException(msgs)
+        }
+        val clazz = instantiateClass(name, getCodePackageName(code))
+
+        clazz
       }
 
-      val sett = new Settings()
-      sett.classpath.value = completeClasspath
-      sett.bootclasspath.value = sett.classpath.value
-      sett.outdir.value = "/tmp"
-
-      val reporter = reporterCallback(sett)
-      val g = new Global(sett, reporter)
-      val run = new g.Run
-      run.compileSources(sourceFiles.toList)
-
-      //Ignore warnings for now
-      if (reporter.hasErrors /*|| reporter.WARNING.count > 0*/ ) {
-        val msgs: List[List[String]] = reporter match {
-          case collector: MessageCollector =>
-            collector.messages.toList
-          case _ =>
-            List(List(reporter.toString))
-        }
-        //TODO: use case class for error handling
-        throw new CompilerException(msgs)
-      }
-      val clazz = instantiateClass(name, getCodePackageName(code))
-
-      clazz
     }
-
   }
-}
 
   def getCurrentClasspath() = {
     val getDeclaredMethod: Method = new URLClassLoader(Array(rootURL)).getClass().getDeclaredMethod("getURLs")
@@ -112,7 +112,7 @@ final class Compiler(rootDir: String, completeClasspath: String, reporterCallbac
     //val constructor = clazz.getConstructor()
     //constructor.setAccessible(true)
     //val instance = constructor.newInstance()
-    try{
+    try {
 
       val module = runtimeMirror.staticModule(packageName + "." + name(0))
 
@@ -120,8 +120,8 @@ final class Compiler(rootDir: String, completeClasspath: String, reporterCallbac
       println(obj.instance)
 
       obj.instance
-    }catch {
-        case _ => throw new CompilerException(List(List("Instantiation Error. Did you get the path to the training data correct?")))
+    } catch {
+      case _ => throw new CompilerException(List(List("Instantiation Error. Did you get the path to the training data correct?")))
     }
   }
 

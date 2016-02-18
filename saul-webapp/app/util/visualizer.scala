@@ -1,7 +1,7 @@
 package util
 
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
-import edu.illinois.cs.cogcomp.saul.datamodel.node.{ NodeProperty, PropertySet, InstanceSet, instanceCache }
+import edu.illinois.cs.cogcomp.saul.datamodel.node.{ NodeProperty, PropertySet, InstanceSet }
 
 object visualizer {
 
@@ -29,15 +29,9 @@ object visualizer {
     this.instanceSet = instanceSet.asInstanceOf[InstanceSet[AnyRef]]
 
     if (dm != null) {
-      val sourceNode = instanceCache.node
       val targetNode = instanceSet.node
 
-      dm.NODES --= dm.NODES.filter(n =>
-        n != sourceNode && n != targetNode)
-      if (sourceNode != null) {
-        sourceNode.clearData
-        sourceNode.populate(instanceCache.instances)
-      }
+      dm.NODES --= dm.NODES.filter(n => n != targetNode)
       targetNode.clearData
       targetNode.populate(instanceSet.instances)
     }

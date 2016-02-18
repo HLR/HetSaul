@@ -346,6 +346,7 @@ trait DataModel {
     hasDerivedInstances = true
   }
 }
+<<<<<<< HEAD
 
 object dataModelJsonInterface {
 
@@ -482,3 +483,5 @@ object dataModelJsonInterface {
     json
   }
 }
+=======
+>>>>>>> fcdd494... Separate json functions from Core
