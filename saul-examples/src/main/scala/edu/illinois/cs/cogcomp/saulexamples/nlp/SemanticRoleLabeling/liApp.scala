@@ -1,21 +1,22 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling
 
+import edu.illinois.cs.cogcomp.saul.classifier.JointTrainSparseNetwork
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifiers.argumentTypeLearner
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlConstraintClassifiers.argTypeConstraintClassifier
-import org.slf4j.{ Logger, LoggerFactory }
+import org.slf4j.{Logger, LoggerFactory}
 /** Created by Parisa on 12/27/15.
   */
 object liApp extends App {
 
   val logger: Logger = LoggerFactory.getLogger(this.getClass)
-  private val rootModelDir: String = "../models/models_fTr_Chris/"
+  private val rootModelDir: String = "../models/models_aTr/"
   val aTr_lc = rootModelDir + "edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifiers.argumentTypeLearner$.lc"
   val aTr_lex = rootModelDir + "edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifiers.argumentTypeLearner$.lex"
   val aTr_pred = rootModelDir + "classifier-predictions.txt"
 
   val useGoldPredicate = true
-  val useGoldBoundaries = false
-  val srlGraphs = populatemultiGraphwithSRLData(true, useGoldPredicate, useGoldBoundaries)
+  val useGoldBoundaries = true
+  val srlGraphs = populatemultiGraphwithSRLData(false, useGoldPredicate, useGoldBoundaries)
 
   logger.info("all relations number after population:" + srlGraphs.relations().size)
   logger.info("all sentences number after population:" + srlGraphs.sentences().size)
@@ -41,13 +42,15 @@ object liApp extends App {
   //evaluation.Test(argumentLabelGold, typeArgumentPrediction, relations.getTestingInstances)
 
   //test(testData: Iterable[T], prediction: Property[T], groundTruth: Property[T])
-  logger.info("Join prediction: ")
+  logger.info("Join train:... ")
+  JointTrainSparseNetwork(srlGraphs, argTypeConstraintClassifier::Nil, 3)
 
+  logger.info("join prediction:... ")
   argTypeConstraintClassifier.test(srlGraphs.relations.getTestingInstances, aTr_pred, 100, exclude = "candidate") //(aTr_pred, 100)
 
-  logger.info("Independent prediction: ")
 
-  argumentTypeLearner.test(exclude = "candidate")
+
+  //argumentTypeLearner.test(exclude = "candidate")
   // logger.info("finished!")
 
   //TODO add more variations with combination of constraints

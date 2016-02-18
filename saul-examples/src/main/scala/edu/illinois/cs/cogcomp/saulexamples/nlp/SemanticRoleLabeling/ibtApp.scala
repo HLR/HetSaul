@@ -1,63 +1,66 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling
 
 import edu.illinois.cs.cogcomp.saul.classifier.JointTrainSparseNetwork
-import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifiers.{ argumentTypeLearner, argumentXuIdentifierGivenApredicate }
+import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifiers.argumentTypeLearner
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlConstraintClassifiers._
-import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLDataModel._
-import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLSensors._
-
-import scala.collection.JavaConversions._
 
 object ibtApp extends App {
 
-  populateGraphwithGoldSRL(SRLDataModel, SRLDataModel.sentences)
+  val useGoldPredicate = true
+  val useGoldBoundaries = false
 
-  val XuPalmerCandidateArgsTraining = predicates.getTrainingInstances.flatMap(x => xuPalmerCandidate(x, (sentences(x.getTextAnnotation) ~> sentencesToStringTree).head))
+  val srlGraphs = populatemultiGraphwithSRLData(false, useGoldPredicate, useGoldBoundaries)
 
-  val XuPalmerCandidateArgsTesting = predicates.getTestingInstances.flatMap(x => xuPalmerCandidate(x, (sentences(x.getTextAnnotation) ~> sentencesToStringTree).head))
+  import srlGraphs._
 
-  val a = relations() ~> relationsToArguments prop address
-  val b = relations() ~> relationsToPredicates prop address
+  argumentTypeLearner.setModelDir("models_aTrJoin")
 
-  val negativePalmerTestCandidates = XuPalmerCandidateArgsTesting.filterNot(cand => (a.contains(address(cand.getTarget))) && b.contains(address(cand.getSource)))
-  val negativePalmerTrainCandidates = XuPalmerCandidateArgsTraining.filterNot(cand => (a.contains(address(cand.getTarget))) && b.contains(address(cand.getSource)))
+  argumentTypeLearner.learn(1, relations.getTrainingInstances)
 
-  relations.populate(negativePalmerTrainCandidates)
-  relations.populate(negativePalmerTestCandidates, false)
+  argumentTypeLearner.test(exclude = "candidate")
 
-  println("all relations number after population:" + SRLDataModel.relations().size)
+  JointTrainSparseNetwork(srlGraphs, argTypeConstraintClassifier::Nil, 1)
 
-  argumentXuIdentifierGivenApredicate.learn(5)
-
-  print("argument identifier test results after 5 rounds:")
-
-  argumentXuIdentifierGivenApredicate.test()
-
-  argumentTypeLearner.learn(5)
-
-  print("argument classifier test results after 5 rounds:")
-
-  argumentTypeLearner.test()
-
-  println("**************************************************** go 50 iterations:")
-  JointTrainSparseNetwork.train(SRLDataModel, arg_Is_TypeConstraintClassifier :: arg_IdentifyConstraintClassifier :: Nil, 50)
-
-  println("argument classifier IBT model (join with identification) test results:")
-  arg_Is_TypeConstraintClassifier.test()
-  println("argument identifier IBT model (join with classification) test results:")
-  arg_IdentifyConstraintClassifier.test()
-
-  JointTrainSparseNetwork.train(SRLDataModel, arg_Is_TypeConstraintClassifier :: arg_IdentifyConstraintClassifier :: Nil, 50)
-
-  println("******************************************** additional 50 iterations:")
-
-  println("argument classifier IBT model (join with identification) test results:")
-  arg_Is_TypeConstraintClassifier.test()
-  println("argument identifier IBT model (join with classification) test results:")
-
-  arg_IdentifyConstraintClassifier.test()
   argumentTypeLearner.save()
-  argumentXuIdentifierGivenApredicate.save()
+
+  argTypeConstraintClassifier.test(exclude ="candidate", outputGranularity = 100)
+
+
+//  println("all relations number after population:" + SRLDataModel.relations().size)
+//
+//  argumentXuIdentifierGivenApredicate.learn(5)
+//
+//  print("argument identifier test results after 5 rounds:")
+//
+//  argumentXuIdentifierGivenApredicate.test()
+//
+//  argumentTypeLearner.learn(5)
+//
+//  print("argument classifier test results after 5 rounds:")
+//
+//  argumentTypeLearner.test()
+
+//  JointTrainSparseNetwork(SRLDataModel, argTypeConstraintClassifier::Nil, 50)
+//
+//  println("**************************************************** go 50 iterations:")
+//  JointTrainSparseNetwork.train(SRLDataModel, arg_Is_TypeConstraintClassifier :: arg_IdentifyConstraintClassifier :: Nil, 50)
+//
+//  println("argument classifier IBT model (join with identification) test results:")
+//  arg_Is_TypeConstraintClassifier.test()
+//  println("argument identifier IBT model (join with classification) test results:")
+//  arg_IdentifyConstraintClassifier.test()
+//
+//  JointTrainSparseNetwork.train(SRLDataModel, arg_Is_TypeConstraintClassifier :: arg_IdentifyConstraintClassifier :: Nil, 50)
+//
+//  println("******************************************** additional 50 iterations:")
+//
+//  println("argument classifier IBT model (join with identification) test results:")
+//  arg_Is_TypeConstraintClassifier.test()
+//  println("argument identifier IBT model (join with classification) test results:")
+//
+//  arg_IdentifyConstraintClassifier.test()
+//  argumentTypeLearner.save()
+//  argumentXuIdentifierGivenApredicate.save()
 
   //TODO add more variations with combination of constraints
 }
