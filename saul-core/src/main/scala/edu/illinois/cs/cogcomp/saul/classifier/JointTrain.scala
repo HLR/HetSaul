@@ -32,18 +32,15 @@ object JointTrain {
 
   }
 
-  def apply[HEAD <: AnyRef](node: Node[HEAD], cls: List[ConstrainedClassifier[_, HEAD]])
-                           (implicit headTag: ClassTag[HEAD]) = {
+  def apply[HEAD <: AnyRef](node: Node[HEAD], cls: List[ConstrainedClassifier[_, HEAD]])(implicit headTag: ClassTag[HEAD]) = {
     train[HEAD](node, cls, 1)
   }
 
-  def apply[HEAD <: AnyRef](node: Node[HEAD], cls: List[ConstrainedClassifier[_, HEAD]], it: Int)
-                           (implicit headTag: ClassTag[HEAD]) = {
+  def apply[HEAD <: AnyRef](node: Node[HEAD], cls: List[ConstrainedClassifier[_, HEAD]], it: Int)(implicit headTag: ClassTag[HEAD]) = {
     train[HEAD](node, cls, it)
   }
 
-  def train[HEAD <: AnyRef](node: Node[HEAD], cls: List[ConstrainedClassifier[_, HEAD]], it: Int)
-                           (implicit headTag: ClassTag[HEAD]): Unit = {
+  def train[HEAD <: AnyRef](node: Node[HEAD], cls: List[ConstrainedClassifier[_, HEAD]], it: Int)(implicit headTag: ClassTag[HEAD]): Unit = {
     // forall members in collection of the head (dm.t) do
 
     println("Training iteration: " + it)
@@ -54,39 +51,39 @@ object JointTrain {
 
       allHeads foreach {
         h =>
-        {
-          cls.foreach {
-            case c: ConstrainedClassifier[_, HEAD] =>
-              type C = c.LEFT
-              val typedC = c.asInstanceOf[ConstrainedClassifier[_, HEAD]]
-              val oracle = typedC.onClassifier.getLabeler
+          {
+            cls.foreach {
+              case c: ConstrainedClassifier[_, HEAD] =>
+                type C = c.LEFT
+                val typedC = c.asInstanceOf[ConstrainedClassifier[_, HEAD]]
+                val oracle = typedC.onClassifier.getLabeler
 
-              typedC.getCandidates(h) foreach {
-                x => {
-                  def trainOnce() = {
-                    val result = typedC.classifier.discreteValue(x)
-                    val trueLabel = oracle.discreteValue(x)
-                    if (result.equals("true") && trueLabel.equals("false")) {
-                      val a = typedC.onClassifier.getExampleArray(x)
-                      val a0 = a(0).asInstanceOf[Array[Int]]
-                      val a1 = a(1).asInstanceOf[Array[Double]]
-                      typedC.onClassifier.asInstanceOf[LinearThresholdUnit].promote(a0, a1, 0.1)
-                    } else {
-                      if (result.equals("false") && trueLabel.equals("true")) {
-                        val a = typedC.onClassifier.getExampleArray(x)
-                        val a0 = a(0).asInstanceOf[Array[Int]]
-                        val a1 = a(1).asInstanceOf[Array[Double]]
-                        typedC.onClassifier.asInstanceOf[LinearThresholdUnit].demote(a0, a1, 0.1)
+                typedC.getCandidates(h) foreach {
+                  x =>
+                    {
+                      def trainOnce() = {
+                        val result = typedC.classifier.discreteValue(x)
+                        val trueLabel = oracle.discreteValue(x)
+                        if (result.equals("true") && trueLabel.equals("false")) {
+                          val a = typedC.onClassifier.getExampleArray(x)
+                          val a0 = a(0).asInstanceOf[Array[Int]]
+                          val a1 = a(1).asInstanceOf[Array[Double]]
+                          typedC.onClassifier.asInstanceOf[LinearThresholdUnit].promote(a0, a1, 0.1)
+                        } else {
+                          if (result.equals("false") && trueLabel.equals("true")) {
+                            val a = typedC.onClassifier.getExampleArray(x)
+                            val a0 = a(0).asInstanceOf[Array[Int]]
+                            val a1 = a(1).asInstanceOf[Array[Double]]
+                            typedC.onClassifier.asInstanceOf[LinearThresholdUnit].demote(a0, a1, 0.1)
+                          } else {}
+                        }
+
                       }
-                      else {}
+                      trainOnce()
                     }
-
-                  }
-                  trainOnce()
                 }
-              }
+            }
           }
-        }
       }
       train(node, cls, it - 1)
     }

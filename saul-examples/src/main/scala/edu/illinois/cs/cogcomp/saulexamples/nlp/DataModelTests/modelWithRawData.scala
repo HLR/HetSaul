@@ -18,8 +18,8 @@ object modelWithRawData {
     /** Edges */
     val rawToAnn = edge(rawText, annotatedText)
     val textToCon = edge(annotatedText, sentences)
-    textToCon.addSensor(commonSensors.getSentences _)
-    rawToAnn.addSensor(commonSensors.annotateWithCurator _)
+    textToCon.addSensor(CommonSensors.getSentences _)
+    rawToAnn.addSensor(CommonSensors.annotateWithCurator _)
 
     /** Properties */
     val docFeatureExample = property(annotatedText, "doc") {
@@ -87,6 +87,5 @@ object modelWithRawData {
     println(s"x3.size = ${x3.size}")
     println(s"x4.size = ${x4.size}")
     print("finished")
-
   }
 }

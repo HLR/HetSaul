@@ -1,6 +1,6 @@
 package edu.illinois.cs.cogcomp.saul.constraint
 
-import edu.illinois.cs.cogcomp.lbjava.infer.{FirstOrderConstraint, ParameterizedConstraint}
+import edu.illinois.cs.cogcomp.lbjava.infer.{ FirstOrderConstraint, ParameterizedConstraint }
 import edu.illinois.cs.cogcomp.saul.classifier.infer.InferenceCondition
 
 import scala.reflect.ClassTag
