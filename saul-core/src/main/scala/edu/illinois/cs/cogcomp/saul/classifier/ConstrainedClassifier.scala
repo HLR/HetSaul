@@ -7,6 +7,7 @@ import edu.illinois.cs.cogcomp.lbjava.parse.Parser
 import edu.illinois.cs.cogcomp.saul.classifier.infer.InferenceCondition
 import edu.illinois.cs.cogcomp.saul.constraint.LfsConstraint
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
+import edu.illinois.cs.cogcomp.saul.datamodel.edge.Edge
 import edu.illinois.cs.cogcomp.saul.lbjrelated.LBJClassifierEquivalent
 import edu.illinois.cs.cogcomp.saul.parser.LBJIteratorParserScala
 
@@ -27,7 +28,7 @@ abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val dm: DataMo
 
   def filter(t: T, head: HEAD): Boolean = true
 
-  val pathToHead: Option[Symbol] = None
+  val pathToHead: Option[Edge[T, HEAD]] = None
 
   def findHead(x: T): Option[HEAD] = {
 
@@ -35,9 +36,9 @@ abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val dm: DataMo
       Some(x.asInstanceOf[HEAD])
     } else {
       val lst = pathToHead match {
-        case Some(s) =>
+        case Some(e) =>
           //          println(s"Searching via ${s}")
-          dm.getFromRelation[T, HEAD](s, x)
+          e.forward.neighborsOf(x)
         case _ => dm.getFromRelation[T, HEAD](x)
       }
 
@@ -78,7 +79,7 @@ abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val dm: DataMo
       head.asInstanceOf[T] :: Nil
     } else {
       val l = pathToHead match {
-        case Some(s) => dm.getFromRelation[HEAD, T](s, head)
+        case Some(e) => e.backward.neighborsOf(head)
         case _ => dm.getFromRelation[HEAD, T](head)
       }
 
@@ -195,7 +196,7 @@ abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val dm: DataMo
       allHeads.map(_.asInstanceOf[T]).toList
     } else {
       this.pathToHead match {
-        case Some(path) => (allHeads map (h => this.dm.getFromRelation[HEAD, T](path, h))).toList.flatten
+        case Some(path) => allHeads.map(h => path.backward.neighborsOf(h)).toList.flatten
         case _ => (allHeads map (h => this.dm.getFromRelation[HEAD, T](h))).toList.flatten
       }
 

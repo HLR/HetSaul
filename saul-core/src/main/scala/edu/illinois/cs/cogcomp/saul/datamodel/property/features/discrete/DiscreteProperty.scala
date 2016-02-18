@@ -64,7 +64,7 @@ case class DiscreteProperty[T <: AnyRef](
 
       override def discreteValue(__example: AnyRef): String = {
         val d: T = __example.asInstanceOf[T]
-        "" + sensor(d)
+        sensor(d)
       }
 
       override def classify(examples: Array[AnyRef]): Array[FeatureVector] = {

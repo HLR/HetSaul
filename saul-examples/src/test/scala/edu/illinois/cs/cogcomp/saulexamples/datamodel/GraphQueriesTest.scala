@@ -19,36 +19,36 @@ class GraphQueriesTest extends FlatSpec with Matchers {
 
   "finding neighbors of a link" should "find the neighbors" in {
     import TestGraph._
-    name.forward.neighborsOf("Dave") should be(Set("Dell"))
-    name.forward.neighborsOf("John") should be(Set("Jacobs"))
+    name.forward.neighborsOf("Dave") should be(Seq("Dell"))
+    name.forward.neighborsOf("John") should be(Seq("Jacobs"))
   }
 
   "finding neighbors of a reverse link" should "find the reverse neighbors" in {
     import TestGraph._
-    name.backward.neighborsOf("Jacobs") should be(Set("John"))
-    name.backward.neighborsOf("Maron") should be(Set("Mark", "Michael"))
+    name.backward.neighborsOf("Jacobs") should be(Seq("John"))
+    name.backward.neighborsOf("Maron") should be(Seq("Mark", "Michael"))
   }
 
   "atomic queries" should "return themselves" in {
     import TestGraph._
-    firstNames() should be(Set("Dave", "John", "Mark", "Michael"))
-    firstNames("Jim") should be(Set("Jim"))
+    firstNames() should be(Seq("Dave", "John", "Mark", "Michael"))
+    firstNames("Jim") should be(Seq("Jim"))
   }
 
   "single hop with all instances" should "return their neighbors" in {
     import TestGraph._
     val query = firstNames() ~> name
-    query.toSet should be(Set("Dell", "Jacobs", "Maron", "Mario"))
+    query should be(Seq("Dell", "Jacobs", "Maron", "Mario"))
   }
 
   "single hop with custom instances" should "return their neighbors" in {
     import TestGraph._
 
     val query1 = firstNames("John") ~> name
-    query1.toSet should be(Set("Jacobs"))
+    query1 should be(Seq("Jacobs"))
 
     val query2 = firstNames("Mark") ~> name
-    query2.toSet should be(Set("Maron", "Mario"))
+    query2 should be(Seq("Maron", "Mario"))
   }
 
   "single reverse hop with custom instances" should "return their neighbors" in {
@@ -58,10 +58,10 @@ class GraphQueriesTest extends FlatSpec with Matchers {
     query.toSet should be(firstNames.getAllInstances.toSet)
 
     val query1 = lastNames("Jacobs") ~> -name
-    query1.toSet should be(Set("John"))
+    query1 should be(Seq("John"))
 
     val query2 = lastNames("Maron") ~> -name
-    query2.toSet should be(Set("Mark", "Michael"))
+    query2 should be(Seq("Mark", "Michael"))
   }
 
   "reverse hop with custom instances" should "return similar ones" in {
@@ -71,7 +71,7 @@ class GraphQueriesTest extends FlatSpec with Matchers {
     query1 should be(Set("John"))
 
     val query2 = firstNames("Mark") ~> name ~> -name
-    query2 should be(Set("Mark", "Michael"))
+    query2 should be(Seq("Mark", "Michael"))
   }
 
   "prop on single node, single instance" should "return the correct value" in {

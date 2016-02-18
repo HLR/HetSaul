@@ -10,7 +10,7 @@ import edu.illinois.cs.cogcomp.saulexamples.data.Document
 import scala.collection.JavaConversions._
 
 /** an object containing many popular sensors used in examples */
-object commonSensors {
+object CommonSensors {
 
   def textCollection(x: List[Document]) = {
     x.map(documentContent)

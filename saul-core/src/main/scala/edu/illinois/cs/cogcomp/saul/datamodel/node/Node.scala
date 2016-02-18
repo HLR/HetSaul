@@ -14,8 +14,26 @@ trait NodeProperty[T <: AnyRef] extends Property[T] {
   def node: Node[T]
 }
 
+/** Representation of an instance inside the Node.
+  * @param t original instance
+  * @param keyFunc key function used to extract the key
+  * @tparam T base type of the instances
+  */
+class NodeInstance[T](val t: T, val keyFunc: T => Any) {
+  val key: Any = keyFunc(t)
+  def apply = t
+
+  override def hashCode(): Int = key.hashCode()
+
+  override def equals(obj: scala.Any): Boolean = obj match {
+    case nt2: NodeInstance[T] => key.equals(nt2.key)
+  }
+}
+
 /** A Node E is an instances of base types T */
 class Node[T <: AnyRef](val keyFunc: T => Any = (x: T) => x, val tag: ClassTag[T]) {
+
+  type NT = NodeInstance[T]
 
   val outgoing = new ArrayBuffer[Edge[T, _]]()
   val incoming = new ArrayBuffer[Edge[_, T]]()
@@ -24,26 +42,26 @@ class Node[T <: AnyRef](val keyFunc: T => Any = (x: T) => x, val tag: ClassTag[T
 
   val properties = new ArrayBuffer[NodeProperty[T]]
 
-  private val collection = new mutable.LinkedHashMap[Any, T]()
+  private val collection = MutableSet[NT]()
 
-  def getAllInstances: Iterable[T] = this.collection.values
+  def getAllInstances: Iterable[T] = this.collection.toSeq.map(_.apply)
 
-  val trainingSet = MutableSet[T]()
+  val trainingSet = MutableSet[NT]()
 
-  val testingSet = MutableSet[T]()
+  val testingSet = MutableSet[NT]()
 
-  def getTrainingInstances: Iterable[T] = this.trainingSet
+  def getTrainingInstances: Iterable[T] = this.trainingSet.toSeq.map(_.apply)
 
-  def getTestingInstances: Iterable[T] = this.testingSet
+  def getTestingInstances: Iterable[T] = this.testingSet.toSeq.map(_.apply)
 
-  val orderingMap = MutableMap[Int, T]()
-  val reverseOrderingMap = MutableMap[T, Int]()
+  val orderingMap = MutableMap[Int, NT]()
+  val reverseOrderingMap = MutableMap[NT, Int]()
 
   def filterNode(property: DiscreteProperty[T], value: String): Node[T] = {
     val node = new Node[T](this.keyFunc, this.tag)
-    node populate collection.values.filter {
-      property.sensor(_) == value
-    }.toSeq
+    node populate collection.filter {
+      nt => property.sensor(nt.apply) == value
+    }.toSeq.map(_.apply)
     node
   }
 
@@ -69,19 +87,24 @@ class Node[T <: AnyRef](val keyFunc: T => Any = (x: T) => x, val tag: ClassTag[T
     ret
   }
 
-  def contains(t: T): Boolean = collection.contains(keyFunc(t))
+  def contains(t: T): Boolean = collection.contains(toNT(t))
+
+  def toNT(t: T): NT = new NT(t, keyFunc)
+
+  private def containsNT(nt: NT): Boolean = collection.contains(nt)
 
   def containsUntyped(t: Any): Boolean = if (t.isInstanceOf[T]) {
     contains(t.asInstanceOf[T])
   } else false
 
   def addInstance(t: T, train: Boolean = true, populateEdge: Boolean = true) = {
-    if (!contains(t)) {
+    val nt = toNT(t)
+    if (!containsNT(nt)) {
       val order = incrementCount()
-      if (train) this.trainingSet += t else this.testingSet += t
-      this.collection(keyFunc(t)) = t
-      this.orderingMap += (order -> t)
-      this.reverseOrderingMap += (t -> order)
+      if (train) this.trainingSet += nt else this.testingSet += nt
+      this.collection += nt
+      this.orderingMap += (order -> nt)
+      this.reverseOrderingMap += (nt -> order)
       if (populateEdge) {
         outgoing.foreach(_.populateUsingFrom(t, train))
         incoming.foreach(_.populateUsingTo(t, train))
@@ -108,8 +131,6 @@ class Node[T <: AnyRef](val keyFunc: T => Any = (x: T) => x, val tag: ClassTag[T
   def apply(t: T) = SingletonSet(this, t)
   def apply(ts: Iterable[T]) = BasicSet(this, ts)
 
-  def get(k: Any) = SingletonSet(this, collection(k))
-
   def getWithRelativePosition(t: T, relativePos: Int): Option[T] = {
     getWithRelativePosition(t, relativePos, Nil)
   }
@@ -118,14 +139,15 @@ class Node[T <: AnyRef](val keyFunc: T => Any = (x: T) => x, val tag: ClassTag[T
     if (relativePos == 0) {
       Some(t)
     } else {
+      val nt = toNT(t)
       /** relative not equal to 0 */
-      this.reverseOrderingMap.get(t) match {
+      this.reverseOrderingMap.get(nt) match {
         case Some(ord) =>
           val targetOrd = ord + relativePos
           this.orderingMap.get(targetOrd) match {
             case Some(x) =>
-              if (underSameParent(t, x, filters)) {
-                Some(x)
+              if (underSameParent(t, x.apply, filters)) {
+                Some(x.apply)
               } else {
                 None
               }
@@ -143,7 +165,7 @@ class Node[T <: AnyRef](val keyFunc: T => Any = (x: T) => x, val tag: ClassTag[T
     }
   }
 
-  def pervOf(t: T, filters: List[Symbol]): Option[T] = {
+  def prevOf(t: T, filters: List[Symbol]): Option[T] = {
     getWithWindow(t, -1, -1, Nil) match {
       case head :: more => head
       case Nil => None
@@ -165,14 +187,16 @@ class Node[T <: AnyRef](val keyFunc: T => Any = (x: T) => x, val tag: ClassTag[T
 
   def between(t1: T, t2: T, filter: Iterable[T => Any]): List[Option[T]] = {
     val wildCard = !underSameParent(t1, t2, filter)
+    val nt1 = toNT(t1)
+    val nt2 = toNT(t2)
     // If t1 and t2 are not under same parents, then we ignore the parent.
-    (this.reverseOrderingMap.get(t1), this.reverseOrderingMap.get(t2)) match {
+    (this.reverseOrderingMap.get(nt1), this.reverseOrderingMap.get(nt2)) match {
       case (Some(start), Some(end)) => {
         (start to end) map {
           position =>
             this.orderingMap.get(position) match {
-              case Some(v) => if (wildCard || underSameParent(t1, v, filter)) {
-                Some(v)
+              case Some(v) => if (wildCard || underSameParent(t1, v.apply, filter)) {
+                Some(v.apply)
               } else {
                 None
               }
@@ -185,12 +209,12 @@ class Node[T <: AnyRef](val keyFunc: T => Any = (x: T) => x, val tag: ClassTag[T
   }
 
   def getWithWindow(t: T, before: Int, after: Int, filters: Iterable[T => Any]): List[Option[T]] = {
-    this.reverseOrderingMap.get(t) match {
+    (this.reverseOrderingMap.get(toNT(t)) match {
       case Some(myOrder) =>
         val start = myOrder + before
         val end = myOrder + after
         val result = (start to end).flatMap(this.orderingMap.get).filter {
-          x => underSameParent(t, x, filters)
+          x => underSameParent(t, x.apply, filters)
         }.toList
 
         val pos = result.indexOf(t)
@@ -212,7 +236,7 @@ class Node[T <: AnyRef](val keyFunc: T => Any = (x: T) => x, val tag: ClassTag[T
         }
       case _ =>
         throw new Exception("Can't find order of " + t.toString)
-    }
+    }).map(_.map(_.apply))
   }
 
   val derivedInstances = new mutable.HashMap[Int, FeatureVector]()
@@ -224,7 +248,7 @@ class Node[T <: AnyRef](val keyFunc: T => Any = (x: T) => x, val tag: ClassTag[T
         val featureVector = new FeatureVector()
         castedProperties.foreach {
           property =>
-            property.addToFeatureVector(instance, featureVector, property.name)
+            property.addToFeatureVector(instance.apply, featureVector, property.name)
         }
         derivedInstances.put(instanceId, featureVector)
     }
