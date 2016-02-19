@@ -38,10 +38,10 @@ object SetCoverSolverDataModel extends DataModel {
     }
   }
 
-  val containsStationConstaint = ConstrainedClassifier.constraint[City] { x: City => allCityNeiborhoodsAreCovered(x) }
+  val containsStationConstraint = ConstrainedClassifier.constraint[City] { x: City => allCityNeiborhoodsAreCovered(x) }
 }
 
 object ContainsStationConstraint extends ConstrainedClassifier[Neighborhood, City](SetCoverSolverDataModel, new ContainsStation()) {
-  override def subjectTo = SetCoverSolverDataModel.containsStationConstaint
+  override def subjectTo = SetCoverSolverDataModel.containsStationConstraint
   override val solver = new OJalgoHook
 }
