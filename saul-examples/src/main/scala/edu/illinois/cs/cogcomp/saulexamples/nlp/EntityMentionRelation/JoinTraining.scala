@@ -16,9 +16,11 @@ object JoinTraining {
       locationClassifier.learn(preTrainIteration)
     }
 
-    JointTrain.train[ConllRelation](EntityRelationDataModel,
+    JointTrain.train[ConllRelation](
+      EntityRelationDataModel,
       perConstraintClassifier :: orgConstraintClassifier :: locConstraintClassifier :: work_P_O_relationClassifier :: liveIn_P_O_relationClassifier :: Nil,
-      jointTrainIteration)
+      jointTrainIteration
+    )
   }
 
   def main(args: Array[String]) {
