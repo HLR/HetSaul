@@ -7,7 +7,7 @@ import edu.illinois.cs.cogcomp.saul.datamodel.property.Property
 import edu.illinois.cs.cogcomp.saul.datamodel.property.features.discrete.DiscreteProperty
 import edu.illinois.cs.cogcomp.saul.datamodel.edge.Edge
 
-import scala.collection.mutable.{ Map => MutableMap, LinkedHashSet => MutableSet, ArrayBuffer }
+import scala.collection.mutable.{ HashMap => MutableHashMap, Map => MutableMap, LinkedHashSet => MutableSet, ListBuffer, ArrayBuffer }
 import scala.collection.mutable
 import scala.reflect.ClassTag
 
@@ -37,8 +37,7 @@ class NodeInstance[T](
 /** A Node E is an instances of base types T */
 class Node[T <: AnyRef](
   val keyFunc: T => Any = (x: T) => x,
-  val tag: ClassTag[T],
-  val dataModel: DataModel
+  val tag: ClassTag[T]
 ) {
 
   type NT = NodeInstance[T]
@@ -66,7 +65,7 @@ class Node[T <: AnyRef](
   val reverseOrderingMap = MutableMap[NT, Int]()
 
   def filterNode(property: DiscreteProperty[T], value: String): Node[T] = {
-    val node = new Node[T](this.keyFunc, this.tag, dataModel)
+    val node = new Node[T](this.keyFunc, this.tag)
     node populate collection.filter {
       nt => property.sensor(nt.apply) == value
     }.toSeq.map(_.apply)
@@ -283,9 +282,17 @@ class Node[T <: AnyRef](
         derivedInstances.put(id, featureVector)
     }
   }
+
+  /** list of hashmaps used inside properties for caching sensor values */
+  final val propertyCacheList = new ListBuffer[MutableHashMap[_, Any]]()
+
+  def clearPropertyCache[T](): Unit = {
+    println("clean property cache: cleaning " + propertyCacheList.size + " maps")
+    propertyCacheList.foreach(_.asInstanceOf[MutableHashMap[T, Any]].clear)
+  }
 }
 
-class JoinNode[A <: AnyRef, B <: AnyRef](val na: Node[A], val nb: Node[B], matcher: (A, B) => Boolean, tag: ClassTag[(A, B)]) extends Node[(A, B)](p => na.keyFunc(p._1) -> nb.keyFunc(p._2), tag, na.dataModel) {
+class JoinNode[A <: AnyRef, B <: AnyRef](val na: Node[A], val nb: Node[B], matcher: (A, B) => Boolean, tag: ClassTag[(A, B)]) extends Node[(A, B)](p => na.keyFunc(p._1) -> nb.keyFunc(p._2), tag) {
 
   def addFromChild[T <: AnyRef](node: Node[T], t: T, train: Boolean = true, populateEdge: Boolean = true) = {
     node match {
