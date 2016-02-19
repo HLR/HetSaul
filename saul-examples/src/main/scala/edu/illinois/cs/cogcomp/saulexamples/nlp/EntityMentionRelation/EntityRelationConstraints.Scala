@@ -39,6 +39,12 @@ object EntityRelationConstraints {
           ((personClassifier on x.e1) isTrue)
       }
   }
+
+//  val worksForImpliesNotLivesIn = ConstrainedClassifier.constraintOf[ConllRelation]
+//  {
+//   x: ConllRelation => (worksForClassifier on x isTrue) ==> (livesInClassifier on x isNotTrue)
+//  }
+//
   //TODO these commented out codes probably should be used in new examples
   //  val Per_Org=ConstraintClassifier.constraintOf[ConllRelation]  {
   //    x:ConllRelation=>{
