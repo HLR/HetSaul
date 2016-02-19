@@ -26,4 +26,4 @@ object IndependentModels extends App {
   println("=================================")
   livesInClassifier.crossValidation(iter)
   println("=================================")
- }
+}

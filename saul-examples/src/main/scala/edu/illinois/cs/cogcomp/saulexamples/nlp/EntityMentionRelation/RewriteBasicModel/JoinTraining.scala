@@ -16,12 +16,11 @@ object JoinTraining {
       orgClassifier.learn(preTrainIteration)
       personClassifier.learn(preTrainIteration)
       locationClassifier.learn(preTrainIteration)
-      }
+    }
 
     JointTrain.train[ConllRelation](entityRelationBasicDataModel, PerConstraintClassifier :: orgConstraintClassifier :: LocConstraintClassifier :: P_O_relationClassifier :: LiveIn_P_O_relationClassifier :: Nil, jointTrainIteration)
 
   }
-
 
   def main(args: Array[String]) {
     import entityRelationBasicDataModel._

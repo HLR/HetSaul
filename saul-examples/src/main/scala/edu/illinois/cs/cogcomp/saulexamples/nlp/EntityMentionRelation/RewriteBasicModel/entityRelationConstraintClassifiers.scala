@@ -26,7 +26,7 @@ object entityRelationConstraintClassifiers {
     def subjectTo = Per_Org
     override val pathToHead = Some('TokToPair)
     //TODO add test unit for this filter
-    override def filter(t: ConllRawToken,h:ConllRelation): Boolean = t.wordId==h.wordId2
+    override def filter(t: ConllRawToken, h: ConllRelation): Boolean = t.wordId == h.wordId2
   }
 
   object P_O_relationClassifier extends ConstrainedClassifier[ConllRelation, ConllRelation](entityRelationBasicDataModel, worksForClassifier) {

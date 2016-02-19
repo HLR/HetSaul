@@ -2,7 +2,7 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.RewriteBa
 
 import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.RewriteBasicModel.entityRelationClassifiers._
 
-object PipelineTraining extends App{
+object PipelineTraining extends App {
 
   val it = 20
   entityRelationBasicDataModel.populateWithConll()

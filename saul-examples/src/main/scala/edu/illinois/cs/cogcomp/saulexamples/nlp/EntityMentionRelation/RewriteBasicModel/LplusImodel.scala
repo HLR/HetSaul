@@ -5,7 +5,7 @@ import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.RewriteBas
 import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.RewriteBasicModel.entityRelationConstraintClassifiers._
 /** Created by Parisa on 5/20/15.
   */
-object LplusIModel extends App{
+object LplusIModel extends App {
   val iter = 5
   entityRelationBasicDataModel.populateWithConll()
   //Independent Learners

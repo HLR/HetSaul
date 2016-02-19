@@ -3,7 +3,7 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.RewriteBa
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
 import edu.illinois.cs.cogcomp.saulexamples.EntityMentionRelation.datastruct.{ ConllRawSentence, ConllRawToken, ConllRelation }
 import edu.illinois.cs.cogcomp.saulexamples.EntityMentionRelation.reader.Conll04_ReaderNew
-import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.RewriteBasicModel.entityRelationClassifiers.{locationClassifier, personClassifier, orgClassifier}
+import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.RewriteBasicModel.entityRelationClassifiers.{ locationClassifier, personClassifier, orgClassifier }
 import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.entityRelationSensors
 import entityRelationSensors._
 import scala.collection.JavaConversions._
@@ -11,12 +11,12 @@ import scala.collection.JavaConversions._
 object entityRelationBasicDataModel extends DataModel {
 
   /** Nodes & Edges */
-  val tokens = node[ConllRawToken]//((x:ConllRawToken) => x.wordId+":"+x.sentId)
-  val sentences = node[ConllRawSentence] ((x:ConllRawSentence) => x.sentId)
-  val pairs = node[ConllRelation] ((x: ConllRelation)=> x.wordId1+":"+x.wordId2+":"+x.sentId)
+  val tokens = node[ConllRawToken] //((x:ConllRawToken) => x.wordId+":"+x.sentId)
+  val sentences = node[ConllRawSentence]((x: ConllRawSentence) => x.sentId)
+  val pairs = node[ConllRelation]((x: ConllRelation) => x.wordId1 + ":" + x.wordId2 + ":" + x.sentId)
 
-  val sentenceToToken = edge(sentences,tokens)
-  val sentencesToPairs = edge (sentences,pairs)
+  val sentenceToToken = edge(sentences, tokens)
+  val sentencesToPairs = edge(sentences, pairs)
   val pairTo1stArg = edge(pairs, tokens)
   val pairTo2ndArg = edge(pairs, tokens)
   val tokenToPair = edge(tokens, pairs)
@@ -25,7 +25,7 @@ object entityRelationBasicDataModel extends DataModel {
   sentencesToPairs.addSensor(sentenceToRelation_GS _)
   pairTo1stArg.addSensor(relationTosecondArg_MS _)
   pairTo2ndArg.addSensor(relationTosecondArg_MS _)
- 
+
   /** Properties */
   val pos = property(tokens) {
     t: ConllRawToken => t.POS
@@ -49,7 +49,7 @@ object entityRelationBasicDataModel extends DataModel {
   val containsSubPhraseIng = property(tokens) {
     t: ConllRawToken => t.getWords(false).exists(_.contains("ing")).toString
   }
-  
+
   val containsInCityList = property(tokens) {
     t: ConllRawToken => cityGazetSensor.isContainedIn(t)
   }
@@ -65,7 +65,7 @@ object entityRelationBasicDataModel extends DataModel {
   val relFeature = property(pairs) {
     token: ConllRelation =>
       {
-          "w1-word-" + token.e1.phrase :: "w2-word-" + token.e2.phrase ::
+        "w1-word-" + token.e1.phrase :: "w2-word-" + token.e2.phrase ::
           "w1-pos-" + token.e1.POS :: "w2-pos-" + token.e2.POS ::
           "w1-city-" + cityGazetSensor.isContainedIn(token.e1) :: "w2-city-" + cityGazetSensor.isContainedIn(token.e2) ::
           "w1-per-" + personGazetSensor.containsAny(token.e1) :: "w2-per-" + personGazetSensor.containsAny(token.e2) ::
@@ -113,6 +113,6 @@ object entityRelationBasicDataModel extends DataModel {
   def populateWithConll() = {
     val reader = new Conll04_ReaderNew("./data/EntityMentionRelation/conll04.corp", "Token")
     val trainSentences = reader.sentences.toList
-    sentences populate trainSentences.slice(0,10)
+    sentences populate trainSentences.slice(0, 10)
   }
 }
