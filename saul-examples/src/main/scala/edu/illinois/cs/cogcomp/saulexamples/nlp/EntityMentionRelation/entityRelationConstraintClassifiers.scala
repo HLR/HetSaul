@@ -8,32 +8,32 @@ import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.entityRela
 
 object entityRelationConstraintClassifiers {
 
-  object orgConstraintClassifier extends ConstrainedClassifier[ConllRawToken, ConllRelation](entityRelationBasicDataModel, orgClassifier) {
+  object orgConstraintClassifier extends ConstrainedClassifier[ConllRawToken, ConllRelation](entityRelationDataModel, orgClassifier) {
     def subjectTo = Per_Org
-    override val pathToHead = Some(entityRelationBasicDataModel.tokenToPair)
+    override val pathToHead = Some(entityRelationDataModel.tokenToPair)
     override def filter(t: ConllRawToken, h: ConllRelation): Boolean = t.wordId == h.wordId1
   }
 
-  object PerConstraintClassifier extends ConstrainedClassifier[ConllRawToken, ConllRelation](entityRelationBasicDataModel, personClassifier) {
+  object PerConstraintClassifier extends ConstrainedClassifier[ConllRawToken, ConllRelation](entityRelationDataModel, personClassifier) {
 
     def subjectTo = Per_Org
-    override val pathToHead = Some(entityRelationBasicDataModel.tokenToPair)
+    override val pathToHead = Some(entityRelationDataModel.tokenToPair)
     override def filter(t: ConllRawToken, h: ConllRelation): Boolean = t.wordId == h.wordId2
   }
 
-  object LocConstraintClassifier extends ConstrainedClassifier[ConllRawToken, ConllRelation](entityRelationBasicDataModel, locationClassifier) {
+  object LocConstraintClassifier extends ConstrainedClassifier[ConllRawToken, ConllRelation](entityRelationDataModel, locationClassifier) {
 
     def subjectTo = Per_Org
-    override val pathToHead = Some(entityRelationBasicDataModel.tokenToPair)
+    override val pathToHead = Some(entityRelationDataModel.tokenToPair)
     //TODO add test unit for this filter
     override def filter(t: ConllRawToken, h: ConllRelation): Boolean = t.wordId == h.wordId2
   }
 
-  object P_O_relationClassifier extends ConstrainedClassifier[ConllRelation, ConllRelation](entityRelationBasicDataModel, worksForClassifier) {
+  object P_O_relationClassifier extends ConstrainedClassifier[ConllRelation, ConllRelation](entityRelationDataModel, worksForClassifier) {
     def subjectTo = Per_Org
   }
 
-  object LiveIn_P_O_relationClassifier extends ConstrainedClassifier[ConllRelation, ConllRelation](entityRelationBasicDataModel, livesInClassifier) {
+  object LiveIn_P_O_relationClassifier extends ConstrainedClassifier[ConllRelation, ConllRelation](entityRelationDataModel, livesInClassifier) {
     def subjectTo = Per_Org
   }
 }

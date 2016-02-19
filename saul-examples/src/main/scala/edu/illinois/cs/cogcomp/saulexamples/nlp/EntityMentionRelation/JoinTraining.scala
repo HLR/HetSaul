@@ -18,12 +18,12 @@ object JoinTraining {
       locationClassifier.learn(preTrainIteration)
     }
 
-    JointTrain.train[ConllRelation](entityRelationBasicDataModel, PerConstraintClassifier :: orgConstraintClassifier :: LocConstraintClassifier :: P_O_relationClassifier :: LiveIn_P_O_relationClassifier :: Nil, jointTrainIteration)
+    JointTrain.train[ConllRelation](entityRelationDataModel, PerConstraintClassifier :: orgConstraintClassifier :: LocConstraintClassifier :: P_O_relationClassifier :: LiveIn_P_O_relationClassifier :: Nil, jointTrainIteration)
 
   }
 
   def main(args: Array[String]) {
-    import entityRelationBasicDataModel._
+    import entityRelationDataModel._
     populateWithConll()
     val testRels = pairs.getTrainingInstances.toList
     val testTokens = tokens.getTrainingInstances.toList

@@ -4,7 +4,7 @@ import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.entityRela
 
 object IndependentModels extends App {
 
-  entityRelationBasicDataModel.populateWithConll()
+  entityRelationDataModel.populateWithConll()
   val iter = 5
   println("Person Classifier Evaluation")
   println("=================================")

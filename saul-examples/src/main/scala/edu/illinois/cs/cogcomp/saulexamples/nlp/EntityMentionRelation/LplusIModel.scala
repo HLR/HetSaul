@@ -2,12 +2,12 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation
 
 import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.entityRelationClassifiers._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.entityRelationConstraintClassifiers._
-import entityRelationBasicDataModel._
+import entityRelationDataModel._
 /** Created by Parisa on 5/20/15.
   */
 object LplusIModel extends App {
   val iter = 5
-  entityRelationBasicDataModel.populateWithConll()
+  entityRelationDataModel.populateWithConll()
   //Independent Learners
   personClassifier.learn(iter)
   orgClassifier.learn(iter)

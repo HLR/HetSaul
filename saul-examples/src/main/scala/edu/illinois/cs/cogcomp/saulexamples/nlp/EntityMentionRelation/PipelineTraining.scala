@@ -4,7 +4,7 @@ import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.entityRela
 
 object PipelineTraining extends App {
   val it = 20
-  entityRelationBasicDataModel.populateWithConll()
+  entityRelationDataModel.populateWithConll()
   def independentPipe(it: Int): Unit = {
 
     println("Running CV " + it)

@@ -8,7 +8,7 @@ import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.entityRela
 
 import scala.collection.JavaConversions._
 
-object entityRelationBasicDataModel extends DataModel {
+object entityRelationDataModel extends DataModel {
 
   /** Nodes & Edges */
   val tokens = node[ConllRawToken] //((x:ConllRawToken) => x.wordId+":"+x.sentId)
