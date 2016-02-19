@@ -5,7 +5,6 @@ import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.EntityRela
 object PipelineTraining extends App {
   val it = 20
   EntityRelationDataModel.populateWithConll()
-  def independentPipe(it: Int): Unit = {
 
     println("Running CV " + it)
 
@@ -16,5 +15,4 @@ object PipelineTraining extends App {
     workForClassifierPipe.crossValidation(it)
     LivesInClassifierPipe.crossValidation(it)
 
-  }
 }
