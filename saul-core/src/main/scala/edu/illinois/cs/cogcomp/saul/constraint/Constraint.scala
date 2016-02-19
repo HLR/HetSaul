@@ -43,13 +43,19 @@ object ConstraintTypeConversion {
 // TODO: one should be able to replace fold with reduce and remove ___result; right?
 class QuantifierWrapper[T](val coll: Seq[T]) {
   def _exists(p: T => FirstOrderConstraint): FirstOrderConstraint = {
-    val dummyConstraint = new FirstOrderConstant(false)
-    coll.map(p).foldLeft[FirstOrderConstraint](dummyConstraint)(new FirstOrderDisjunction(_, _))
+    val alwaysFalse: FirstOrderConstraint = new FirstOrderConstant(false)
+    def makeDisjunction(c1: FirstOrderConstraint, c2: FirstOrderConstraint): FirstOrderConstraint = {
+      new FirstOrderDisjunction(c1, c2)
+    }
+    coll.map(p).foldLeft[FirstOrderConstraint](alwaysFalse)(makeDisjunction)
   }
 
   def _forall(p: T => FirstOrderConstraint): FirstOrderConstraint = {
-    val dummyConstraint = new FirstOrderConstant(true)
-    coll.map(p).foldLeft[FirstOrderConstraint](dummyConstraint)(new FirstOrderConjunction(_, _))
+    val alwaysTrue: FirstOrderConstraint = new FirstOrderConstant(true)
+    def makeConjunction(c1: FirstOrderConstraint, c2: FirstOrderConstraint): FirstOrderConstraint = {
+      new FirstOrderConjunction(c1, c2)
+    }
+    coll.map(p).foldLeft[FirstOrderConstraint](alwaysTrue)(makeConjunction)
   }
 
   /** transfer the constraint to a constant
