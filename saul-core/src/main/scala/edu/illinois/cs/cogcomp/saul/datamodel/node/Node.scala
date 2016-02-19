@@ -16,7 +16,6 @@ trait NodeProperty[T <: AnyRef] extends Property[T] {
 }
 
 /** Representation of an instance inside the Node.
-  *
   * @param t original instance
   * @param keyFunc key function used to extract the key
   * @tparam T base type of the instances

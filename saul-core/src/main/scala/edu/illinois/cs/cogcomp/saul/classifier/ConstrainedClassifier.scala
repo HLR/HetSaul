@@ -121,7 +121,6 @@ abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val edge: Edge
       }
     }
     learnAll(crTokenTest, iteration)
-
   }
 
   def test(): List[(String, (Double, Double, Double))] = {

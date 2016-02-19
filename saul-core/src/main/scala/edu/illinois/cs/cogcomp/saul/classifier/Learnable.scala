@@ -145,6 +145,9 @@ abstract class Learnable[T <: AnyRef](val node: Node[T], val parameters: Paramet
         classifier.readLexicon(lexiconResourcesUrls.get(0))
       else logger.error("Cannot find lexicon file {}", lexFile)
     }
+
+    setExtractor()
+    setLabeler()
   }
 
   def load(lcFile: URL, lexFile: URL): Unit = {
