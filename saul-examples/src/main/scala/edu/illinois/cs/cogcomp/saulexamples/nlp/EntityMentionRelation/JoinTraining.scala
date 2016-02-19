@@ -1,9 +1,9 @@
-package edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.RewriteBasicModel
+package edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation
 
 import edu.illinois.cs.cogcomp.saul.classifier.JointTrain
 import edu.illinois.cs.cogcomp.saulexamples.EntityMentionRelation.datastruct.ConllRelation
-import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.RewriteBasicModel.entityRelationClassifiers._
-import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.RewriteBasicModel.entityRelationConstraintClassifiers._
+import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.entityRelationClassifiers._
+import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.entityRelationConstraintClassifiers._
 
 /** Created by Parisa on 5/6/15.
   */

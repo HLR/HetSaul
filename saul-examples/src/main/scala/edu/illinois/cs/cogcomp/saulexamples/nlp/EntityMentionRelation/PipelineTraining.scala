@@ -1,9 +1,8 @@
-package edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.RewriteBasicModel
+package edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation
 
-import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.RewriteBasicModel.entityRelationClassifiers._
+import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.entityRelationClassifiers._
 
 object PipelineTraining extends App {
-
   val it = 20
   entityRelationBasicDataModel.populateWithConll()
   def independentPipe(it: Int): Unit = {
@@ -18,5 +17,4 @@ object PipelineTraining extends App {
     LivesInClassifierPipe.crossValidation(it)
 
   }
-
 }
