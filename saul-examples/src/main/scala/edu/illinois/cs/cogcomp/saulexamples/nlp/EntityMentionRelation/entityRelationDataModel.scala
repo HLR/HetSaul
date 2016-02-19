@@ -21,10 +21,10 @@ object EntityRelationDataModel extends DataModel {
   val pairTo2ndArg = edge(pairs, tokens)
   val tokenToPair = edge(tokens, pairs)
 
-  sentenceToToken.addSensor(sentenceToTokens_GS _)
-  sentencesToPairs.addSensor(sentenceToRelation_GS _)
-  pairTo1stArg.addSensor(relationTosecondArg_MS _)
-  pairTo2ndArg.addSensor(relationTosecondArg_MS _)
+  sentenceToToken.addSensor(sentenceToTokens_GeneratingS _)
+  sentencesToPairs.addSensor(sentenceToRelation_GeneratingS _)
+  pairTo1stArg.addSensor(relationToSecondArg_MatchingS _)
+  pairTo2ndArg.addSensor(relationToSecondArg_MatchingS _)
 
   /** Properties */
   val pos = property(tokens) {

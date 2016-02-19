@@ -13,19 +13,19 @@ object EntityRelationSensors {
     persongazet.addFile("./data/EntityMentionRelation/known_femaleFirst.lst", true)
     persongazet
   }
-  def sentenceToRelation_GS(s: ConllRawSentence): List[ConllRelation] = {
+  def sentenceToRelation_GeneratingS(s: ConllRawSentence): List[ConllRelation] = {
     s.relations.toList
   }
-  def sentenceToRelations_MS(s: ConllRawSentence, t: ConllRelation): Boolean = {
+  def sentenceToRelations_MatchingS(s: ConllRawSentence, t: ConllRelation): Boolean = {
     s.sentId == t.sentId
   }
-  def sentenceToTokens_GS(s: ConllRawSentence): List[ConllRawToken] = {
+  def sentenceToTokens_GeneratingS(s: ConllRawSentence): List[ConllRawToken] = {
     s.sentTokens.toList
   }
-  def relationTofirstArg_MS(r: ConllRelation, t: ConllRawToken): Boolean = {
+  def relationToFirstArg_MatchingS(r: ConllRelation, t: ConllRawToken): Boolean = {
     r.sentId.equals(t.sentId) && r.e1.wordId == t.wordId
   }
-  def relationTosecondArg_MS(r: ConllRelation, t: ConllRawToken): Boolean = {
+  def relationToSecondArg_MatchingS(r: ConllRelation, t: ConllRawToken): Boolean = {
     r.sentId.equals(t.sentId) && r.e2.wordId == t.wordId
   }
 }
