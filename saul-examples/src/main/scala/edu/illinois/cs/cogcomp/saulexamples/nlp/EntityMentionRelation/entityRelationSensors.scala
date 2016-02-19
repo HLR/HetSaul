@@ -16,6 +16,9 @@ object entityRelationSensors {
   def sentenceToRelation_GS(s: ConllRawSentence): List[ConllRelation] = {
     s.relations.toList
   }
+  def sentenceToRelations_MS(s: ConllRawSentence, t: ConllRelation): Boolean = {
+    s.sentId == t.sentId
+  }
   def sentenceToTokens_GS(s: ConllRawSentence): List[ConllRawToken] = {
     s.sentTokens.toList
   }

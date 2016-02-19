@@ -11,7 +11,7 @@ import scala.collection.JavaConversions._
 object entityRelationDataModel extends DataModel {
 
   /** Nodes & Edges */
-  val tokens = node[ConllRawToken] //((x:ConllRawToken) => x.wordId+":"+x.sentId)
+  val tokens = node[ConllRawToken]((x: ConllRawToken) => x.wordId + ":" + x.sentId)
   val sentences = node[ConllRawSentence]((x: ConllRawSentence) => x.sentId)
   val pairs = node[ConllRelation]((x: ConllRelation) => x.wordId1 + ":" + x.wordId2 + ":" + x.sentId)
 
@@ -112,7 +112,7 @@ object entityRelationDataModel extends DataModel {
 
   def populateWithConll() = {
     val reader = new Conll04_ReaderNew("./data/EntityMentionRelation/conll04.corp", "Token")
-    val trainSentences = reader.sentences.toList
-    sentences populate trainSentences.slice(0, 10)
+    sentences.populate(reader.sentences)
+    pairs.populate(reader.relations)
   }
 }

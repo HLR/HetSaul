@@ -10,21 +10,21 @@ object entityRelationConstraintClassifiers {
 
   object orgConstraintClassifier extends ConstrainedClassifier[ConllRawToken, ConllRelation](entityRelationDataModel, orgClassifier) {
     def subjectTo = Per_Org
-    override val pathToHead = Some(entityRelationDataModel.tokenToPair)
+    override val pathToHead = Some(-entityRelationDataModel.pairTo2ndArg)
     override def filter(t: ConllRawToken, h: ConllRelation): Boolean = t.wordId == h.wordId1
   }
 
   object PerConstraintClassifier extends ConstrainedClassifier[ConllRawToken, ConllRelation](entityRelationDataModel, personClassifier) {
 
     def subjectTo = Per_Org
-    override val pathToHead = Some(entityRelationDataModel.tokenToPair)
+    override val pathToHead = Some(-entityRelationDataModel.pairTo1stArg)
     override def filter(t: ConllRawToken, h: ConllRelation): Boolean = t.wordId == h.wordId2
   }
 
   object LocConstraintClassifier extends ConstrainedClassifier[ConllRawToken, ConllRelation](entityRelationDataModel, locationClassifier) {
 
     def subjectTo = Per_Org
-    override val pathToHead = Some(entityRelationDataModel.tokenToPair)
+    override val pathToHead = Some(-entityRelationDataModel.pairTo2ndArg)
     //TODO add test unit for this filter
     override def filter(t: ConllRawToken, h: ConllRelation): Boolean = t.wordId == h.wordId2
   }
