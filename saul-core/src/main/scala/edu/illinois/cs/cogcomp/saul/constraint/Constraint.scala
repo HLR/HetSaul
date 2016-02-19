@@ -40,7 +40,6 @@ object ConstraintTypeConversion {
   }
 }
 
-// TODO: one should be able to replace fold with reduce and remove ___result; right?
 class QuantifierWrapper[T](val coll: Seq[T]) {
   def _exists(p: T => FirstOrderConstraint): FirstOrderConstraint = {
     val alwaysFalse: FirstOrderConstraint = new FirstOrderConstant(false)
