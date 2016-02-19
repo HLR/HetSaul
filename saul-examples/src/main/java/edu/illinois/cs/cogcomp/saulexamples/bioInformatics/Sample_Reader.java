@@ -21,7 +21,11 @@ public class Sample_Reader {
             //  o.WeiID=columns[3];
             //  o.batch=columns[4];
             o.gender = columns[5];
-            o.age = columns[6];
+            if(columns[6].equals("NA")){
+                o.age = "0";
+            }else{
+                o.age = columns[6];
+            }
             o.ethnicity = columns[7];
             //  o.hidden=columns[8];
 
