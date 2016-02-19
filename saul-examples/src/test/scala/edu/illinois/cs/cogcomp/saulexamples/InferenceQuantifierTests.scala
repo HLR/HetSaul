@@ -1,0 +1,91 @@
+package edu.illinois.cs.cogcomp.saulexamples
+
+import edu.illinois.cs.cogcomp.lbjava.infer.OJalgoHook
+import edu.illinois.cs.cogcomp.saul.classifier.ConstrainedClassifier
+import edu.illinois.cs.cogcomp.saul.constraint.ConstraintTypeConversion._
+import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
+import edu.illinois.cs.cogcomp.saulexamples.setcover.{ City, ContainsStation, Neighborhood }
+import org.scalatest.{ Matchers, FlatSpec }
+
+import scala.collection.JavaConversions._
+
+class InferenceQuantifierTests extends FlatSpec with Matchers {
+
+  object SomeDM extends DataModel {
+
+    val cities = node[City]
+
+    val neighborhoods = node[Neighborhood]
+
+    val cityContainsNeighborhoods = edge(cities, neighborhoods)
+
+    cityContainsNeighborhoods.populateWith((c, n) => c == n.getParentCity)
+
+    /** definition of the constraints */
+    val containStation = new ContainsStation()
+
+    def neighborhoodContainsStation = { n: Neighborhood =>
+      containStation on n isTrue
+    }
+
+    val atLeastSomeNeighborsAreCoveredConstraint = ConstrainedClassifier.constraint[City] { x: City =>
+      x.getNeighborhoods._atleast(2) { n: Neighborhood => neighborhoodContainsStation(n) }
+    }
+
+    val atLeastSomeNeighborsAreCoveredConstraintUsingAtMost = ConstrainedClassifier.constraint[City] { x: City =>
+      !x.getNeighborhoods._atmost(2) { n: Neighborhood => neighborhoodContainsStation(n) }
+    }
+
+    val allNeighborsAreCoveredConstraint = ConstrainedClassifier.constraint[City] { x: City =>
+      x.getNeighborhoods._forall { n: Neighborhood => neighborhoodContainsStation(n) }
+    }
+
+    val singleNeighborsAreCoveredConstraint = ConstrainedClassifier.constraint[City] { x: City =>
+      x.getNeighborhoods._exists { n: Neighborhood => neighborhoodContainsStation(n) }
+    }
+  }
+
+  object AtLeastSomeNeighborhoods extends ConstrainedClassifier[Neighborhood, City](SomeDM, new ContainsStation()) {
+    override def subjectTo = SomeDM.atLeastSomeNeighborsAreCoveredConstraint
+    override val solver = new OJalgoHook
+  }
+
+  object AtLeastSomeNeighborhoodsUsingAtMost extends ConstrainedClassifier[Neighborhood, City](SomeDM, new ContainsStation()) {
+    override def subjectTo = SomeDM.atLeastSomeNeighborsAreCoveredConstraintUsingAtMost
+    override val solver = new OJalgoHook
+  }
+
+  object AllNeighborhoods extends ConstrainedClassifier[Neighborhood, City](SomeDM, new ContainsStation()) {
+    override def subjectTo = SomeDM.allNeighborsAreCoveredConstraint
+    override val solver = new OJalgoHook
+  }
+
+  object ASingleNeighborhood extends ConstrainedClassifier[Neighborhood, City](SomeDM, new ContainsStation()) {
+    override def subjectTo = SomeDM.singleNeighborsAreCoveredConstraint
+    override val solver = new OJalgoHook
+  }
+
+  val cityInstances = new City("../saul-examples/src/main/resources/SetCover/example.txt")
+  val neighborhoodInstances = cityInstances.getNeighborhoods.toList
+
+  SomeDM.cities populate List(cityInstances)
+  SomeDM.neighborhoods populate neighborhoodInstances
+  SomeDM.cityContainsNeighborhoods.populateWith(_ == _.getParentCity)
+
+  "Quantifier atleast " should " work " in {
+    cityInstances.getNeighborhoods.count(n => AtLeastSomeNeighborhoods(n) == "true") should be(2)
+  }
+
+  // negation of atmost(2) is equivalent to atleast(2)
+  "Quantifier atmost " should " work " in {
+    cityInstances.getNeighborhoods.count(n => AtLeastSomeNeighborhoodsUsingAtMost(n) == "true") should be(3)
+  }
+
+  "Quantifier forall " should " work " in {
+    cityInstances.getNeighborhoods.count(n => AllNeighborhoods(n) == "true") should be(9)
+  }
+
+  "Quantifier exists " should " work " in {
+    cityInstances.getNeighborhoods.count(n => ASingleNeighborhood(n) == "true") should be(1)
+  }
+}
