@@ -34,6 +34,7 @@ object EntityRelationDataModel extends DataModel {
   val word = property(tokens) {
     t: ConllRawToken => t.getWords(false).toList
   }
+
   val phrase = property(tokens) {
     t: ConllRawToken => t.phrase
   }
