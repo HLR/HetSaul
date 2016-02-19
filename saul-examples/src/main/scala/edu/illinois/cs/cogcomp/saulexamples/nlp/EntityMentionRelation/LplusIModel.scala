@@ -18,7 +18,7 @@ object LplusIModel extends App {
   //Test use the constraints
   println("Person Classifier Evaluation with training")
   println("=================================")
-  PerConstraintClassifier.test(tokens())
+  perConstraintClassifier.test(tokens())
   println("=================================")
   println("Organization Classifier Evaluation")
   println("=================================")
@@ -26,15 +26,15 @@ object LplusIModel extends App {
   println("=================================")
   println("Location Classifier Evaluation")
   println("=================================")
-  LocConstraintClassifier.test(tokens())
+  locConstraintClassifier.test(tokens())
   println("=================================")
   println("WorkFor Classifier Evaluation")
   println("=================================")
-  P_O_relationClassifier.test(pairs())
+  work_P_O_relationClassifier.test(pairs())
   println("=================================")
   println("LivesIn Classifier Evaluation")
   println("=================================")
-  LiveIn_P_O_relationClassifier.test(pairs())
+  liveIn_P_O_relationClassifier.test(pairs())
   println("=================================")
 
 }
