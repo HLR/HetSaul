@@ -1,7 +1,9 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation
-import scala.collection.JavaConversions._
+
 import edu.illinois.cs.cogcomp.saulexamples.EntityMentionRelation.datastruct.{ ConllRawToken, ConllRelation, ConllRawSentence }
 import edu.illinois.cs.cogcomp.saulexamples.EntityMentionRelation.reader.GazeteerReader
+
+import scala.collection.JavaConversions._
 
 object EntityRelationSensors {
   def cityGazetSensor: GazeteerReader = {

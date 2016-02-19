@@ -39,7 +39,7 @@ object EntityRelationDataModel extends DataModel {
   }
 
   val tokenSurface = property(tokens) {
-    t: ConllRawToken => t.getWords(false).toList.mkString(" ")
+    t: ConllRawToken => t.getWords(false).mkString(" ")
   }
 
   val containsSubPhraseMent = property(tokens) {
