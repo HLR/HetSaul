@@ -1,10 +1,10 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation
 
-import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.entityRelationClassifiers._
+import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.EntityRelationClassifiers._
 
 object PipelineTraining extends App {
   val it = 20
-  entityRelationDataModel.populateWithConll()
+  EntityRelationDataModel.populateWithConll()
   def independentPipe(it: Int): Unit = {
 
     println("Running CV " + it)

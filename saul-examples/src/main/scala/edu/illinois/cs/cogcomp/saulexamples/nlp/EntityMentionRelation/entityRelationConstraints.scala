@@ -3,12 +3,12 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation
 import edu.illinois.cs.cogcomp.saul.classifier.ConstrainedClassifier
 import edu.illinois.cs.cogcomp.saul.constraint.ConstraintTypeConversion._
 import edu.illinois.cs.cogcomp.saulexamples.EntityMentionRelation.datastruct.ConllRelation
-import entityRelationClassifiers._
-import entityRelationClassifiers.orgClassifier
+import EntityRelationClassifiers._
+import EntityRelationClassifiers.orgClassifier
 
 /** Created by haowu on 1/27/15.
   */
-object entityRelationConstraints {
+object EntityRelationConstraints {
 
   val Per_Org = ConstrainedClassifier.constraintOf[ConllRelation] {
     x: ConllRelation =>

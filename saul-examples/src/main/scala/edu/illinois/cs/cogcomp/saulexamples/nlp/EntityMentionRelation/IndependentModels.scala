@@ -1,10 +1,10 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation
 
-import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.entityRelationClassifiers._
+import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.EntityRelationClassifiers._
 
 object IndependentModels extends App {
 
-  entityRelationDataModel.populateWithConll()
+  EntityRelationDataModel.populateWithConll()
   val iter = 5
   println("Person Classifier Evaluation")
   println("=================================")

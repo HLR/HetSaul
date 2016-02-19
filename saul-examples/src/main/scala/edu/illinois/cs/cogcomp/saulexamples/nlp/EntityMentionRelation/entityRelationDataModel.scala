@@ -3,12 +3,12 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
 import edu.illinois.cs.cogcomp.saulexamples.EntityMentionRelation.datastruct.{ ConllRawSentence, ConllRawToken, ConllRelation }
 import edu.illinois.cs.cogcomp.saulexamples.EntityMentionRelation.reader.Conll04_ReaderNew
-import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.entityRelationClassifiers.{ locationClassifier, orgClassifier, personClassifier }
-import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.entityRelationSensors._
+import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.EntityRelationClassifiers.{ locationClassifier, orgClassifier, personClassifier }
+import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.EntityRelationSensors._
 
 import scala.collection.JavaConversions._
 
-object entityRelationDataModel extends DataModel {
+object EntityRelationDataModel extends DataModel {
 
   /** Nodes & Edges */
   val tokens = node[ConllRawToken]((x: ConllRawToken) => x.wordId + ":" + x.sentId)

@@ -3,7 +3,7 @@ import scala.collection.JavaConversions._
 import edu.illinois.cs.cogcomp.saulexamples.EntityMentionRelation.datastruct.{ ConllRawToken, ConllRelation, ConllRawSentence }
 import edu.illinois.cs.cogcomp.saulexamples.EntityMentionRelation.reader.GazeteerReader
 
-object entityRelationSensors {
+object EntityRelationSensors {
   def cityGazetSensor: GazeteerReader = {
     new GazeteerReader("./data/EntityMentionRelation/known_city.lst", "Gaz:City", true)
   }

@@ -2,8 +2,8 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation
 
 import edu.illinois.cs.cogcomp.saul.classifier.JointTrain
 import edu.illinois.cs.cogcomp.saulexamples.EntityMentionRelation.datastruct.ConllRelation
-import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.entityRelationClassifiers._
-import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.entityRelationConstraintClassifiers._
+import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.EntityRelationClassifiers._
+import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.EntityRelationConstraintClassifiers._
 
 /** Created by Parisa on 5/6/15.
   */
@@ -18,12 +18,12 @@ object JoinTraining {
       locationClassifier.learn(preTrainIteration)
     }
 
-    JointTrain.train[ConllRelation](entityRelationDataModel, PerConstraintClassifier :: orgConstraintClassifier :: LocConstraintClassifier :: P_O_relationClassifier :: LiveIn_P_O_relationClassifier :: Nil, jointTrainIteration)
+    JointTrain.train[ConllRelation](EntityRelationDataModel, PerConstraintClassifier :: orgConstraintClassifier :: LocConstraintClassifier :: P_O_relationClassifier :: LiveIn_P_O_relationClassifier :: Nil, jointTrainIteration)
 
   }
 
   def main(args: Array[String]) {
-    import entityRelationDataModel._
+    import EntityRelationDataModel._
     populateWithConll()
     val testRels = pairs.getTrainingInstances.toList
     val testTokens = tokens.getTrainingInstances.toList
