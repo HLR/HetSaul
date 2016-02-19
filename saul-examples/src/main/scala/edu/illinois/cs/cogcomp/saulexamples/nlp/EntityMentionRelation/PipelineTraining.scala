@@ -6,13 +6,13 @@ object PipelineTraining extends App {
   val it = 20
   EntityRelationDataModel.populateWithConll()
 
-    println("Running CV " + it)
+  println("Running CV " + it)
 
-    personClassifier.crossValidation(it)
-    orgClassifier.crossValidation(it)
-    locationClassifier.crossValidation(it)
+  personClassifier.crossValidation(it)
+  orgClassifier.crossValidation(it)
+  locationClassifier.crossValidation(it)
 
-    workForClassifierPipe.crossValidation(it)
-    LivesInClassifierPipe.crossValidation(it)
+  workForClassifierPipe.crossValidation(it)
+  LivesInClassifierPipe.crossValidation(it)
 
 }
