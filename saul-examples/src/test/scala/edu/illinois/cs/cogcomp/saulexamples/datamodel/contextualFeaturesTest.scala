@@ -1,7 +1,7 @@
 package edu.illinois.cs.cogcomp.saulexamples.datamodel
 
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
-import org.scalatest.{FlatSpec, Matchers}
+import org.scalatest.{ FlatSpec, Matchers }
 class contextualFeaturesTest extends FlatSpec with Matchers {
 
   class TestGraphC extends DataModel {

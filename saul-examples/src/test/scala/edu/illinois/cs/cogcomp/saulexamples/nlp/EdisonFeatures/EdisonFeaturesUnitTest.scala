@@ -24,11 +24,11 @@ class EdisonFeaturesUnitTest extends FlatSpec with Matchers {
   constituents.populate(constituentList)
 
   /** instantiating edges */
-  docToSen.populateWith(commonSensors.textAnnotationSentenceAlignment _)
+  docToSen.populateWith(CommonSensors.textAnnotationSentenceAlignment _)
 
-  senToCons.populateWith(commonSensors.sentenceConstituentAlignment _)
+  senToCons.populateWith(CommonSensors.sentenceConstituentAlignment _)
 
-  docToCons.populateWith(commonSensors.textAnnotationConstituentAlignment _)
+  docToCons.populateWith(CommonSensors.textAnnotationConstituentAlignment _)
 
   "querying on `Documents`, `TextAnnotation` and `Constituents`" should " work" in {
 

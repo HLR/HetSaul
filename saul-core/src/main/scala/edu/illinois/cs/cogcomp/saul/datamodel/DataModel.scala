@@ -1,8 +1,8 @@
 package edu.illinois.cs.cogcomp.saul.datamodel
 
-import edu.illinois.cs.cogcomp.lbjava.util.{ExceptionlessInputStream, ExceptionlessOutputStream}
-import edu.illinois.cs.cogcomp.saul.datamodel.edge.{AsymmetricEdge, Edge, Link, SymmetricEdge}
-import edu.illinois.cs.cogcomp.saul.datamodel.node.{JoinNode, Node, NodeProperty}
+import edu.illinois.cs.cogcomp.lbjava.util.{ ExceptionlessInputStream, ExceptionlessOutputStream }
+import edu.illinois.cs.cogcomp.saul.datamodel.edge.{ AsymmetricEdge, Edge, Link, SymmetricEdge }
+import edu.illinois.cs.cogcomp.saul.datamodel.node.{ JoinNode, Node, NodeProperty }
 import edu.illinois.cs.cogcomp.saul.datamodel.property.EvaluatedProperty
 import edu.illinois.cs.cogcomp.saul.datamodel.property.features.discrete._
 import edu.illinois.cs.cogcomp.saul.datamodel.property.features.real._
@@ -95,14 +95,11 @@ trait DataModel {
 
   case class PropertyDefinition(ty: PropertyType, name: Symbol)
 
-  /** list of hashmaps used inside properties for caching sensor values */
-  final val propertyCacheList = new ListBuffer[collection.mutable.HashMap[_, Any]]()
-
   class PropertyApply[T <: AnyRef] private[DataModel] (val node: Node[T], name: String, cache: Boolean, ordered: Boolean) { papply =>
 
     // TODO: make the hashmaps immutable
     val propertyCacheMap = collection.mutable.HashMap[T, Any]()
-    propertyCacheList += propertyCacheMap
+    node.propertyCacheList += propertyCacheMap
 
     def getOrUpdate(input: T, f: (T) => Any): Any = { propertyCacheMap.getOrElseUpdate(input, f(input)) }
 
@@ -215,10 +212,6 @@ trait DataModel {
   def property[T <: AnyRef](node: Node[T], name: String = "prop" + PROPERTIES.size, cache: Boolean = false, ordered: Boolean = false) =
     new PropertyApply[T](node, name, cache, ordered)
 
-  def clearPropertyCache[T](): Unit = {
-    propertyCacheList.foreach(_.asInstanceOf[collection.mutable.HashMap[T, Any]].clear)
-  }
-
   /** Methods for caching Data Model */
   var hasDerivedInstances = false
 
@@ -259,15 +252,13 @@ trait DataModel {
     val in = ExceptionlessInputStream.openCompressedStream(filePath)
 
     val nodesSize = in.readInt()
-    (0 until nodesSize).foreach {
-      _ =>
+    (0 until nodesSize).foreach { _ =>
         val nodeId = in.readInt()
         NODES(nodeId).loadDerivedInstances(in)
     }
 
     val edgesSize = in.readInt()
-    (0 until edgesSize).foreach {
-      _ =>
+    (0 until edgesSize).foreach { _ =>
         val edgeId = in.readInt()
         EDGES(edgeId).loadIndexWithIds(in)
     }

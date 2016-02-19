@@ -1,7 +1,7 @@
 package edu.illinois.cs.cogcomp.saul.classifier
 
-import edu.illinois.cs.cogcomp.lbjava.classify.{FeatureVector, Classifier, TestDiscrete}
-import edu.illinois.cs.cogcomp.lbjava.infer.{FirstOrderConstraint, InferenceManager}
+import edu.illinois.cs.cogcomp.lbjava.classify.{ FeatureVector, Classifier, TestDiscrete }
+import edu.illinois.cs.cogcomp.lbjava.infer.{ FirstOrderConstraint, InferenceManager }
 import edu.illinois.cs.cogcomp.lbjava.learn.Learner
 import edu.illinois.cs.cogcomp.lbjava.parse.Parser
 import edu.illinois.cs.cogcomp.saul.classifier.infer.InferenceCondition
@@ -13,7 +13,8 @@ import edu.illinois.cs.cogcomp.saul.parser.LBJIteratorParserScala
 import scala.reflect.ClassTag
 
 abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val edge: Edge[T, HEAD], val onClassifier: Learner)(
-  implicit val tType: ClassTag[T],
+  implicit
+  val tType: ClassTag[T],
   implicit val headType: ClassTag[HEAD]
 ) extends LBJClassifierEquivalent {
 
@@ -31,8 +32,7 @@ abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val edge: Edge
   def findHead(x: T): Option[HEAD] = {
     if (tType.equals(headType)) {
       Some(x.asInstanceOf[HEAD])
-    }
-    else {
+    } else {
       val lst = pathToHead match {
         case Some(e) => e.forward.neighborsOf(x)
         case _ => edge.forward.neighborsOf(x)
@@ -51,8 +51,7 @@ abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val edge: Edge
   def getCandidates(head: HEAD): Seq[T] = {
     if (tType.equals(headType)) {
       head.asInstanceOf[T] :: Nil
-    }
-    else {
+    } else {
       val l = pathToHead match {
         case Some(e) => e.backward.neighborsOf(head)
         case _ => edge.backward.neighborsOf(head)
@@ -60,8 +59,7 @@ abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val edge: Edge
 
       if (l.isEmpty) {
         throw new Exception("Failed to find part")
-      }
-      else {
+      } else {
         l.filter(filter(_, head)).toSeq
       }
     }
@@ -117,14 +115,12 @@ abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val edge: Edge
           crTokenTest.reset()
           learnAll(crTokenTest, remainingIteration - 1)
         }
-      }
-      else {
+      } else {
         this.onClassifier.learn(v)
         learnAll(crTokenTest, remainingIteration)
       }
     }
     learnAll(crTokenTest, iteration)
-
   }
 
   def test(): List[(String, (Double, Double, Double))] = {

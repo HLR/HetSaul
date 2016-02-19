@@ -4,7 +4,7 @@ import java.io.File
 import java.net.URL
 
 import edu.illinois.cs.cogcomp.core.io.IOUtils
-import edu.illinois.cs.cogcomp.lbjava.classify.{FeatureVector, TestDiscrete}
+import edu.illinois.cs.cogcomp.lbjava.classify.{ FeatureVector, TestDiscrete }
 import edu.illinois.cs.cogcomp.lbjava.learn.Learner.Parameters
 import edu.illinois.cs.cogcomp.lbjava.learn._
 import edu.illinois.cs.cogcomp.lbjava.parse.Parser
@@ -14,7 +14,7 @@ import edu.illinois.cs.cogcomp.saul.datamodel.node.Node
 import edu.illinois.cs.cogcomp.saul.datamodel.property.{ CombinedDiscreteProperty, Property }
 import edu.illinois.cs.cogcomp.saul.lbjrelated.LBJLearnerEquivalent
 import edu.illinois.cs.cogcomp.saul.parser.LBJIteratorParserScala
-import org.slf4j.{Logger, LoggerFactory}
+import org.slf4j.{ Logger, LoggerFactory }
 
 import scala.reflect.ClassTag
 
@@ -145,6 +145,9 @@ abstract class Learnable[T <: AnyRef](val node: Node[T], val parameters: Paramet
         classifier.readLexicon(lexiconResourcesUrls.get(0))
       else logger.error("Cannot find lexicon file {}", lexFile)
     }
+
+    setExtractor()
+    setLabeler()
   }
 
   def load(lcFile: URL, lexFile: URL): Unit = {
@@ -185,8 +188,7 @@ abstract class Learnable[T <: AnyRef](val node: Node[T], val parameters: Paramet
 
         if (remainingIteration > 1) {
           crTokenTest.reset()
-          //TODO We need a solution for this
-          //datamodel.clearPropertyCache()
+          node.clearPropertyCache()
           learnAll(crTokenTest, remainingIteration - 1)
         }
       } else {

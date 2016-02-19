@@ -1,10 +1,10 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation
 
 import edu.illinois.cs.cogcomp.lbjava.learn.SparseNetworkLearner
-import edu.illinois.cs.cogcomp.saul.classifier.{ConstrainedClassifier, Learnable}
+import edu.illinois.cs.cogcomp.saul.classifier.{ ConstrainedClassifier, Learnable }
 import edu.illinois.cs.cogcomp.saul.constraint.ConstraintTypeConversion._
 import edu.illinois.cs.cogcomp.saul.datamodel.property.Property
-import edu.illinois.cs.cogcomp.saulexamples.EntityMentionRelation.datastruct.{ConllRawToken, ConllRelation}
+import edu.illinois.cs.cogcomp.saulexamples.EntityMentionRelation.datastruct.{ ConllRawToken, ConllRelation }
 import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.RewriteBasicModel.entityRelationBasicDataModel._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.entityRelationConstraints._
 
@@ -27,7 +27,8 @@ object entityRelationClassifiers {
   object PersonClassifier extends Learnable[ConllRawToken](tokens) {
     def label: Property[ConllRawToken] = entityType is "Peop"
     override lazy val classifier = new SparseNetworkLearner()
-    override def feature = using(posWindow,
+    override def feature = using(
+      posWindow,
       word, phrase, containsSubPhraseMent, containsSubPhraseIng,
       containsInPersonList, wordLen, containsInCityList
     )
@@ -36,7 +37,8 @@ object entityRelationClassifiers {
   object LocClassifier extends Learnable[ConllRawToken](tokens) {
     def label: Property[ConllRawToken] = entityType is "Loc"
     override lazy val classifier = new SparseNetworkLearner()
-    override def feature = using(posWindow,
+    override def feature = using(
+      posWindow,
       word, phrase, containsSubPhraseMent, containsSubPhraseIng,
       containsInPersonList, wordLen, containsInCityList
     )

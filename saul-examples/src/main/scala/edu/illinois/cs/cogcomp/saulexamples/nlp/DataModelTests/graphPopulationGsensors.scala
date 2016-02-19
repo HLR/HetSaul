@@ -1,8 +1,9 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.DataModelTests
 
+import edu.illinois.cs.cogcomp.core.datastructures.textannotation.TextAnnotation
 import edu.illinois.cs.cogcomp.saulexamples.data.DocumentReader
 import edu.illinois.cs.cogcomp.saulexamples.nlp.DataModelTests.modelWithSensors._
-import edu.illinois.cs.cogcomp.saulexamples.nlp.commonSensors
+import edu.illinois.cs.cogcomp.saulexamples.nlp.CommonSensors
 
 import scala.collection.JavaConversions._
 
@@ -18,8 +19,8 @@ object graphPopulationGsensors {
     document.populate(taList)
 
     // The below line uses a generator sensor
-    modelWithSensors.docTosen populateWith (CommonSensors.getSentences(_))
-    modelWithSensors.docTosen populateWith ((x: TextAnnotation) => CommonSensors.getSentences(x).headOption)
+    modelWithSensors.docToSen populateWith (CommonSensors.getSentences(_))
+    modelWithSensors.docToSen populateWith ((x: TextAnnotation) => CommonSensors.getSentences(x).headOption)
     //TODO: make the below line work, to just use the edge name and depending on the type of sensor a generator or matching edge will be called.
     //EdisonDataModel.populateWith(EdisonDataModel.DocTosen)
 

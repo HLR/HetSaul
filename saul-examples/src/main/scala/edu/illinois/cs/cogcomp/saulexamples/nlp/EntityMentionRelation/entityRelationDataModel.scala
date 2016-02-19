@@ -1,11 +1,11 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation
 
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
-import edu.illinois.cs.cogcomp.saulexamples.EntityMentionRelation.datastruct.{ConllRawSentence, ConllRawToken, ConllRelation}
+import edu.illinois.cs.cogcomp.saulexamples.EntityMentionRelation.datastruct.{ ConllRawSentence, ConllRawToken, ConllRelation }
 import edu.illinois.cs.cogcomp.saulexamples.EntityMentionRelation.reader.Conll04_ReaderNew
 
 import scala.collection.JavaConversions._
-import scala.collection.mutable.{Map => MutableMap}
+import scala.collection.mutable.{ Map => MutableMap }
 import scala.util.Random
 
 object entityRelationDataModel extends DataModel {
@@ -24,7 +24,7 @@ object entityRelationDataModel extends DataModel {
   //('sid === 'sid, 'e2id === 'wordid)//TODO check the runtime problem with the new edge implementation
   val tokenContainsInSentence = edge(tokens, pairedRelations, 'sid) //('sid === 'sid)//TODO check the runtime problem with the new edge implementation
 
-  val tokenToToken = edge(tokens,tokens,'SenToTok)
+  val tokenToToken = edge(tokens, tokens, 'SenToTok)
 
   /** Properties */
   val pos = property(tokens, "pos") {
