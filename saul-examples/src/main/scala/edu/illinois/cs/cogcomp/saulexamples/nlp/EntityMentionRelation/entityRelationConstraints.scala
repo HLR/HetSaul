@@ -22,7 +22,7 @@ object EntityRelationConstraints {
       }
   }
 
-  val LiveInConstrint = ConstrainedClassifier.constraintOf[ConllRelation] {
+  val LiveInConstraint = ConstrainedClassifier.constraintOf[ConllRelation] {
     x: ConllRelation =>
       {
         ((livesInClassifier on x) isTrue) ==> (
