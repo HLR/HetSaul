@@ -2,6 +2,7 @@ package edu.illinois.cs.cogcomp.saul.datamodel.node
 
 import edu.illinois.cs.cogcomp.lbjava.classify.FeatureVector
 import edu.illinois.cs.cogcomp.lbjava.util.{ ExceptionlessInputStream, ExceptionlessOutputStream }
+import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
 import edu.illinois.cs.cogcomp.saul.datamodel.property.Property
 import edu.illinois.cs.cogcomp.saul.datamodel.property.features.discrete.DiscreteProperty
 import edu.illinois.cs.cogcomp.saul.datamodel.edge.Edge
@@ -15,11 +16,15 @@ trait NodeProperty[T <: AnyRef] extends Property[T] {
 }
 
 /** Representation of an instance inside the Node.
+  *
   * @param t original instance
   * @param keyFunc key function used to extract the key
   * @tparam T base type of the instances
   */
-class NodeInstance[T](val t: T, val keyFunc: T => Any) {
+class NodeInstance[T](
+  val t: T,
+  val keyFunc: T => Any
+) {
   val key: Any = keyFunc(t)
   def apply = t
 
@@ -31,7 +36,11 @@ class NodeInstance[T](val t: T, val keyFunc: T => Any) {
 }
 
 /** A Node E is an instances of base types T */
-class Node[T <: AnyRef](val keyFunc: T => Any = (x: T) => x, val tag: ClassTag[T]) {
+class Node[T <: AnyRef](
+  val keyFunc: T => Any = (x: T) => x,
+  val tag: ClassTag[T],
+  val dataModel: DataModel
+) {
 
   type NT = NodeInstance[T]
 
@@ -58,7 +67,7 @@ class Node[T <: AnyRef](val keyFunc: T => Any = (x: T) => x, val tag: ClassTag[T
   val reverseOrderingMap = MutableMap[NT, Int]()
 
   def filterNode(property: DiscreteProperty[T], value: String): Node[T] = {
-    val node = new Node[T](this.keyFunc, this.tag)
+    val node = new Node[T](this.keyFunc, this.tag, dataModel)
     node populate collection.filter {
       nt => property.sensor(nt.apply) == value
     }.toSeq.map(_.apply)
@@ -277,7 +286,7 @@ class Node[T <: AnyRef](val keyFunc: T => Any = (x: T) => x, val tag: ClassTag[T
   }
 }
 
-class JoinNode[A <: AnyRef, B <: AnyRef](val na: Node[A], val nb: Node[B], matcher: (A, B) => Boolean, tag: ClassTag[(A, B)]) extends Node[(A, B)](p => na.keyFunc(p._1) -> nb.keyFunc(p._2), tag) {
+class JoinNode[A <: AnyRef, B <: AnyRef](val na: Node[A], val nb: Node[B], matcher: (A, B) => Boolean, tag: ClassTag[(A, B)]) extends Node[(A, B)](p => na.keyFunc(p._1) -> nb.keyFunc(p._2), tag, na.dataModel) {
 
   def addFromChild[T <: AnyRef](node: Node[T], t: T, train: Boolean = true, populateEdge: Boolean = true) = {
     node match {

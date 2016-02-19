@@ -185,8 +185,7 @@ abstract class Learnable[T <: AnyRef](val node: Node[T], val parameters: Paramet
 
         if (remainingIteration > 1) {
           crTokenTest.reset()
-          //TODO We need a solution for this
-          //datamodel.clearPropertyCache()
+          node.dataModel.clearPropertyCache()
           learnAll(crTokenTest, remainingIteration - 1)
         }
       } else {

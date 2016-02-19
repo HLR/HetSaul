@@ -53,7 +53,7 @@ trait DataModel {
   def node[T <: AnyRef](implicit tag: ClassTag[T]): Node[T] = node((x: T) => x)
 
   def node[T <: AnyRef](keyFunc: T => Any)(implicit tag: ClassTag[T]): Node[T] = {
-    val n = new Node[T](keyFunc, tag)
+    val n = new Node[T](keyFunc, tag, this)
     NODES += n
     n
   }
