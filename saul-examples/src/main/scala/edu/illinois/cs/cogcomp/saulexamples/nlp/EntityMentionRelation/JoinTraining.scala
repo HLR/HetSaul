@@ -5,8 +5,6 @@ import edu.illinois.cs.cogcomp.saulexamples.EntityMentionRelation.datastruct.Con
 import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.EntityRelationClassifiers._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.EntityRelationConstrainedClassifiers._
 
-/** Created by Parisa on 5/6/15.
-  */
 object JoinTraining {
 
   def trainJoint(preTrainIteration: Int, jointTrainIteration: Int): Unit = {
@@ -56,5 +54,4 @@ object JoinTraining {
     JointTrain.testClassifiers(LiveIn_P_O_relationClassifier.classifier, (relationType is "Live_In").classifier, testRels)
 
   }
-
 }

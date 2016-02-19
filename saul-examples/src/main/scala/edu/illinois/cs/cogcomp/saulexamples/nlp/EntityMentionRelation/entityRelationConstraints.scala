@@ -6,8 +6,6 @@ import edu.illinois.cs.cogcomp.saulexamples.EntityMentionRelation.datastruct.Con
 import EntityRelationClassifiers._
 import EntityRelationClassifiers.orgClassifier
 
-/** Created by haowu on 1/27/15.
-  */
 object EntityRelationConstraints {
 
   val Per_Org = ConstrainedClassifier.constraintOf[ConllRelation] {
