@@ -3,6 +3,7 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.RewriteBa
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
 import edu.illinois.cs.cogcomp.saulexamples.EntityMentionRelation.datastruct.{ ConllRawSentence, ConllRawToken, ConllRelation }
 import edu.illinois.cs.cogcomp.saulexamples.EntityMentionRelation.reader.Conll04_ReaderNew
+import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.RewriteBasicModel.entityRelationClassifiers.{locationClassifier, personClassifier, orgClassifier}
 import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.entityRelationSensors
 import entityRelationSensors._
 import scala.collection.JavaConversions._
@@ -14,11 +15,11 @@ object entityRelationBasicDataModel extends DataModel {
   val sentences = node[ConllRawSentence] ((x:ConllRawSentence) => x.sentId)
   val pairs = node[ConllRelation] ((x: ConllRelation)=> x.wordId1+":"+x.wordId2+":"+x.sentId)
 
-  val sentenceToToken = edge(sentences,tokens,'SenToTok)
-  val sentencesToPairs = edge (sentences,pairs,'SenToPair)
-  val pairTo1stArg = edge(pairs, tokens,'PairToA1)
-  val pairTo2ndArg = edge(pairs, tokens,'PairToA2)
-  val tokenToPair = edge(tokens, pairs,'TokToPair)
+  val sentenceToToken = edge(sentences,tokens)
+  val sentencesToPairs = edge (sentences,pairs)
+  val pairTo1stArg = edge(pairs, tokens)
+  val pairTo2ndArg = edge(pairs, tokens)
+  val tokenToPair = edge(tokens, pairs)
 
   sentenceToToken.addSensor(sentenceToTokens_GS _)
   sentencesToPairs.addSensor(sentenceToRelation_GS _)
@@ -87,6 +88,17 @@ object entityRelationBasicDataModel extends DataModel {
           case (Some(t), idx) => s"right-$idx-pos-${t.POS} "
           case (None, idx) => s"right-$idx-pos-EMPTY} "
         }
+  }
+
+  val ePipe = property[ConllRelation](pairs) {
+    rel: ConllRelation =>
+      "e1-org: " + orgClassifier(rel.e1) ::
+        "e1-per: " + personClassifier(rel.e1) ::
+        "e1-loc: " + locationClassifier(rel.e1) ::
+        "e2-org: " + orgClassifier(rel.e1) ::
+        "e2-per: " + personClassifier(rel.e1) ::
+        "e2-loc: " + locationClassifier(rel.e1) ::
+        Nil
   }
 
   /** Labeler Properties  */
