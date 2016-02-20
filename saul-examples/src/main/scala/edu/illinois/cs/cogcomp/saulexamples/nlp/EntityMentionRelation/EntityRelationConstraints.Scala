@@ -8,21 +8,14 @@ import EntityRelationClassifiers.orgClassifier
 
 object EntityRelationConstraints {
 
-  val Per_Org = ConstrainedClassifier.constraint[ConllRelation] {
+  val relationArgumentConstraints = ConstrainedClassifier.constraint[ConllRelation] {
     x: ConllRelation =>
       {
-        (((worksForClassifier on x) isTrue) ==>
-          (((orgClassifier on x.e2) isTrue) and
-            ((personClassifier on x.e1) isTrue))) and (
-              ((livesInClassifier on x) isTrue) ==> (
-                ((personClassifier on x.e1) isTrue)
-                and ((locationClassifier on x.e2) isTrue)
-              )
-            ) and ((worksForClassifier on x isTrue) ==> (livesInClassifier on x isNotTrue)) and ((livesInClassifier on x isTrue) ==> (worksForClassifier on x isNotTrue))
+        workForConstraint(x) and liveInConstraint(x) and worksForImpliesNotLivesIn(x)
       }
   }
 
-  val LiveInConstraint = ConstrainedClassifier.constraint[ConllRelation] {
+  val liveInConstraint = ConstrainedClassifier.constraint[ConllRelation] {
     x: ConllRelation =>
       {
         ((livesInClassifier on x) isTrue) ==> (
@@ -32,19 +25,23 @@ object EntityRelationConstraints {
       }
   }
 
-  val PersonWorkFor = ConstrainedClassifier.constraint[ConllRelation] {
+  val workForConstraint = ConstrainedClassifier.constraint[ConllRelation] {
     x: ConllRelation =>
       {
         ((worksForClassifier on x) isTrue) ==>
-          ((personClassifier on x.e1) isTrue)
+          (((orgClassifier on x.e2) isTrue) and
+            ((personClassifier on x.e1) isTrue))
       }
   }
 
-//  val worksForImpliesNotLivesIn = ConstrainedClassifier.constraintOf[ConllRelation]
-//  {
-//   x: ConllRelation => (worksForClassifier on x isTrue) ==> (livesInClassifier on x isNotTrue)
-//  }
-//
+  val worksForImpliesNotLivesIn = ConstrainedClassifier.constraint[ConllRelation]
+  {
+   x: ConllRelation => 
+     ((worksForClassifier on x isTrue) ==> (livesInClassifier on x isNotTrue)) and 
+     ((livesInClassifier on x isTrue) ==> (worksForClassifier on x isNotTrue))
+
+  }
+
   //TODO these commented out codes probably should be used in new examples
   //  val Per_Org=ConstraintClassifier.constraintOf[ConllRelation]  {
   //    x:ConllRelation=>{
@@ -57,7 +54,7 @@ object EntityRelationConstraints {
   //    x: ConllRelation => {
   //      ((locatedInClassifier on x) isTrue) ==> (
   //        ((PersonClassifier on x) is "Loc") ||| ((orgClassifier on x) is "Org")
-  //          &&& ((LocClassifier on x) sis "Loc"))
+  //          &&& ((LocClassifier on x) is "Loc"))
   //    }
   //  }
   //  val Org_basedConstrint = ConstraintClassifier.constraintOf[ConllRelation] {
