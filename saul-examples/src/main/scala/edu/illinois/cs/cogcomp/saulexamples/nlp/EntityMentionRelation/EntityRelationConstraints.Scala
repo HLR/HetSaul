@@ -34,11 +34,10 @@ object EntityRelationConstraints {
       }
   }
 
-  val worksForImpliesNotLivesIn = ConstrainedClassifier.constraint[ConllRelation]
-  {
-   x: ConllRelation => 
-     ((worksForClassifier on x isTrue) ==> (livesInClassifier on x isNotTrue)) and 
-     ((livesInClassifier on x isTrue) ==> (worksForClassifier on x isNotTrue))
+  val worksForImpliesNotLivesIn = ConstrainedClassifier.constraint[ConllRelation] {
+    x: ConllRelation =>
+      ((worksForClassifier on x isTrue) ==> (livesInClassifier on x isNotTrue)) and
+        ((livesInClassifier on x isTrue) ==> (worksForClassifier on x isNotTrue))
 
   }
 

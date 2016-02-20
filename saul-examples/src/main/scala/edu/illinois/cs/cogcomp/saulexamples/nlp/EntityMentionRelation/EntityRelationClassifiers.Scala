@@ -43,7 +43,7 @@ object EntityRelationClassifiers {
       relFeature, relPos, ePipe
     )
   }
-  object LivesInClassifierPipe extends Learnable[ConllRelation](EntityRelationDataModel) {
+  object livesInClassifierPipe extends Learnable[ConllRelation](EntityRelationDataModel) {
     override def label: Property[ConllRelation] = relationType is "Live_In"
     override def feature = using(relFeature, relPos, ePipe)
     override lazy val classifier = new SparseNetworkLearner()

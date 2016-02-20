@@ -13,6 +13,6 @@ object PipelineTraining extends App {
   locationClassifier.crossValidation(it)
 
   workForClassifierPipe.crossValidation(it)
-  LivesInClassifierPipe.crossValidation(it)
+  livesInClassifierPipe.crossValidation(it)
 
 }
