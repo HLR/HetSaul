@@ -83,12 +83,13 @@
     <span class="sr-only">100% Complete</span>
   </div>
 </div>
-
+<input type="file" id="selectedFile" style="display: none;"/>
             <div class="panel-body" style="float : left ;width: 50%">
+            <div class="alert alert-success" id="nodevalue" role="showvalue"></div>
                 <ul class="nav nav-tabs" id="fileList">
                     <li class="active" id="fileName1"><a href="#">test.scala</a></li>
                 <button class="btn btn-danger bb" id="deleteFile" style="float:right;"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
-                <button class="btn btn-primary bb" id="uploadFile" style="float:right;"><span class="glyphicon glyphicon-floppy-open" aria-hidden="true"></span></button>
+                <button class="btn btn-primary bb" id="uploadFile" style="float:right;" onclick="document.getElementById('selectedFile').click();"><span class="glyphicon glyphicon-floppy-open" aria-hidden="true"></span></button>
                 
                 <div class="dropdown bb" style="float:right;">
                     <button class="btn btn-success dropdown-toggle bb" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="plusFile" ><span class="glyphicon glyphicon-plus"></span><span class="caret"></span></button>
@@ -118,7 +119,7 @@
                     <li class="tab2"><a href="tab2">Populated Data Model</a></li>
                     <li class="tab3"><a href="tab3">Running Result</a></li>
                 </ul>
-                <div class="alert alert-success" id="nodevalue" role="showvalue"></div>
+                
                 <div class="tab-content">
                     <div id="tab1" class="tab active">
                         <div class="panel panel-default">
