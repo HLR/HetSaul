@@ -52,7 +52,7 @@ object liApp extends App {
   breakable {
     predictedViews.zipWithIndex.foreach(
       pav => {
-        CoNLLFormatWriter.printPredicateArgumentView(pav._1, predWriter)
+        writer.printPredicateArgumentView(pav._1, predWriter)
         if (pav._2 == 593) {
           println(pav._2)
           break()
@@ -64,14 +64,13 @@ object liApp extends App {
     goldViews.zipWithIndex.foreach(
       pav =>
         {
-          CoNLLFormatWriter.printPredicateArgumentView(pav._1, goldWriter)
+          writer.printPredicateArgumentView(pav._1, goldWriter)
           println(pav._2)
           if (pav._2 == 593) {
             println(pav._2)
             break()
           }
         }
-
     )
   }
 
