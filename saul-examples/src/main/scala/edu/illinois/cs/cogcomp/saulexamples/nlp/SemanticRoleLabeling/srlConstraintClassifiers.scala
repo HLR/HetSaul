@@ -12,6 +12,7 @@ object srlConstraintClassifiers {
   import liApp._
   object argTypeConstraintClassifier extends ConstrainedClassifier[Relation, TextAnnotation](srlGraphs, argumentTypeLearner) {
     def subjectTo = r_and_c_args
+    override val pathToHead = Some(-srlGraphs.sentencesToRelations)
   }
 
   object arg_Is_TypeConstraintClassifier extends ConstrainedClassifier[Relation, Relation](srlGraphs, argumentTypeLearner) {
