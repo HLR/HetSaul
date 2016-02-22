@@ -4,27 +4,29 @@ import edu.illinois.cs.cogcomp.saul.classifier.JointTrainSparseNetwork
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifiers.argumentTypeLearner
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlConstraintClassifiers.argTypeConstraintClassifier
 import org.slf4j.{Logger, LoggerFactory}
-/** Created by Parisa on 12/27/15.
-  */
+import ModelConfigs._
+
 object liApp extends App {
-
-  val logger: Logger = LoggerFactory.getLogger(this.getClass)
-  private val rootModelDir: String = "../models/models_aTr/"
-  val aTr_lc = rootModelDir + "edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifiers.argumentTypeLearner$.lc"
-  val aTr_lex = rootModelDir + "edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifiers.argumentTypeLearner$.lex"
-  val aTr_pred = rootModelDir + "classifier-predictions.txt"
-
+  val pipeline = true
   val useGoldPredicate = true
   val useGoldBoundaries = true
+
+  val logger: Logger = LoggerFactory.getLogger(this.getClass)
+
+
   val srlGraphs = populatemultiGraphwithSRLData(false, useGoldPredicate, useGoldBoundaries)
+
   logger.info("all relations number after population:" + srlGraphs.relations().size)
   logger.info("all sentences number after population:" + srlGraphs.sentences().size)
   logger.info("all predicates number after population:" + srlGraphs.predicates().size)
   logger.info("all arguments number after population:" + srlGraphs.arguments().size)
   logger.info("all tokens number after population:" + srlGraphs.tokens().size)
 
-  //Load independently trained models
 
+  if (pipeline){
+
+
+  }
   //  arg_Is_TypeConstraintClassifier.test()
 
   // print("argument identifier L+I model (join with classifciation) test results:")
@@ -37,7 +39,7 @@ object liApp extends App {
 
   //print("argument classifier L+I model considering background knowledge  test results:")
 
-  argumentTypeLearner.load(aTr_lc, aTr_lex)
+  argumentTypeLearner.load(argumentTypeLearner_lc, argumentTypeLearner_lex)
 
   // argumentTypeLearner.test()
 //  import util.control.Breaks._
@@ -85,7 +87,7 @@ object liApp extends App {
     argumentTypeLearner.save()
 
     logger.info("join prediction:... ")
-    argTypeConstraintClassifier.test(srlGraphs.relations.getTestingInstances, aTr_pred, 100, exclude = "candidate") //(aTr_pred, 100)
+    argTypeConstraintClassifier.test(srlGraphs.relations.getTestingInstances, (aModelDir+argumentTypeLearner_pred), 100, exclude = "candidate") //(aTr_pred, 100)
 
   //argumentTypeLearner.test(exclude = "candidate")
   // logger.info("finished!")
@@ -93,5 +95,6 @@ object liApp extends App {
   //TODO add more variations with combination of constraints
 //  predWriter.close()
 //  goldWriter.close()
+
 }
 
