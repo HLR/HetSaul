@@ -31,6 +31,8 @@ abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val dm: DataMo
 
   val pathToHead: Option[Edge[T, HEAD]] = None
 
+  def apply(example: AnyRef): String = classifier.discreteValue(example: AnyRef)
+
   def findHead(x: T): Option[HEAD] = {
 
     if (tType.equals(headType)) {

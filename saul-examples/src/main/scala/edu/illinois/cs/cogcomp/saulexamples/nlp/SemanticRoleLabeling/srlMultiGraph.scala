@@ -1,14 +1,15 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling
 
 import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
-import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{ Constituent, Relation, TextAnnotation }
+import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{Constituent, Relation, TextAnnotation}
 import edu.illinois.cs.cogcomp.core.datastructures.trees.Tree
 import edu.illinois.cs.cogcomp.edison.features.factory._
 import edu.illinois.cs.cogcomp.nlp.corpusreaders.CoNLLColumnFormatReader
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
 import edu.illinois.cs.cogcomp.saulexamples.data.SRLFrameManager
-import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifiers._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLSensors._
+import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifiers._
+import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlConstraintClassifiers._
 
 import scala.collection.JavaConversions._
 
@@ -212,7 +213,7 @@ class srlMultiGraph(parseViewName: String = null, frameManager: SRLFrameManager 
       argumentTypeLearner(x)
   }
 
-  val typeArgumentPipePrediction = property(relations, "typeArgumentPipePrediction") {
+  val typeArgumentPipePrediction = property(relations) {
     x: Relation =>
       val a: String = predicateClassifier(x.getSource) match {
         case "false" => "false"
@@ -223,5 +224,21 @@ class srlMultiGraph(parseViewName: String = null, frameManager: SRLFrameManager 
         case _ => argumentTypeLearner(x)
       }
       b
+  }
+  val typeArgumentPipeGivenGoldPredicate = property(relations) {
+    x: Relation =>
+      val a: String = argumentXuIdentifierGivenApredicate(x) match {
+        case "false" => "candidate"
+        case _ => argumentTypeLearner(x)
+      }
+     a
+  }
+  val typeArgumentPipeGivenGoldPredicateConstrained = property(relations) {
+    x: Relation =>
+      val a: String = argumentXuIdentifierGivenApredicate(x) match {
+        case "false" => "candidate"
+        case _ => argTypeConstraintClassifier(x)
+      }
+      a
   }
 }

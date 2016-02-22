@@ -49,6 +49,7 @@ object pipelineAppMultiGraph extends App {
   println("rel:" + relations().size)
   print("arg" + arguments().size)
   print("tok" + srlGraphs.tokens().size)
+
   if (trainArgType && useGoldArgBoundaries && useGoldPredicate) {
     argumentTypeLearner.setModelDir("models_aTr")
     argumentTypeLearner.learn(100, relations.getTrainingInstances)
