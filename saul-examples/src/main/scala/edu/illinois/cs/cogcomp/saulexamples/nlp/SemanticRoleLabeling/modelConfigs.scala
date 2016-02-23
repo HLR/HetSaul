@@ -5,12 +5,13 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling
  */
 object ModelConfigs {
 
-   val aModelDir: String = "../models/models_aTr/"
-   val bModelDir: String = "../models/models_bTr/"
-   val cModelDir: String = "../models/models_cTr/"
-   val dModelDir: String = "../models/models_dTr/"
-   val eModelDir: String = "../models/models_eTr/"
-   val fModelDir: String = "../models/models_fTr/"
+   val aModelDir: String = "./models/models_aTr/"
+   val jModelDir: String = "./models/joinModels_aTr/"
+   val bModelDir: String = "./models/models_bTr/"
+   val cModelDir: String = "./models/models_cTr/"
+   val dModelDir: String = "./models/models_dTr/"
+   val eModelDir: String = "./models/models_eTr/"
+   val fModelDir: String = "./models/models_fTr/"
 
   val argumentTypeLearner_lc = "edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifiers.argumentTypeLearner$.lc"
   val argumentTypeLearner_lex ="edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifiers.argumentTypeLearner$.lex"

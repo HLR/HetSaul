@@ -8,35 +8,6 @@ import scala.reflect.ClassTag
   */
 object JointTrainSparseNetwork {
 
-  /* def testClassifiers(cls : Classifier ,oracle : Classifier, ds : List[AnyRef]) : Unit = {
-
-      val results = ds.map( {
-        x =>
-          //        println(x)
-          val pri = cls.discreteValue(x)
-          val truth =  oracle.discreteValue(x)
-          //        println((pri,truth))
-
-
-
-          (pri,truth)
-      })
-
-      val tp = results.count({case (x,y) => x == y && ( x == "true" ) }) * 1.0
-      val fp = results.count({case (x,y) => x != y && ( x == "true" ) }) * 1.0
-
-      val tn = results.count({case (x,y) => x == y && ( x == "false" ) }) * 1.0
-      val fn = results.count({case (x,y) => x != y && ( x == "false" ) }) * 1.0
-
-
-      println(s"tp: ${tp} fp: ${fp} tn: ${tn} fn: ${fn} ")
-      println( s" accuracy    ${(tp+tn) / (results.size) } " )
-      println( s" precision   ${(tp) / (tp+fp) } " )
-      println( s" recall      ${(tp) / (tp+fn) } " )
-      println( s" f1          ${(2.0*tp) / (  2*tp+fp+fn ) } " )
-
-    }*/
-
   def apply[HEAD <: AnyRef](
     dm: DataModel,
     cls: List[ConstrainedClassifier[_, HEAD]]

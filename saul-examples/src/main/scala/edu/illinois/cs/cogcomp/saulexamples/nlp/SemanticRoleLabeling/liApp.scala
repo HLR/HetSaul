@@ -1,14 +1,13 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling
 
-import edu.illinois.cs.cogcomp.saul.classifier.JointTrainSparseNetwork
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.ModelConfigs._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifiers._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlConstraintClassifiers.argTypeConstraintClassifier
 import org.slf4j.{Logger, LoggerFactory}
 object liApp extends App {
   //train parameters
-  val pipelineTrain=true
-  val joinTrain= false
+  val pipelineTrain= false
+  val joinTrain= true
   //test parameters
   val pipeline= false
   val pipelineInTestA = false
@@ -18,7 +17,7 @@ object liApp extends App {
 
   //population parameters
   val useGoldPredicate = true
-  val useGoldBoundaries = false
+  val useGoldBoundaries = true
 
   val logger: Logger = LoggerFactory.getLogger(this.getClass)
 
@@ -81,47 +80,50 @@ object liApp extends App {
 
   if (joinTrain) {
 
-    argumentTypeLearner.load(argumentTypeLearner_lc, argumentTypeLearner_lex)
-    // argumentTypeLearner.test()
-    //  import util.control.Breaks._
-    //  val goldOutFile = "srl.gold";
-    //  val goldWriter = new PrintWriter(new File(goldOutFile));
-    //  val predOutFile = "srl.predicted";
-    //  val predWriter = new PrintWriter(new File(predOutFile));
-    //  val writer = new ColumnFormatWriter();
-    //
-    //  val predictedViews = predArgViewGenerator.toPredArgList(srlGraphs, typeArgumentPrediction)
-    //  val goldViews = predArgViewGenerator.toPredArgList(srlGraphs, argumentLabelGold)
-    //  breakable {
-    //    predictedViews.zipWithIndex.foreach(
-    //      pav => {
-    //        writer.printPredicateArgumentView(pav._1, predWriter)
-    //        if (pav._2 == 593) {
-    //          println(pav._2)
-    //          break()
-    //        }
-    //      }
-    //    )
-    //  }
-    //  breakable {
-    //    goldViews.zipWithIndex.foreach(
-    //      pav =>
-    //        {
-    //          writer.printPredicateArgumentView(pav._1, goldWriter)
-    //          println(pav._2)
-    //          if (pav._2 == 593) {
-    //            println(pav._2)
-    //            break()
-    //          }
-    //        }
-    //    )
-    //  }
+    //argumentTypeLearner.load(aModelDir+argumentTypeLearner_lc, aModelDir+argumentTypeLearner_lex)
+//    argumentTypeLearner.test()
+//      import util.control.Breaks._
+//      val goldOutFile = "srl.gold";
+//      val goldWriter = new PrintWriter(new File(goldOutFile));
+//      val predOutFile = "srl.predicted";
+//      val predWriter = new PrintWriter(new File(predOutFile));
+//      val writer = new ColumnFormatWriter();
+//
+//      val predictedViews = predArgViewGenerator.toPredArgList(srlGraphs, typeArgumentPrediction)
+//      val goldViews = predArgViewGenerator.toPredArgList(srlGraphs, argumentLabelGold)
+//      breakable {
+//        predictedViews.zipWithIndex.foreach(
+//          pav => {
+//            writer.printPredicateArgumentView(pav._1, predWriter)
+//            if (pav._2 == 593) {
+//              println(pav._2)
+//              break()
+//            }
+//          }
+//        )
+//      }
+//      breakable {
+//        goldViews.zipWithIndex.foreach(
+//          pav =>
+//            {
+//              writer.printPredicateArgumentView(pav._1, goldWriter)
+//              println(pav._2)
+//              if (pav._2 == 593) {
+//                println(pav._2)
+//                break()
+//              }
+//            }
+//        )
+//      }
     logger.info("Join train:... ")
-    JointTrainSparseNetwork(srlGraphs, argTypeConstraintClassifier :: Nil, 3)
-    argumentTypeLearner.setModelDir("joinModels_aTr")
+   // JointTrainSparseNetwork(srlGraphs, argTypeConstraintClassifier :: Nil, 3)
+    argumentTypeLearner.setModelDir("models/joinModels_aTr/")
+    argumentTypeLearner.learn()
     argumentTypeLearner.save()
+    argumentTypeLearner.load(jModelDir+argumentTypeLearner_lc, jModelDir+argumentTypeLearner_lex)
+    argumentTypeLearner.test()
     logger.info("join prediction:... ")
-    argTypeConstraintClassifier.test(srlGraphs.relations.getTestingInstances, (aModelDir + argumentTypeLearner_pred), 100, exclude = "candidate") //(aTr_pred, 100)
+   // argTypeConstraintClassifier.test(srlGraphs.relations.getTestingInstances, (aModelDir + argumentTypeLearner_pred), 100, exclude = "candidate") //(aTr_pred, 100)
     //  predWriter.close()
     //  goldWriter.close()
   }
@@ -149,6 +151,5 @@ if (pipelineTrain)
   argumentTypeLearner.test(exclude = "candidate")
   argumentTypeLearner.save()
   argumentTypeLearner.test(prediction = typeArgumentPipeGivenGoldPredicate, groundTruth = argumentLabelGold, exclude= "candidate")//grounexclude = "candidate")
-
 }
 }
