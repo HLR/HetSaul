@@ -3,7 +3,7 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
 import edu.illinois.cs.cogcomp.saulexamples.EntityMentionRelation.datastruct.{ ConllRawSentence, ConllRawToken, ConllRelation }
 import edu.illinois.cs.cogcomp.saulexamples.EntityMentionRelation.reader.Conll04_ReaderNew
-import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.EntityRelationClassifiers.{ locationClassifier, orgClassifier, personClassifier }
+import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.EntityRelationClassifiers._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.EntityRelationSensors._
 
 import scala.collection.JavaConversions._
@@ -21,10 +21,10 @@ object EntityRelationDataModel extends DataModel {
   val pairTo2ndArg = edge(pairs, tokens)
   val tokenToPair = edge(tokens, pairs)
 
-  sentenceToToken.addSensor(sentenceToTokens_GeneratingS _)
-  sentencesToPairs.addSensor(sentenceToRelation_GeneratingS _)
-  pairTo1stArg.addSensor(relationToSecondArg_MatchingS _)
-  pairTo2ndArg.addSensor(relationToSecondArg_MatchingS _)
+  sentenceToToken.addSensor(sentenceToTokens_GeneratingSensor _)
+  sentencesToPairs.addSensor(sentenceToRelation_GeneratingSensor _)
+  pairTo1stArg.addSensor(relationToSecondArg_MatchingSensor _)
+  pairTo2ndArg.addSensor(relationToSecondArg_MatchingSensor _)
 
   /** Properties */
   val pos = property(tokens) {
@@ -65,15 +65,15 @@ object EntityRelationDataModel extends DataModel {
 
   val relFeature = property(pairs) {
     token: ConllRelation =>
-      {
-        "w1-word-" + token.e1.phrase :: "w2-word-" + token.e2.phrase ::
-          "w1-pos-" + token.e1.POS :: "w2-pos-" + token.e2.POS ::
-          "w1-city-" + cityGazetSensor.isContainedIn(token.e1) :: "w2-city-" + cityGazetSensor.isContainedIn(token.e2) ::
-          "w1-per-" + personGazetSensor.containsAny(token.e1) :: "w2-per-" + personGazetSensor.containsAny(token.e2) ::
-          "w1-ment-" + token.e1.getWords(false).exists(_.contains("ing")) :: "w2-ment-" + token.e2.getWords(false).exists(_.contains("ing")) ::
-          "w1-ing-" + token.e1.getWords(false).exists(_.contains("ing")) :: "w2-ing-" + token.e2.getWords(false).exists(_.contains("ing")) ::
-          Nil
-      }
+      "w1-word-" + token.e1.phrase :: "w2-word-" + token.e2.phrase ::
+        "w1-pos-" + token.e1.POS :: "w2-pos-" + token.e2.POS ::
+        "w1-city-" + cityGazetSensor.isContainedIn(token.e1) :: "w2-city-" + cityGazetSensor.isContainedIn(token.e2) ::
+        "w1-per-" + personGazetSensor.containsAny(token.e1) :: "w2-per-" + personGazetSensor.containsAny(token.e2) ::
+        "w1-ment-" + token.e1.getWords(false).exists(_.contains("ing")) ::
+        "w2-ment-" + token.e2.getWords(false).exists(_.contains("ing")) ::
+        "w1-ing-" + token.e1.getWords(false).exists(_.contains("ing")) ::
+        "w2-ing-" + token.e2.getWords(false).exists(_.contains("ing")) ::
+        Nil
   }
 
   val relPos = property(pairs) {
@@ -93,13 +93,12 @@ object EntityRelationDataModel extends DataModel {
 
   val ePipe = property[ConllRelation](pairs) {
     rel: ConllRelation =>
-      "e1-org: " + orgClassifier(rel.e1) ::
-        "e1-per: " + personClassifier(rel.e1) ::
-        "e1-loc: " + locationClassifier(rel.e1) ::
-        "e2-org: " + orgClassifier(rel.e1) ::
-        "e2-per: " + personClassifier(rel.e1) ::
-        "e2-loc: " + locationClassifier(rel.e1) ::
-        Nil
+      "e1-org: " + OrganizationClassifier(rel.e1) ::
+        "e1-per: " + PersonClassifier(rel.e1) ::
+        "e1-loc: " + LocationClassifier(rel.e1) ::
+        "e2-org: " + OrganizationClassifier(rel.e1) ::
+        "e2-per: " + PersonClassifier(rel.e1) ::
+        "e2-loc: " + LocationClassifier(rel.e1) :: Nil
   }
 
   /** Labeler Properties  */
@@ -112,8 +111,7 @@ object EntityRelationDataModel extends DataModel {
   }
 
   def populateWithConll() = {
-    val reader = new Conll04_ReaderNew("./data/EntityMentionRelation/conll04.corp", "Token")
-    sentences.populate(reader.sentences)
-    pairs.populate(reader.relations)
+    sentences.populate(EntityRelationSensors.sentences)
+    pairs.populate(EntityRelationSensors.relations)
   }
 }
