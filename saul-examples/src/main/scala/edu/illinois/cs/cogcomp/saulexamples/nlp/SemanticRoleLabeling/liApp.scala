@@ -8,6 +8,7 @@ import org.slf4j.{Logger, LoggerFactory}
 
 object liApp extends App {
   //test parameters
+  val pipeline= true
   val pipelineInTestA = true
   val pipelineInTestC = false
   val testWithConstraints = true
@@ -69,7 +70,7 @@ object liApp extends App {
     argumentTypeLearner.load(modelLCa,modelLEXa)
     argumentTypeLearner.test(prediction = typeArgumentPipeGivenGoldPredicate, groundTruth = argumentLabelGold, exclude= "candidate")//grounexclude = "candidate")
   }
-  if (testWithConstraints){
+  if (testWithConstraints && !pipeline){
     val modelLCc = cModelDir+argumentTypeLearner_lc
     val modelLEXc = cModelDir+argumentTypeLearner_lex
     argumentTypeLearner.load( modelLCc,modelLEXc)
