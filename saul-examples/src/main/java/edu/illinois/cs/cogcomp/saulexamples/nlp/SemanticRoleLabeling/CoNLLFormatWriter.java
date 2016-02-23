@@ -160,13 +160,15 @@ public class CoNLLFormatWriter {
                 for (int spCount = rowData[0].length(); spCount < leftOfStar[0]; spCount++)
                     out.print(" ");
 
-                out.print("  " + rowData[1]);
+                if (rowData.length > 1) {
+                    out.print("  " + rowData[1]);
 
-                // print the spaces
-                for (int spCount = rowData[1].length(); spCount < leftOfStar[1]; spCount++)
-                    out.print(" ");
+                    // print the spaces
+                    for (int spCount = rowData[1].length(); spCount < leftOfStar[1]; spCount++)
+                        out.print(" ");
 
-                out.print("  ");
+                    out.print("  ");
+                }
 
                 for (int colId = 2; colId < rowData.length; colId++) {
                     String word = rowData[colId];

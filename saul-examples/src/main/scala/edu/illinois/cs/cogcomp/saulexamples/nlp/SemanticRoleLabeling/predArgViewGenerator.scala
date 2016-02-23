@@ -22,7 +22,7 @@ object predArgViewGenerator {
         val args: List[Constituent] = predictedRels.map(rel => rel.getTarget).toList
         val relLabels: Array[String] = predictedRels.map(rel => rel.getRelationName).toArray
         val scores: Array[Double] = Array.fill(relLabels.length) { 1 }
-        predArgView.addPredicateArguments(pred, args, relLabels, scores)
+        predArgView.addPredicateArguments(pred.cloneForNewView(ViewNames.SRL_VERB), args, relLabels, scores)
       }
       predArgView
     }
