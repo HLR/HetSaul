@@ -1,7 +1,7 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling
 
 import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
-import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{Constituent, Relation, TextAnnotation}
+import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{ Constituent, Relation, TextAnnotation }
 import edu.illinois.cs.cogcomp.core.datastructures.trees.Tree
 import edu.illinois.cs.cogcomp.edison.features.factory._
 import edu.illinois.cs.cogcomp.nlp.corpusreaders.CoNLLColumnFormatReader
@@ -231,7 +231,7 @@ class srlMultiGraph(parseViewName: String = null, frameManager: SRLFrameManager 
         case "false" => "candidate"
         case _ => argumentTypeLearner(x)
       }
-     a
+      a
   }
   val typeArgumentPipeGivenGoldPredicateConstrained = property(relations) {
     x: Relation =>
