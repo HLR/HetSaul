@@ -5,14 +5,16 @@ import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.ModelConfig
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifiers._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlConstraintClassifiers.argTypeConstraintClassifier
 import org.slf4j.{Logger, LoggerFactory}
-
 object liApp extends App {
-  //test parameters
-  val pipeline= true
-  val pipelineInTestA = true
-  val pipelineInTestC = false
-  val testWithConstraints = true
+  //train parameters
+  val pipelineTrain=true
   val joinTrain= false
+  //test parameters
+  val pipeline= false
+  val pipelineInTestA = false
+  val pipelineInTestC = false
+  val testWithConstraints = false
+
 
   //population parameters
   val useGoldPredicate = true
@@ -20,7 +22,7 @@ object liApp extends App {
 
   val logger: Logger = LoggerFactory.getLogger(this.getClass)
 
-  val srlGraphs = populatemultiGraphwithSRLData(testOnly = true, useGoldPredicate, useGoldBoundaries)
+  val srlGraphs = populatemultiGraphwithSRLData(testOnly = false, useGoldPredicate, useGoldBoundaries)
   import srlGraphs._
   logger.info("all relations number after population:" + srlGraphs.relations().size)
   logger.info("all sentences number after population:" + srlGraphs.sentences().size)
@@ -136,4 +138,17 @@ object liApp extends App {
 
   //print("argument classifier L+I model considering background knowledge  test results:")
 
+if (pipelineTrain)
+{
+  val modelLCb= bModelDir+argumentIdentifier_lc
+  val modelLEXb= bModelDir+argumentIdentifier_lex
+  argumentXuIdentifierGivenApredicate.load(modelLCb,modelLEXb)
+  val training= relations.getTrainingInstances.filter(x=> argumentXuIdentifierGivenApredicate(x).equals("true"))
+  argumentTypeLearner.setModelDir("pipeModels_cTr")
+  argumentTypeLearner.learn(100,training)
+  argumentTypeLearner.test(exclude = "candidate")
+  argumentTypeLearner.save()
+  argumentTypeLearner.test(prediction = typeArgumentPipeGivenGoldPredicate, groundTruth = argumentLabelGold, exclude= "candidate")//grounexclude = "candidate")
+
+}
 }
