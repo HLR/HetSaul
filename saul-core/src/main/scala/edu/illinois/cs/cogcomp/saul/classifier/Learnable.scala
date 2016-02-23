@@ -9,7 +9,7 @@ import edu.illinois.cs.cogcomp.lbjava.classify.{ FeatureVector, TestDiscrete }
 import edu.illinois.cs.cogcomp.lbjava.learn.Learner.Parameters
 import edu.illinois.cs.cogcomp.lbjava.learn._
 import edu.illinois.cs.cogcomp.lbjava.parse.Parser
-import edu.illinois.cs.cogcomp.lbjava.util.{ ExceptionlessInputStream, ExceptionlessOutputStream }
+import edu.illinois.cs.cogcomp.lbjava.util.ExceptionlessOutputStream
 import edu.illinois.cs.cogcomp.saul.TestContinuous
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
 import edu.illinois.cs.cogcomp.saul.datamodel.property.{ CombinedDiscreteProperty, Property, PropertyWithWindow, RelationalFeature }
@@ -22,7 +22,7 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
   /** Whether to use caching */
   val useCache = false
 
-  val loggging = false
+  val logging = true
 
   var isTraining = false
 
@@ -38,8 +38,7 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
   def combinedProperties = if (label != null) new CombinedDiscreteProperty[T](this.feature.filterNot(_.name == label.name))
   else new CombinedDiscreteProperty[T](this.feature)
 
-  //combinedProperty.makeClassifierWithName("")
-  def lbpFeatures = combinedProperties.makeClassifierWithName("featureExtractor")
+  def lbpFeatures = combinedProperties.classifier
 
   /** classifier need to be defined by the user */
   val classifier: Learner
@@ -49,9 +48,10 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
 
   /** specifications of the classifier and its model files  */
   classifier.setReadLexiconOnDemand()
-  val modelDir = "models/"
-  val lcFilePath = new URL(new URL("file:"), modelDir + getClassNameForClassifier + ".lc")
-  val lexFilePath = new URL(new URL("file:"), modelDir + getClassNameForClassifier + ".lex")
+  // TODO Right now these are set (and the directory is created) twice; we need a better solution
+  var modelDir = "models" + File.separator
+  var lcFilePath = new URL(new URL("file:"), modelDir + getClassNameForClassifier + ".lc")
+  var lexFilePath = new URL(new URL("file:"), modelDir + getClassNameForClassifier + ".lex")
   IOUtils.mkdir(modelDir)
   classifier.setModelLocation(lcFilePath)
   classifier.setLexiconLocation(lexFilePath)
@@ -73,7 +73,7 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
 
   def setExtractor(): Unit = {
     if (feature != null) {
-      if (loggging)
+      if (logging)
         println(s"Setting the feature extractors to be ${lbpFeatures.getCompositeChildren}")
       classifier.setExtractor(lbpFeatures)
     } else {
@@ -84,7 +84,7 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
   def setLabeler(): Unit = {
     if (label != null) {
       val oracle = Property.entitiesToLBJFeature(label)
-      if (loggging) {
+      if (logging) {
         println(s"Setting the labeler to be '$oracle'")
       }
       classifier.setLabeler(oracle)
@@ -95,6 +95,34 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
   setExtractor()
   setLabeler()
 
+  def setModelDir(directory: String) = {
+    classifier.setReadLexiconOnDemand()
+    modelDir = directory + File.separator
+    lcFilePath = new URL(new URL("file:"), modelDir + getClassNameForClassifier + ".lc")
+    lexFilePath = new URL(new URL("file:"), modelDir + getClassNameForClassifier + ".lex")
+    IOUtils.mkdir(modelDir)
+    classifier.setModelLocation(lcFilePath)
+    classifier.setLexiconLocation(lexFilePath)
+
+    // create .lex file if it does not exist
+    if (!IOUtils.exists(lexFilePath.getPath)) {
+      val lexFile = ExceptionlessOutputStream.openCompressedStream(lexFilePath)
+      if (classifier.getCurrentLexicon == null) lexFile.writeInt(0)
+      else classifier.getCurrentLexicon.write(lexFile)
+      lexFile.close()
+    }
+
+    // create .lc file if it does not exist
+    if (!IOUtils.exists(lcFilePath.getPath)) {
+      val lcFile = ExceptionlessOutputStream.openCompressedStream(lcFilePath)
+      classifier.write(lcFile)
+      lcFile.close()
+    }
+    // set paramaters for classifier
+    setExtractor()
+    setLabeler()
+  }
+
   def removeModelFiles(): Unit = {
     IOUtils.rm(lcFilePath.getPath)
     IOUtils.rm(lexFilePath.getPath)
@@ -102,15 +130,33 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
 
   def save(): Unit = {
     removeModelFiles()
-    val cloneClasifier = classifier.clone().asInstanceOf[Learner]
     val dummyClassifier = new SparseNetworkLearner
-    cloneClasifier.setExtractor(dummyClassifier)
-    cloneClasifier.setLabeler(dummyClassifier)
-    cloneClasifier.save()
+    classifier.setExtractor(dummyClassifier)
+    classifier.setLabeler(dummyClassifier)
+    classifier.save()
+
+    // after saving, get rid of the dummyClassifier in the classifier.
+    setExtractor()
+    setLabeler()
   }
 
   def load(lcFile: String, lexFile: String): Unit = {
-    classifier.read(lcFile, lexFile)
+    // Read model file from JAR resources if available, else read from file.
+    val modelResourcesUrls = IOUtils.lsResources(getClass, lcFile)
+    if (modelResourcesUrls.size() == 1) {
+      classifier.readModel(modelResourcesUrls.get(0))
+    } else {
+      classifier.readModel(lcFile)
+    }
+
+    // Read lexicon file from JAR resources if available, else read from file.
+    val lexiconResourcesUrls = IOUtils.lsResources(getClass, lexFile)
+    if (lexiconResourcesUrls.size() == 1) {
+      classifier.readLexicon(lexiconResourcesUrls.get(0))
+    } else {
+      classifier.readLexicon(lexFile)
+    }
+
     setExtractor()
     setLabeler()
   }
@@ -142,7 +188,7 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
   }
 
   def learn(iteration: Int, data: Iterable[T]): Unit = {
-    if (loggging)
+    if (logging)
       println("Learnable: Learn with data of size " + data.size)
     isTraining = true
     val crTokenTest = new LBJIteratorParserScala[T](data)
@@ -151,7 +197,7 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
     def learnAll(crTokenTest: Parser, remainingIteration: Int): Unit = {
       val v = crTokenTest.next
       if (v == null) {
-        if (loggging & remainingIteration % 10 == 0)
+        if (logging & remainingIteration % 10 == 0)
           println(s"Training: $remainingIteration iterations remain. ${time.Instant.now()} ")
 
         if (remainingIteration > 1) {
@@ -197,33 +243,32 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
 
   def forget() = this.classifier.forget()
 
-  def test(): List[(String, (Double, Double, Double))] = {
-    isTraining = false
-    val data = this.datamodel.getNodeWithType[T].getTestingInstances
-    test(data)
-  }
-
   /** Test with given data, use internally
     * @param testData
     * @return List of (label, (f1, precision, recall))
     */
-  def test(testData: Iterable[T]): List[(String, (Double, Double, Double))] = {
+  def test(testData: Iterable[T] = null, prediction: Property[T] = null, groundTruth: Property[T] = null, exclude: String = ""): List[(String, (Double, Double, Double))] = {
     isTraining = false
-    val testReader = new LBJIteratorParserScala[T](testData)
+    val testReader = new LBJIteratorParserScala[T](if (testData == null) this.datamodel.getNodeWithType[T].getTestingInstances else testData)
     testReader.reset()
-    val tester = TestDiscrete.testDiscrete(classifier, classifier.getLabeler, testReader)
+    val tester = if (prediction == null && groundTruth == null)
+      TestDiscrete.testDiscrete(classifier, classifier.getLabeler, testReader)
+    else
+      TestDiscrete.testDiscrete(prediction.classifier, groundTruth.classifier, testReader)
+    if (!exclude.isEmpty) {
+      tester.addNull(exclude)
+    }
     tester.printPerformance(System.out)
     val ret = tester.getLabels.map { label => (label, (tester.getF1(label), tester.getPrecision(label), tester.getRecall(label))) }
     ret.toList
   }
-
-  def testContinuos(): Unit = {
+  def testContinuous(): Unit = {
     isTraining = false
     val data = this.datamodel.getNodeWithType[T].getTestingInstances
-    testContinuos(data)
+    testContinuous(data)
   }
 
-  def testContinuos(testData: Iterable[T]): Unit = {
+  def testContinuous(testData: Iterable[T]): Unit = {
     isTraining = false
     println()
     val testReader = new LBJIteratorParserScala[T](testData)
@@ -257,7 +302,7 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
   def crossValidation(k: Int) = {
     val allData = this.fromData
 
-    if (loggging)
+    if (logging)
       println(s"Running cross validation on ${allData.size} data   ")
 
     val groupSize = Math.ceil(allData.size / k).toInt
@@ -311,7 +356,7 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
     })
   }
 
-  /** Label property foor users classifier */
+  /** Label property for users classifier */
   def label: Property[T]
 
   /** A windows of properties

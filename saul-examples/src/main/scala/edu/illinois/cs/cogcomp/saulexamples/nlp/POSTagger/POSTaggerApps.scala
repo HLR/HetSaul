@@ -1,0 +1,112 @@
+package edu.illinois.cs.cogcomp.saulexamples.nlp.POSTagger
+
+import edu.illinois.cs.cogcomp.core.datastructures.textannotation.Constituent
+import edu.illinois.cs.cogcomp.core.utilities.configuration.{ Property, ResourceManager, Configurator }
+import edu.illinois.cs.cogcomp.lbj.pos.POSLabeledUnknownWordParser
+import edu.illinois.cs.cogcomp.lbjava.classify.TestDiscrete
+import edu.illinois.cs.cogcomp.nlp.corpusreaders.PennTreebankPOSReader
+import edu.illinois.cs.cogcomp.saul.parser.LBJIteratorParserScala
+import edu.illinois.cs.cogcomp.saulexamples.nlp.POSTagger.POSClassifiers._
+import edu.illinois.cs.cogcomp.saulexamples.nlp.POSTagger.POSDataModel._
+import edu.illinois.cs.cogcomp.saulexamples.nlp.CommonSensors
+
+import scala.collection.JavaConversions._
+
+object POSConfigurator extends Configurator {
+  private val prefix = "../data/POS/"
+  val trainData = new Property("trainData", prefix + "00-18.br")
+  val trainDataSmall = new Property("trainDataSmall", prefix + "00-18_small.br")
+  val trainAndDevData = new Property("trainAndDevData", prefix + "00-21.br")
+  val testData = new Property("testData", prefix + "22-24.br")
+
+  override def getDefaultConfig: ResourceManager = {
+    val props = Array(trainData, trainDataSmall, trainAndDevData, testData)
+    new ResourceManager(generateProperties(props))
+  }
+}
+
+object POSTaggerApp {
+  object POSExperimentType extends Enumeration {
+    val TrainAndTest, TestFromModel = Value
+  }
+
+  def main(args: Array[String]): Unit = {
+    /** Choose the experiment you're interested in by changing the following line */
+    val testType = POSExperimentType.TestFromModel
+
+    testType match {
+      case POSExperimentType.TrainAndTest => trainAndTest()
+      case POSExperimentType.TestFromModel => testWithPretrainedModels()
+    }
+  }
+
+  /** Reading test and train data */
+  lazy val (trainData, testData) = {
+    val trainDataReader = new PennTreebankPOSReader("train")
+    trainDataReader.readFile(POSConfigurator.trainAndDevData.value)
+
+    var sentenceId = 0
+    val trainData = trainDataReader.getTextAnnotations.flatMap(p => {
+      val cons = CommonSensors.textAnnotationToTokens(p)
+      sentenceId += 1
+      //      Adding a dummy attribute so that hashCode is different for each constituent
+      cons.foreach(c => c.addAttribute("SentenceId", sentenceId.toString))
+      cons
+    })
+
+    val testDataReader = new PennTreebankPOSReader("test")
+    testDataReader.readFile(POSConfigurator.testData.value)
+    val testData = testDataReader.getTextAnnotations.flatMap(p => {
+      val cons = CommonSensors.textAnnotationToTokens(p)
+      sentenceId += 1
+      //      Adding a dummy attribute so that hashCode is different for each constituent
+      cons.foreach(c => c.addAttribute("SentenceId", sentenceId.toString))
+      cons
+    })
+    (trainData, testData)
+  }
+
+  def trainAndTest(): Unit = {
+    POSDataModel.tokens populate trainData
+    POSDataModel.tokens.populate(testData, train = false)
+
+    /** pre-process the baseline systems */
+    BaselineClassifier.learn(1)
+    MikheevClassifier.learn(1)
+
+    /** train the learning models */
+    val unknownTrainData = trainData.filter(x => BaselineClassifier.classifier.observedCount(wordForm(x)) <= POSLabeledUnknownWordParser.threshold)
+    POSTaggerKnown.learn(50)
+    POSTaggerUnknown.learn(50, unknownTrainData)
+
+    /** test the resulting model */
+    testPOSTagger()
+
+    // saving all the models
+    saveModels()
+  }
+
+  /** Loading the serialized models as a dependency */
+  def testWithPretrainedModels(): Unit = {
+    POSDataModel.tokens.populate(testData, train = false)
+
+    POSClassifiers.loadModelsFromPackage()
+
+    testPOSTagger()
+  }
+
+  def testPOSTagger(): Unit = {
+    val tester = new TestDiscrete
+    val testReader = new LBJIteratorParserScala[Constituent](testData)
+    testReader.reset()
+
+    testReader.data.foreach(cons => {
+      val gold = POSDataModel.POSLabel(cons)
+      val predicted = POSClassifiers.POSClassifier(cons)
+      tester.reportPrediction(predicted, gold)
+    })
+
+    tester.printPerformance(System.out)
+  }
+}
+

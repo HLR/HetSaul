@@ -1,12 +1,9 @@
-
-val cogcompNLPVersion = "3.0.14"
-val cogcompPipelineVersion = "0.1.15"
-
+val cogcompNLPVersion = "3.0.18"
+val cogcompPipelineVersion = "0.1.16"
 
 lazy val root = (project in file(".")).
   aggregate(saulCore, saulExamples)
 
-//
 lazy val commonSettings = Seq(
   organization := "edu.illinois.cs.cogcomp",
   name := "saul-project",
@@ -16,9 +13,9 @@ lazy val commonSettings = Seq(
     Resolver.mavenLocal,
     "CogcompSoftware" at "http://cogcomp.cs.illinois.edu/m2repo/"
   ),
-  javaOptions ++= List("-Xmx8g"),
+  javaOptions ++= List("-Xmx6g"),
   libraryDependencies ++= Seq(
-    "edu.illinois.cs.cogcomp" % "illinois-core-utilities" % cogcompNLPVersion exclude("org.slf4j", "slf4j-log4j12") withSources,
+    "edu.illinois.cs.cogcomp" % "illinois-core-utilities" % cogcompNLPVersion withSources,
     "com.gurobi" % "gurobi" % "6.0",
     "org.apache.commons" % "commons-math3" % "3.0",
     "org.scalatest" % "scalatest_2.11" % "2.2.4"
@@ -40,28 +37,13 @@ lazy val saulCore = (project in file("saul-core")).
 lazy val saulExamples = (project in file("saul-examples")).
   settings(commonSettings: _*).
   settings(
-      name := "saul-examples",
-      javaOptions += "-Xmx6g",
-      mainClass in assembly := Some("edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.joinIsArg_TypeArg"),
-     assemblyJarName in assembly := "JoinExperiment.jar",
-     assemblyMergeStrategy in assembly := {
-      case PathList("javax", "servlet", xs @ _*) => MergeStrategy.first
-      case PathList("META-INF", xs @ _*) => MergeStrategy.discard
-      //case x => MergeStrategy.first
-      case x if x.contains("org.slf4j") => MergeStrategy.last
-      case PathList(ps @ _*) if ps.last endsWith ".html" => MergeStrategy.first
-      case "application.conf"                            => MergeStrategy.concat
-      case "unwanted.txt"                                => MergeStrategy.discard
-      case x => MergeStrategy.first
-      // val oldStrategy = (assemblyMergeStrategy in assembly).value
-      //oldStrategy(x)
-    },
-      libraryDependencies ++= Seq(
+    name := "saul-examples",
+    libraryDependencies ++= Seq(
       "edu.illinois.cs.cogcomp" % "illinois-nlp-pipeline" % cogcompPipelineVersion,
-      "edu.illinois.cs.cogcomp" % "illinois-curator" % cogcompNLPVersion,
+      "edu.illinois.cs.cogcomp" % "illinois-curator" % "1.0.0",
       "edu.illinois.cs.cogcomp" % "illinois-edison" % cogcompNLPVersion,
-      "edu.illinois.cs.cogcomp" % "illinois-srl"  % "5.1.7",
-      "edu.illinois.cs.cogcomp" % "illinois-nlp-readers" % "0.0.2-SNAPSHOT"
+      "edu.illinois.cs.cogcomp" % "illinois-nlp-readers" % "0.0.2-SNAPSHOT", 
+      "edu.illinois.cs.cogcomp" % "saul-pos-tagger-models" % "1.0"
     )
   ).dependsOn(saulCore).aggregate(saulCore)
 
