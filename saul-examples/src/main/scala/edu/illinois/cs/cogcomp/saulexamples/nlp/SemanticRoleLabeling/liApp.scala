@@ -2,7 +2,6 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling
 
 import java.io.{File, PrintWriter}
 
-import edu.illinois.cs.cogcomp.core.datastructures.textannotation.Relation
 import edu.illinois.cs.cogcomp.saul.classifier.JointTrainSparseNetwork
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.ModelConfigs._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifiers._
@@ -49,10 +48,7 @@ object liApp extends App {
     val predOutFile = "srl.predicted"
     val predWriter = new PrintWriter(new File(predOutFile))
      argumentTypeLearner.test(prediction= typeArgumentPrediction, groundTruth =  argumentLabelGold, exclude="candidate")
-    val predictedViews = predArgViewGenerator.toPredArgList(srlGraphs, property(relations, "typeArgumentPrediction") {
-      x: Relation =>
-        argumentTypeLearner(x)
-    })
+    val predictedViews = predArgViewGenerator.toPredArgList(srlGraphs, typeArgumentPrediction)
     val goldViews = predArgViewGenerator.toPredArgList(srlGraphs, argumentLabelGold)
 
     predictedViews.foreach(pav => CoNLLFormatWriter.printPredicateArgumentView(pav, predWriter))
