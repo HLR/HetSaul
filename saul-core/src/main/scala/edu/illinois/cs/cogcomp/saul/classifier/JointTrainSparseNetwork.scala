@@ -1,41 +1,14 @@
 package edu.illinois.cs.cogcomp.saul.classifier
 
-import edu.illinois.cs.cogcomp.lbjava.learn.{ LinearThresholdUnit, Learner }
+import java.time
+
+import edu.illinois.cs.cogcomp.lbjava.learn.{Learner, LinearThresholdUnit}
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
 
 import scala.reflect.ClassTag
 /** Created by Parisa on 5/22/15.
   */
 object JointTrainSparseNetwork {
-
-  /* def testClassifiers(cls : Classifier ,oracle : Classifier, ds : List[AnyRef]) : Unit = {
-
-      val results = ds.map( {
-        x =>
-          //        println(x)
-          val pri = cls.discreteValue(x)
-          val truth =  oracle.discreteValue(x)
-          //        println((pri,truth))
-
-
-
-          (pri,truth)
-      })
-
-      val tp = results.count({case (x,y) => x == y && ( x == "true" ) }) * 1.0
-      val fp = results.count({case (x,y) => x != y && ( x == "true" ) }) * 1.0
-
-      val tn = results.count({case (x,y) => x == y && ( x == "false" ) }) * 1.0
-      val fn = results.count({case (x,y) => x != y && ( x == "false" ) }) * 1.0
-
-
-      println(s"tp: ${tp} fp: ${fp} tn: ${tn} fn: ${fn} ")
-      println( s" accuracy    ${(tp+tn) / (results.size) } " )
-      println( s" precision   ${(tp) / (tp+fp) } " )
-      println( s" recall      ${(tp) / (tp+fn) } " )
-      println( s" f1          ${(2.0*tp) / (  2*tp+fp+fn ) } " )
-
-    }*/
 
   def apply[HEAD <: AnyRef](
     dm: DataModel,
@@ -69,10 +42,10 @@ object JointTrainSparseNetwork {
     headTag: ClassTag[HEAD]
   ): Unit = {
     // forall members in collection of the head (dm.t) do
+    if (it % 10 == 0)
+      println(s"Training: $it iterations remain. ${time.Instant.now()} ")
 
     println("Training iteration: " + it)
-    if (it == 38)
-      println("STOP")
     if (it == 0) {
       // Done
     } else {
@@ -81,7 +54,9 @@ object JointTrainSparseNetwork {
       allHeads.zipWithIndex.foreach {
         case (h, idx) =>
           {
-            // println("example number:" + idx)
+            if (idx % 10000 == 0)
+              println(s"Training: $idx examples inferred. ${time.Instant.now()} ")
+
             cls.foreach {
               case c: ConstrainedClassifier[_, HEAD] => {
 

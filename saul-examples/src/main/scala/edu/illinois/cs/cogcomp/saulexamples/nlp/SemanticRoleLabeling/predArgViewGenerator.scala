@@ -18,9 +18,9 @@ object predArgViewGenerator {
       val predArgView: PredicateArgumentView = new PredicateArgumentView(ViewNames.SRL_VERB, ta)
       (sentences(ta) ~> sentencesToRelations ~> relationsToPredicates).foreach { pred =>
         val predictedRels: Iterable[Relation] = (predicates(pred) ~> -relationsToPredicates).filterNot(rel =>
-          (relations(rel) prop labelProp).head.equals("candidate"))
+          labelProp(rel).equals("candidate"))
         val args: List[Constituent] = predictedRels.map(rel => rel.getTarget).toList
-        val relLabels: Array[String] = predictedRels.map(rel => rel.getRelationName).toArray
+        val relLabels: Array[String] = predictedRels.map(rel => labelProp(rel)).toArray
         val scores: Array[Double] = Array.fill(relLabels.length) { 1 }
         predArgView.addPredicateArguments(pred.cloneForNewView(ViewNames.SRL_VERB), args, relLabels, scores)
       }
