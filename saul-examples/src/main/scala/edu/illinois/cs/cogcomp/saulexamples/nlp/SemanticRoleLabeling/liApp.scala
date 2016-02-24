@@ -1,7 +1,5 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling
 
-import java.io.{File, PrintWriter}
-
 import edu.illinois.cs.cogcomp.saul.classifier.JointTrainSparseNetwork
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.ModelConfigs._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifiers._
@@ -9,14 +7,11 @@ import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlConstrai
 import org.slf4j.{Logger, LoggerFactory}
 object liApp extends App {
   //train parameters
-
-  val TestA= true
-
   val pipelineTrain = false
-
-  val joinTrain = false
+  val joinTrain = true
 
   //test parameters
+  val TestA= false
   val pipeline = false
   val pipelineInTestA = false
   val pipelineInTestC = false
@@ -28,7 +23,7 @@ object liApp extends App {
 
   val logger: Logger = LoggerFactory.getLogger(this.getClass)
 
-  val srlGraphs = populatemultiGraphwithSRLData(testOnly = true, useGoldPredicate, useGoldBoundaries)
+  val srlGraphs = populatemultiGraphwithSRLData(testOnly = false, useGoldPredicate, useGoldBoundaries)
 
   import srlGraphs._
 
@@ -42,19 +37,19 @@ object liApp extends App {
     val modelLCa = aModelDir + argumentTypeLearner_lc
     val modelLEXa = aModelDir + argumentTypeLearner_lex
     argumentTypeLearner.load(modelLCa, modelLEXa)
-    //argumentTypeLearner.test()
-    val goldOutFile = "srl.gold"
-    val goldWriter = new PrintWriter(new File(goldOutFile))
-    val predOutFile = "srl.predicted"
-    val predWriter = new PrintWriter(new File(predOutFile))
-     argumentTypeLearner.test(prediction= typeArgumentPrediction, groundTruth =  argumentLabelGold, exclude="candidate")
-    val predictedViews = predArgViewGenerator.toPredArgList(srlGraphs, typeArgumentPrediction)
-    val goldViews = predArgViewGenerator.toPredArgList(srlGraphs, argumentLabelGold)
-
-    predictedViews.foreach(pav => CoNLLFormatWriter.printPredicateArgumentView(pav, predWriter))
-    goldViews.foreach(pav => CoNLLFormatWriter.printPredicateArgumentView(pav, goldWriter))
-    predWriter.close()
-    goldWriter.close()
+    argumentTypeLearner.test(exclude="candidate")
+//    val goldOutFile = "srl.gold"
+//    val goldWriter = new PrintWriter(new File(goldOutFile))
+//    val predOutFile = "srl.predicted"
+//    val predWriter = new PrintWriter(new File(predOutFile))
+//     argumentTypeLearner.test(prediction= typeArgumentPrediction, groundTruth =  argumentLabelGold, exclude="candidate")
+//    val predictedViews = predArgViewGenerator.toPredArgList(srlGraphs, typeArgumentPrediction)
+//    val goldViews = predArgViewGenerator.toPredArgList(srlGraphs, argumentLabelGold)
+//
+//    predictedViews.foreach(pav => CoNLLFormatWriter.printPredicateArgumentView(pav, predWriter))
+//    goldViews.foreach(pav => CoNLLFormatWriter.printPredicateArgumentView(pav, goldWriter))
+//    predWriter.close()
+//    goldWriter.close()
   }
 
   if (pipelineInTestA & !testWithConstraints) {
@@ -108,14 +103,19 @@ object liApp extends App {
 
   if (joinTrain) {
     //argumentTypeLearner.load(cModelDir + argumentTypeLearner_lc, cModelDir + argumentTypeLearner_lex)
-    logger.info("Join train:... ")
+
     argumentTypeLearner.setModelDir(jModelDir)
     argumentTypeLearner.learn(10)
     argumentTypeLearner.save()
     argumentTypeLearner.load(jModelDir + argumentTypeLearner_lc, jModelDir + argumentTypeLearner_lex)
-    logger.info("join prediction:... ")
+    logger.info("test independent train after 10 iterations:... ")
     argumentTypeLearner.test(exclude="candidate")
-    JointTrainSparseNetwork(srlGraphs, argTypeConstraintClassifier :: Nil, 90)
+    logger.info("Join train:... ")
+    JointTrainSparseNetwork(srlGraphs, argTypeConstraintClassifier :: Nil, 50)
+    logger.info("test join train after 50 iterations:... ")
+    argTypeConstraintClassifier.test(srlGraphs.relations.getTestingInstances, aModelDir + argumentTypeLearner_pred, 100, exclude = "candidate") //(aTr_pred, 100)
+    JointTrainSparseNetwork(srlGraphs, argTypeConstraintClassifier :: Nil, 40)
+    logger.info("test join train after 90+10 iterations:... ")
     argTypeConstraintClassifier.test(srlGraphs.relations.getTestingInstances, aModelDir + argumentTypeLearner_pred, 100, exclude = "candidate") //(aTr_pred, 100)
 
   }
