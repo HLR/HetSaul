@@ -5,35 +5,33 @@ import edu.illinois.cs.cogcomp.saul.constraint.ConstraintTypeConversion._
 import edu.illinois.cs.cogcomp.saulexamples.EntityMentionRelation.datastruct.ConllRelation
 import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.entityRelationClassifiers._
 
-/** Created by haowu on 1/27/15.
-  */
 object entityRelationConstraints {
 
-  val Per_Org = ConstrainedClassifier.constraintOf[ConllRelation] {
+  val Per_Org = ConstrainedClassifier.constraint[ConllRelation] {
     x: ConllRelation =>
       {
         (((workForClassifier on x) isTrue) ==>
-          (((orgClassifier on x.e2) isTrue) &&&
-            ((PersonClassifier on x.e1) isTrue))) &&& (
+          (((orgClassifier on x.e2) isTrue) and
+            ((PersonClassifier on x.e1) isTrue))) and (
               ((LivesInClassifier on x) isTrue) ==> (
                 ((PersonClassifier on x.e1) isTrue)
-                &&& ((LocClassifier on x.e2) isTrue)
+                and ((LocClassifier on x.e2) isTrue)
               )
-            ) &&& ((workForClassifier on x isTrue) ==> (LivesInClassifier on x isNotTrue)) &&& ((LivesInClassifier on x isTrue) ==> (workForClassifier on x isNotTrue))
+            ) and ((workForClassifier on x isTrue) ==> (LivesInClassifier on x isNotTrue)) and ((LivesInClassifier on x isTrue) ==> (workForClassifier on x isNotTrue))
       }
   }
 
-  val LiveInConstrint = ConstrainedClassifier.constraintOf[ConllRelation] {
+  val LiveInConstrint = ConstrainedClassifier.constraint[ConllRelation] {
     x: ConllRelation =>
       {
         ((LivesInClassifier on x) isTrue) ==> (
           ((PersonClassifier on x.e1) isTrue)
-          &&& ((LocClassifier on x.e2) isTrue)
+          and ((LocClassifier on x.e2) isTrue)
         )
       }
   }
 
-  val PersonWorkFor = ConstrainedClassifier.constraintOf[ConllRelation] {
+  val PersonWorkFor = ConstrainedClassifier.constraint[ConllRelation] {
     x: ConllRelation =>
       {
         ((workForClassifier on x) isTrue) ==>

@@ -2,7 +2,6 @@ package edu.illinois.cs.cogcomp.saulexamples.setcover;
 
 import java.util.TreeSet;
 
-
 public class Neighborhood implements Comparable<Neighborhood> {
 
     City parent;

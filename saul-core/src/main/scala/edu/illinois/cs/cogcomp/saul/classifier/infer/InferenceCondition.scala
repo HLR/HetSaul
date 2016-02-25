@@ -6,9 +6,7 @@ import edu.illinois.cs.cogcomp.saul.constraint.LfsConstraint
 
 import scala.reflect.ClassTag
 
-/** Created by haowu on 1/29/15.
-  */
-abstract class InferenceCondition[INPUT <: AnyRef, HEAD <: AnyRef]()(
+abstract class InferenceCondition[INPUT <: AnyRef, HEAD <: AnyRef](val dm: DataModel, solver: ILPSolver)(
   implicit
   val inputTag: ClassTag[INPUT],
   val headTag: ClassTag[HEAD]
@@ -16,7 +14,7 @@ abstract class InferenceCondition[INPUT <: AnyRef, HEAD <: AnyRef]()(
   def subjectTo: LfsConstraint[HEAD]
 
   def transfer(t: HEAD): JointTemplate[HEAD] = {
-    new JointTemplate[HEAD](t) {
+    new JointTemplate[HEAD](t, solver) {
       // TODO: Define this function
       override def getSubjectToInstance: ParameterizedConstraint = {
         subjectTo.transfer
