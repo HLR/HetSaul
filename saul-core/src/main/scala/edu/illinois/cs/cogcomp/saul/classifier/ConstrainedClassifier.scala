@@ -11,7 +11,7 @@ import edu.illinois.cs.cogcomp.saul.parser.LBJIteratorParserScala
 
 import scala.reflect.ClassTag
 
-abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val edge: Edge[T, HEAD], val onClassifier: Learner)(
+abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val onClassifier: Learner)(
   implicit
   val tType: ClassTag[T],
   implicit val headType: ClassTag[HEAD]
@@ -33,7 +33,7 @@ abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val edge: Edge
 
   val log = true
 
-  val pathToHead: Option[Edge[T, HEAD]] = None
+  val pathToHead: Edge[T, HEAD] = null
 
   /** syntactic sugar to create simple calls to the function */
   def apply(example: AnyRef): String = classifier.discreteValue(example: AnyRef)
@@ -42,12 +42,7 @@ abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val edge: Edge
     if (tType.equals(headType)) {
       Some(x.asInstanceOf[HEAD])
     } else {
-      val lst = pathToHead match {
-        case Some(e) => e.forward.neighborsOf(x)
-        case _ => edge.forward.neighborsOf(x)
-      }
-
-      val l = lst.toSet.toList
+      val l = pathToHead.forward.neighborsOf(x).toSet.toList
 
       if (l.isEmpty) {
         if (log)
@@ -69,10 +64,7 @@ abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val edge: Edge
     if (tType.equals(headType)) {
       head.asInstanceOf[T] :: Nil
     } else {
-      val l = pathToHead match {
-        case Some(e) => e.backward.neighborsOf(head)
-        case _ => edge.backward.neighborsOf(head)
-      }
+      val l = pathToHead.backward.neighborsOf(head)
 
       if (l.isEmpty) {
         if (log)
@@ -120,15 +112,12 @@ abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val edge: Edge
   }
 
   def test(): List[(String, (Double, Double, Double))] = {
-    val allHeads: List[HEAD] = edge.to.getTestingInstances.toList
+    val allHeads: List[HEAD] = pathToHead.to.getTestingInstances.toList
 
     val data: List[T] = if (tType.equals(headType)) {
       allHeads.map(_.asInstanceOf[T])
     } else {
-      this.pathToHead match {
-        case Some(path) => allHeads.flatMap(h => path.backward.neighborsOf(h))
-        case _ => allHeads.flatMap(h => edge.backward.neighborsOf(h))
-      }
+      allHeads.flatMap(h => pathToHead.backward.neighborsOf(h))
     }
     test(data)
   }

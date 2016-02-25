@@ -19,8 +19,6 @@ object entityRelationBasicDataModel extends DataModel {
 
   val RelationToLoc = edge(tokens, pairs)
 
-  val RelationToRelation = edge(pairs, pairs)
-
   val tokenContainsInSentence = edge(tokens, pairs)
 
   /** Properties */

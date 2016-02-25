@@ -42,7 +42,8 @@ object SetCoverSolverDataModel extends DataModel {
 }
 
 import SetCoverSolverDataModel._
-object ContainsStationConstraint extends ConstrainedClassifier[Neighborhood, City](-cityContainsNeighborhoods, new ContainsStation()) {
+object ContainsStationConstraint extends ConstrainedClassifier[Neighborhood, City](new ContainsStation()) {
+  override val pathToHead = -cityContainsNeighborhoods
   override def subjectTo = containsStationConstraint
   override val solver = new OJalgoHook
 }

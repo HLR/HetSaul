@@ -96,30 +96,30 @@ object entityRelationClassifiers {
     override lazy val classifier = new SparseNetworkLearner()
   }
 
-  object orgConstraintClassifier extends ConstrainedClassifier[ConllRawToken, ConllRelation](RelationToOrg, orgClassifier) {
+  object orgConstraintClassifier extends ConstrainedClassifier[ConllRawToken, ConllRelation](orgClassifier) {
+    override val pathToHead = RelationToOrg
     def subjectTo = Per_Org
     override def filter(t: ConllRawToken, h: ConllRelation): Boolean = t.wordId == h.wordId1
   }
 
-  object PerConstraintClassifier extends ConstrainedClassifier[ConllRawToken, ConllRelation](RelationToPer, PersonClassifier) {
+  object PerConstraintClassifier extends ConstrainedClassifier[ConllRawToken, ConllRelation](PersonClassifier) {
+    override val pathToHead = RelationToPer
     def subjectTo = Per_Org
     override def filter(t: ConllRawToken, h: ConllRelation): Boolean = t.wordId == h.wordId2
   }
 
-  //TODO Where is RelationToLoc getting populated?
-  object LocConstraintClassifier extends ConstrainedClassifier[ConllRawToken, ConllRelation](RelationToLoc, LocClassifier) {
+  object LocConstraintClassifier extends ConstrainedClassifier[ConllRawToken, ConllRelation](LocClassifier) {
+    override val pathToHead = RelationToLoc
     def subjectTo = Per_Org
     //TODO add test unit for this filter
     //    override def filter(t: ConllRawToken,h:ConllRelation): Boolean = t.wordId==h.wordId2
   }
 
-  //TODO Where is RelationToRelation getting populated?
-  //TODO Aren't these two classifiers the same?
-  object P_O_relationClassifier extends ConstrainedClassifier[ConllRelation, ConllRelation](RelationToRelation, workForClassifier) {
+  object P_O_relationClassifier extends ConstrainedClassifier[ConllRelation, ConllRelation](workForClassifier) {
     def subjectTo = Per_Org
   }
 
-  object LiveIn_P_O_relationClassifier extends ConstrainedClassifier[ConllRelation, ConllRelation](RelationToRelation, LivesInClassifier) {
+  object LiveIn_P_O_relationClassifier extends ConstrainedClassifier[ConllRelation, ConllRelation](LivesInClassifier) {
     def subjectTo = Per_Org
   }
 }
