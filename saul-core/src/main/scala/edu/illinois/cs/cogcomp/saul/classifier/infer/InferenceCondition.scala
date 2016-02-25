@@ -1,12 +1,11 @@
 package edu.illinois.cs.cogcomp.saul.classifier.infer
 
-import edu.illinois.cs.cogcomp.lbjava.infer.ParameterizedConstraint
-import edu.illinois.cs.cogcomp.saul.JointTemplate
+import edu.illinois.cs.cogcomp.lbjava.infer.{ ILPSolver, ParameterizedConstraint }
 import edu.illinois.cs.cogcomp.saul.constraint.LfsConstraint
 
 import scala.reflect.ClassTag
 
-abstract class InferenceCondition[INPUT <: AnyRef, HEAD <: AnyRef](val dm: DataModel, solver: ILPSolver)(
+abstract class InferenceCondition[INPUT <: AnyRef, HEAD <: AnyRef](solver: ILPSolver)(
   implicit
   val inputTag: ClassTag[INPUT],
   val headTag: ClassTag[HEAD]

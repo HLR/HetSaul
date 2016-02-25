@@ -253,14 +253,14 @@ trait DataModel {
 
     val nodesSize = in.readInt()
     (0 until nodesSize).foreach { _ =>
-        val nodeId = in.readInt()
-        NODES(nodeId).loadDerivedInstances(in)
+      val nodeId = in.readInt()
+      NODES(nodeId).loadDerivedInstances(in)
     }
 
     val edgesSize = in.readInt()
     (0 until edgesSize).foreach { _ =>
-        val edgeId = in.readInt()
-        EDGES(edgeId).loadIndexWithIds(in)
+      val edgeId = in.readInt()
+      EDGES(edgeId).loadIndexWithIds(in)
     }
 
     in.close()

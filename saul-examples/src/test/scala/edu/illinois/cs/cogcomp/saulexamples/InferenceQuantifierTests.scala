@@ -45,23 +45,24 @@ class InferenceQuantifierTests extends FlatSpec with Matchers {
     }
   }
 
-  object AtLeastSomeNeighborhoods extends ConstrainedClassifier[Neighborhood, City](SomeDM, new ContainsStation()) {
-    override def subjectTo = SomeDM.atLeastSomeNeighborsAreCoveredConstraint
+  import SomeDM._
+  object AtLeastSomeNeighborhoods extends ConstrainedClassifier[Neighborhood, City](-cityContainsNeighborhoods, new ContainsStation()) {
+    override def subjectTo = atLeastSomeNeighborsAreCoveredConstraint
     override val solver = new OJalgoHook
   }
 
-  object AtLeastSomeNeighborhoodsUsingAtMost extends ConstrainedClassifier[Neighborhood, City](SomeDM, new ContainsStation()) {
-    override def subjectTo = SomeDM.atLeastSomeNeighborsAreCoveredConstraintUsingAtMost
+  object AtLeastSomeNeighborhoodsUsingAtMost extends ConstrainedClassifier[Neighborhood, City](-cityContainsNeighborhoods, new ContainsStation()) {
+    override def subjectTo = atLeastSomeNeighborsAreCoveredConstraintUsingAtMost
     override val solver = new OJalgoHook
   }
 
-  object AllNeighborhoods extends ConstrainedClassifier[Neighborhood, City](SomeDM, new ContainsStation()) {
-    override def subjectTo = SomeDM.allNeighborsAreCoveredConstraint
+  object AllNeighborhoods extends ConstrainedClassifier[Neighborhood, City](-cityContainsNeighborhoods, new ContainsStation()) {
+    override def subjectTo = allNeighborsAreCoveredConstraint
     override val solver = new OJalgoHook
   }
 
-  object ASingleNeighborhood extends ConstrainedClassifier[Neighborhood, City](SomeDM, new ContainsStation()) {
-    override def subjectTo = SomeDM.singleNeighborsAreCoveredConstraint
+  object ASingleNeighborhood extends ConstrainedClassifier[Neighborhood, City](-cityContainsNeighborhoods, new ContainsStation()) {
+    override def subjectTo = singleNeighborsAreCoveredConstraint
     override val solver = new OJalgoHook
   }
 

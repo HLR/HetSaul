@@ -1,6 +1,6 @@
 package edu.illinois.cs.cogcomp.saul.classifier
 
-import edu.illinois.cs.cogcomp.lbjava.classify.TestDiscrete
+import edu.illinois.cs.cogcomp.lbjava.classify.{ FeatureVector, Classifier, TestDiscrete }
 import edu.illinois.cs.cogcomp.lbjava.infer._
 import edu.illinois.cs.cogcomp.lbjava.learn.Learner
 import edu.illinois.cs.cogcomp.lbjava.parse.Parser
@@ -36,10 +36,8 @@ abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val edge: Edge
 
   val pathToHead: Option[Edge[T, HEAD]] = None
 
-  /** syntactic suger to create simple calls to the function */
+  /** syntactic sugar to create simple calls to the function */
   def apply(example: AnyRef): String = classifier.discreteValue(example: AnyRef)
-
-  override val classifier = lbjClassifier.classifier
 
   def findHead(x: T): Option[HEAD] = {
     if (tType.equals(headType)) {
@@ -111,10 +109,15 @@ abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val edge: Edge
 
   def cName: String = this.getClass.getName
 
+  private def getSolverInstance = solver match {
+    case _: OJalgoHook => () => new OJalgoHook()
+    case _: GurobiHook => () => new GurobiHook()
+  }
+
   override val classifier = new Classifier() {
     override def classify(o: scala.Any): FeatureVector = new FeatureVector(featureValue(discreteValue(o)))
     override def discreteValue(o: scala.Any): String =
-      buildWithConstrain(subjectTo.createInferenceCondition[T].convertToType[T], onClassifier)(o.asInstanceOf[T])
+      buildWithConstraint(subjectTo.createInferenceCondition[T](getSolverInstance()).convertToType[T], onClassifier)(o.asInstanceOf[T])
   }
 
   def learn(it: Int): Unit = {
@@ -123,8 +126,6 @@ abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val edge: Edge
   }
 
   def learn(iteration: Int, data: Iterable[T]): Unit = {
-    //    featureExtractor.setDMforAll(this.datamodel)
-
     val crTokenTest = new LBJIteratorParserScala[T](data)
     crTokenTest.reset()
 
