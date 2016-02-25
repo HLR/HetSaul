@@ -111,13 +111,14 @@ object liApp extends App {
     logger.info("test independent train after 10 iterations:... ")
     argumentTypeLearner.test(exclude="candidate")
     logger.info("Join train:... ")
-    JointTrainSparseNetwork(srlGraphs, argTypeConstraintClassifier :: Nil, 50)
-    logger.info("test join train after 50 iterations:... ")
-    argTypeConstraintClassifier.test(srlGraphs.relations.getTestingInstances, aModelDir + argumentTypeLearner_pred, 100, exclude = "candidate") //(aTr_pred, 100)
-    JointTrainSparseNetwork(srlGraphs, argTypeConstraintClassifier :: Nil, 40)
-    logger.info("test join train after 90+10 iterations:... ")
-    argTypeConstraintClassifier.test(srlGraphs.relations.getTestingInstances, aModelDir + argumentTypeLearner_pred, 100, exclude = "candidate") //(aTr_pred, 100)
-
+    for (i<-0 until 100) {
+      JointTrainSparseNetwork(srlGraphs, argTypeConstraintClassifier :: Nil, 10)
+      if (i % 10 == 0)
+        {  logger.info("test join train after "+ i+" iterations:... ")
+           argumentTypeLearner.save()
+           argTypeConstraintClassifier.test(srlGraphs.relations.getTestingInstances, aModelDir + argumentTypeLearner_pred, 100, exclude = "candidate") //(aTr_pred, 100)
+        }
+    }
   }
 
   //  arg_Is_TypeConstraintClassifier.test()
