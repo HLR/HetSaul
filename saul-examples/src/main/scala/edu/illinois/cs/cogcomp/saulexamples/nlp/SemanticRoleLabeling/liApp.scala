@@ -7,8 +7,8 @@ import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlConstrai
 import org.slf4j.{ Logger, LoggerFactory }
 object liApp extends App {
   //train parameters
-  val pipelineTrain = false
-  val joinTrain = true
+  val pipelineTrain =true
+  val joinTrain = false
 
   //test parameters
   val TestA = false
@@ -19,7 +19,7 @@ object liApp extends App {
 
   //population parameters
   val useGoldPredicate = true
-  val useGoldBoundaries = true
+  val useGoldBoundaries = false
 
   val logger: Logger = LoggerFactory.getLogger(this.getClass)
 
@@ -146,6 +146,5 @@ object liApp extends App {
     argumentTypeLearner.test(exclude = "candidate")
     argumentTypeLearner.save()
     argumentTypeLearner.test(prediction = typeArgumentPipeGivenGoldPredicate, groundTruth = argumentLabelGold, exclude = "candidate") //grounexclude = "candidate")
-
   }
 }
