@@ -16,7 +16,7 @@ object predArgViewGenerator {
     import graph._
     sentences().map { ta =>
       val predArgView: PredicateArgumentView = new PredicateArgumentView(ViewNames.SRL_VERB, ta)
-      (sentences(ta) ~> sentencesToRelations ~> relationsToPredicates).foreach { pred =>
+      (sentences(ta) ~> sentencesToPredicates).foreach { pred =>
         val predictedRels: Iterable[Relation] = (predicates(pred) ~> -relationsToPredicates).filterNot(rel =>
           labelProp(rel).equals("candidate"))
         val args: List[Constituent] = predictedRels.map(rel => rel.getTarget).toList
