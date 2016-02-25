@@ -2,7 +2,7 @@ package edu.illinois.cs.cogcomp.saul.classifier
 
 import java.time
 
-import edu.illinois.cs.cogcomp.lbjava.learn.{Learner, LinearThresholdUnit}
+import edu.illinois.cs.cogcomp.lbjava.learn.{ Learner, LinearThresholdUnit }
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
 
 import scala.reflect.ClassTag
