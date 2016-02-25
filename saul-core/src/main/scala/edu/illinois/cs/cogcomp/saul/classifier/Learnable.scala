@@ -214,7 +214,9 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
 
   def forget() = this.classifier.forget()
 
-  def test(): List[(String, (Double, Double, Double))] = {
+  case class Result(f1: Double, precision: Double, recall: Double)
+
+  def test(): List[(String, Result)] = {
     isTraining = false
     val data = this.datamodel.getNodeWithType[T].getTestingInstances
     test(data)
@@ -224,14 +226,15 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
     * @param testData
     * @return List of (label, (f1, precision, recall))
     */
-  def test(testData: Iterable[T]): List[(String, (Double, Double, Double))] = {
+  def test(testData: Iterable[T]): List[(String, Result)] = {
     isTraining = false
     val testReader = new LBJIteratorParserScala[T](testData)
     testReader.reset()
     val tester = TestDiscrete.testDiscrete(classifier, classifier.getLabeler, testReader)
     tester.printPerformance(System.out)
-    val ret = tester.getLabels.map { label => (label, (tester.getF1(label), tester.getPrecision(label), tester.getRecall(label))) }
-    ret.toList
+    tester.getLabels.map { label =>
+      (label, Result(tester.getF1(label), tester.getPrecision(label), tester.getRecall(label)))
+    }.toList
   }
 
   def testContinuos(): Unit = {
@@ -271,61 +274,47 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
   }
 
   /** Run k fold cross validation. */
-  def crossValidation(k: Int) = {
+  def crossValidation(k: Int, numIterations: Int = 5): Unit = {
     val allData = this.fromData
 
     if (loggging)
       println(s"Running cross validation on ${allData.size} data   ")
 
-    val groupSize = Math.ceil(allData.size / k).toInt
-    val groups = allData.grouped(groupSize).toList
+    def splitIdx(i: Int): Int = i * allData.size / k
 
-    val loops = if (k == 1) {
-      (groups.head, Nil) :: Nil
-    } else {
-      (0 until k) map {
-        i => chunkData(groups, i, 0, (Nil, Nil))
+    /** generating k-fold test and train sets */
+    val trainAndTestDataList = {
+      (0 until k).map { fold =>
+        val (prefix, rest) = allData.splitAt(splitIdx(fold))
+        val (test, postfix) = rest.splitAt(splitIdx(fold + 1) - splitIdx(fold))
+        val train = prefix ++ postfix
+        (train, test)
       }
     }
 
-    def printTestResult(result: (String, (Double, Double, Double))): Unit = {
-      result match {
-        case (label, (f1, precision, recall)) =>
-          println(s"  $label    $f1    $precision     $recall   ")
-      }
-    }
-
-    val results = loops.zipWithIndex map {
+    val results = trainAndTestDataList.zipWithIndex.flatMap {
       case ((trainingSet, testingSet), idx) =>
         println(s"Running fold $idx")
         println(s"Learn with ${trainingSet.size}")
         println(s"Test with ${testingSet.size}")
 
         this.classifier.forget()
-        this.learn(10, trainingSet)
-        val testResult = this.test(testingSet)
-        testResult
+        this.learn(numIterations, trainingSet)
+        this.test(testingSet)
     }
 
-    def sumTuple(a: (Double, Double, Double), b: (Double, Double, Double)): (Double, Double, Double) = {
-      (a._1 + b._1, a._2 + b._2, a._3 + b._3)
-    }
-
-    def avgTuple(a: (Double, Double, Double), size: Int): (Double, Double, Double) = {
-      (a._1 / size, a._2 / size, a._3 / size)
+    def resultToList(someResult: Result): List[Double] = {
+      List(someResult.f1, someResult.precision, someResult.recall)
     }
 
     println("  label    f1    precision     recall   ")
 
-    results.flatten.toList.groupBy({
-      tu: (String, (Double, Double, Double)) => tu._1
-    }).foreach({
-      case (label, l) =>
-        val t = l.length
-        val avg = avgTuple(l.map(_._2).reduce(sumTuple), t)
-
-        printTestResult((label, avg))
-    })
+    results.groupBy { case (label: String, _) => label }.mapValues { labelAndResult =>
+      val (label, result) = labelAndResult.unzip
+      val length = labelAndResult.length
+      val avgResult = result.map(resultToList).transpose.map(_.sum / length)
+      println(s"  $label    ${avgResult(0)}    ${avgResult(1)}     ${avgResult(2)}   ")
+    }
   }
 
   /** Label property foor users classifier */
