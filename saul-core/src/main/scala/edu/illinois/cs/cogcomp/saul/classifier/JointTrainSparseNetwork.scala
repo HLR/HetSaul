@@ -1,14 +1,15 @@
 package edu.illinois.cs.cogcomp.saul.classifier
 
-import java.time
-
 import edu.illinois.cs.cogcomp.lbjava.learn.{ Learner, LinearThresholdUnit }
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
+import org.slf4j.{ Logger, LoggerFactory }
 
 import scala.reflect.ClassTag
 /** Created by Parisa on 5/22/15.
   */
 object JointTrainSparseNetwork {
+
+  val logger: Logger = LoggerFactory.getLogger(this.getClass)
 
   def apply[HEAD <: AnyRef](
     dm: DataModel,
@@ -42,10 +43,7 @@ object JointTrainSparseNetwork {
     headTag: ClassTag[HEAD]
   ): Unit = {
     // forall members in collection of the head (dm.t) do
-    if (it % 10 == 0)
-      println(s"Training: $it iterations remain. ${time.Instant.now()} ")
-
-    println("Training iteration: " + it)
+    logger.info("Training iteration: " + it)
     if (it == 0) {
       // Done
     } else {
@@ -54,8 +52,8 @@ object JointTrainSparseNetwork {
       allHeads.zipWithIndex.foreach {
         case (h, idx) =>
           {
-            if (idx % 10000 == 0)
-              println(s"Training: $idx examples inferred. ${time.Instant.now()} ")
+            if (idx % 5000 == 0)
+              logger.info(s"Training: $idx examples inferred.")
 
             cls.foreach {
               case c: ConstrainedClassifier[_, HEAD] => {
@@ -75,7 +73,7 @@ object JointTrainSparseNetwork {
                 typedC.getCandidates(h) foreach {
                   x =>
                     {
-                      //                  println(x)
+                      //             println(x)
                       //                  typedC.onClassifier.learn(x)
 
                       def trainOnce() = {

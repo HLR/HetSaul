@@ -176,5 +176,5 @@ object srlConstraints {
       r_arg_Constraint(x) &&& c_arg_Constraint(x) &&& legal_arguments_Constraint(x) &&& noDuplicate(x)
   }
 
-} // end srlConstainrs
+} // end srlConstraints
 

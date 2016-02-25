@@ -102,22 +102,25 @@ object liApp extends App {
   }
 
   if (joinTrain) {
-    //argumentTypeLearner.load(cModelDir + argumentTypeLearner_lc, cModelDir + argumentTypeLearner_lex)
 
     argumentTypeLearner.setModelDir(jModelDir)
-    argumentTypeLearner.learn(10)
-    argumentTypeLearner.save()
-    argumentTypeLearner.load(jModelDir + argumentTypeLearner_lc, jModelDir + argumentTypeLearner_lex)
-    logger.info("test independent train after 10 iterations:... ")
-    argumentTypeLearner.test(exclude = "candidate")
+    // argumentTypeLearner.learn(10)
+    //argumentTypeLearner.save()
+    // argumentTypeLearner.load(jModelDir + argumentTypeLearner_lc, jModelDir + argumentTypeLearner_lex)
+    //logger.info("test independent train after 10 iterations:... ")
+    // argTypeConstraintClassifier.test(srlGraphs.relations.getTestingInstances, jModelDir + argumentTypeLearner_pred, 100, exclude = "candidate") //(aTr_pred, 100)
+    //argumentTypeLearner.test(exclude = "candidate")
     logger.info("Join train:... ")
-    for (i <- 0 until 100) {
-      JointTrainSparseNetwork(srlGraphs, argTypeConstraintClassifier :: Nil, 10)
-      if (i % 10 == 0) {
-        logger.info("test join train after " + i + " iterations:... ")
-        argumentTypeLearner.save()
-        argTypeConstraintClassifier.test(srlGraphs.relations.getTestingInstances, aModelDir + argumentTypeLearner_pred, 100, exclude = "candidate") //(aTr_pred, 100)
-      }
+    for (i <- 0 until 20) {
+      //  argumentTypeLearner.load(jModelDir + argumentTypeLearner_lc, jModelDir + argumentTypeLearner_lex)
+      // argumentTypeLearner.learn(10)
+
+      JointTrainSparseNetwork(srlGraphs, argTypeConstraintClassifier :: Nil, 5)
+      // if (i % 2 == 0) {
+      logger.info("test join train after " + i + " iterations:... ")
+      argumentTypeLearner.save()
+      argTypeConstraintClassifier.test(srlGraphs.relations.getTestingInstances, jModelDir + argumentTypeLearner_pred, 200, exclude = "candidate") //(aTr_pred, 100)
+      //}
     }
   }
 

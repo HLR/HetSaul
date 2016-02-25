@@ -148,7 +148,7 @@ abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val dm: DataMo
 
   def cName: String = this.getClass.getName
   // TODO: Pick a better name
-  def lbjClassifier = dm.property[T](dm.getNodeWithType[T], cName)("*", "*") {
+  def lbjClassifier = dm.property(dm.getNodeWithType[T], cName)("*", "*") {
     x: T => buildWithConstrain(subjectTo.createInferenceCondition[T](this.dm).convertToType[T], onClassifier)(x)
   }
 
@@ -223,10 +223,8 @@ abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val dm: DataMo
     val ret = tester.getLabels.map({
       label => (label, (tester.getF1(label), tester.getPrecision(label), tester.getRecall(label)))
     })
-
     ret toList
   }
-
 }
 
 object ConstrainedClassifier {
@@ -241,5 +239,4 @@ object ConstrainedClassifier {
       override def makeConstrainDef(x: HEAD): FirstOrderConstraint = f(x)
     }).asInstanceOf[LfsConstraint[HEAD]]
   }
-
 }
