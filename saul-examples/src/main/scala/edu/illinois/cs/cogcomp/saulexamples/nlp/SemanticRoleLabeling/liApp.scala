@@ -4,14 +4,14 @@ import edu.illinois.cs.cogcomp.saul.classifier.JointTrainSparseNetwork
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.ModelConfigs._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifiers._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlConstraintClassifiers.argTypeConstraintClassifier
-import org.slf4j.{Logger, LoggerFactory}
+import org.slf4j.{ Logger, LoggerFactory }
 object liApp extends App {
   //train parameters
   val pipelineTrain = false
   val joinTrain = true
 
   //test parameters
-  val TestA= false
+  val TestA = false
   val pipeline = false
   val pipelineInTestA = false
   val pipelineInTestC = false
@@ -33,23 +33,23 @@ object liApp extends App {
   logger.info("all arguments number after population:" + srlGraphs.arguments().size)
   logger.info("all tokens number after population:" + srlGraphs.tokens().size)
 
-  if (TestA){
+  if (TestA) {
     val modelLCa = aModelDir + argumentTypeLearner_lc
     val modelLEXa = aModelDir + argumentTypeLearner_lex
     argumentTypeLearner.load(modelLCa, modelLEXa)
-    argumentTypeLearner.test(exclude="candidate")
-//    val goldOutFile = "srl.gold"
-//    val goldWriter = new PrintWriter(new File(goldOutFile))
-//    val predOutFile = "srl.predicted"
-//    val predWriter = new PrintWriter(new File(predOutFile))
-//     argumentTypeLearner.test(prediction= typeArgumentPrediction, groundTruth =  argumentLabelGold, exclude="candidate")
-//    val predictedViews = predArgViewGenerator.toPredArgList(srlGraphs, typeArgumentPrediction)
-//    val goldViews = predArgViewGenerator.toPredArgList(srlGraphs, argumentLabelGold)
-//
-//    predictedViews.foreach(pav => CoNLLFormatWriter.printPredicateArgumentView(pav, predWriter))
-//    goldViews.foreach(pav => CoNLLFormatWriter.printPredicateArgumentView(pav, goldWriter))
-//    predWriter.close()
-//    goldWriter.close()
+    argumentTypeLearner.test(exclude = "candidate")
+    //    val goldOutFile = "srl.gold"
+    //    val goldWriter = new PrintWriter(new File(goldOutFile))
+    //    val predOutFile = "srl.predicted"
+    //    val predWriter = new PrintWriter(new File(predOutFile))
+    //     argumentTypeLearner.test(prediction= typeArgumentPrediction, groundTruth =  argumentLabelGold, exclude="candidate")
+    //    val predictedViews = predArgViewGenerator.toPredArgList(srlGraphs, typeArgumentPrediction)
+    //    val goldViews = predArgViewGenerator.toPredArgList(srlGraphs, argumentLabelGold)
+    //
+    //    predictedViews.foreach(pav => CoNLLFormatWriter.printPredicateArgumentView(pav, predWriter))
+    //    goldViews.foreach(pav => CoNLLFormatWriter.printPredicateArgumentView(pav, goldWriter))
+    //    predWriter.close()
+    //    goldWriter.close()
   }
 
   if (pipelineInTestA & !testWithConstraints) {
@@ -109,15 +109,15 @@ object liApp extends App {
     argumentTypeLearner.save()
     argumentTypeLearner.load(jModelDir + argumentTypeLearner_lc, jModelDir + argumentTypeLearner_lex)
     logger.info("test independent train after 10 iterations:... ")
-    argumentTypeLearner.test(exclude="candidate")
+    argumentTypeLearner.test(exclude = "candidate")
     logger.info("Join train:... ")
-    for (i<-0 until 100) {
+    for (i <- 0 until 100) {
       JointTrainSparseNetwork(srlGraphs, argTypeConstraintClassifier :: Nil, 10)
-      if (i % 10 == 0)
-        {  logger.info("test join train after "+ i+" iterations:... ")
-           argumentTypeLearner.save()
-           argTypeConstraintClassifier.test(srlGraphs.relations.getTestingInstances, aModelDir + argumentTypeLearner_pred, 100, exclude = "candidate") //(aTr_pred, 100)
-        }
+      if (i % 10 == 0) {
+        logger.info("test join train after " + i + " iterations:... ")
+        argumentTypeLearner.save()
+        argTypeConstraintClassifier.test(srlGraphs.relations.getTestingInstances, aModelDir + argumentTypeLearner_pred, 100, exclude = "candidate") //(aTr_pred, 100)
+      }
     }
   }
 
@@ -132,7 +132,6 @@ object liApp extends App {
   // arg_Is_TypeConstraintClassifier.test()
 
   //print("argument classifier L+I model considering background knowledge  test results:")
-
 
   if (pipelineTrain) {
     val modelLCb = bModelDir + argumentIdentifier_lc
