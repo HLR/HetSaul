@@ -17,8 +17,21 @@ types.
 In this example we show how to model this problem and show different training/inference paradigms 
 for this problem. 
 
- - Pipeline Training: 
- - L+I Training 
+ - Independent Training: In this scenario the entity and relation classifiers, are trained independently using only 
+            local features. In particular, the relation classifier does not know the labels of its entity arguments,
+            and the entity classifier does not know the labels of relations in the sentence either. 
+            
+ - Pipeline Training: Pipeline, mimics the typical strategy in solving complex natural language problems – separating a 
+            task into several stages and solving them sequentially. For example, a named entity recognizer may be 
+            trained using a different corpus in advance, and given to a relation classifier as a tool to extract 
+            features. This approach first trains an entity classifier, and then uses the prediction of entities in 
+            addition to other local features to learn the relation identifier. Note that although the true labels of 
+            entities are known when training the relation identifier, this may not be the case in the testing time since 
+            only the predicted entity labels are available in testing, learning on the predictions of the entity 
+            classifier presumably makes the relation classifier more tolerant to the mistakes of the entity classifier. 
+            In fact, we also observe this phenomenon empirically. When the relation classifier is trained using the 
+            true entity labels, the performance is much worse than using the predicted entity labels.
+ - L+I Training: 
  - Joint Training: 
 
 
