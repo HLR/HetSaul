@@ -125,25 +125,30 @@ abstract class Learnable[T <: AnyRef](val node: Node[T], val parameters: Paramet
 
   /** Loads the model and lexicon for the classifier. Looks up in the local file system
     * and the files are not found, looks up in the classpath JARs.
+    *
     * @param lcFile The path of the model file
     * @param lexFile The path of the lexicon file
     */
   def load(lcFile: String, lexFile: String): Unit = {
-    if (IOUtils.exists(lcFile))
+    if (IOUtils.exists(lcFile)) {
+      logger.info("Reading model file {} from local path.", IOUtils.getFileName(lcFile))
       classifier.readModel(lcFile)
-    else {
+    } else {
       val modelResourcesUrls = IOUtils.lsResources(getClass, lcFile)
-      if (modelResourcesUrls.size() == 1)
+      if (modelResourcesUrls.size() == 1) {
+        logger.info("Reading model file {} from classpath.", IOUtils.getFileName(lcFile))
         classifier.readModel(modelResourcesUrls.get(0))
-      else logger.error("Cannot find model file: {}", lcFile)
+      } else logger.error("Cannot find model file: {}", lcFile)
     }
-    if (IOUtils.exists(lcFile))
+    if (IOUtils.exists(lcFile)) {
+      logger.info("Reading lexicon file {} from local path.", IOUtils.getFileName(lexFile))
       classifier.readLexicon(lexFile)
-    else {
+    } else {
       val lexiconResourcesUrls = IOUtils.lsResources(getClass, lexFile)
-      if (lexiconResourcesUrls.size() == 1)
+      if (lexiconResourcesUrls.size() == 1) {
+        logger.info("Reading lexicon file {} from classpath.", IOUtils.getFileName(lexFile))
         classifier.readLexicon(lexiconResourcesUrls.get(0))
-      else logger.error("Cannot find lexicon file {}", lexFile)
+      } else logger.error("Cannot find lexicon file {}", lexFile)
     }
 
     setExtractor()
@@ -163,7 +168,9 @@ abstract class Learnable[T <: AnyRef](val node: Node[T], val parameters: Paramet
     isTraining = true
     if (useCache) {
       if (node.derivedInstances.isEmpty) {
-        logger.error("No cached data found. Please use dataModel.load()")
+        logger.error("No cached data found. Please use \"dataModel.load(filepath)\" \n" +
+          "If you don't have any cache saved, use \"datamodel.deriveInstances()\" to extract it, " +
+          "and then save it with \"datamodel.write(filePath)\"  ")
       }
       learnWithDerivedInstances(iteration, node.derivedInstances.values)
     } else {
@@ -250,6 +257,10 @@ abstract class Learnable[T <: AnyRef](val node: Node[T], val parameters: Paramet
     ret.toList
   }
 
+  /** Test with real-valued (continuous) data. Runs Spearman's and Pearson's correlations.
+    *
+    * @param testData The continuous data to test on
+    */
   def testContinuous(testData: Iterable[T] = null): Unit = {
     isTraining = false
     val testReader = new LBJIteratorParserScala[T](if (testData == null) node.getTestingInstances else testData)

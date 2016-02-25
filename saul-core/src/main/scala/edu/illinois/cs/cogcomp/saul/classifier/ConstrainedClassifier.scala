@@ -1,9 +1,8 @@
 package edu.illinois.cs.cogcomp.saul.classifier
 
-import edu.illinois.cs.cogcomp.lbjava.classify.{ FeatureVector, Classifier, TestDiscrete }
+import edu.illinois.cs.cogcomp.lbjava.classify.{ Classifier, FeatureVector, TestDiscrete }
 import edu.illinois.cs.cogcomp.lbjava.infer._
 import edu.illinois.cs.cogcomp.lbjava.learn.Learner
-import edu.illinois.cs.cogcomp.lbjava.parse.Parser
 import edu.illinois.cs.cogcomp.saul.classifier.infer.InferenceCondition
 import edu.illinois.cs.cogcomp.saul.constraint.LfsConstraint
 import edu.illinois.cs.cogcomp.saul.datamodel.edge.Edge
@@ -118,30 +117,6 @@ abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val edge: Edge
     override def classify(o: scala.Any): FeatureVector = new FeatureVector(featureValue(discreteValue(o)))
     override def discreteValue(o: scala.Any): String =
       buildWithConstraint(subjectTo.createInferenceCondition[T](getSolverInstance()).convertToType[T], onClassifier)(o.asInstanceOf[T])
-  }
-
-  def learn(it: Int): Unit = {
-    val ds = edge.from.getTrainingInstances
-    this.learn(it, ds)
-  }
-
-  def learn(iteration: Int, data: Iterable[T]): Unit = {
-    val crTokenTest = new LBJIteratorParserScala[T](data)
-    crTokenTest.reset()
-
-    def learnAll(crTokenTest: Parser, remainingIteration: Int): Unit = {
-      val v = crTokenTest.next
-      if (v == null) {
-        if (remainingIteration > 0) {
-          crTokenTest.reset()
-          learnAll(crTokenTest, remainingIteration - 1)
-        }
-      } else {
-        this.onClassifier.learn(v)
-        learnAll(crTokenTest, remainingIteration)
-      }
-    }
-    learnAll(crTokenTest, iteration)
   }
 
   def test(): List[(String, (Double, Double, Double))] = {
