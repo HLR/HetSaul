@@ -74,6 +74,6 @@ object knowEngDataModel extends DataModel {
   }
 
   val responsePrediction = property(patientDrug) {
-    x: PatientDrug => dResponseClassifier(x)
+    x: PatientDrug => dResponseClassifier.classifier.realValue(x)
   }
 }
