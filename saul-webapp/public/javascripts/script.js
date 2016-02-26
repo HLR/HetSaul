@@ -52,6 +52,9 @@ $(document).ready(function(){
             updateCode(2);
         });
 
+        $("#queryBtn").click(function() {
+            updateCode(3)
+        });
 
         $("#newmodel").click(function(){
             var content = ["package test","","import edu.illinois.cs.cogcomp.saul.datamodel.DataModel","","object $$$$$$ extends DataModel {","","}"];
@@ -308,9 +311,12 @@ var updateCode = function(event){
     } else if (event == 1) {
         rURL = '/populate'
         onSuccess = onPopulateSuccess;
-    } else {
+    } else if (event == 2) {
         rURL = '/runCode';
         onSuccess = onRunSuccess;
+    } else if (event == 3) {
+        rURL = '/query';
+        onSuccess = onQuerySuccess;
     }
 
     var callback = {
@@ -615,6 +621,10 @@ var onRunSuccess = function(data) {
     alertError(data);
     changeTab("tab3");
     displayOutput(data)
+}
+
+var onQuerySuccess = function(data) {
+    alertError(data);
 }
 
 var onError = function(data){

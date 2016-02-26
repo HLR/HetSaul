@@ -14,6 +14,9 @@ POST    /populate               controllers.Application.acceptPopulateModel
 # Compile source code
 POST     /compileCode                 controllers.Application.acceptDisplayModel
 
+# Query populated data
+POST    /query                  controllers.Application.acceptQuery
+
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
 

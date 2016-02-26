@@ -12,7 +12,6 @@ trait InstanceSet[T <: AnyRef] extends Iterable[T] {
 
   def ~>[U <: AnyRef](edge: Edge[T, U]): InstanceSet[U] = {
     assert(node == edge.forward.from)
-    instanceCache.cache(node.asInstanceOf[Node[AnyRef]], instances.asInstanceOf[Iterable[AnyRef]])
     new InstanceSet[U] {
       val node: Node[U] = edge.forward.to
       val tempInst = self.instances.flatMap(t => edge.forward.neighborsOf(t))
@@ -63,16 +62,4 @@ trait PropertySet[T <: AnyRef, V] extends Iterable[V] {
   override def iterator: Iterator[V] = propValues.iterator
 
   def counts = propValues.groupBy(x => x).map(p => p._1 -> p._2.size).toMap
-}
-
-object instanceCache {
-  var instances: Iterable[AnyRef] = null
-  var node: Node[AnyRef] = null
-
-  def cache(node: Node[AnyRef], instances: Iterable[AnyRef]): Unit = {
-    if (this.node == null) {
-      this.node = node
-      this.instances = instances.toSet
-    }
-  }
 }
