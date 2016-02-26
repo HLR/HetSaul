@@ -7,7 +7,7 @@ import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlConstrai
 import org.slf4j.{ Logger, LoggerFactory }
 object liApp extends App {
   //train parameters
-  val pipelineTrain =true
+  val pipelineTrain = true
   val joinTrain = false
 
   //test parameters
@@ -143,8 +143,10 @@ object liApp extends App {
     val training = relations.getTrainingInstances.filter(x => argumentXuIdentifierGivenApredicate(x).equals("true"))
     argumentTypeLearner.setModelDir("pipeModels_cTr")
     argumentTypeLearner.learn(100, training)
+    logger.info("Test without pipeline:")
     argumentTypeLearner.test(exclude = "candidate")
     argumentTypeLearner.save()
+    logger.info("Test with pipeline:")
     argumentTypeLearner.test(prediction = typeArgumentPipeGivenGoldPredicate, groundTruth = argumentLabelGold, exclude = "candidate") //grounexclude = "candidate")
   }
 }
