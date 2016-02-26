@@ -10,6 +10,7 @@
         <link rel="stylesheet" media="screen" href="@routes.WebJarAssets.at(WebJarAssets.locate("bootstrap.min.css"))">
         <script src="@routes.WebJarAssets.at(WebJarAssets.locate("jquery.min.js"))"></script>
         <script src="@routes.WebJarAssets.at(WebJarAssets.locate("js/bootstrap.min.js"))"></script>
+        <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/shepherd-theme-arrows.css")">
         @helper.javascriptRouter("jsRoutes")(
             routes.javascript.Application.index,
             routes.javascript.Application.acceptRunMain,
@@ -25,6 +26,11 @@
         <script src="@routes.Assets.versioned("javascripts/plugins/settings.js")" type="text/javascript" charset="utf-8"></script>
         <script src="@routes.Assets.versioned("javascripts/plugins/sigma.canvas.edges.labels.curve.js")" type="text/javascript" charset="utf-8"></script>
         <script src="@routes.Assets.versioned("javascripts/plugins/sigma.plugins.dragNodes.min.js")" type="text/javascript" charset="utf-8"></script>
+        <script src="@routes.Assets.versioned("javascripts/tether.js")" type="text/javascript" charset="utf-8"></script>
+        <script src="@routes.Assets.versioned("javascripts/shepherd.min.js")" type="text/javascript" charset="utf-8"></script>
+        <script src="@routes.Assets.versioned("javascripts/introduction.js")" type="text/javascript" charset="utf-8"></script>
+        
+        
 
     </head>
     <body>

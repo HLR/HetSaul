@@ -13,9 +13,13 @@
     padding-bottom: 20px;
 }
 
+.shepherd-step{
+    z-index: 5;
+}
 .code{
     display: none;
 }
+
 
 #populatedGraphContainer{
 	height: 100%;
