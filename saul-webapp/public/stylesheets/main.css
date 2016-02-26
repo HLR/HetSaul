@@ -21,6 +21,12 @@
 }
 
 
+input[type="text"], textarea {
+
+  background-color : #333333;
+  color: #ffffff;
+}
+
 #populatedGraphContainer{
 	height: 100%;
 }

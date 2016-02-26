@@ -1,8 +1,9 @@
 .DS_Store
+data
 */data
 .idea
 /RUNNING_PID
-/logs/
+*/logs/
 /project/*-shim.sbt
 /project/project/
 */target/
