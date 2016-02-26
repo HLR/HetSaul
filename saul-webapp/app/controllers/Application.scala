@@ -112,6 +112,7 @@ class Application extends Controller {
         }) match {
           case Some(x) => x match {
             case model: DataModel => {
+              visualizer.init
               dataModelJsonInterface.getPopulatedInstancesJson(model)
             }
             case _ => getErrorJson(Json.toJson("Error"))

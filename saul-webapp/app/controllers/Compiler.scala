@@ -131,11 +131,11 @@ final class Compiler(rootDir: String, completeClasspath: String, reporterCallbac
     val cls = file.getClass()
     cls.getMethods().find(x => x.getName eq "main") match {
       case Some(x) => {
-        try{
+        try {
           x.invoke(file, null)
-          }catch{
-            case e: java.lang.reflect.InvocationTargetException => e.printStackTrace()
-          }
+        } catch {
+          case e: java.lang.reflect.InvocationTargetException => e.printStackTrace()
+        }
       }
       case _ =>
     }

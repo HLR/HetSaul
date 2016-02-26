@@ -17,76 +17,110 @@ object dataModelJsonInterface {
     val nodesObjs = nodes.map { n =>
       n.setAccessible(true)
       (n.getName, n.get(dm))
-    } filter (t =>
-      dm.NODES contains t._2)
-
-    val invertedNodesMap: Map[Object, String] = nodesObjs.map(_.swap).toMap
+    }
 
     val edgesObjs = edges.map { n =>
       n.setAccessible(true)
       (n.getName, n.get(dm))
     }
+    /*
+    val selected = {
+      if (visualizer.instanceSet != null) {
+        getInstanceQueryJson
+      } else if (visualizer.propertySet != null) {
+        getPropertyQueryJson
+      } else {
+        None
+      }
+    }*/
 
-    var edgesJson = List[(String, String)]()
-
-    val selectedNodes = nodesObjs.flatMap {
-      case (name, node) => node.asInstanceOf[Node[_]].getAllInstances.map(x => name + x.hashCode.toString).toSet[String]
+    /** @return json representation of the whole graph
+      */
+    def getFullJson = {
+      val nodesJson = buildNodesJson(nodesObjs)
+      val invertedNodesMap: Map[Object, String] = nodesObjs.map(_.swap).toMap
+      val edgesJson = buildEdgeJson(invertedNodesMap)
+      val propertiesJson = buildPropertiesJson(nodesObjs)
+      parseJsonGraph(nodesJson, edgesJson, propertiesJson)
     }
 
-    for {
-      (name, edge) <- edgesObjs;
-      (start, ends) <- edge.asInstanceOf[Edge[_, _]].forward.index
-    } {
+    def parseJsonGraph(
+      nodesJson: Map[String, Array[String]],
+      edgesJson: List[(String, String)],
+      propertiesJson: List[(String, Map[String, String])]
+    ): JsObject = {
+      JsObject(Seq(
+        "nodes" -> Json.toJson(nodesJson),
+        "edges" -> Json.toJson(edgesJson.groupBy(_._1).map { case (k, v) => (k, v.map(_._2)) }),
+        "properties" -> Json.toJson(propertiesJson.groupBy(_._1).map { case (k, v) => (k, v.map(_._2)) })
+      ))
+    }
 
-      val from = invertedNodesMap.get(edge.asInstanceOf[Edge[_, _]].from) match {
-        case Some(v) => v + start.hashCode.toString
-        case _ => ""
-      }
-      if (selectedNodes contains from) {
+    def getPropertyQueryJson = {
+
+    }
+
+    def getInstanceQueryJson = {
+      val queryNodesObjs = nodesObjs.filter(node => node._2 eq visualizer.instanceSet.node)
+      val nodesJson = buildNodesJson(queryNodesObjs)
+      val invertedNodesMap: Map[Object, String] = queryNodesObjs.map(_.swap).toMap
+      val edgesJson = buildEdgeJson(invertedNodesMap)
+      val propertiesJson = buildPropertiesJson(queryNodesObjs)
+      parseJsonGraph(nodesJson, edgesJson, propertiesJson)
+    }
+
+    def buildNodesJson(nodes: Array[(String, AnyRef)]): Map[String, Array[String]] = {
+      nodesObjs.map {
+        case (name, node) =>
+          (name, node.asInstanceOf[Node[_]].getAllInstances.map(x => name + x.hashCode.toString).toArray)
+      } toMap
+    }
+
+    def buildEdgeJson(invertedNodesMap: Map[Object, String]): List[(String, String)] = {
+      var edgesJson = List[(String, String)]()
+      for {
+        (name, edge) <- edgesObjs;
+        (start, ends) <- edge.asInstanceOf[Edge[_, _]].forward.index
+      } {
+        val from = invertedNodesMap.get(edge.asInstanceOf[Edge[_, _]].from) match {
+          case Some(v) => v + start.hashCode.toString
+          case _ => ""
+        }
+
         for (end <- ends) {
           val to = invertedNodesMap.get(edge.asInstanceOf[Edge[_, _]].to) match {
             case Some(v) => v + end.hashCode.toString
             case _ => ""
           }
-          if (selectedNodes contains to) {
+          if (from != "" && to != "") {
             edgesJson = (from, to) :: edgesJson
-
           }
         }
       }
-
+      edgesJson
     }
 
-    val nodesJson = nodesObjs.map {
-      case (name, node) =>
-        (name, node.asInstanceOf[Node[_]].getAllInstances.map(x => name + x.hashCode.toString).toArray)
-    } toMap
+    def buildPropertiesJson(nodes: Array[(String, AnyRef)]): List[(String, Map[String, String])] = {
+      var propertiesJson = List[(String, Map[String, String])]()
+      for (p <- properties) {
+        p.setAccessible(true)
+        println(p.getName + "---------------------------------------------")
+        val propertyObj = p.get(dm).asInstanceOf[NodeProperty[AnyRef]]
+        nodes.find { case (_, x) => x == propertyObj.node } match {
+          case Some((nodeName, node)) => {
+            propertiesJson = node.asInstanceOf[Node[_]]
+              .getAllInstances.map(x => nodeName + x.hashCode.toString)
+              .toList.zip(node.asInstanceOf[Node[AnyRef]]
+                .getAllInstances
+                .map(x => Map(p.getName -> propertyObj(x).toString))) ::: propertiesJson
 
-    var propertiesJson = List[(String, Map[String, String])]()
-
-    for (p <- properties) {
-      p.setAccessible(true)
-      println(p.getName + "---------------------------------------------")
-      val propertyObj = p.get(dm).asInstanceOf[NodeProperty[AnyRef]]
-      nodesObjs.find { case (_, x) => x == propertyObj.node } match {
-        case Some((nodeName, node)) => {
-          propertiesJson = node.asInstanceOf[Node[_]]
-            .getAllInstances.map(x => nodeName + x.hashCode.toString)
-            .toList.zip(node.asInstanceOf[Node[AnyRef]]
-              .getAllInstances
-              .map(x => Map(p.getName -> propertyObj(x).toString))) ::: propertiesJson
-
+          }
+          case None =>
         }
-        case None =>
       }
+      propertiesJson
     }
-
-    JsObject(Seq(
-      "nodes" -> Json.toJson(nodesJson),
-      "edges" -> Json.toJson(edgesJson.groupBy(_._1).map { case (k, v) => (k, v.map(_._2)) }),
-      "properties" -> Json.toJson(propertiesJson.groupBy(_._1).map { case (k, v) => (k, v.map(_._2)) })
-    ))
-
+    getFullJson
   }
   def getSchemaJson(dm: DataModel): JsValue = {
     val declaredFields = dm.getClass.getDeclaredFields
