@@ -23,24 +23,32 @@ object dataModelJsonInterface {
       n.setAccessible(true)
       (n.getName, n.get(dm))
     }
-    /*
-    val selected = {
-      if (visualizer.instanceSet != null) {
-        getInstanceQueryJson
-      } else if (visualizer.propertySet != null) {
-        getPropertyQueryJson
-      } else {
-        None
-      }
-    }*/
 
     /** @return json representation of the whole graph
       */
     def getFullJson = {
-      val nodesJson = buildNodesJson(nodesObjs)
+      val nodesJson = nodesObjs.map {
+        case (name, node) =>
+          (name, node.asInstanceOf[Node[_]].getAllInstances.map(x => name + x.hashCode.toString).toArray)
+      } toMap
       val invertedNodesMap: Map[Object, String] = nodesObjs.map(_.swap).toMap
       val edgesJson = buildEdgeJson(invertedNodesMap)
       val propertiesJson = buildPropertiesJson(nodesObjs)
+      parseJsonGraph(nodesJson, edgesJson, propertiesJson)
+    }
+
+    def getPropertyQueryJson: JsValue = {
+      JsNull
+    }
+
+    def getInstanceQueryJson: JsObject = {
+      val queryNodesObjs = nodesObjs.filter(node => node._2 eq visualizer.instanceSet.node)
+      val name = queryNodesObjs(0)._1
+      val nodesJson = Map(name ->
+        visualizer.instanceSet.instances.map(x => name + x.hashCode.toString).toArray)
+      val invertedNodesMap: Map[Object, String] = queryNodesObjs.map(_.swap).toMap
+      val edgesJson = buildEdgeJson(invertedNodesMap)
+      val propertiesJson = buildPropertiesJson(queryNodesObjs)
       parseJsonGraph(nodesJson, edgesJson, propertiesJson)
     }
 
@@ -54,26 +62,6 @@ object dataModelJsonInterface {
         "edges" -> Json.toJson(edgesJson.groupBy(_._1).map { case (k, v) => (k, v.map(_._2)) }),
         "properties" -> Json.toJson(propertiesJson.groupBy(_._1).map { case (k, v) => (k, v.map(_._2)) })
       ))
-    }
-
-    def getPropertyQueryJson = {
-
-    }
-
-    def getInstanceQueryJson = {
-      val queryNodesObjs = nodesObjs.filter(node => node._2 eq visualizer.instanceSet.node)
-      val nodesJson = buildNodesJson(queryNodesObjs)
-      val invertedNodesMap: Map[Object, String] = queryNodesObjs.map(_.swap).toMap
-      val edgesJson = buildEdgeJson(invertedNodesMap)
-      val propertiesJson = buildPropertiesJson(queryNodesObjs)
-      parseJsonGraph(nodesJson, edgesJson, propertiesJson)
-    }
-
-    def buildNodesJson(nodes: Array[(String, AnyRef)]): Map[String, Array[String]] = {
-      nodesObjs.map {
-        case (name, node) =>
-          (name, node.asInstanceOf[Node[_]].getAllInstances.map(x => name + x.hashCode.toString).toArray)
-      } toMap
     }
 
     def buildEdgeJson(invertedNodesMap: Map[Object, String]): List[(String, String)] = {
@@ -120,7 +108,20 @@ object dataModelJsonInterface {
       }
       propertiesJson
     }
-    getFullJson
+    val selectedGraph: JsValue = {
+      if (visualizer.instanceSet != null) {
+        getInstanceQueryJson
+      } else if (visualizer.propertySet != null) {
+        getPropertyQueryJson
+      } else {
+        JsNull
+      }
+    }
+
+    val fullGraph = getFullJson
+
+    JsObject(Map("selected" -> selectedGraph, "full" -> fullGraph))
+
   }
   def getSchemaJson(dm: DataModel): JsValue = {
     val declaredFields = dm.getClass.getDeclaredFields
