@@ -27,7 +27,7 @@ object EntityRelationClassifiers {
   object LocationClassifier extends Learnable[ConllRawToken](EntityRelationDataModel) {
     def label: Property[ConllRawToken] = entityType is "Loc"
     override def feature = using(word, windowWithin[ConllRawSentence](-2, 2, List(pos)), phrase, containsSubPhraseMent,
-      containsSubPhraseIng, wordLen)//, containsInPersonList, containsInCityList)*/
+      containsSubPhraseIng, wordLen) //, containsInPersonList, containsInCityList)*/
     override lazy val classifier = new SparseNetworkLearner()
   }
 

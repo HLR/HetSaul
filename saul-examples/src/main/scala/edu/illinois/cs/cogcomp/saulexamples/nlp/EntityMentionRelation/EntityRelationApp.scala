@@ -57,16 +57,16 @@ object EntityRelationApp {
     saveEntityModels()
 
     // independent relation classifiers
-//    println("WorkFor Classifier Evaluation")
-//    println("=================================")
-//    WorksForClassifier.crossValidation(foldSize)
-//    println("=================================")
-//    println("LivesIn Classifier Evaluation")
-//    println("=================================")
-//    LivesInClassifier.crossValidation(foldSize)
-//    println("=================================")
-//
-//    saveIndependentRelationModels()
+    //    println("WorkFor Classifier Evaluation")
+    //    println("=================================")
+    //    WorksForClassifier.crossValidation(foldSize)
+    //    println("=================================")
+    //    println("LivesIn Classifier Evaluation")
+    //    println("=================================")
+    //    LivesInClassifier.crossValidation(foldSize)
+    //    println("=================================")
+    //
+    //    saveIndependentRelationModels()
   }
 
   def testIndependentClassifiers() = {
