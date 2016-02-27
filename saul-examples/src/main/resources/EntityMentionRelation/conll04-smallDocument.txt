@@ -1,0 +1,576 @@
+
+
+3000	O	0	O	NNP	Fall	O	O	O
+3000	O	1	O	IN	in	O	O	O
+3000	O	2	O	NNP	Pollution	O	O	O
+3000	O	3	O	IN	in	O	O	O
+3000	O	4	O	NNP	Eastern	O	O	O
+3000	O	5	O	NNP	Laender	O	O	O
+3000	O	6	O	NNP	Reported	O	O	O
+3000	O	7	O	NNP	AU2202163794	O	O	O
+3000	Loc	8	O	NNP	Berlin	O	O	O
+3000	O	9	O	NNP	DIE	O	O	O
+3000	O	10	O	NNP	WELT	O	O	O
+3000	O	11	O	IN	in	O	O	O
+3000	O	12	O	JJ	German	O	O	O
+3000	Other	13	O	CD/NNP/CD	22/Feb/94	O	O	O
+3000	O	14	O	NN	p	O	O	O
+3000	O	15	O	CD	2	O	O	O
+
+
+3001	Loc	0	O	NNP	Berlin	O	O	O
+3001	O	1	O	NNP	DIE	O	O	O
+3001	O	2	O	NNP	WELT	O	O	O
+
+
+3002	O	0	O	-LRB-	-LRB-	O	O	O
+3002	O	1	O	NN	"	O	O	O
+3002	O	2	O	NNP	DPA	O	O	O
+3002	O	3	O	NN	"	O	O	O
+3002	O	4	O	NN	report	O	O	O
+3002	O	5	O	:	:	O	O	O
+3002	O	6	O	NN	"	O	O	O
+3002	Loc	7	O	NNP/NNP	Eastern/Germany	O	O	O
+3002	O	8	O	MD	Can	O	O	O
+3002	O	9	O	NNP	Breathe	O	O	O
+3002	O	10	O	NNP	Freely	O	O	O
+3002	O	11	O	RB	Again	O	O	O
+3002	O	12	O	NN	"	O	O	O
+3002	O	13	O	-RRB-	-RRB-	O	O	O
+
+
+3003	O	0	O	-LRB-	-LRB-	O	O	O
+3003	O	1	O	NNP	Text	O	O	O
+3003	O	2	O	-RRB-	-RRB-	O	O	O
+3003	Loc	3	O	NN	Berlin	O	O	O
+3003	O	4	O	:	--	O	O	O
+3003	O	5	O	NNP	Owing	O	O	O
+3003	O	6	O	TO	to	O	O	O
+3003	O	7	O	JJ	environmental	O	O	O
+3003	O	8	O	NN	protection	O	O	O
+3003	O	9	O	NNS	measures	O	O	O
+3003	O	10	O	CC	and	O	O	O
+3003	O	11	O	NN	production	O	O	O
+3003	O	12	O	NNS	cuts	O	O	O
+3003	O	13	O	,	COMMA	O	O	O
+3003	O	14	O	NN	pollution	O	O	O
+3003	O	15	O	VBZ	has	O	O	O
+3003	O	16	O	VBN	decreased	O	O	O
+3003	O	17	O	RB	considerably	O	O	O
+3003	O	18	O	IN	in	O	O	O
+3003	O	19	O	DT	the	O	O	O
+3003	O	20	O	JJ	new	O	O	O
+3003	O	21	O	NN	laender	O	O	O
+3003	O	22	O	IN	since	O	O	O
+3003	O	23	O	NN	unification	O	O	O
+3003	O	24	O	.	.	O	O	O
+
+
+3004	O	0	O	VBG	According	O	O	O
+3004	O	1	O	TO	to	O	O	O
+3004	O	2	O	DT	a	O	O	O
+3004	O	3	O	NN	report	O	O	O
+3004	O	4	O	IN	by	O	O	O
+3004	O	5	O	DT	the	O	O	O
+3004	Org	6	O	NNP/NNP/NNP/NNP	Halle/Economic/Research/Institute	O	O	O
+3004	O	7	O	,	COMMA	O	O	O
+3004	O	8	O	DT	the	O	O	O
+3004	O	9	O	JJ	average	O	O	O
+3004	O	10	O	NN	production	O	O	O
+3004	O	11	O	IN	of	O	O	O
+3004	O	12	O	NN	dust	O	O	O
+3004	O	13	O	CC	and	O	O	O
+3004	Other	14	O	NN/NN	sulfur/dioxide	O	O	O
+3004	O	15	O	VBD	decreased	O	O	O
+3004	O	16	O	IN	by	O	O	O
+3004	Other	17	O	CD/NN	50/percent	O	O	O
+3004	O	18	O	IN	in	O	O	O
+3004	O	19	O	NNS	areas	O	O	O
+3004	O	20	O	IN	with	O	O	O
+3004	O	21	O	JJ	high	O	O	O
+3004	O	22	O	NN	pollution	O	O	O
+3004	O	23	O	,	COMMA	O	O	O
+3004	O	24	O	CC	and	O	O	O
+3004	O	25	O	IN	by	O	O	O
+3004	Other	26	O	DT/NN	a/third	O	O	O
+3004	O	27	O	IN	in	O	O	O
+3004	O	28	O	NNS	areas	O	O	O
+3004	O	29	O	RBR	less	O	O	O
+3004	O	30	O	VBN	exposed	O	O	O
+3004	O	31	O	TO	to	O	O	O
+3004	O	32	O	NN	pollution	O	O	O
+3004	O	33	O	.	.	O	O	O
+
+
+3005	O	0	O	PRP	It	O	O	O
+3005	O	1	O	VBD	was	O	O	O
+3005	O	2	O	,	COMMA	O	O	O
+3005	O	3	O	IN	above	O	O	O
+3005	O	4	O	DT	all	O	O	O
+3005	O	5	O	,	COMMA	O	O	O
+3005	O	6	O	DT	the	O	O	O
+3005	O	7	O	NN	conversion	O	O	O
+3005	O	8	O	IN	of	O	O	O
+3005	O	9	O	JJ	coal-fired	O	O	O
+3005	O	10	O	NN	heating	O	O	O
+3005	O	11	O	NNS	systems	O	O	O
+3005	O	12	O	TO	to	O	O	O
+3005	O	13	O	NN	oil	O	O	O
+3005	O	14	O	CC	and	O	O	O
+3005	O	15	O	NN	gas-	O	O	O
+3005	O	16	O	VBN	fired	O	O	O
+3005	O	17	O	NNS	ones	O	O	O
+3005	O	18	O	IN	in	O	O	O
+3005	O	19	O	RBR	more	O	O	O
+3005	O	20	O	IN	than	O	O	O
+3005	Other	21	O	CD/CD	1/million	O	O	O
+3005	O	22	O	JJ	private	O	O	O
+3005	O	23	O	NNS	households	O	O	O
+3005	O	24	O	WDT	that	O	O	O
+3005	O	25	O	VBZ	has	O	O	O
+3005	O	26	O	VBN	caused	O	O	O
+3005	O	27	O	DT	this	O	O	O
+3005	O	28	O	JJ	positive	O	O	O
+3005	O	29	O	NN	effect	O	O	O
+3005	O	30	O	.	.	O	O	O
+
+
+3006	O	0	O	IN	In	O	O	O
+3006	O	1	O	DT	the	O	O	O
+3006	O	2	O	NN	electricity	O	O	O
+3006	O	3	O	NN	sector	O	O	O
+3006	O	4	O	DT	the	O	O	O
+3006	O	5	O	NNS	funds	O	O	O
+3006	O	6	O	IN	for	O	O	O
+3006	O	7	O	VBG	fighting	O	O	O
+3006	O	8	O	NN	dust	O	O	O
+3006	O	9	O	,	COMMA	O	O	O
+3006	O	10	O	NN	sulfur	O	O	O
+3006	O	11	O	,	COMMA	O	O	O
+3006	O	12	O	CC	and	O	O	O
+3006	O	13	O	DT	the	O	O	O
+3006	O	14	O	NN	disposal	O	O	O
+3006	O	15	O	IN	of	O	O	O
+3006	O	16	O	NN	ash	O	O	O
+3006	O	17	O	,	COMMA	O	O	O
+3006	O	18	O	NN	gypsum	O	O	O
+3006	O	19	O	,	COMMA	O	O	O
+3006	O	20	O	CC	and	O	O	O
+3006	O	21	O	NN	water	O	O	O
+3006	O	22	O	VBP	are	O	O	O
+3006	O	23	O	VBN	expected	O	O	O
+3006	O	24	O	TO	to	O	O	O
+3006	O	25	O	VB	increase	O	O	O
+3006	O	26	O	TO	to	O	O	O
+3006	Other	27	O	CD/NN	20-30/percent	O	O	O
+3006	O	28	O	IN	of	O	O	O
+3006	O	29	O	DT	the	O	O	O
+3006	O	30	O	JJ	basic	O	O	O
+3006	O	31	O	NN	investment	O	O	O
+3006	O	32	O	.	.	O	O	O
+
+
+3007	O	0	O	IN	Of	O	O	O
+3007	O	1	O	DT	the	O	O	O
+3007	Other	2	O	CD/CD	28/billion	O	O	O
+3007	O	3	O	JJ	German	O	O	O
+3007	O	4	O	NNS	marks	O	O	O
+3007	O	5	O	IN	of	O	O	O
+3007	O	6	O	NN	investment	O	O	O
+3007	O	7	O	IN	in	O	O	O
+3007	O	8	O	NNS	plants	O	O	O
+3007	O	9	O	VBN	expected	O	O	O
+3007	O	10	O	IN	by	O	O	O
+3007	Other	11	O	CD	1997	O	O	O
+3007	O	12	O	,	COMMA	O	O	O
+3007	O	13	O	DT	some	O	O	O
+3007	Other	14	O	CD/NN	40/percent	O	O	O
+3007	O	15	O	MD	will	O	O	O
+3007	O	16	O	,	COMMA	O	O	O
+3007	O	17	O	RB	however	O	O	O
+3007	O	18	O	,	COMMA	O	O	O
+3007	O	19	O	VB	have	O	O	O
+3007	O	20	O	TO	to	O	O	O
+3007	O	21	O	VB	be	O	O	O
+3007	O	22	O	VBN	used	O	O	O
+3007	O	23	O	IN	for	O	O	O
+3007	O	24	O	VBG	repairing	O	O	O
+3007	O	25	O	DT	the	O	O	O
+3007	O	26	O	NN	power	O	O	O
+3007	O	27	O	NN	network	O	O	O
+3007	O	28	O	.	.	O	O	O
+
+
+3008	O	0	O	NNP	Document	O	O	O
+3008	O	1	O	NNP	Type	O	O	O
+3008	O	2	O	:	:	O	O	O
+3008	O	3	O	NNP	Daily	O	O	O
+3008	O	4	O	NNP	Report	O	O	O
+3008	Other	5	O	CD/NNP/CD	7/March/1994	O	O	O
+
+
+3009	O	0	O	NNP	CSCE	O	O	O
+3009	O	1	O	NNS	Calls	O	O	O
+3009	O	2	O	IN	For	O	O	O
+3009	O	3	O	JJ	Early	O	O	O
+3009	O	4	O	NN	Return	O	O	O
+3009	O	5	O	IN	of	O	O	O
+3009	O	6	O	NNP	Missions	O	O	O
+3009	O	7	O	IN	in	O	O	O
+3009	Loc	8	O	NNP	Yugoslavia	O	O	O
+3009	O	9	O	NNP	LD0503162394	O	O	O
+3009	Loc	10	O	NNP	Belgrade	O	O	O
+3009	O	11	O	NNP	TANJUG	O	O	O
+3009	O	12	O	IN	in	O	O	O
+3009	O	13	O	NNP	English	O	O	O
+3009	Other	14	O	CD/NNP	1313/GMT	O	O	O
+3009	Other	15	O	CD/NNP/CD	5/Mar/94	O	O	O
+
+
+3010	Loc	0	O	NNP	Belgrade	O	O	O
+3010	O	1	O	NNP	TANJUG	O	O	O
+
+
+3011	O	0	O	-LRB-	-LRB-	O	O	O
+3011	O	1	O	NNP	Text	O	O	O
+3011	O	2	O	-RRB-	-RRB-	O	O	O
+3011	Loc	3	O	NNP	Prague	O	O	O
+3011	O	4	O	,	COMMA	O	O	O
+3011	Other	5	O	NNP/CD	March/5	O	O	O
+3011	O	6	O	-LRB-	-LRB-	O	O	O
+3011	O	7	O	NNP	TANJUG	O	O	O
+3011	O	8	O	-RRB-	-RRB-	O	O	O
+3011	O	9	O	:	--	O	O	O
+3011	O	10	O	DT	The	O	O	O
+3011	Org	11	O	NN/IN/JJ/NNS/IN/DT/NN/IN/NNP/CC/NNP/IN/NNP	Committee/of/Senior/Officials/of/the/Conference/on/Security/and/Cooperation/in/Europe	O	O	O
+3011	O	12	O	-LRB-	-LRB-	O	O	O
+3011	Org	13	O	NNP	CSCE	O	O	O
+3011	O	14	O	-RRB-	-RRB-	O	O	O
+3011	O	15	O	NN	meeting	O	O	O
+3011	O	16	O	IN	in	O	O	O
+3011	Loc	17	O	NNP	Prague	O	O	O
+3011	O	18	O	VBN	called	O	O	O
+3011	O	19	O	IN	for	O	O	O
+3011	O	20	O	DT	the	O	O	O
+3011	O	21	O	JJ	early	O	O	O
+3011	O	22	O	NN	return	O	O	O
+3011	O	23	O	IN	of	O	O	O
+3011	O	24	O	PP$	its	O	O	O
+3011	O	25	O	NNS	missions	O	O	O
+3011	O	26	O	TO	to	O	O	O
+3011	Loc	27	O	NNP	Kosovo	O	O	O
+3011	O	28	O	,	COMMA	O	O	O
+3011	Loc	29	O	NNP	Sandzak	O	O	O
+3011	O	30	O	CC	and	O	O	O
+3011	Loc	31	O	NNP	Vojvodina	O	O	O
+3011	O	32	O	IN	in	O	O	O
+3011	O	33	O	DT	the	O	O	O
+3011	Loc	34	O	JJ/NNP/IN/NNP	Yugoslav/Republic/of/Serbia	O	O	O
+3011	O	35	O	.	.	O	O	O
+
+27	34	Located_In
+29	34	Located_In
+31	34	Located_In
+
+3012	O	0	O	DT	The	O	O	O
+3012	Org	1	O	NNP	CSCE	O	O	O
+3012	O	2	O	NNS	missions	O	O	O
+3012	O	3	O	POS	'	O	O	O
+3012	O	4	O	NN	mandate	O	O	O
+3012	O	5	O	IN	in	O	O	O
+3012	Loc	6	O	NNP	Yugoslavia	O	O	O
+3012	O	7	O	VBD	expired	O	O	O
+3012	O	8	O	JJR	less	O	O	O
+3012	O	9	O	IN	than	O	O	O
+3012	O	10	O	DT	a	O	O	O
+3012	O	11	O	NN	year	O	O	O
+3012	O	12	O	IN	ago	O	O	O
+3012	O	13	O	CC	and	O	O	O
+3012	Loc	14	O	NNP	Belgrade	O	O	O
+3012	O	15	O	VBZ	has	O	O	O
+3012	O	16	O	VBN	made	O	O	O
+3012	O	17	O	PP$	its	O	O	O
+3012	O	18	O	NN	extension	O	O	O
+3012	O	19	O	NN	conditional	O	O	O
+3012	O	20	O	IN	upon	O	O	O
+3012	Loc	21	O	NNP	Yugoslavia	O	O	O
+3012	O	22	O	POS	's	O	O	O
+3012	O	23	O	NN	return	O	O	O
+3012	O	24	O	TO	to	O	O	O
+3012	O	25	O	DT	the	O	O	O
+3012	Org	26	O	NNP	CSCE	O	O	O
+3012	O	27	O	.	.	O	O	O
+
+
+3013	Loc	0	O	NNP	Yugoslavia	O	O	O
+3013	O	1	O	VBD	was	O	O	O
+3013	O	2	O	VBN	suspended	O	O	O
+3013	O	3	O	IN	from	O	O	O
+3013	O	4	O	DT	the	O	O	O
+3013	O	5	O	NN	organization	O	O	O
+3013	O	6	O	IN	in	O	O	O
+3013	O	7	O	NNP	July	O	O	O
+3013	Other	8	O	CD	1992	O	O	O
+3013	O	9	O	IN	for	O	O	O
+3013	O	10	O	PP$	its	O	O	O
+3013	O	11	O	VBN	alleged	O	O	O
+3013	O	12	O	NN	involvement	O	O	O
+3013	O	13	O	IN	in	O	O	O
+3013	O	14	O	NN	war	O	O	O
+3013	O	15	O	IN	in	O	O	O
+3013	O	16	O	VBG	neighbouring	O	O	O
+3013	Loc	17	O	NNP	Bosnia-Herzegovina	O	O	O
+3013	O	18	O	.	.	O	O	O
+
+
+3014	O	0	O	DT	The	O	O	O
+3014	Org	1	O	NNP	CSCE	O	O	O
+3014	O	2	O	NN	committee	O	O	O
+3014	O	3	O	VBD	said	O	O	O
+3014	O	4	O	IN	in	O	O	O
+3014	O	5	O	DT	a	O	O	O
+3014	O	6	O	VBN	written	O	O	O
+3014	O	7	O	NN	statement	O	O	O
+3014	O	8	O	RB	late	O	O	O
+3014	O	9	O	IN	on	O	O	O
+3014	O	10	O	NNP	Friday	O	O	O
+3014	Other	11	O	-LRB-/CD/NNP	-LRB-/4/March	O	O	O
+3014	O	12	O	-RRB-	-RRB-	O	O	O
+3014	O	13	O	IN	that	O	O	O
+3014	O	14	O	DT	the	O	O	O
+3014	O	15	O	NN	return	O	O	O
+3014	O	16	O	IN	of	O	O	O
+3014	O	17	O	DT	the	O	O	O
+3014	O	18	O	NNS	missions	O	O	O
+3014	O	19	O	MD	should	O	O	O
+3014	O	20	O	VB	be	O	O	O
+3014	O	21	O	NN	"	O	O	O
+3014	O	22	O	JJ	unconditional	O	O	O
+3014	O	23	O	.	.	O	O	O
+3014	O	24	O	NN	"	O	O	O
+
+
+3015	Loc	0	O	NNP	Serbia	O	O	O
+3015	O	1	O	POS	's	O	O	O
+3015	O	2	O	JJ	southern	O	O	O
+3015	O	3	O	NN	province	O	O	O
+3015	O	4	O	IN	of	O	O	O
+3015	Loc	5	O	NNP	Kosovo	O	O	O
+3015	O	6	O	,	COMMA	O	O	O
+3015	O	7	O	WRB	where	O	O	O
+3015	O	8	O	DT	the	O	O	O
+3015	O	9	O	JJ	first	O	O	O
+3015	O	10	O	JJ	Serbian	O	O	O
+3015	O	11	O	NN	state	O	O	O
+3015	O	12	O	VBD	was	O	O	O
+3015	O	13	O	VBN	created	O	O	O
+3015	O	14	O	IN	in	O	O	O
+3015	O	15	O	DT	the	O	O	O
+3015	O	16	O	RB	early	O	O	O
+3015	O	17	O	NNP	Middle	O	O	O
+3015	O	18	O	NNPS	Ages	O	O	O
+3015	O	19	O	,	COMMA	O	O	O
+3015	O	20	O	VBZ	is	O	O	O
+3015	O	21	O	RB	mostly	O	O	O
+3015	O	22	O	VBN	populated	O	O	O
+3015	O	23	O	IN	by	O	O	O
+3015	O	24	O	DT	the	O	O	O
+3015	O	25	O	JJ	ethnic	O	O	O
+3015	Other	26	O	JJ	Albanian	O	O	O
+3015	O	27	O	NN	minority	O	O	O
+3015	O	28	O	.	.	O	O	O
+
+5	0	Located_In
+
+3016	Loc	0	O	NNP	Slovenia	O	O	O
+3016	O	1	O	CC	and	O	O	O
+3016	Loc	2	O	NNP	Croatia	O	O	O
+3016	O	3	O	RB	violently	O	O	O
+3016	O	4	O	VBN	seceded	O	O	O
+3016	O	5	O	IN	from	O	O	O
+3016	O	6	O	DT	the	O	O	O
+3016	O	7	O	JJ	former	O	O	O
+3016	Other	8	O	JJ	Yugoslav	O	O	O
+3016	O	9	O	NN	six-member	O	O	O
+3016	O	10	O	NN	federation	O	O	O
+3016	O	11	O	IN	in	O	O	O
+3016	O	12	O	CD	mid-1991	O	O	O
+3016	O	13	O	.	.	O	O	O
+
+
+3017	O	0	O	DT	The	O	O	O
+3017	O	1	O	JJ	Former	O	O	O
+3017	O	2	O	NN	southernmost	O	O	O
+3017	Loc	3	O	JJ/NNP/IN/NNP	Yugoslav/Republic/of/Macedonia	O	O	O
+3017	O	4	O	JJ	followed	O	O	O
+3017	O	5	O	NN	suit	O	O	O
+3017	O	6	O	IN	so	O	O	O
+3017	O	7	O	IN	that	O	O	O
+3017	Loc	8	O	NNP	Yugoslavia	O	O	O
+3017	O	9	O	RB	now	O	O	O
+3017	O	10	O	VBZ	consists	O	O	O
+3017	O	11	O	IN	of	O	O	O
+3017	Loc	12	O	NNP	Serbia	O	O	O
+3017	O	13	O	CC	and	O	O	O
+3017	Loc	14	O	NNP	Montenegro	O	O	O
+3017	O	15	O	.	.	O	O	O
+
+12	8	Located_In
+14	8	Located_In
+
+3018	O	0	O	DT	The	O	O	O
+3018	Org	1	O	NNP	CSCE	O	O	O
+3018	O	2	O	NN	committee	O	O	O
+3018	O	3	O	VBD	was	O	O	O
+3018	O	4	O	VBN	divided	O	O	O
+3018	O	5	O	IN	over	O	O	O
+3018	O	6	O	DT	the	O	O	O
+3018	O	7	O	NN	establishment	O	O	O
+3018	O	8	O	IN	of	O	O	O
+3018	O	9	O	DT	a	O	O	O
+3018	O	10	O	JJ	military	O	O	O
+3018	O	11	O	NN	stability	O	O	O
+3018	O	12	O	NN	forum	O	O	O
+3018	O	13	O	IN	because	O	O	O
+3018	Loc	14	O	NNP	Russia	O	O	O
+3018	O	15	O	CC	and	O	O	O
+3018	Loc	16	O	NNP	Greece	O	O	O
+3018	O	17	O	VBD	urged	O	O	O
+3018	O	18	O	DT	a	O	O	O
+3018	O	19	O	JJR	slower	O	O	O
+3018	O	20	O	CC	and	O	O	O
+3018	O	21	O	JJR	more	O	O	O
+3018	O	22	O	JJ	gradual	O	O	O
+3018	O	23	O	NN	approach	O	O	O
+3018	O	24	O	,	COMMA	O	O	O
+3018	O	25	O	IN	while	O	O	O
+3018	Loc	26	O	NNP	Austria	O	O	O
+3018	O	27	O	,	COMMA	O	O	O
+3018	Loc	28	O	NNP	Croatia	O	O	O
+3018	O	29	O	,	COMMA	O	O	O
+3018	Loc	30	O	NNP	Slovenia	O	O	O
+3018	O	31	O	CC	and	O	O	O
+3018	Loc	32	O	NNP	Bosnia-Herzegovina	O	O	O
+3018	O	33	O	:	--	O	O	O
+3018	O	34	O	WDT	which	O	O	O
+3018	O	35	O	VBD	initiated	O	O	O
+3018	O	36	O	DT	the	O	O	O
+3018	O	37	O	NN	idea	O	O	O
+3018	O	38	O	:	--	O	O	O
+3018	O	39	O	VBD	insisted	O	O	O
+3018	O	40	O	IN	that	O	O	O
+3018	O	41	O	DT	the	O	O	O
+3018	O	42	O	NN	body	O	O	O
+3018	O	43	O	VB	be	O	O	O
+3018	O	44	O	VBN	formed	O	O	O
+3018	O	45	O	IN	without	O	O	O
+3018	O	46	O	NN	delay	O	O	O
+3018	O	47	O	.	.	O	O	O
+
+
+3019	O	0	O	NNP	Document	O	O	O
+3019	O	1	O	NNP	Type	O	O	O
+3019	O	2	O	:	:	O	O	O
+3019	O	3	O	NNP	Daily	O	O	O
+3019	O	4	O	NNP	Report	O	O	O
+3019	Other	5	O	CD/NNP/CD	10/Mar/1994	O	O	O
+
+
+3020	Loc	0	O	NNP/NNP	VATICAN/CITY	O	O	O
+
+
+3021	O	0	O	NNP	Fini	O	O	O
+3021	O	1	O	NNS	Views	O	O	O
+3021	O	2	O	JJ	Political	O	O	O
+3021	O	3	O	NNP	Situation	O	O	O
+3021	O	4	O	,	COMMA	O	O	O
+3021	O	5	O	NNP	Personalities	O	O	O
+3021	O	6	O	NNP	LD0803172694	O	O	O
+3021	Loc	7	O	NNP	Rome	O	O	O
+3021	O	8	O	NNP	RAI	O	O	O
+3021	O	9	O	JJ	Due	O	O	O
+3021	O	10	O	NNP	Television	O	O	O
+3021	O	11	O	NNP	Network	O	O	O
+3021	O	12	O	IN	in	O	O	O
+3021	O	13	O	JJ	Italian	O	O	O
+3021	Other	14	O	CD/NNP	2045/GMT	O	O	O
+3021	Other	15	O	CD/NNP/CD	7/Mar/94	O	O	O
+
+
+3022	Loc	0	O	NNP	Rome	O	O	O
+3022	O	1	O	NNP	RAI	O	O	O
+3022	O	2	O	JJ	Due	O	O	O
+3022	O	3	O	NNP	Television	O	O	O
+3022	O	4	O	NNP	Network	O	O	O
+
+
+3023	O	0	O	-LRB-	-LRB-	O	O	O
+3023	O	1	O	NNP	Interview	O	O	O
+3023	O	2	O	IN	with	O	O	O
+3023	Org	3	O	NNP/NNP	National/Alliance	O	O	O
+3023	O	4	O	NN	leader	O	O	O
+3023	Peop	5	O	NNP/NNP	Gianfranco/Fini	O	O	O
+3023	O	6	O	IN	by	O	O	O
+
+5	3	Work_For
+
+3024	Peop	0	O	NNP/NNP	Giovanni/Minoli	O	O	O
+3024	O	1	O	:	;	O	O	O
+3024	O	2	O	NN	place	O	O	O
+3024	O	3	O	CC	and	O	O	O
+3024	O	4	O	NN	date	O	O	O
+3024	O	5	O	RB	not	O	O	O
+3024	O	6	O	VBN	given	O	O	O
+3024	O	7	O	:	;	O	O	O
+3024	O	8	O	IN	from	O	O	O
+3024	O	9	O	DT	the	O	O	O
+3024	O	10	O	NN	"	O	O	O
+3024	O	11	O	NNP	Mixer	O	O	O
+3024	O	12	O	NN	"	O	O	O
+3024	O	13	O	NN	program	O	O	O
+3024	O	14	O	:	--	O	O	O
+3024	O	15	O	VB	live	O	O	O
+3024	O	16	O	CC	or	O	O	O
+3024	O	17	O	VBN	recorded	O	O	O
+3024	O	18	O	-RRB-	-RRB-	O	O	O
+3024	O	19	O	-LRB-	-LRB-	O	O	O
+3024	O	20	O	NNS	Excerpts	O	O	O
+3024	O	21	O	-RRB-	-RRB-	O	O	O
+3024	O	22	O	-LRB-	-LRB-	O	O	O
+3024	Peop	23	O	NNP	Minoli	O	O	O
+3024	O	24	O	-RRB-	-RRB-	O	O	O
+3024	O	25	O	RB	Well	O	O	O
+3024	O	26	O	,	COMMA	O	O	O
+3024	Peop	27	O	NNP/NNP	Mr./Fini	O	O	O
+3024	O	28	O	VB	do	O	O	O
+3024	O	29	O	PRP	you	O	O	O
+3024	O	30	O	VB	consider	O	O	O
+3024	O	31	O	PRP	it	O	O	O
+3024	O	32	O	TO	to	O	O	O
+3024	O	33	O	VB	be	O	O	O
+3024	O	34	O	DT	a	O	O	O
+3024	O	35	O	NN	compliment	O	O	O
+3024	O	36	O	CC	or	O	O	O
+3024	O	37	O	DT	an	O	O	O
+3024	O	38	O	NN	insult	O	O	O
+3024	O	39	O	TO	to	O	O	O
+3024	O	40	O	VB	be	O	O	O
+3024	O	41	O	VBN	called	O	O	O
+3024	O	42	O	DT	a	O	O	O
+3024	O	43	O	JJ	fascist	O	O	O
+3024	O	44	O	IN	by	O	O	O
+3024	Peop	45	O	NNP/NNP	Umberto/Bossi	O	O	O
+3024	O	46	O	.	?	O	O	O
+3024	O	47	O	-LRB-	-LRB-	O	O	O
+3024	Peop	48	O	NNP	Fini	O	O	O
+3024	O	49	O	-RRB-	-RRB-	O	O	O
+3024	O	50	O	PRP	I	O	O	O
+3024	O	51	O	VBP	am	O	O	O
+3024	O	52	O	JJ	indifferent	O	O	O
+3024	O	53	O	TO	to	O	O	O
+3024	O	54	O	WP	what	O	O	O
+3024	Peop	55	O	NNP	Bossi	O	O	O
+3024	O	56	O	VBZ	says	O	O	O
+3024	O	57	O	IN	about	O	O	O
+3024	O	58	O	PRP	me	O	O	O
+3024	O	59	O	.	.	O	O	O

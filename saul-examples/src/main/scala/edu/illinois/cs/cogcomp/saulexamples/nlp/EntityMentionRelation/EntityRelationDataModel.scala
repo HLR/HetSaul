@@ -2,7 +2,7 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation
 
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
 import edu.illinois.cs.cogcomp.saulexamples.EntityMentionRelation.datastruct.{ ConllRawSentence, ConllRawToken, ConllRelation }
-import edu.illinois.cs.cogcomp.saulexamples.EntityMentionRelation.reader.Conll04_ReaderNew
+import edu.illinois.cs.cogcomp.saulexamples.EntityMentionRelation.reader.Conll04_Reader
 import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.EntityRelationClassifiers._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.EntityRelationSensors._
 
@@ -23,7 +23,7 @@ object EntityRelationDataModel extends DataModel {
 
   sentenceToToken.addSensor(sentenceToTokens_GeneratingSensor _)
   sentencesToPairs.addSensor(sentenceToRelation_GeneratingSensor _)
-  pairTo1stArg.addSensor(relationToSecondArg_MatchingSensor _)
+  pairTo1stArg.addSensor(relationToFirstArg_MatchingSensor _)
   pairTo2ndArg.addSensor(relationToSecondArg_MatchingSensor _)
 
   /** Properties */
@@ -113,7 +113,37 @@ object EntityRelationDataModel extends DataModel {
   }
 
   def populateWithConll() = {
-    sentences.populate(EntityRelationSensors.sentences)
-    pairs.populate(EntityRelationSensors.relations)
+    import scala.collection.JavaConverters._
+    //    tokens.populate(EntityRelationSensors.sentencesTrain.flatMap(_.getEntitiesInSentence.asScala))
+    //    tokens.populate(EntityRelationSensors.sentencesTest.flatMap(_.getEntitiesInSentence.asScala), train = false )
+    val aaa = EntityRelationSensors.sentencesTest ++ EntityRelationSensors.sentencesTrain
+    println("total sentences size: List " + aaa.size)
+    val bbb = aaa.toSet
+    println("total sentences size: Set " + bbb.size)
+    val ccc = EntityRelationSensors.relationsTest ++ EntityRelationSensors.relationsTrain
+    println("total relations size: List " + ccc.size)
+    val ddd = ccc.toSet
+    println("total relations size: Set " + ddd.size)
+    //    println(EntityRelationSensors.sentencesTest.head.hashCode())
+    //    println(EntityRelationSensors.sentencesTest.get(1).hashCode())
+    //    println(EntityRelationSensors.sentencesTest.get(2).hashCode())
+    //    println(EntityRelationSensors.sentencesTest.size)
+    //    println(EntityRelationSensors.sentencesTrain.size)
+    //    pairs.populate(EntityRelationSensors.relationsTrain)
+    sentences.populate(EntityRelationSensors.sentencesTest, train = false)
+    sentences.populate(EntityRelationSensors.sentencesTrain)
+    //    pairs.populate(EntityRelationSensors.relationsTest, train = false)
+
+    println("train tok: " + tokens.trainingSet.size)
+    println("test tok: " + tokens.testingSet.size)
+    println("train sen: " + sentences.trainingSet.size)
+    println("test sen: " + sentences.testingSet.size)
+    println("train pairs: " + pairs.trainingSet.size)
+    println("test pairs: " + pairs.testingSet.size)
+  }
+
+  def populateWithConllSmallSet() = {
+    sentences.populate(EntityRelationSensors.sentencesSmallSet, train = false)
+    pairs.populate(EntityRelationSensors.testRelationsSmallSet, train = false)
   }
 }

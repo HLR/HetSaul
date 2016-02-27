@@ -1,24 +1,23 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation
 
-import edu.illinois.cs.cogcomp.core.utilities.configuration.{ ResourceManager, Property, Configurator }
 import edu.illinois.cs.cogcomp.saul.classifier.JointTrain
 import edu.illinois.cs.cogcomp.saulexamples.EntityMentionRelation.datastruct.ConllRelation
 import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.EntityRelationClassifiers._
+import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.EntityRelationSensors._
+import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.EntityRelationDataModel._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.EntityRelationConstrainedClassifiers._
-import EntityRelationDataModel._
-import edu.illinois.cs.cogcomp.saulexamples.nlp.POSTagger.POSConfigurator._
 
 object EntityRelationApp {
   def main(args: Array[String]): Unit = {
     /** Choose the experiment you're interested in by changing the following line */
-    val testType = ERExperimentType.IndependentClassifiers
+    val testType = ERExperimentType.TestFromModel
 
     testType match {
       case ERExperimentType.IndependentClassifiers => trainIndependentClassifiers()
       case ERExperimentType.PipelineTraining => runPipelineTraining()
       case ERExperimentType.LPlusITraining => runLPlusI()
       case ERExperimentType.JointTraining => runJointTraining()
-      case ERExperimentType.TestFromModel => runLPlusI()
+      case ERExperimentType.TestFromModel => testIndependentClassifiers()
     }
   }
 
@@ -26,20 +25,14 @@ object EntityRelationApp {
     val IndependentClassifiers, LPlusITraining, TestFromModel, JointTraining, PipelineTraining = Value
   }
 
-  object ERConfigurator extends Configurator {
-    private val prefix = "../data/EntityMentionRelation/"
-    val trainData = new Property("trainData", prefix + "00-18.br")
-
-    override def getDefaultConfig: ResourceManager = {
-      val props = Array(trainData, trainDataSmall, trainAndDevData, testData)
-      new ResourceManager(generateProperties(props))
-    }
-  }
-
-  /** in this scenario we train and test classifiers independent of each other */
+  /** in this scenario we train and test classifiers independent of each other. In particular, the relation classifier
+    * does not know the labels of its entity arguments, and the entity classifier does not know the labels of relations
+    * in the sentence either
+    */
   def trainIndependentClassifiers(): Unit = {
     val foldSize = 5
     EntityRelationDataModel.populateWithConll()
+
     // independent entity classifiers
     println("Person Classifier Evaluation")
     println("=================================")
@@ -57,26 +50,44 @@ object EntityRelationApp {
     saveEntityModels()
 
     // independent relation classifiers
-    //    println("WorkFor Classifier Evaluation")
-    //    println("=================================")
-    //    WorksForClassifier.crossValidation(foldSize)
-    //    println("=================================")
-    //    println("LivesIn Classifier Evaluation")
-    //    println("=================================")
-    //    LivesInClassifier.crossValidation(foldSize)
-    //    println("=================================")
-    //
-    //    saveIndependentRelationModels()
+    println("WorksFor Classifier Evaluation")
+    println("=================================")
+    WorksForClassifier.crossValidation(foldSize)
+    println("=================================")
+    println("LivesIn Classifier Evaluation")
+    println("=================================")
+    LivesInClassifier.crossValidation(foldSize)
+    println("=================================")
+
+    saveIndependentRelationModels()
   }
 
   def testIndependentClassifiers() = {
-    //    EntityRelationDataModel.populateWithConll()
-    //
-    //    PersonClassifier.test()
-    //    OrganizationClassifier.crossValidation(foldSize)
-    //    LocationClassifier.crossValidation(foldSize)
+    EntityRelationDataModel.populateWithConll()
+    //    loadIndependentEntityModels()
+
+    PersonClassifier.learn(5)
+    //    PersonClassifier.save()
+
+    //    PersonClassifier.load()
+
+    //    PersonClassifier.load()
+    //    OrganizationClassifier.load()
+    //    LocationClassifier.load()
+
+    println(PersonClassifier.test())
+    //    println(OrganizationClassifier.test())
+    //    println(LocationClassifier.test())
+
+    //        val out = EntityRelationSensors.testSentences.asScala.flatMap( sentenceToTokens_GeneratingSensor )
+
+    //      PersonClassifier(  )
   }
 
+  /** in this scenario the named entity recognizers are trained independently, and given to a relation classifier as
+    * a tool to extract features (hence the name "pipeline"). This approach first trains an entity classifier, and
+    * then uses the prediction of entities in addition to other local features to learn the relation identifier.
+    */
   def runPipelineTraining(): Unit = {
     val foldSize = 5
     EntityRelationDataModel.populateWithConll()
@@ -84,17 +95,25 @@ object EntityRelationApp {
     println("Running CV " + foldSize)
 
     // train independent classifiers
-    PersonClassifier.crossValidation(foldSize)
-    OrganizationClassifier.crossValidation(foldSize)
-    LocationClassifier.crossValidation(foldSize)
+    //    PersonClassifier.crossValidation(foldSize)
+    //    OrganizationClassifier.crossValidation(foldSize)
+    //    LocationClassifier.crossValidation(foldSize)
+    //    saveEntityModels()
 
-    saveEntityModels()
+    PersonClassifier.load()
+    OrganizationClassifier.load()
+    LocationClassifier.load()
 
     // train pipeline relation models, which use the prediction of the entity classifiers
-    WorkForClassifierPipeline.crossValidation(foldSize)
+    WorksForClassifierPipeline.crossValidation(foldSize)
     LivesInClassifierPipeline.crossValidation(foldSize)
+
+    savePipelineRelationModels()
   }
 
+  /** In the scenario the classifiers are learned independently but at the test time we use constrained inference to
+    * maintain structural consistency (which would justify the naming "Learning Plus Inference" (L+I).
+    */
   def runLPlusI() {
     val foldSize = 5
     EntityRelationDataModel.populateWithConll()
@@ -123,14 +142,17 @@ object EntityRelationApp {
     println("=================================")
     println("WorkFor Classifier Evaluation")
     println("=================================")
-    Work_P_O_relationClassifier.test(pairs())
+    WorksFor_PerOrg_ConstrainedClassifier.test(pairs())
     println("=================================")
     println("LivesIn Classifier Evaluation")
     println("=================================")
-    LiveIn_P_O_relationClassifier.test(pairs())
+    LivesIn_PerOrg_relationConstrainedClassifier.test(pairs())
     println("=================================")
   }
 
+  /** here we meanwhile training classifiers, we use global inference, in order to overcome the poor local
+    * classifications and yield accurate global classifications.
+    */
   def runJointTraining() {
     populateWithConll()
     val testRels = pairs.getTrainingInstances.toList
@@ -150,7 +172,7 @@ object EntityRelationApp {
     JointTrain.train[ConllRelation](
       EntityRelationDataModel,
       PerConstrainedClassifier :: OrgConstrainedClassifier :: LocConstrainedClassifier ::
-        Work_P_O_relationClassifier :: LiveIn_P_O_relationClassifier :: Nil,
+        WorksFor_PerOrg_ConstrainedClassifier :: LivesIn_PerOrg_relationConstrainedClassifier :: Nil,
       jointTrainIteration
     )
 
@@ -176,12 +198,12 @@ object EntityRelationApp {
     JointTrain.testClassifiers(WorksForClassifier.classifier, (relationType is "Work_For").classifier, testRels)
 
     println(Console.RED + "Work_For")
-    JointTrain.testClassifiers(Work_P_O_relationClassifier.classifier, (relationType is "Work_For").classifier, testRels)
+    JointTrain.testClassifiers(WorksFor_PerOrg_ConstrainedClassifier.classifier, (relationType is "Work_For").classifier, testRels)
 
     println(Console.BLUE + "Live_In")
     JointTrain.testClassifiers(LivesInClassifier.classifier, (relationType is "Live_In").classifier, testRels)
 
     println(Console.RED + "Live_In")
-    JointTrain.testClassifiers(LiveIn_P_O_relationClassifier.classifier, (relationType is "Live_In").classifier, testRels)
+    JointTrain.testClassifiers(LivesIn_PerOrg_relationConstrainedClassifier.classifier, (relationType is "Live_In").classifier, testRels)
   }
 }

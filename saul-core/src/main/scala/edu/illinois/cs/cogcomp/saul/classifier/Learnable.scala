@@ -159,8 +159,7 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
   }
 
   def learn(iteration: Int, data: Iterable[T]): Unit = {
-    if (loggging)
-      println("Learnable: Learn with data of size " + data.size)
+    println("Learnable: Learn with data of size " + data.size)
     isTraining = true
     val crTokenTest = new LBJIteratorParserScala[T](data)
     crTokenTest.reset()
@@ -168,7 +167,7 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
     def learnAll(crTokenTest: Parser, remainingIteration: Int): Unit = {
       val v = crTokenTest.next
       if (v == null) {
-        if (loggging & remainingIteration % 10 == 0)
+        if (remainingIteration % 10 == 0)
           println(s"Training: $remainingIteration iterations remain. ${time.Instant.now()} ")
 
         if (remainingIteration > 1) {

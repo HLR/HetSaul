@@ -9,10 +9,10 @@ object EntityRelationConstraints {
 
   val relationArgumentConstraints = ConstrainedClassifier.constraint[ConllRelation] {
     x: ConllRelation =>
-      workForConstraint(x) and liveInConstraint(x) and worksForImpliesNotLivesIn(x)
+      worksForConstraint(x) and livesInConstraint(x) and worksForImpliesNotLivesIn(x)
   }
 
-  val liveInConstraint = ConstrainedClassifier.constraint[ConllRelation] {
+  val livesInConstraint = ConstrainedClassifier.constraint[ConllRelation] {
     x: ConllRelation =>
       ((LivesInClassifier on x) isTrue) ==> (
         ((PersonClassifier on x.e1) isTrue)
@@ -20,7 +20,7 @@ object EntityRelationConstraints {
       )
   }
 
-  val workForConstraint = ConstrainedClassifier.constraint[ConllRelation] {
+  val worksForConstraint = ConstrainedClassifier.constraint[ConllRelation] {
     x: ConllRelation =>
       {
         ((WorksForClassifier on x) isTrue) ==>

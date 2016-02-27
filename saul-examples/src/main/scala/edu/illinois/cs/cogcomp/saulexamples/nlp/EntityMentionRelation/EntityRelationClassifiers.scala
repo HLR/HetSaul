@@ -14,7 +14,8 @@ object EntityRelationClassifiers {
     def label: Property[ConllRawToken] = entityType is "Org"
     override lazy val classifier = new SparseNetworkLearner()
     override def feature = using(word, windowWithin[ConllRawSentence](-2, 2, List(pos)), phrase, containsSubPhraseMent,
-      containsSubPhraseIng, wordLen, containsInPersonList, containsInCityList)*/
+      containsSubPhraseIng, wordLen)
+    /* The gazetteer properties are temporarily removed: containsInPersonList, containsInCityList */
   }
 
   object PersonClassifier extends Learnable[ConllRawToken](EntityRelationDataModel) {
@@ -55,7 +56,7 @@ object EntityRelationClassifiers {
   }
 
   /** relation pipeline classifiers */
-  object WorkForClassifierPipeline extends Learnable[ConllRelation](EntityRelationDataModel) {
+  object WorksForClassifierPipeline extends Learnable[ConllRelation](EntityRelationDataModel) {
     override def label: Property[ConllRelation] = relationType is "Work_For"
     override def feature = using(relFeature, relPos, entityPrediction)
     override lazy val classifier = new SparseNetworkLearner()
@@ -82,13 +83,13 @@ object EntityRelationClassifiers {
   }
 
   def savePipelineRelationModels() = {
-    WorkForClassifierPipeline.save()
+    WorksForClassifierPipeline.save()
     LivesInClassifierPipeline.save()
   }
 
   // Loads learned models from the "saul-conll-er-tagger-models" jar package
   def loadModel[T <: AnyRef](x: Learnable[T]): Unit = {
-    val jarModelPath = "edu/illinois/cs/cogcomp/saulexamples/nlp/EntityRelationMention/models/"
+    val jarModelPath = "models/"
     val prefix = jarModelPath + x.getClassNameForClassifier
     x.load(prefix + ".lc", prefix + ".lex")
   }

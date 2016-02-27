@@ -1,17 +1,23 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation
 
 import edu.illinois.cs.cogcomp.saulexamples.EntityMentionRelation.datastruct.{ ConllRawToken, ConllRelation, ConllRawSentence }
-import edu.illinois.cs.cogcomp.saulexamples.EntityMentionRelation.reader.{ Conll04_ReaderNew, GazeteerReader }
+import edu.illinois.cs.cogcomp.saulexamples.EntityMentionRelation.reader.{ Conll04_Reader, GazeteerReader }
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConverters._
 
 object EntityRelationSensors {
   val path = "../data/"
+  val resourcePath = "../saul-examples/src/main/resources/EntityMentionRelation/"
 
-  lazy val (sentences, relations) = {
-    val reader = new Conll04_ReaderNew(path + "EntityMentionRelation/conll04.corp", "Token")
-    (reader.sentences, reader.relations)
+  def readConllData(dir: String): (List[ConllRawSentence], List[ConllRelation]) = {
+    val reader = new Conll04_Reader(dir, "Token")
+    (reader.sentences.asScala.toList, reader.relations.asScala.toList)
   }
+
+  lazy val (sentencesAll, relationsAll) = readConllData(path + "EntityMentionRelation/conll04.corp")
+  lazy val (sentencesTrain, relationsTrain) = readConllData(path + "EntityMentionRelation/conll04_train.corp")
+  lazy val (sentencesTest, relationsTest) = readConllData(path + "EntityMentionRelation/conll04_test.corp")
+  lazy val (sentencesSmallSet, testRelationsSmallSet) = readConllData(resourcePath + "conll04-smallDocument.txt")
 
   def cityGazetSensor: GazeteerReader = {
     new GazeteerReader(path + "EntityMentionRelation/known_city.lst", "Gaz:City", true)
@@ -24,7 +30,7 @@ object EntityRelationSensors {
   }
 
   def sentenceToRelation_GeneratingSensor(s: ConllRawSentence): List[ConllRelation] = {
-    s.relations.toList
+    s.relations.asScala.toList
   }
 
   def sentenceToRelations_MatchingSensor(s: ConllRawSentence, t: ConllRelation): Boolean = {
@@ -32,7 +38,7 @@ object EntityRelationSensors {
   }
 
   def sentenceToTokens_GeneratingSensor(s: ConllRawSentence): List[ConllRawToken] = {
-    s.sentTokens.toList
+    s.sentTokens.asScala.toList
   }
 
   def relationToFirstArg_MatchingSensor(r: ConllRelation, t: ConllRawToken): Boolean = {
