@@ -14,7 +14,7 @@ object EntityRelationApp {
     val testType = ERExperimentType.IndependentClassifiers
 
     testType match {
-      case ERExperimentType.IndependentClassifiers => runIndependentClassifiers()
+      case ERExperimentType.IndependentClassifiers => trainIndependentClassifiers()
       case ERExperimentType.PipelineTraining => runPipelineTraining()
       case ERExperimentType.LPlusITraining => runLPlusI()
       case ERExperimentType.JointTraining => runJointTraining()
@@ -37,42 +37,78 @@ object EntityRelationApp {
   }
 
   /** in this scenario we train and test classifiers independent of each other */
-  def runIndependentClassifiers(): Unit = {
+  def trainIndependentClassifiers(): Unit = {
+    val foldSize = 5
     EntityRelationDataModel.populateWithConll()
-    val iter = 5
+    // independent entity classifiers
     println("Person Classifier Evaluation")
     println("=================================")
-    PersonClassifier.crossValidation(iter)
+    PersonClassifier.crossValidation(foldSize)
     println("=================================")
     println("Organization Classifier Evaluation")
     println("=================================")
-    OrganizationClassifier.crossValidation(iter)
+    OrganizationClassifier.crossValidation(foldSize)
     println("=================================")
     println("Location Classifier Evaluation")
     println("=================================")
-    LocationClassifier.crossValidation(iter)
+    LocationClassifier.crossValidation(foldSize)
     println("=================================")
-    println("WorkFor Classifier Evaluation")
-    println("=================================")
-    WorksForClassifier.crossValidation(iter)
-    println("=================================")
-    println("LivesIn Classifier Evaluation")
-    println("=================================")
-    LivesInClassifier.crossValidation(iter)
-    println("=================================")
+
+    saveEntityModels()
+
+    // independent relation classifiers
+//    println("WorkFor Classifier Evaluation")
+//    println("=================================")
+//    WorksForClassifier.crossValidation(foldSize)
+//    println("=================================")
+//    println("LivesIn Classifier Evaluation")
+//    println("=================================")
+//    LivesInClassifier.crossValidation(foldSize)
+//    println("=================================")
+//
+//    saveIndependentRelationModels()
+  }
+
+  def testIndependentClassifiers() = {
+    //    EntityRelationDataModel.populateWithConll()
+    //
+    //    PersonClassifier.test()
+    //    OrganizationClassifier.crossValidation(foldSize)
+    //    LocationClassifier.crossValidation(foldSize)
+  }
+
+  def runPipelineTraining(): Unit = {
+    val foldSize = 5
+    EntityRelationDataModel.populateWithConll()
+
+    println("Running CV " + foldSize)
+
+    // train independent classifiers
+    PersonClassifier.crossValidation(foldSize)
+    OrganizationClassifier.crossValidation(foldSize)
+    LocationClassifier.crossValidation(foldSize)
+
+    saveEntityModels()
+
+    // train pipeline relation models, which use the prediction of the entity classifiers
+    WorkForClassifierPipeline.crossValidation(foldSize)
+    LivesInClassifierPipeline.crossValidation(foldSize)
   }
 
   def runLPlusI() {
-    val iter = 5
+    val foldSize = 5
     EntityRelationDataModel.populateWithConll()
-    // Independent Learners
-    PersonClassifier.learn(iter)
-    OrganizationClassifier.learn(iter)
-    LocationClassifier.learn(iter)
-    WorksForClassifier.learn(iter)
-    LivesInClassifier.learn(iter)
 
-    // Test using the constraints
+    // independent entity classifiers
+    PersonClassifier.learn(foldSize)
+    OrganizationClassifier.learn(foldSize)
+    LocationClassifier.learn(foldSize)
+
+    // independent relation classifiers
+    WorksForClassifier.learn(foldSize)
+    LivesInClassifier.learn(foldSize)
+
+    // test using the constraints
     println("Person Classifier Evaluation with training")
     println("=================================")
     PerConstrainedClassifier.test(tokens())
@@ -96,7 +132,6 @@ object EntityRelationApp {
   }
 
   def runJointTraining() {
-    import EntityRelationDataModel._
     populateWithConll()
     val testRels = pairs.getTrainingInstances.toList
     val testTokens = tokens.getTrainingInstances.toList
@@ -104,14 +139,14 @@ object EntityRelationApp {
     val preTrainIteration = 1
     val jointTrainIteration = 5
 
-    println("Joint Training with Pretraint " + preTrainIteration)
-    println("Joint Training with iteration " + jointTrainIteration)
+    println(s"Pre-train $preTrainIteration iterations.")
     if (preTrainIteration > 0) {
       OrganizationClassifier.learn(preTrainIteration)
       PersonClassifier.learn(preTrainIteration)
       LocationClassifier.learn(preTrainIteration)
     }
 
+    println(s"Joint training $jointTrainIteration iterations. ")
     JointTrain.train[ConllRelation](
       EntityRelationDataModel,
       PerConstrainedClassifier :: OrgConstrainedClassifier :: LocConstrainedClassifier ::
@@ -121,55 +156,32 @@ object EntityRelationApp {
 
     println(Console.BLUE + "Peop")
     JointTrain.testClassifiers(PersonClassifier.classifier, PersonClassifier.label.classifier, testTokens)
+
     println(Console.RED + "Peop")
     JointTrain.testClassifiers(PerConstrainedClassifier.classifier, (entityType is "Peop").classifier, testTokens)
 
     println(Console.BLUE + "Org")
-    JointTrain.testClassifiers(
-      OrganizationClassifier.classifier,
-      (entityType is "Org").classifier, testTokens
-    )
+    JointTrain.testClassifiers(OrganizationClassifier.classifier, (entityType is "Org").classifier, testTokens)
+
     println(Console.RED + "Org")
-    JointTrain.testClassifiers(
-      OrgConstrainedClassifier.classifier,
-      (entityType is "Org").classifier, testTokens
-    )
+    JointTrain.testClassifiers(OrgConstrainedClassifier.classifier, (entityType is "Org").classifier, testTokens)
 
     println(Console.BLUE + "Loc")
-    JointTrain.testClassifiers(
-      LocationClassifier.classifier,
-      (entityType is "Loc").classifier, testTokens
-    )
+    JointTrain.testClassifiers(LocationClassifier.classifier, (entityType is "Loc").classifier, testTokens)
+
     println(Console.RED + "Loc")
-    JointTrain.testClassifiers(
-      LocConstrainedClassifier.classifier,
-      (entityType is "Loc").classifier, testTokens
-    )
+    JointTrain.testClassifiers(LocConstrainedClassifier.classifier, (entityType is "Loc").classifier, testTokens)
 
     println(Console.BLUE + "Work_For")
     JointTrain.testClassifiers(WorksForClassifier.classifier, (relationType is "Work_For").classifier, testRels)
+
     println(Console.RED + "Work_For")
-    JointTrain.testClassifiers(Work_P_O_relationClassifier.classifier, (relationType is "Work_For").classifier,
-      testRels)
+    JointTrain.testClassifiers(Work_P_O_relationClassifier.classifier, (relationType is "Work_For").classifier, testRels)
 
     println(Console.BLUE + "Live_In")
     JointTrain.testClassifiers(LivesInClassifier.classifier, (relationType is "Live_In").classifier, testRels)
+
     println(Console.RED + "Live_In")
-    JointTrain.testClassifiers(LiveIn_P_O_relationClassifier.classifier, (relationType is "Live_In").classifier,
-      testRels)
-  }
-
-  def runPipelineTraining(): Unit = {
-    val it = 20
-    EntityRelationDataModel.populateWithConll()
-
-    println("Running CV " + it)
-
-    PersonClassifier.crossValidation(it)
-    OrganizationClassifier.crossValidation(it)
-    LocationClassifier.crossValidation(it)
-
-    WorkForClassifierPipe.crossValidation(it)
-    LivesInClassifierPipe.crossValidation(it)
+    JointTrain.testClassifiers(LiveIn_P_O_relationClassifier.classifier, (relationType is "Live_In").classifier, testRels)
   }
 }

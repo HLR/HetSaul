@@ -51,11 +51,11 @@ object EntityRelationDataModel extends DataModel {
     t: ConllRawToken => t.getWords(false).exists(_.contains("ing")).toString
   }
 
-  val containsInCityList = property(tokens) {
+  val containsInCityList = property(tokens, cache = true) {
     t: ConllRawToken => cityGazetSensor.isContainedIn(t)
   }
 
-  val containsInPersonList = property(tokens) {
+  val containsInPersonList = property(tokens, cache = true) {
     t: ConllRawToken => personGazetSensor.containsAny(t)
   }
 
@@ -91,14 +91,16 @@ object EntityRelationDataModel extends DataModel {
         }
   }
 
-  val ePipe = property[ConllRelation](pairs) {
+  val entityPrediction = property[ConllRelation](pairs) {
     rel: ConllRelation =>
-      "e1-org: " + OrganizationClassifier(rel.e1) ::
-        "e1-per: " + PersonClassifier(rel.e1) ::
-        "e1-loc: " + LocationClassifier(rel.e1) ::
-        "e2-org: " + OrganizationClassifier(rel.e1) ::
-        "e2-per: " + PersonClassifier(rel.e1) ::
-        "e2-loc: " + LocationClassifier(rel.e1) :: Nil
+      List(
+        "e1-org:" + OrganizationClassifier(rel.e1),
+        "e1-per:" + PersonClassifier(rel.e1),
+        "e1-loc:" + LocationClassifier(rel.e1),
+        "e2-org:" + OrganizationClassifier(rel.e2),
+        "e2-per:" + PersonClassifier(rel.e2),
+        "e2-loc:" + LocationClassifier(rel.e2)
+      )
   }
 
   /** Labeler Properties  */

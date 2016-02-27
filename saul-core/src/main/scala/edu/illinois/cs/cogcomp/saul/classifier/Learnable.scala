@@ -324,7 +324,7 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
     * @param before always negative (or 0)
     * @param after always positive (or 0)
     */
-  def windowWithIn[U <: AnyRef](before: Int, after: Int, properties: List[Property[T]])(implicit uTag: ClassTag[U]): Property[T] = {
+  def windowWithin[U <: AnyRef](before: Int, after: Int, properties: List[Property[T]])(implicit uTag: ClassTag[U]): Property[T] = {
     val fls = datamodel.getRelatedFieldsBetween[T, U]
     getWindowWithFilters(before, after, fls.map(e => (t: T) => e.neighborsOf(t).head), properties)
   }
@@ -342,11 +342,11 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
   }
 
   def nextWithIn[U <: AnyRef](properties: List[Property[T]])(implicit uTag: ClassTag[U]): Property[T] = {
-    this.windowWithIn[U](0, 1, properties.toList)
+    this.windowWithin[U](0, 1, properties.toList)
   }
 
   def prevWithIn[U <: AnyRef](property: Property[T]*)(implicit uTag: ClassTag[U]): Property[T] = {
-    this.windowWithIn[U](-1, 0, property.toList)
+    this.windowWithin[U](-1, 0, property.toList)
   }
 
   def nextOf(properties: List[Property[T]]): Property[T] = {

@@ -14,6 +14,8 @@ binary relations and their arguments; we seek an optimal assignment to the varia
 the presence of the constraints on the binary relations between variables and the relation 
 types.
 
+## Training and inference paradigms
+
 In this example we show how to model this problem and show different training/inference paradigms 
 for this problem. 
 
@@ -33,7 +35,6 @@ for this problem.
             true entity labels, the performance is much worse than using the predicted entity labels.
  - L+I Training: 
  - Joint Training: 
-
 
 [1] D. Roth and W-t Yih. "A Linear Programming Formulation for Global Inference in Natural Language Tasks." In Proceedings of CoNLL-2004. 2004.
 [2] M. Chang, L. Ratinov, and D. Roth. "Structured learning with constrained conditional models." Machine Learning,
