@@ -105,6 +105,7 @@ class Application extends Controller {
   private def populateModel(scalaInstances: Iterable[Any], fileMap: Map[String, String], compiler: Compiler): JsValue = {
     scalaInstances find (x => classExecutor.containsMain(x)) match {
       case Some(x) => {
+        visualizer.init
         compiler.executeWithoutLog(x)
         scalaInstances find (x => x match {
           case model: DataModel => true
@@ -112,7 +113,6 @@ class Application extends Controller {
         }) match {
           case Some(x) => x match {
             case model: DataModel => {
-              visualizer.init
               dataModelJsonInterface.getPopulatedInstancesJson(model)
             }
             case _ => getErrorJson(Json.toJson("Error"))

@@ -390,7 +390,7 @@ var enableColoringNeighbors = function(s){
         s.refresh();
     });
 }
-var generatePopulatedGraphFromJson = function(data) {
+var generatePopulatedGraphFromJson = function(jsonData) {
 
     $('#populatedGraphContainer').remove();
     $('#graphParent2').html('<div id="populatedGraphContainer"></div>');
@@ -410,6 +410,12 @@ var generatePopulatedGraphFromJson = function(data) {
         })
     });
 */
+    var data
+    if(jsonData['selected'] == null) {
+        data = jsonData['full']
+    } else {
+        data = jsonData['selected']
+    }
     var nodeId = 0;
     var nodeDict = {};
     var nodePropertyCount = {};
