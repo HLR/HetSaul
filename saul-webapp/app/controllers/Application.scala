@@ -5,7 +5,7 @@ import controllers.Event._
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
 
 import play.api.mvc._
-import play.api.libs.json.{ JsValue, JsObject, Json }
+import play.api.libs.json.{ JsNull, JsValue, JsObject, Json }
 
 import java.io.File
 
@@ -15,7 +15,7 @@ import scala.tools.nsc.Settings
 import scala.tools.nsc.reporters.{ Reporter, AbstractReporter }
 
 import util.reflectUtils._
-import util.{ dataModelJsonInterface, visualizer, classExecutor, IOUtils }
+import util._
 
 object Application {
 
@@ -59,29 +59,51 @@ class Application extends Controller {
   }
 
   def acceptQuery = Action(parse.json) { implicit request =>
-    Ok("blah")
+    execute(Query(), request)
+  }
+
+  private def parseRequest(event: Event, request: Request[JsValue]): Option[Map[String, String]] = {
+    request.body match {
+      case jsonData: JsObject => {
+        event match {
+          case Query() => {
+            val dataMap = jsonData.as[Map[String, String]]
+            val query = dataMap("query")
+            val files = Json.parse(dataMap("files")).as[Map[String, String]]
+            val fileMap = queryPreprocessor.preprocess(files, query)
+            fileMap match {
+              case Some(files) => Some(files)
+              case None => None
+            }
+          }
+          case _ => Some(jsonData.as[Map[String, String]])
+        }
+      }
+      case _ => None
+    }
   }
 
   private def execute(event: Event, request: Request[JsValue]) = {
     //new File(rootDir).mkdirs()
     IOUtils.cleanUpTmpFolder(rootDir)
-    request.body match {
-      case files: JsObject => {
-        val fileMap = files.as[Map[String, String]]
+    val files = parseRequest(event, request)
+    files match {
+      case Some(fileMap) => {
         val compilationResult = compile(fileMap)
         compilationResult match {
           case Left(scalaInstances) => {
+            println("compilation success")
             event match {
               case DisplayModel() => Ok(displayModel(scalaInstances))
               case PopulateData() => Ok(populateModel(scalaInstances, fileMap, compiler))
               case RunMain() => Ok(runMain(scalaInstances))
+              case Query() => Ok(populateModel(scalaInstances, fileMap, compiler))
             }
           }
           case Right(errorMsg) => Ok(errorMsg)
         }
       }
-
-      case _ => Ok("Bad json." + request.body)
+      case None => Ok("Bad json.")
     }
   }
 
@@ -122,10 +144,6 @@ class Application extends Controller {
       }
       case _ => getErrorJson(Json.toJson("No main method found.(Try changing the filename if you are certain you have a main method)"))
     }
-  }
-
-  private def query() = {
-
   }
 
   private def runMain(scalaInstances: Iterable[Any]): JsValue = {

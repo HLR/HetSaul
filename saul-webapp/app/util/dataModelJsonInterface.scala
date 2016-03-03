@@ -145,9 +145,7 @@ object dataModelJsonInterface {
     }
 
     val fullGraph = getFullJson
-
     JsObject(Map("selected" -> selectedGraph, "full" -> fullGraph))
-
   }
   def getSchemaJson(dm: DataModel): JsValue = {
     val declaredFields = dm.getClass.getDeclaredFields

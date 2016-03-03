@@ -301,7 +301,6 @@ var getAllFiles = function(){
 }
 
 var updateCode = function(event){
-
     //jsRoutes.controllers.Application.updateCode($("#code1").text()).ajax(callback);
     var rURL;
     var onSuccess;
@@ -323,6 +322,15 @@ var updateCode = function(event){
         success : onSuccess,
         error : onError
     }
+    var query = $("#query")[0].value
+    var files = getAllFiles()
+    var dataJson = files
+    if(event == 3) {
+        dataJson = JSON.stringify({
+            "files": files,
+            "query": query
+        })
+    }
     $("#pbar").show();
     $.ajax({
         type : 'POST',
@@ -331,7 +339,7 @@ var updateCode = function(event){
                 'Accept': 'application/json',
                 'Content-Type': 'application/json' 
                 },
-        data : getAllFiles(),
+        data : dataJson,
         success : onSuccess,
         error: onError
         });
@@ -630,7 +638,7 @@ var onRunSuccess = function(data) {
 }
 
 var onQuerySuccess = function(data) {
-    alertError(data);
+    onPopulateSuccess(data)
 }
 
 var onError = function(data){
