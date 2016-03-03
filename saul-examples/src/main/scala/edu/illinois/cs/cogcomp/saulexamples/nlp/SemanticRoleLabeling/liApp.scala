@@ -1,6 +1,9 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling
 
-import edu.illinois.cs.cogcomp.saul.classifier.JointTrainSparseNetwork
+import edu.illinois.cs.cogcomp.core.datastructures.textannotation.Constituent
+import edu.illinois.cs.cogcomp.lbjava.learn.SparsePerceptron
+import edu.illinois.cs.cogcomp.saul.classifier.{Learnable, JointTrainSparseNetwork}
+import edu.illinois.cs.cogcomp.saul.datamodel.property.Property
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.ModelConfigs._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifiers._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlConstraintClassifiers.argTypeConstraintClassifier
@@ -9,7 +12,7 @@ object liApp extends App {
   //train parameters
   val pipelineTrain = true
   val joinTrain = false
-
+  val multiClass= false
   //test parameters
   val TestA = false
   val pipeline = false
@@ -19,11 +22,11 @@ object liApp extends App {
 
   //population parameters
   val useGoldPredicate = true
-  val useGoldBoundaries = false
+  val useGoldBoundaries = true
 
   val logger: Logger = LoggerFactory.getLogger(this.getClass)
 
-  val srlGraphs = populatemultiGraphwithSRLData(testOnly = false, useGoldPredicate, useGoldBoundaries)
+  val srlGraphs = populatemultiGraphwithSRLData(testOnly = true, useGoldPredicate, useGoldBoundaries)
 
   import srlGraphs._
 
@@ -149,4 +152,28 @@ object liApp extends App {
     logger.info("Test with pipeline:")
     argumentTypeLearner.test(prediction = typeArgumentPipeGivenGoldPredicate, groundTruth = argumentLabelGold, exclude = "candidate") //grounexclude = "candidate")
   }
+  if (multiClass)
+  {
+    for (i <- 1 until srlGraphs.argumentLabelGold.classifier.allowableValues().size)
+    {
+      object predicateClassifier extends Learnable[Constituent](srlGraphs, parameters) {
+
+        import srlGraphs._
+
+        def label: Property[Constituent] = isPredicateGold
+
+        override lazy val classifier = new SparsePerceptron()
+
+      }
+      var a = List(predicateClassifier)
+      a = predicateClassifier :: a
+    }
+  }
 }
+
+// srlGraphs.argumentLabelGold.classifier.allowableValues()(i)   } }
+
+
+
+
+
