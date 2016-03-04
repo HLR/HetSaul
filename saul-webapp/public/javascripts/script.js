@@ -418,12 +418,8 @@ var generatePopulatedGraphFromJson = function(jsonData) {
         })
     });
 */
-    var data
-    if(jsonData['selected'] == null) {
-        data = jsonData['full']
-    } else {
-        data = jsonData['selected']
-    }
+    var data = jsonData['full']
+    var selectedData = jsonData['selected']
     var nodeId = 0;
     var nodeDict = {};
     var nodePropertyCount = {};
@@ -436,20 +432,36 @@ var generatePopulatedGraphFromJson = function(jsonData) {
         var id = nodeDict[label];
         return s.graph.nodes(id);
     }
+    var selectedNodes = {}
+    var selectedProps = {}
     var nodeGroupCount = 0;
     for(var nodeGroup in data['nodes']) {
-
         nodeGroupCount++;
         for(var node in data['nodes'][nodeGroup]) {
-            nodePropertyCount[data['nodes'][nodeGroup][node]] = 0;
-            nodeDict[data['nodes'][nodeGroup][node]] = 'n' + ++nodeId;
+            var nodeValue = data['nodes'][nodeGroup][node]
+            nodePropertyCount[nodeValue] = 0;
+            var curId = ++nodeId
+            nodeDict[nodeValue] = 'n' + curId;
+            var nodeColor = colors[nodeGroupCount % colors.length]
+            if(selectedData != null) {
+                if(!(nodeGroup in selectedData['nodes'])) {
+                    nodeColor = '#eee'
+                } else {
+                    if($.inArray(nodeValue, selectedData['nodes'][nodeGroup]) == -1) {
+                        nodeColor = '#eee'
+                    } else {
+                        selectedNodes['n' + curId] = true
+                        selectedProps[nodeValue] = selectedData['properties'][nodeValue]
+                    }
+                }
+            }
             s.graph.addNode({
                 id: 'n' + nodeId,
                 label: data['nodes'][nodeGroup][node],
                 size: 3,
                 x: (totalNumNodes > 30 ? 3*(3+(nodeId / 30)) : 1) * Math.cos(2 * nodeId * Math.PI / (totalNumNodes > 30 ? 30 : totalNumNodes)),
                 y: (totalNumNodes > 30 ? 3*(3+(nodeId / 30)) : 1) * Math.sin(2 * nodeId * Math.PI / (totalNumNodes > 30 ? 30 : totalNumNodes)),
-                color: colors[nodeGroupCount % colors.length]
+                color: nodeColor
             });
             
         };
@@ -458,16 +470,19 @@ var generatePopulatedGraphFromJson = function(jsonData) {
     var edgeId = 0;
     for(var source in data['edges']) {
         for(var targetNode in data['edges'][source]) {
-
+            var edgeColor = s.graph.nodes(nodeDict[source]).color
+            if(s.graph.nodes(nodeDict[data['edges'][source][targetNode]]).color == '#eee') {
+                edgeColor = '#eee'
+            }
             s.graph.addEdge({
                 id: 'e' + edgeId++,
                 source: nodeDict[source],
                 target: nodeDict[data['edges'][source][targetNode]],
-                type: 'curve'
+                type: 'curve',
+                color: edgeColor
             });
         }
     };
-
 
     var propertyCount = 0
     for(var node in data['properties']){
@@ -475,6 +490,29 @@ var generatePopulatedGraphFromJson = function(jsonData) {
             for(var pI in data['properties'][node][propertyIndex]){
             propertyCount ++;
             ++nodePropertyCount[node];
+            var nodeColor = colors[propertyCount % colors.length]
+            //If this property is not associated with a node that's queried
+            if(selectedData != null) {
+                if(!(nodeDict[node] in selectedNodes)) {
+                    nodeColor = '#eee'
+                } else {
+                    //If this property is not the queried property
+                    if(!(node in selectedProps)) {
+                        nodeColor = '#eee'
+                    } else {
+                        var find = false
+                        for(var i in selectedProps[node]) {
+                            if(pI in selectedProps[node][i]) {
+                                find = true
+                                break
+                            }
+                        }
+                        if(!find) {
+                            nodeColor = '#eee'
+                        }
+                    }
+                }
+            }
             var parentNode = getNodeByLabel(node);
             s.graph.addNode({
                 id: 'p' + propertyCount,
@@ -482,13 +520,18 @@ var generatePopulatedGraphFromJson = function(jsonData) {
                 size: 1,
                 x: parentNode.x + 1 * Math.cos(2 * nodePropertyCount[node] * Math.PI / 6),
                 y: parentNode.y + 1 * Math.sin(2 * nodePropertyCount[node] * Math.PI / 6),
-                color: colors[propertyCount % colors.length]
+                color: nodeColor
             });
+            var edgeColor = s.graph.nodes(nodeDict[node]).color
+            if(nodeColor == '#eee') {
+                edgeColor = '#eee'
+            }
             s.graph.addEdge({
                 id: 'e'+ edgeId++,
                 source: nodeDict[node],
                 target: 'p' + propertyCount,
-                type: 'curve'
+                type: 'curve',
+                color: edgeColor
             });
             }
         }
