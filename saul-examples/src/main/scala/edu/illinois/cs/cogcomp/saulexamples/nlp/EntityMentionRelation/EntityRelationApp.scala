@@ -62,26 +62,22 @@ object EntityRelationApp {
     saveIndependentRelationModels()
   }
 
+  def trainCVIndependentClassifiers() = {
+    EntityRelationDataModel.populateWithConll()
+    PersonClassifier.crossValidation(5, 5, saveModels = true)
+    PersonClassifier.test()
+  }
+
   def testIndependentClassifiers() = {
     EntityRelationDataModel.populateWithConll()
-    //    loadIndependentEntityModels()
 
-    PersonClassifier.learn(5)
-    //    PersonClassifier.save()
+    val k = 5
+    val idx = 0 // or 1, 2, 3, 4
+    val lcFile = PersonClassifier.lcFilePath(s"-crosValidation-k=$k-fold=$idx")
+    val lexFile = PersonClassifier.lexFilePath(s"-crosValidation-k=$k-fold=$idx")
+    PersonClassifier.load(lcFile, lexFile)
 
-    //    PersonClassifier.load()
-
-    //    PersonClassifier.load()
-    //    OrganizationClassifier.load()
-    //    LocationClassifier.load()
-
-    println(PersonClassifier.test())
-    //    println(OrganizationClassifier.test())
-    //    println(LocationClassifier.test())
-
-    //        val out = EntityRelationSensors.testSentences.asScala.flatMap( sentenceToTokens_GeneratingSensor )
-
-    //      PersonClassifier(  )
+    PersonClassifier.test()
   }
 
   /** in this scenario the named entity recognizers are trained independently, and given to a relation classifier as

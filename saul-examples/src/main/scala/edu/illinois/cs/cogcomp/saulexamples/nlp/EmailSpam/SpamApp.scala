@@ -71,7 +71,7 @@ object SpamApp {
     spamClassifier.save()
 
     println(deserializedSpamClassifier.classifier.getPrunedLexiconSize)
-    deserializedSpamClassifier.load(spamClassifier.lcFilePath, spamClassifier.lexFilePath)
+    deserializedSpamClassifier.load(spamClassifier.lcFilePath(), spamClassifier.lexFilePath())
 
     val predictionsBeforeSerialization = testData.map(spamClassifier(_))
     val predictionsAfterSerialization = testData.map(deserializedSpamClassifier(_))

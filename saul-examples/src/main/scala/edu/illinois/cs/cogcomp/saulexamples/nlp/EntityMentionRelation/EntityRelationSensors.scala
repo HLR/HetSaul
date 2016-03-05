@@ -6,7 +6,7 @@ import edu.illinois.cs.cogcomp.saulexamples.EntityMentionRelation.reader.{ Conll
 import scala.collection.JavaConverters._
 
 object EntityRelationSensors {
-  val path = "../data/"
+  val path = "./data/"
   val resourcePath = "../saul-examples/src/main/resources/EntityMentionRelation/"
 
   def readConllData(dir: String): (List[ConllRawSentence], List[ConllRelation]) = {

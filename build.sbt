@@ -22,7 +22,8 @@ lazy val commonSettings = Seq(
     "org.scalatest" % "scalatest_2.11" % "2.2.4"
   ),
   fork := true,
-  publishTo := Some(Resolver.sftp("CogcompSoftwareRepo", "bilbo.cs.illinois.edu", "/mounts/bilbo/disks/0/www/cogcomp/html/m2repo/"))
+  publishTo := Some(Resolver.sftp("CogcompSoftwareRepo", "bilbo.cs.illinois.edu", "/mounts/bilbo/disks/0/www/cogcomp/html/m2repo/")),
+  isSnapshot := true
 )
 
 lazy val saulCore = (project in file("saul-core")).
@@ -63,4 +64,3 @@ lazy val saulWebapp = (project in file("saul-webapp")).
     resolvers += "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases",
     routesGenerator := InjectedRoutesGenerator
   ).dependsOn(saulCore).aggregate(saulCore)
-

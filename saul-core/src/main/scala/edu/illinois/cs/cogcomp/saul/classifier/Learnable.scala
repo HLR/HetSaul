@@ -49,23 +49,23 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
   /** specifications of the classifier and its model files  */
   classifier.setReadLexiconOnDemand()
   val modelDir = "models/"
-  val lcFilePath = new URL(new URL("file:"), modelDir + getClassNameForClassifier + ".lc")
-  val lexFilePath = new URL(new URL("file:"), modelDir + getClassNameForClassifier + ".lex")
+  def lcFilePath(suffix: String = "") = new URL(new URL("file:"), modelDir + getClassNameForClassifier + suffix + ".lc")
+  def lexFilePath(suffix: String = "") = new URL(new URL("file:"), modelDir + getClassNameForClassifier + suffix + ".lex")
   IOUtils.mkdir(modelDir)
-  classifier.setModelLocation(lcFilePath)
-  classifier.setLexiconLocation(lexFilePath)
+  classifier.setModelLocation(lcFilePath())
+  classifier.setLexiconLocation(lexFilePath())
 
   // create .lex file if it does not exist
-  if (!IOUtils.exists(lexFilePath.getPath)) {
-    val lexFile = ExceptionlessOutputStream.openCompressedStream(lexFilePath)
+  if (!IOUtils.exists(lexFilePath().getPath)) {
+    val lexFile = ExceptionlessOutputStream.openCompressedStream(lexFilePath())
     if (classifier.getCurrentLexicon == null) lexFile.writeInt(0)
     else classifier.getCurrentLexicon.write(lexFile)
     lexFile.close()
   }
 
   // create .lc file if it does not exist
-  if (!IOUtils.exists(lcFilePath.getPath)) {
-    val lcFile = ExceptionlessOutputStream.openCompressedStream(lcFilePath)
+  if (!IOUtils.exists(lcFilePath().getPath)) {
+    val lcFile = ExceptionlessOutputStream.openCompressedStream(lcFilePath())
     classifier.write(lcFile)
     lcFile.close()
   }
@@ -95,8 +95,8 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
   setLabeler()
 
   def removeModelFiles(): Unit = {
-    IOUtils.rm(lcFilePath.getPath)
-    IOUtils.rm(lexFilePath.getPath)
+    IOUtils.rm(lcFilePath().getPath)
+    IOUtils.rm(lexFilePath().getPath)
   }
 
   def save(): Unit = {
@@ -137,7 +137,7 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
   }
 
   def load(): Unit = {
-    load(lcFilePath.getPath, lexFilePath.getPath)
+    load(lcFilePath().getPath, lexFilePath().getPath)
   }
 
   def learn(iteration: Int, filePath: String = datamodel.defaultDIFilePath): Unit = {
@@ -256,24 +256,24 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
     //ret toList
   }
 
-  def chunkData(ts: List[Iterable[T]], i: Int, curr: Int, acc: (Iterable[T], Iterable[T])): (Iterable[T], Iterable[T]) = {
-    ts match {
-      case head :: more =>
-        acc match {
-          case (train, test) =>
-            if (i == curr) {
-              // we found the test part
-              chunkData(more, i, curr + 1, (train, head))
-            } else {
-              chunkData(more, i, curr + 1, (head ++ train, test))
-            }
-        }
-      case Nil => acc
-    }
-  }
+  //  def chunkData(ts: List[Iterable[T]], i: Int, curr: Int, acc: (Iterable[T], Iterable[T])): (Iterable[T], Iterable[T]) = {
+  //    ts match {
+  //      case head :: more =>
+  //        acc match {
+  //          case (train, test) =>
+  //            if (i == curr) {
+  //              // we found the test part
+  //              chunkData(more, i, curr + 1, (train, head))
+  //            } else {
+  //              chunkData(more, i, curr + 1, (head ++ train, test))
+  //            }
+  //        }
+  //      case Nil => acc
+  //    }
+  //  }
 
   /** Run k fold cross validation. */
-  def crossValidation(k: Int, numIterations: Int = 5): Unit = {
+  def crossValidation(k: Int, numIterations: Int = 5, saveModels: Boolean = false): Unit = {
     val allData = this.fromData
 
     if (loggging)
@@ -299,6 +299,11 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
 
         this.classifier.forget()
         this.learn(numIterations, trainingSet)
+        if (saveModels) {
+          classifier.setModelLocation(lcFilePath(s"-crosValidation-k=$k-fold=$idx"))
+          classifier.setLexiconLocation(lexFilePath(s"-crosValidation-k=$k-fold=$idx"))
+          this.save()
+        }
         this.test(testingSet)
     }
 

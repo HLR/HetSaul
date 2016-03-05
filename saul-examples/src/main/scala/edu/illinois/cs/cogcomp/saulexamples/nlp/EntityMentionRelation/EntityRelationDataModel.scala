@@ -11,9 +11,9 @@ import scala.collection.JavaConversions._
 object EntityRelationDataModel extends DataModel {
 
   /** Nodes & Edges */
-  val tokens = node[ConllRawToken]((x: ConllRawToken) => x.wordId + ":" + x.sentId)
-  val sentences = node[ConllRawSentence]((x: ConllRawSentence) => x.sentId)
-  val pairs = node[ConllRelation]((x: ConllRelation) => x.wordId1 + ":" + x.wordId2 + ":" + x.sentId)
+  val tokens = node[ConllRawToken] //((x: ConllRawToken) => x.wordId + ":" + x.sentId)
+  val sentences = node[ConllRawSentence] //((x: ConllRawSentence) => x.sentId)
+  val pairs = node[ConllRelation] //((x: ConllRelation) => x.wordId1 + ":" + x.wordId2 + ":" + x.sentId)
 
   val sentenceToToken = edge(sentences, tokens)
   val sentencesToPairs = edge(sentences, pairs)
@@ -113,33 +113,8 @@ object EntityRelationDataModel extends DataModel {
   }
 
   def populateWithConll() = {
-    import scala.collection.JavaConverters._
-    //    tokens.populate(EntityRelationSensors.sentencesTrain.flatMap(_.getEntitiesInSentence.asScala))
-    //    tokens.populate(EntityRelationSensors.sentencesTest.flatMap(_.getEntitiesInSentence.asScala), train = false )
-    val aaa = EntityRelationSensors.sentencesTest ++ EntityRelationSensors.sentencesTrain
-    println("total sentences size: List " + aaa.size)
-    val bbb = aaa.toSet
-    println("total sentences size: Set " + bbb.size)
-    val ccc = EntityRelationSensors.relationsTest ++ EntityRelationSensors.relationsTrain
-    println("total relations size: List " + ccc.size)
-    val ddd = ccc.toSet
-    println("total relations size: Set " + ddd.size)
-    //    println(EntityRelationSensors.sentencesTest.head.hashCode())
-    //    println(EntityRelationSensors.sentencesTest.get(1).hashCode())
-    //    println(EntityRelationSensors.sentencesTest.get(2).hashCode())
-    //    println(EntityRelationSensors.sentencesTest.size)
-    //    println(EntityRelationSensors.sentencesTrain.size)
-    //    pairs.populate(EntityRelationSensors.relationsTrain)
-    sentences.populate(EntityRelationSensors.sentencesTest, train = false)
     sentences.populate(EntityRelationSensors.sentencesTrain)
-    //    pairs.populate(EntityRelationSensors.relationsTest, train = false)
-
-    println("train tok: " + tokens.trainingSet.size)
-    println("test tok: " + tokens.testingSet.size)
-    println("train sen: " + sentences.trainingSet.size)
-    println("test sen: " + sentences.testingSet.size)
-    println("train pairs: " + pairs.trainingSet.size)
-    println("test pairs: " + pairs.testingSet.size)
+    sentences.populate(EntityRelationSensors.sentencesTest, train = false)
   }
 
   def populateWithConllSmallSet() = {
