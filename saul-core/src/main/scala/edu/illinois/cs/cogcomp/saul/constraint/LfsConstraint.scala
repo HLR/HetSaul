@@ -1,13 +1,11 @@
 package edu.illinois.cs.cogcomp.saul.constraint
 
-import edu.illinois.cs.cogcomp.lbjava.infer.{ ParameterizedConstraint, FirstOrderConstraint }
+import edu.illinois.cs.cogcomp.lbjava.infer.{ ILPSolver, ParameterizedConstraint, FirstOrderConstraint }
 import edu.illinois.cs.cogcomp.saul.classifier.infer.InferenceCondition
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
 
 import scala.reflect.ClassTag
 
-/** Created by haowu on 1/29/15.
-  */
 abstract class LfsConstraint[T <: AnyRef](implicit val tag: ClassTag[T]) {
 
   def makeConstrainDef(x: T): FirstOrderConstraint
@@ -36,8 +34,8 @@ abstract class LfsConstraint[T <: AnyRef](implicit val tag: ClassTag[T]) {
 
   val lc = this
 
-  def createInferenceCondition[C <: AnyRef](dm: DataModel)(implicit cTag: ClassTag[C]): InferenceCondition[C, T] = {
-    new InferenceCondition[C, T](dm) {
+  def createInferenceCondition[C <: AnyRef](dm: DataModel, solver: ILPSolver)(implicit cTag: ClassTag[C]): InferenceCondition[C, T] = {
+    new InferenceCondition[C, T](dm, solver) {
       override def subjectTo: LfsConstraint[T] = lc
     }
   }

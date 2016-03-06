@@ -36,7 +36,7 @@ class propertyTest extends FlatSpec with Matchers {
 
     conjunctionProperty(new toyClass).mkString(",") should be("string_value_funnyRange_ranged")
     conjunctionProperty1(new toyClass).size should be(3)
-    conjunctionProperty1(new toyClass).mkString(",") should be("funnyRange_ranged_boolean_true,string_value_boolean_true,string_value_funnyRange_ranged")
+    conjunctionProperty1(new toyClass).mkString(",") should be("string_value_funnyRange_ranged,string_value_boolean_true,funnyRange_ranged_boolean_true")
   }
 
   "properties" should "use reasonable default names if not specified" in {
