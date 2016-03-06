@@ -1,14 +1,11 @@
 package edu.illinois.cs.cogcomp.saul.datamodel
 
-import edu.illinois.cs.cogcomp.lbjava.util.{ ExceptionlessInputStream, ExceptionlessOutputStream }
-import edu.illinois.cs.cogcomp.saul.datamodel.edge.{ AsymmetricEdge, Edge, Link, SymmetricEdge }
-import edu.illinois.cs.cogcomp.saul.datamodel.node.{ NodeProperty, JoinNode, Node }
+import edu.illinois.cs.cogcomp.lbjava.util.{ExceptionlessInputStream, ExceptionlessOutputStream}
+import edu.illinois.cs.cogcomp.saul.datamodel.edge.{AsymmetricEdge, Edge, Link, SymmetricEdge}
+import edu.illinois.cs.cogcomp.saul.datamodel.node.{JoinNode, Node, NodeProperty}
 import edu.illinois.cs.cogcomp.saul.datamodel.property.features.discrete._
 import edu.illinois.cs.cogcomp.saul.datamodel.property.features.real._
-import edu.illinois.cs.cogcomp.saul.datamodel.property.{ EvaluatedProperty, Property }
-import edu.illinois.cs.cogcomp.saul.datamodel.node.{ JoinNode, Node }
-import edu.illinois.cs.cogcomp.saul.datamodel.edge.{ SymmetricEdge, AsymmetricEdge, Edge, Link }
-import org.scalatest.fixture
+import edu.illinois.cs.cogcomp.saul.datamodel.property.{EvaluatedProperty, Property}
 
 import scala.collection.mutable.ListBuffer
 import scala.reflect.ClassTag
