@@ -15,7 +15,7 @@ lazy val commonSettings = Seq(
   ),
   javaOptions ++= List("-Xmx6g"),
   libraryDependencies ++= Seq(
-    "edu.illinois.cs.cogcomp" % "LBJava" % "1.2.8",
+    "edu.illinois.cs.cogcomp" % "LBJava" % "1.2.8" withSources,
     "edu.illinois.cs.cogcomp" % "illinois-core-utilities" % cogcompNLPVersion withSources,
     "com.gurobi" % "gurobi" % "6.0",
     "org.apache.commons" % "commons-math3" % "3.0",

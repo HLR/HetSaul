@@ -10,8 +10,8 @@ import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlConstrai
 import org.slf4j.{ Logger, LoggerFactory }
 object liApp extends App {
   //train parameters
-  val pipelineTrain = true
-  val joinTrain = false
+  val pipelineTrain = false
+  val joinTrain = true
   val multiClass= false
   //test parameters
   val TestA = false
@@ -26,7 +26,7 @@ object liApp extends App {
 
   val logger: Logger = LoggerFactory.getLogger(this.getClass)
 
-  val srlGraphs = populatemultiGraphwithSRLData(testOnly = true, useGoldPredicate, useGoldBoundaries)
+  val srlGraphs = populatemultiGraphwithSRLData(testOnly = false, useGoldPredicate, useGoldBoundaries)
 
   import srlGraphs._
 
@@ -107,16 +107,16 @@ object liApp extends App {
   if (joinTrain) {
 
     argumentTypeLearner.setModelDir(jModelDir)
-    // argumentTypeLearner.learn(10)
-    //argumentTypeLearner.save()
+    argumentTypeLearner.learn(1)
+    argumentTypeLearner.save()
     // argumentTypeLearner.load(jModelDir + argumentTypeLearner_lc, jModelDir + argumentTypeLearner_lex)
     //logger.info("test independent train after 10 iterations:... ")
-    // argTypeConstraintClassifier.test(srlGraphs.relations.getTestingInstances, jModelDir + argumentTypeLearner_pred, 100, exclude = "candidate") //(aTr_pred, 100)
+    argTypeConstraintClassifier.test(srlGraphs.relations.getTestingInstances, jModelDir + argumentTypeLearner_pred, 100, exclude = "candidate") //(aTr_pred, 100)
     //argumentTypeLearner.test(exclude = "candidate")
     logger.info("Join train:... ")
     for (i <- 0 until 20) {
       //  argumentTypeLearner.load(jModelDir + argumentTypeLearner_lc, jModelDir + argumentTypeLearner_lex)
-      // argumentTypeLearner.learn(10)
+
 
       JointTrainSparseNetwork(srlGraphs, argTypeConstraintClassifier :: Nil, 5)
       // if (i % 2 == 0) {

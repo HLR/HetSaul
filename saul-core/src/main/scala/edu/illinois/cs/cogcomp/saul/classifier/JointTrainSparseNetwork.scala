@@ -10,7 +10,7 @@ import scala.reflect.ClassTag
 object JointTrainSparseNetwork {
 
   val logger: Logger = LoggerFactory.getLogger(this.getClass)
-
+  var difference=0
   def apply[HEAD <: AnyRef](
     dm: DataModel,
     cls: List[ConstrainedClassifier[_, HEAD]]
@@ -46,9 +46,10 @@ object JointTrainSparseNetwork {
     logger.info("Training iteration: " + it)
     if (it == 0) {
       // Done
+      println("difference=", difference )
     } else {
       val allHeads = dm.getNodeWithType[HEAD].getTrainingInstances
-
+      difference=0
       allHeads.zipWithIndex.foreach {
         case (h, idx) =>
           {
@@ -79,6 +80,13 @@ object JointTrainSparseNetwork {
                       def trainOnce() = {
 
                         val result = typedC.classifier.discreteValue(x)
+                        val simpleResult= typedC.onClassifier.discreteValue(x)
+                        println("Constrained Result=",result, "Simple Result", simpleResult )
+                        if (!simpleResult.equals(result)){
+                          difference= difference +1
+                        }
+
+
                         //                  val result =  typedC.classifier.discreteValue(x)
                         //
                         //                                      println(s"${typedC.onClassifier.scores(x).getScore("true")}")
@@ -124,19 +132,18 @@ object JointTrainSparseNetwork {
                           if (label >= N || ilearner.net.get(label) == null) {
                             ilearner.iConjuctiveLables = ilearner.iConjuctiveLables | ilearner.getLabelLexicon.lookupKey(label).isConjunctive();
 
-                            var ltu: LinearThresholdUnit = ilearner.getbaseLTU
+                            val ltu: LinearThresholdUnit = ilearner.getbaseLTU.clone().asInstanceOf[LinearThresholdUnit]
                             ltu.initialize(ilearner.getnumExamples, ilearner.getnumFeatures);
                             ilearner.net.set(label, ltu);
                             N = label + 1;
-
                           }
                           // test push
-                          var ltu_actual: LinearThresholdUnit = ilearner.getLTU(LTU_actual) //.net.get(i).asInstanceOf[LinearThresholdUnit]
-                          var ltu_predited: LinearThresholdUnit = ilearner.getLTU(LTU_predicted)
+                          val ltu_actual: LinearThresholdUnit = ilearner.getLTU(LTU_actual).clone().asInstanceOf[LinearThresholdUnit] //.net.get(i).asInstanceOf[LinearThresholdUnit]
+                          val ltu_predicted: LinearThresholdUnit = ilearner.getLTU(LTU_predicted).clone().asInstanceOf[LinearThresholdUnit]
                           if (ltu_actual != null)
-                            ltu_actual.promote(a0, a1, 0.1)
-                          if (ltu_predited != null)
-                            ltu_predited.demote(a0, a1, 0.1)
+                            typedC.onClassifier.asInstanceOf[Learner].asInstanceOf[SparseNetworkLBP].getLTU(LTU_actual).promote(a0, a1, 0.1)
+                          if (ltu_predicted != null)
+                            typedC.onClassifier.asInstanceOf[Learner].asInstanceOf[SparseNetworkLBP].getLTU(LTU_predicted).demote(a0, a1, 0.1)
 
                           // var l = new Array[Int](1)
                           // for (i<-  0 until N) {
