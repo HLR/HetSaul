@@ -3,9 +3,10 @@ package controllers
 import controllers.Event._
 
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
+import logging.logger
 
 import play.api.mvc._
-import play.api.libs.json.{ JsNull, JsValue, JsObject, Json }
+import play.api.libs.json._
 
 import java.io.File
 
@@ -14,8 +15,8 @@ import scala.reflect.internal.util.{ BatchSourceFile, Position }
 import scala.tools.nsc.Settings
 import scala.tools.nsc.reporters.{ Reporter, AbstractReporter }
 
-import util.reflectUtils._
-import util._
+import _root_.util.reflectUtils._
+import _root_.util._
 
 object Application {
 
@@ -62,6 +63,72 @@ class Application extends Controller {
     execute(Query(), request)
   }
 
+  def visualize = Action(parse.json) { implicit request =>
+    IOUtils.cleanUpTmpFolder(rootDir)
+    val files = parseRequest(RunMain(), request)
+    files match {
+      case Some(fileMap) => {
+        val compilationResult = compile(fileMap)
+        compilationResult match {
+          case Left(scalaInstances) => {
+            val dm = getDataModel(scalaInstances)
+            dm match {
+              case Some(dataModel) => {
+                val dataModelSchema = dataModelJsonInterface.getSchemaJson(dataModel)
+                //If main class found, execute and get output and data population results
+                val executionResult = executeMain(scalaInstances, fileMap, compiler)
+                executionResult match {
+                  case Some(x) => {
+                    Ok(JsObject(Seq(
+                      "dataModelSchema" -> dataModelSchema,
+                      "populatedModel" -> dataModelJsonInterface.getPopulatedInstancesJson(dataModel),
+                      "log" -> JsObject(logger.gather.map(record => (record._1, JsString(record._2))))
+                    )))
+                  }
+                  case None => {
+                    Ok(JsObject(Seq(
+                      "dataModelSchema" -> dataModelSchema,
+                      "populatedModel" -> JsNull,
+                      "log" -> JsNull
+                    )))
+                  }
+                }
+              }
+              case None => Ok(getErrorJson(Json.toJson("No DataModel found.")))
+            }
+          }
+          case Right(errorMsg) => Ok(errorMsg)
+        }
+      }
+    }
+  }
+
+  private def getDataModel(scalaInstances: Iterable[Any]): Option[DataModel] = {
+    val result = scalaInstances find (x => x match {
+      case model: DataModel => true
+      case _ => false
+    })
+
+    result match {
+      case Some(x) => x match {
+        case model: DataModel => Some(model)
+        case _ => None
+      }
+      case None => None
+    }
+  }
+
+  private def executeMain(scalaInstances: Iterable[Any], fileMap: Map[String, String], compiler: Compiler): Option[Unit] = {
+    scalaInstances find (x => classExecutor.containsMain(x)) match {
+      case Some(x) => {
+        visualizer.init
+        logger.init
+        Some(compiler.executeWithoutLog(x))
+      }
+      case None => None
+    }
+  }
+
   private def parseRequest(event: Event, request: Request[JsValue]): Option[Map[String, String]] = {
     request.body match {
       case jsonData: JsObject => {
@@ -92,7 +159,6 @@ class Application extends Controller {
         val compilationResult = compile(fileMap)
         compilationResult match {
           case Left(scalaInstances) => {
-            println("compilation success")
             event match {
               case DisplayModel() => Ok(displayModel(scalaInstances))
               case PopulateData() => Ok(populateModel(scalaInstances, fileMap, compiler))
