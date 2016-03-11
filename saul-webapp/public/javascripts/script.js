@@ -371,14 +371,14 @@ var enableColoringNeighbors = function(s){
 
         s.graph.nodes().forEach(function(n) {
           if (toKeep[n.id])
-            n.color = n.originalColor;
+            n.color = n.assignedColor;
           else
             n.color = '#eee';
         });
 
         s.graph.edges().forEach(function(e) {
           if (toKeep[e.source] && toKeep[e.target])
-            e.color = e.originalColor;
+            e.color = e.assignedColor;
           else
             e.color = '#eee';
         });
@@ -461,7 +461,8 @@ var generatePopulatedGraphFromJson = function(jsonData) {
                 size: 3,
                 x: (totalNumNodes > 30 ? 3*(3+(nodeId / 30)) : 1) * Math.cos(2 * nodeId * Math.PI / (totalNumNodes > 30 ? 30 : totalNumNodes)),
                 y: (totalNumNodes > 30 ? 3*(3+(nodeId / 30)) : 1) * Math.sin(2 * nodeId * Math.PI / (totalNumNodes > 30 ? 30 : totalNumNodes)),
-                color: nodeColor
+                color: nodeColor,
+                assignedColor: colors[nodeGroupCount % colors.length]
             });
             
         };
@@ -520,7 +521,8 @@ var generatePopulatedGraphFromJson = function(jsonData) {
                 size: 1,
                 x: parentNode.x + 1 * Math.cos(2 * nodePropertyCount[node] * Math.PI / 6),
                 y: parentNode.y + 1 * Math.sin(2 * nodePropertyCount[node] * Math.PI / 6),
-                color: nodeColor
+                color: nodeColor,
+                assignedColor: colors[propertyCount % colors.length]
             });
             var edgeColor = s.graph.nodes(nodeDict[node]).color
             if(nodeColor == '#eee') {
@@ -531,7 +533,8 @@ var generatePopulatedGraphFromJson = function(jsonData) {
                 source: nodeDict[node],
                 target: 'p' + propertyCount,
                 type: 'curve',
-                color: edgeColor
+                color: edgeColor,
+                assignedColor: s.graph.nodes(nodeDict[node]).assignedColor
             });
             }
         }
