@@ -53,7 +53,11 @@ $(document).ready(function(){
         });
 
         $("#queryBtn").click(function() {
-            updateCode(3)
+            updateCode(3);
+        });
+
+        $("#visualizeBtn").click(function() {
+            updateCode(-1);
         });
 
         $("#newmodel").click(function(){
@@ -75,7 +79,7 @@ $(document).ready(function(){
 
         $("#ToyExample").click(function(){
             deleteAllFiles();
-            var content = ["package test","","import edu.illinois.cs.cogcomp.saul.datamodel.DataModel","","object $$$$$$ extends DataModel {","","    val firstNames = node[String]","    val lastNames = node[String]","    val name = edge(firstNames,lastNames)","    val prefix = property(firstNames,\"prefix\")((s: String) => s.charAt(1).toString)","    val prefix2 = property(firstNames,\"prefix\")((s: String) => s.charAt(0).toString)","","    def main(args : Array[String]): Unit ={","        firstNames.populate(Seq(\"Dave\",\"John\",\"Mark\",\"Michael\"))","        lastNames.populate(Seq(\"Dell\",\"Jacobs\",\"Maron\",\"Mario\"))","        name.populateWith(_.charAt(0) == _.charAt(0))","    }","}"];
+            var content = ["package test","","import edu.illinois.cs.cogcomp.saul.datamodel.DataModel","import logging.logger.{ error, info }", "","object $$$$$$ extends DataModel {","","    val firstNames = node[String]","    val lastNames = node[String]","    val name = edge(firstNames,lastNames)","    val prefix = property(firstNames,\"prefix\")((s: String) => s.charAt(1).toString)","    val prefix2 = property(firstNames,\"prefix\")((s: String) => s.charAt(0).toString)","","    def main(args : Array[String]): Unit ={","        firstNames.populate(Seq(\"Dave\",\"John\",\"Mark\",\"Michael\"))","        lastNames.populate(Seq(\"Dell\",\"Jacobs\",\"Maron\",\"Mario\"))","        name.populateWith(_.charAt(0) == _.charAt(0))","    }","}"];
             newFile(content);
         });
 
@@ -316,6 +320,9 @@ var updateCode = function(event){
     } else if (event == 3) {
         rURL = '/query';
         onSuccess = onQuerySuccess;
+    } else if (event == -1) {
+        rURL = '/visualize';
+        onSuccess = onVisualizeSuccess;
     }
 
     var callback = {
@@ -371,14 +378,14 @@ var enableColoringNeighbors = function(s){
 
         s.graph.nodes().forEach(function(n) {
           if (toKeep[n.id])
-            n.color = n.originalColor;
+            n.color = n.assignedColor;
           else
             n.color = '#eee';
         });
 
         s.graph.edges().forEach(function(e) {
           if (toKeep[e.source] && toKeep[e.target])
-            e.color = e.originalColor;
+            e.color = e.assignedColor;
           else
             e.color = '#eee';
         });
@@ -418,6 +425,7 @@ var generatePopulatedGraphFromJson = function(jsonData) {
         })
     });
 */
+
     var data = jsonData['full']
     var selectedData = jsonData['selected']
     var nodeId = 0;
@@ -461,7 +469,8 @@ var generatePopulatedGraphFromJson = function(jsonData) {
                 size: 3,
                 x: (totalNumNodes > 30 ? 3*(3+(nodeId / 30)) : 1) * Math.cos(2 * nodeId * Math.PI / (totalNumNodes > 30 ? 30 : totalNumNodes)),
                 y: (totalNumNodes > 30 ? 3*(3+(nodeId / 30)) : 1) * Math.sin(2 * nodeId * Math.PI / (totalNumNodes > 30 ? 30 : totalNumNodes)),
-                color: nodeColor
+                color: nodeColor,
+                assignedColor: colors[nodeGroupCount % colors.length]
             });
             
         };
@@ -520,7 +529,8 @@ var generatePopulatedGraphFromJson = function(jsonData) {
                 size: 1,
                 x: parentNode.x + 1 * Math.cos(2 * nodePropertyCount[node] * Math.PI / 6),
                 y: parentNode.y + 1 * Math.sin(2 * nodePropertyCount[node] * Math.PI / 6),
-                color: nodeColor
+                color: nodeColor,
+                assignedColor: colors[propertyCount % colors.length]
             });
             var edgeColor = s.graph.nodes(nodeDict[node]).color
             if(nodeColor == '#eee') {
@@ -531,7 +541,8 @@ var generatePopulatedGraphFromJson = function(jsonData) {
                 source: nodeDict[node],
                 target: 'p' + propertyCount,
                 type: 'curve',
-                color: edgeColor
+                color: edgeColor,
+                assignedColor: s.graph.nodes(nodeDict[node]).assignedColor
             });
             }
         }
@@ -614,10 +625,11 @@ var generateSchemaGraphFromJson = function(data){
 }
 
 var displayOutput = function(data) {
-    var stdout = $("<p></p>").text("stdout: " + data["stdout"]);
-    var stderr = $("<p></p>").text("stderr: " + data["stderr"]);
-    $("#tab3").append(stdout);
-    $("#tab3").append(stderr);
+    $("#tab3").html('')
+    var info = $("<p></p>").text("info: \n" + data["info"]);
+    var error = $("<p style='color:red;'></p>").text("error: \n" + data["error"]);
+    $("#tab3").append(info);
+    $("#tab3").append(error);
 }
 
 jQuery(document).ready(function() {
@@ -660,7 +672,7 @@ var alertError = function(data) {
 }
 
 var onCompileSuccess = function(data){
-        $("#pbar").hide();
+    $("#pbar").hide();
     alertError(data);
     changeTab("tab1");
     generateSchemaGraphFromJson(data);
@@ -682,6 +694,17 @@ var onRunSuccess = function(data) {
 
 var onQuerySuccess = function(data) {
     onPopulateSuccess(data)
+}
+
+var onVisualizeSuccess = function(data) {
+    $("#pbar").hide();
+    alertError(data);
+    changeTab("tab1")
+    generateSchemaGraphFromJson(data['dataModelSchema']);
+    changeTab("tab2")
+    if(data['populatedModel'] != null) generatePopulatedGraphFromJson(data['populatedModel'])
+    if(data['log'] != null) displayOutput(data['log'])
+    changeTab("tab1")
 }
 
 var onError = function(data){
