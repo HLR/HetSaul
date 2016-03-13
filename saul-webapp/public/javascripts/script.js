@@ -2,7 +2,10 @@ var colors = ["#000000", "#FFFF00", "#1CE6FF", "#FF34FF", "#FF4A46", "#008941", 
         "#FFDBE5", "#7A4900", "#0000A6", "#63FFAC", "#B79762", "#004D43", "#8FB0FF", "#997D87"];
 
 $(document).ready(function(){
-
+    installGraphsTabClick();
+    $("#hoverBar").click(function() {
+        $('.page-header').toggle();
+    });
   sigma.classes.graph.addMethod('neighbors', function(nodeId) {
     var k,
         neighbors = {},
@@ -18,7 +21,7 @@ $(document).ready(function(){
         setEditor("editor1","scala"); 
         $("#fileList").children("li").each(function(){
             installTabClickedAction($(this));
-        })
+        });
 
         $("#selectedFile").change(function() {
             if (!window.FileReader) {
@@ -141,7 +144,21 @@ $(document).ready(function(){
 
 */
 })
-
+function installGraphsTabClick(){
+    $("#gtabs").children("li").each(function(){
+        $(this).click(function(){
+            $("#gtabs").children(".active").each(function(){
+                $(this).removeClass("active");
+            });
+            $(this).addClass("active");
+            $(".tab-content").children(".active").each(function(){
+                $(this).removeClass("active");
+                $(this).hide();
+            });
+            $("#"+ $(this).attr("value")).addClass("active").show();
+        });
+    });
+}
 function processFile(e) {
     var file = e.target.result,
         results;
@@ -366,9 +383,6 @@ var enableColoringNeighbors = function(s){
       // original color.
       // We do the same for the edges, and we only keep
       // edges that have both extremities colored.
-    s.bind('overNode',function(e){
-        $("#nodevalue").text(e.data.node.label);
-    });
 
     s.bind('clickNode', function(e) {
 
@@ -417,6 +431,13 @@ var generatePopulatedGraphFromJson = function(jsonData) {
         edgeLabelSize: 'proportional',
         labelThreshold: 10
     }});
+
+    $('#graphParent2').parent().find(".recenter").click(function(){
+        generatePopulatedGraphFromJson(jsonData);
+    });
+    s.bind('overNode',function(e){
+        $("#nodetext2").text(e.data.node.label);
+    });
     var dragListener = sigma.plugins.dragNodes(s, s.renderers[0]);
     /*dragListener.bind('drag', function(event) {
         s.graph.neighbors(event.node.id).forEach(function(e) {
@@ -554,6 +575,7 @@ var generatePopulatedGraphFromJson = function(jsonData) {
 }
 
 var generateSchemaGraphFromJson = function(data){
+
     $('#schemaGraphContainer').remove();
     $('#graphParent1').html('<div id="schemaGraphContainer"></div>');
     var s = new sigma({renderer: {
@@ -565,6 +587,12 @@ var generateSchemaGraphFromJson = function(data){
         labelThreshold: 0
     }});
 
+    $('#graphParent1').parent().find(".recenter").click(function(){
+        generateSchemaGraphFromJson(data);
+    });
+    s.bind('overNode',function(e){
+        $("#nodetext1").text(e.data.node.label);
+    });
     var dragListener = sigma.plugins.dragNodes(s, s.renderers[0]);
     var nodeId = 0;
     var nodeDict = {};
@@ -625,6 +653,7 @@ var generateSchemaGraphFromJson = function(data){
 }
 
 var displayOutput = function(data) {
+    $("#tab3").addClass("active");
     $("#tab3").html('')
     var info = $("<p></p>").text("info: \n" + data["info"]);
     var error = $("<p style='color:red;'></p>").text("error: \n" + data["error"]);
@@ -639,16 +668,6 @@ jQuery(document).ready(function() {
         e.preventDefault();
     });
 });
-
-var changeTab = function(currentAttrValue) {
-
-    // Show/Hide Tabs
-    $('.tabs #' + currentAttrValue).show().siblings().hide();
-    $("." + currentAttrValue).addClass('active');
-    $("." + currentAttrValue).siblings().removeClass('active');
-
-
-}
 
 var alertError = function(data) {
     alert(JSON.stringify(data));
@@ -674,37 +693,47 @@ var alertError = function(data) {
 var onCompileSuccess = function(data){
     $("#pbar").hide();
     alertError(data);
-    changeTab("tab1");
+    $("#gtab1").click();
     generateSchemaGraphFromJson(data);
+    
 }
 
 var onPopulateSuccess = function(data) {
     $("#pbar").hide();
     alertError(data);
-    changeTab("tab2");
+    $("#gtab2").click();
     generatePopulatedGraphFromJson(data);
+    
 }
 
 var onRunSuccess = function(data) {
     $("#pbar").hide();
     alertError(data);
+    $("#gtab3").click();
     changeTab("tab3");
-    displayOutput(data)
+    
 }
 
 var onQuerySuccess = function(data) {
-    onPopulateSuccess(data)
+    onPopulateSuccess(data);
 }
 
 var onVisualizeSuccess = function(data) {
     $("#pbar").hide();
     alertError(data);
-    changeTab("tab1")
+    $("#gtab1").click();
     generateSchemaGraphFromJson(data['dataModelSchema']);
-    changeTab("tab2")
-    if(data['populatedModel'] != null) generatePopulatedGraphFromJson(data['populatedModel'])
-    if(data['log'] != null) displayOutput(data['log'])
-    changeTab("tab1")
+
+    if(data['populatedModel'] != null){
+             $("#gtab2").click();
+     generatePopulatedGraphFromJson(data['populatedModel']);
+
+    }  
+    if(data['log'] != null){ 
+                $("#gtab3").click();
+        displayOutput(data['log']);
+
+    }
 }
 
 var onError = function(data){

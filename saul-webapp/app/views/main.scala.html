@@ -5,12 +5,12 @@
 <html lang="en">
     <head>
         <title>@title</title>
-        <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/main.css")">
         <link rel="shortcut icon" type="image/png" href="@routes.Assets.versioned("images/favicon.png")">
         <link rel="stylesheet" media="screen" href="@routes.WebJarAssets.at(WebJarAssets.locate("bootstrap.min.css"))">
         <script src="@routes.WebJarAssets.at(WebJarAssets.locate("jquery.min.js"))"></script>
         <script src="@routes.WebJarAssets.at(WebJarAssets.locate("js/bootstrap.min.js"))"></script>
         <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/shepherd-theme-arrows.css")">
+        <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/main.css")">
         @helper.javascriptRouter("jsRoutes")(
             routes.javascript.Application.index,
             routes.javascript.Application.acceptRunMain,
@@ -84,6 +84,7 @@
                 </button>
             </div>
             </div>
+            <div id="hoverBar"></div>
             <div class="alert alert-danger" id="errors" role="alert"></div>
             <div class="progress progress-striped active"  style="display:none;width:90%;margin-left:auto;margin-right:auto;" id="pbar" >
   <div class="progress-bar progress-bar-striped active" role="progressbar"
@@ -92,8 +93,7 @@
   </div>
 </div>
 <input type="file" id="selectedFile" style="display: none;"/>
-            <div class="panel-body" style="float : left ;width: 50%">
-            <div class="alert alert-success" id="nodevalue" role="showvalue"></div>
+            <div class="panel-body" style="float : left ;width: 50%;">
                 <ul class="nav nav-tabs" id="fileList">
                     <li class="active" id="fileName1"><a href="#">test.scala</a></li>
                 <button class="btn btn-danger bb" id="deleteFile" style="float:right;"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
@@ -125,17 +125,18 @@
                 </div>
             </div>
 
-            <div class="tabs">
+            <div class="tabs panel-body">
 
-                <ul class="tab-links">
-                    <li class="active tab1"><a href="tab1">Data Model</a></li>
-                    <li class="tab2"><a href="tab2">Populated Data Model</a></li>
-                    <li class="tab3"><a href="tab3">Running Result</a></li>
+                <ul class="nav nav-tabs" id="gtabs">
+                    <li class="active" id="gtab1" value="tab1"><a >Data Model</a></li>
+                    <li class="" id="gtab2" value="tab2"><a>Populated Data Model</a></li>
+                    <li class="" id="gtab3" value="tab3"><a>Running Result</a></li>
                 </ul>
                 
                 <div class="tab-content">
                     <div id="tab1" class="tab active">
                         <div class="panel panel-default">
+                        	<div class="alert alert-success nodevalue" id="nodevalue" role="showvalue"><span class="text" id="nodetext1"></span><div class="btn btn-success recenter"><span class="glyphicon glyphicon-screenshot" aria-hidden="true"></span></div></div>
                             <div class="panel-body" id="graphParent1" style="height: 350px; text-align: center">
                                 <div id="schemaGraphContainer"></div>
                             </div>
@@ -144,6 +145,7 @@
 
                     <div id="tab2" class="tab">
                         <div class="panel panel-default">
+                            <div class="alert alert-success nodevalue" id="nodevalue2" role="showvalue"><span class="text" id="nodetext2"></span><div class="btn btn-success recenter"><span class="glyphicon glyphicon-screenshot" aria-hidden="true"></span></div></div>
                             <div class="panel-body" id="graphParent2" style="height: 350px; text-align: center">
                                 <div id="populatedGraphContainer"></div>
 

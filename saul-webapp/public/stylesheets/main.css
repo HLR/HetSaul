@@ -2,6 +2,18 @@
     float:left;
     width:49%;
 }
+body, html {
+  height: 100%;
+}
+.text{
+    height:100%;
+    width: auto;
+}
+.recenter{
+    float: right;
+    height: 50px;
+    width: 50px;
+}
 #right_col {
     float:right;
     width:49%;
@@ -11,8 +23,11 @@
 }
 .page-header{
     padding-bottom: 20px;
+    margin: 0px;
 }
-
+.panel-body{
+    height:100%;
+}
 .shepherd-step{
     z-index: 5;
 }
@@ -20,12 +35,17 @@
     display: none;
 }
 
-
+.nodevalue{
+    display: absolute;
+    height: 50px;
+    overflow: scroll;
+}
 input[type="text"], textarea {
 
   background-color : #333333;
   color: #ffffff;
-  width: 638px;
+  width: 100%;
+  height: 50px;
 }
 
 #populatedGraphContainer{
@@ -42,42 +62,17 @@ input[type="text"], textarea {
     width:50%;
     display:inline-block;
 }
+#hoverBar{
+    width: 100%;
+    background-color: blue;
+    height: 5px;
+}
 
 .well2{
     margin-left: 5px;
     display: inline-block;
     min-height: 20px;
 }
-
-    /*----- Tab Links -----*/
-    /* Clearfix */
-    .tab-links:after {
-        display:block;
-        clear:both;
-        content:'';
-    }
-
-    .tab-links li {
-        margin:0px 5px;
-        float:left;
-        list-style:none;
-    }
-
-        .tab-links a {
-            padding:9px 15px;
-            display:inline-block;
-            border-radius:3px 3px 0px 0px;
-            background:#BDBDBD;
-            font-size:16px;
-            font-weight:600;
-            color:#4c4c4c;
-            transition:all linear 0.15s;
-        }
-
-        .tab-links a:hover {
-            background:#a7cce5;
-            text-decoration:none;
-        }
 
     li.active a, li.active a:hover {
         background:#fff;
