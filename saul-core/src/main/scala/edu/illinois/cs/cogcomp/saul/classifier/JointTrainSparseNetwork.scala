@@ -140,10 +140,18 @@ object JointTrainSparseNetwork {
                           // test push
                           val ltu_actual: LinearThresholdUnit = ilearner.getLTU(LTU_actual).clone().asInstanceOf[LinearThresholdUnit] //.net.get(i).asInstanceOf[LinearThresholdUnit]
                           val ltu_predicted: LinearThresholdUnit = ilearner.getLTU(LTU_predicted).clone().asInstanceOf[LinearThresholdUnit]
+
                           if (ltu_actual != null)
-                            typedC.onClassifier.asInstanceOf[Learner].asInstanceOf[SparseNetworkLBP].getLTU(LTU_actual).promote(a0, a1, 0.1)
+                            ltu_actual.promote(a0, a1, 0.1)
+
                           if (ltu_predicted != null)
-                            typedC.onClassifier.asInstanceOf[Learner].asInstanceOf[SparseNetworkLBP].getLTU(LTU_predicted).demote(a0, a1, 0.1)
+                            ltu_predicted.demote(a0, a1, 0.1)
+
+
+//                          if (ltu_actual != null)
+//                            typedC.onClassifier.asInstanceOf[Learner].asInstanceOf[SparseNetworkLBP].getLTU(LTU_actual).promote(a0, a1, 0.1)
+//                          if (ltu_predicted != null)
+//                            typedC.onClassifier.asInstanceOf[Learner].asInstanceOf[SparseNetworkLBP].getLTU(LTU_predicted).demote(a0, a1, 0.1)
 
                           // var l = new Array[Int](1)
                           // for (i<-  0 until N) {

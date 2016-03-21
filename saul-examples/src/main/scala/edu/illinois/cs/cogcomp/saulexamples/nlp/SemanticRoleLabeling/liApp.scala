@@ -7,7 +7,7 @@ import edu.illinois.cs.cogcomp.saul.datamodel.property.Property
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.ModelConfigs._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifiers._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlConstraintClassifiers.argTypeConstraintClassifier
-import org.slf4j.{ Logger, LoggerFactory }
+import org.slf4j.{Logger, LoggerFactory}
 object liApp extends App {
   //train parameters
   val pipelineTrain = false
@@ -26,7 +26,7 @@ object liApp extends App {
 
   val logger: Logger = LoggerFactory.getLogger(this.getClass)
 
-  val srlGraphs = populatemultiGraphwithSRLData(testOnly = false, useGoldPredicate, useGoldBoundaries)
+  val srlGraphs = populatemultiGraphwithSRLData(testOnly = false, useGoldPredicate, useGoldBoundaries)//, pairOfpairs)
 
   import srlGraphs._
 
@@ -112,17 +112,22 @@ object liApp extends App {
     // argumentTypeLearner.load(jModelDir + argumentTypeLearner_lc, jModelDir + argumentTypeLearner_lex)
     //logger.info("test independent train after 10 iterations:... ")
     argTypeConstraintClassifier.test(srlGraphs.relations.getTestingInstances, jModelDir + argumentTypeLearner_pred, 100, exclude = "candidate") //(aTr_pred, 100)
-    //argumentTypeLearner.test(exclude = "candidate")
+    argumentTypeLearner.test(exclude = "candidate")
     logger.info("Join train:... ")
     for (i <- 0 until 20) {
       //  argumentTypeLearner.load(jModelDir + argumentTypeLearner_lc, jModelDir + argumentTypeLearner_lex)
 
-
+      argumentTypeLearner.learn(5)
+      argumentTypeLearner.test(srlGraphs.relations.getTestingInstances,exclude = "candidate")
+     // argumentTypeLearner.test(srlGraphs.relations.getTrainingInstances,exclude = "candidate")
       JointTrainSparseNetwork(srlGraphs, argTypeConstraintClassifier :: Nil, 5)
       // if (i % 2 == 0) {
       logger.info("test join train after " + i + " iterations:... ")
       argumentTypeLearner.save()
       argTypeConstraintClassifier.test(srlGraphs.relations.getTestingInstances, jModelDir + argumentTypeLearner_pred, 200, exclude = "candidate") //(aTr_pred, 100)
+      logger.info("test join train on training after " + i + " iterations:... ")
+      argTypeConstraintClassifier.test(srlGraphs.relations.getTrainingInstances, jModelDir + argumentTypeLearner_pred, 200, exclude = "candidate") //(aTr_pred, 100)
+
       //}
     }
   }

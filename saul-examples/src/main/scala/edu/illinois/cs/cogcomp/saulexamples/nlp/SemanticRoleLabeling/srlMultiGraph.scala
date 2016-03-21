@@ -33,6 +33,7 @@ class srlMultiGraph(parseViewName: String = null, frameManager: SRLFrameManager 
 
   val tokens = node[Constituent]((x: Constituent) => x.getTextAnnotation.getCorpusId + ":" + x.getTextAnnotation.getId + ":" + x.getSpan)
 
+  val pairs = join(relations,relations)(_.getSource.getSentenceId==_.getSource.getSentenceId)
   val sentencesToTrees = edge(sentences, trees)
   val sentencesToStringTree = edge(sentences, stringTree)
   val sentencesToTokens = edge(sentences, tokens)
