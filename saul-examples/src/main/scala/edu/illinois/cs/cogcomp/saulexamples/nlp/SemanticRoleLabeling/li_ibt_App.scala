@@ -1,18 +1,15 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling
 
-import edu.illinois.cs.cogcomp.core.datastructures.textannotation.Constituent
-import edu.illinois.cs.cogcomp.lbjava.learn.SparsePerceptron
-import edu.illinois.cs.cogcomp.saul.classifier.{Learnable, JointTrainSparseNetwork}
-import edu.illinois.cs.cogcomp.saul.datamodel.property.Property
+import edu.illinois.cs.cogcomp.saul.classifier.JointTrainSparseNetwork
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.ModelConfigs._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifiers._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlConstraintClassifiers.argTypeConstraintClassifier
 import org.slf4j.{Logger, LoggerFactory}
-object liApp extends App {
+object li_ibt_App extends App {
   //train parameters
   val pipelineTrain = false
   val joinTrain = true
-  val multiClass= false
+
   //test parameters
   val TestA = false
   val pipeline = false
@@ -41,6 +38,7 @@ object liApp extends App {
     val modelLEXa = aModelDir + argumentTypeLearner_lex
     argumentTypeLearner.load(modelLCa, modelLEXa)
     argumentTypeLearner.test(exclude = "candidate")
+    // This is to print to file for standard CoNLL evaluation -commented out for later
     //    val goldOutFile = "srl.gold"
     //    val goldWriter = new PrintWriter(new File(goldOutFile))
     //    val predOutFile = "srl.predicted"
@@ -97,6 +95,7 @@ object liApp extends App {
     argumentTypeLearner.load(modelLCa, modelLEXa)
     argumentTypeLearner.test(prediction = typeArgumentPipeGivenGoldPredicate, groundTruth = argumentLabelGold, exclude = "candidate") //grounexclude = "candidate")
   }
+
   if (testWithConstraints && !pipeline) {
     val modelLCc = cModelDir + argumentTypeLearner_lc
     val modelLEXc = cModelDir + argumentTypeLearner_lex
@@ -115,34 +114,15 @@ object liApp extends App {
     argumentTypeLearner.test(exclude = "candidate")
     logger.info("Join train:... ")
     for (i <- 0 until 20) {
-      //  argumentTypeLearner.load(jModelDir + argumentTypeLearner_lc, jModelDir + argumentTypeLearner_lex)
 
-      argumentTypeLearner.learn(5)
-      argumentTypeLearner.test(srlGraphs.relations.getTestingInstances,exclude = "candidate")
-     // argumentTypeLearner.test(srlGraphs.relations.getTrainingInstances,exclude = "candidate")
       JointTrainSparseNetwork(srlGraphs, argTypeConstraintClassifier :: Nil, 5)
-      // if (i % 2 == 0) {
-      logger.info("test join train after " + i + " iterations:... ")
+      logger.info("test join train on testing data after " + (i*5) + " iterations:... ")
       argumentTypeLearner.save()
       argTypeConstraintClassifier.test(srlGraphs.relations.getTestingInstances, jModelDir + argumentTypeLearner_pred, 200, exclude = "candidate") //(aTr_pred, 100)
-      logger.info("test join train on training after " + i + " iterations:... ")
+      logger.info("test join train on training data after " + (i*5) + " iterations:... ")
       argTypeConstraintClassifier.test(srlGraphs.relations.getTrainingInstances, jModelDir + argumentTypeLearner_pred, 200, exclude = "candidate") //(aTr_pred, 100)
-
-      //}
     }
   }
-
-  //  arg_Is_TypeConstraintClassifier.test()
-
-  // print("argument identifier L+I model (join with classifciation) test results:")
-
-  // arg_IdentifyConstraintClassifier.test()
-
-  // print("argument classifier L+I model (join with classifciation) test results:")
-
-  // arg_Is_TypeConstraintClassifier.test()
-
-  //print("argument classifier L+I model considering background knowledge  test results:")
 
   if (pipelineTrain) {
     val modelLCb = bModelDir + argumentIdentifier_lc
@@ -157,26 +137,8 @@ object liApp extends App {
     logger.info("Test with pipeline:")
     argumentTypeLearner.test(prediction = typeArgumentPipeGivenGoldPredicate, groundTruth = argumentLabelGold, exclude = "candidate") //grounexclude = "candidate")
   }
-  if (multiClass)
-  {
-    for (i <- 1 until srlGraphs.argumentLabelGold.classifier.allowableValues().size)
-    {
-      object predicateClassifier extends Learnable[Constituent](srlGraphs, parameters) {
 
-        import srlGraphs._
-
-        def label: Property[Constituent] = isPredicateGold
-
-        override lazy val classifier = new SparsePerceptron()
-
-      }
-      var a = List(predicateClassifier)
-      a = predicateClassifier :: a
-    }
-  }
 }
-
-// srlGraphs.argumentLabelGold.classifier.allowableValues()(i)   } }
 
 
 

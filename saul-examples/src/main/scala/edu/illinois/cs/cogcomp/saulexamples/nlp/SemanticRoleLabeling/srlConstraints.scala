@@ -6,7 +6,7 @@ import edu.illinois.cs.cogcomp.lbjava.infer.{ FirstOrderConstant, FirstOrderCons
 import edu.illinois.cs.cogcomp.saul.classifier.ConstrainedClassifier
 import edu.illinois.cs.cogcomp.saul.constraint.ConstraintTypeConversion._
 import edu.illinois.cs.cogcomp.saulexamples.data.XuPalmerCandidateGenerator
-import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.liApp.srlGraphs._
+import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.li_ibt_App.srlGraphs._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifiers.{ argumentTypeLearner, argumentXuIdentifierGivenApredicate, predicateClassifier }
 
 import scala.collection.JavaConversions._
