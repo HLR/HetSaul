@@ -4,7 +4,7 @@ import edu.illinois.cs.cogcomp.saul.classifier.JointTrainSparseNetwork
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.ModelConfigs._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifiers._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlConstraintClassifiers.argTypeConstraintClassifier
-import org.slf4j.{Logger, LoggerFactory}
+import org.slf4j.{ Logger, LoggerFactory }
 object li_ibt_App extends App {
   //train parameters
   val pipelineTrain = false
@@ -23,7 +23,7 @@ object li_ibt_App extends App {
 
   val logger: Logger = LoggerFactory.getLogger(this.getClass)
 
-  val srlGraphs = populatemultiGraphwithSRLData(testOnly = false, useGoldPredicate, useGoldBoundaries)//, pairOfpairs)
+  val srlGraphs = populatemultiGraphwithSRLData(testOnly = false, useGoldPredicate, useGoldBoundaries) //, pairOfpairs)
 
   import srlGraphs._
 
@@ -116,10 +116,10 @@ object li_ibt_App extends App {
     for (i <- 0 until 20) {
 
       JointTrainSparseNetwork(srlGraphs, argTypeConstraintClassifier :: Nil, 5)
-      logger.info("test join train on testing data after " + (i*5) + " iterations:... ")
+      logger.info("test join train on testing data after " + (i * 5) + " iterations:... ")
       argumentTypeLearner.save()
       argTypeConstraintClassifier.test(srlGraphs.relations.getTestingInstances, jModelDir + argumentTypeLearner_pred, 200, exclude = "candidate") //(aTr_pred, 100)
-      logger.info("test join train on training data after " + (i*5) + " iterations:... ")
+      logger.info("test join train on training data after " + (i * 5) + " iterations:... ")
       argTypeConstraintClassifier.test(srlGraphs.relations.getTrainingInstances, jModelDir + argumentTypeLearner_pred, 200, exclude = "candidate") //(aTr_pred, 100)
     }
   }
@@ -139,8 +139,4 @@ object li_ibt_App extends App {
   }
 
 }
-
-
-
-
 

@@ -100,7 +100,6 @@ class FirstOrderConstraints(val r: FirstOrderConstraint) {
 
   def or(other: FirstOrderConstraint) = new FirstOrderDisjunction(this.r, other)
 
-
 }
 
 class LHSFirstOrderEqualityWithValueLBP(cls: Learner, t: AnyRef) {
