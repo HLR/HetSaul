@@ -121,4 +121,19 @@ class LHSFirstOrderEqualityWithValueLBP(cls: Learner, t: AnyRef) {
   def isTrue: FirstOrderConstraint = is("true")
 
   def isNotTrue: FirstOrderConstraint = is("false")
+
+  def isNot(v: String): FirstOrderConstraint = {
+    new FirstOrderNegation(new FirstOrderEqualityWithValue(true, lbjRepr, v))
+  }
+
+  def isNot(v: LHSFirstOrderEqualityWithValueLBP): FirstOrderConstraint = {
+    new FirstOrderNegation(new FirstOrderEqualityWithVariable(true, lbjRepr, v.lbjRepr))
+  }
+
+  def in(v: Array[String]): FirstOrderConstraint = {
+    val falseConstant = new FirstOrderDisjunction(new FirstOrderConstant(false), new FirstOrderConstant(false))
+    v.foldRight(falseConstant) { (value, newConstraint) =>
+      new FirstOrderDisjunction(new FirstOrderEqualityWithValue(true, lbjRepr, value), newConstraint)
+    }
+  }
 }
