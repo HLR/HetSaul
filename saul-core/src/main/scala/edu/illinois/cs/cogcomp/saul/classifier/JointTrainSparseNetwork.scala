@@ -1,15 +1,16 @@
 package edu.illinois.cs.cogcomp.saul.classifier
 
-import java.time
-
 import edu.illinois.cs.cogcomp.lbjava.learn.{ Learner, LinearThresholdUnit }
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
+import org.slf4j.{ Logger, LoggerFactory }
 
 import scala.reflect.ClassTag
 /** Created by Parisa on 5/22/15.
   */
 object JointTrainSparseNetwork {
 
+  val logger: Logger = LoggerFactory.getLogger(this.getClass)
+  var difference = 0
   def apply[HEAD <: AnyRef](
     dm: DataModel,
     cls: List[ConstrainedClassifier[_, HEAD]]
@@ -42,20 +43,18 @@ object JointTrainSparseNetwork {
     headTag: ClassTag[HEAD]
   ): Unit = {
     // forall members in collection of the head (dm.t) do
-    if (it % 10 == 0)
-      println(s"Training: $it iterations remain. ${time.Instant.now()} ")
-
-    println("Training iteration: " + it)
+    logger.info("Training iteration: " + it)
     if (it == 0) {
       // Done
+      println("difference=", difference)
     } else {
       val allHeads = dm.getNodeWithType[HEAD].getTrainingInstances
-
+      difference = 0
       allHeads.zipWithIndex.foreach {
         case (h, idx) =>
           {
-            if (idx % 10000 == 0)
-              println(s"Training: $idx examples inferred. ${time.Instant.now()} ")
+            if (idx % 5000 == 0)
+              logger.info(s"Training: $idx examples inferred.")
 
             cls.foreach {
               case c: ConstrainedClassifier[_, HEAD] => {
@@ -75,12 +74,18 @@ object JointTrainSparseNetwork {
                 typedC.getCandidates(h) foreach {
                   x =>
                     {
-                      //                  println(x)
+                      //             println(x)
                       //                  typedC.onClassifier.learn(x)
 
                       def trainOnce() = {
 
                         val result = typedC.classifier.discreteValue(x)
+                        val simpleResult = typedC.onClassifier.discreteValue(x)
+                        println("Constrained Result=", result, "Simple Result", simpleResult)
+                        if (!simpleResult.equals(result)) {
+                          difference = difference + 1
+                        }
+
                         //                  val result =  typedC.classifier.discreteValue(x)
                         //
                         //                                      println(s"${typedC.onClassifier.scores(x).getScore("true")}")
@@ -126,19 +131,25 @@ object JointTrainSparseNetwork {
                           if (label >= N || ilearner.net.get(label) == null) {
                             ilearner.iConjuctiveLables = ilearner.iConjuctiveLables | ilearner.getLabelLexicon.lookupKey(label).isConjunctive();
 
-                            var ltu: LinearThresholdUnit = ilearner.getbaseLTU
+                            val ltu: LinearThresholdUnit = ilearner.getbaseLTU.clone().asInstanceOf[LinearThresholdUnit]
                             ltu.initialize(ilearner.getnumExamples, ilearner.getnumFeatures);
                             ilearner.net.set(label, ltu);
                             N = label + 1;
-
                           }
                           // test push
-                          var ltu_actual: LinearThresholdUnit = ilearner.getLTU(LTU_actual) //.net.get(i).asInstanceOf[LinearThresholdUnit]
-                          var ltu_predited: LinearThresholdUnit = ilearner.getLTU(LTU_predicted)
+                          val ltu_actual: LinearThresholdUnit = ilearner.getLTU(LTU_actual).clone().asInstanceOf[LinearThresholdUnit] //.net.get(i).asInstanceOf[LinearThresholdUnit]
+                          val ltu_predicted: LinearThresholdUnit = ilearner.getLTU(LTU_predicted).clone().asInstanceOf[LinearThresholdUnit]
+
                           if (ltu_actual != null)
                             ltu_actual.promote(a0, a1, 0.1)
-                          if (ltu_predited != null)
-                            ltu_predited.demote(a0, a1, 0.1)
+
+                          if (ltu_predicted != null)
+                            ltu_predicted.demote(a0, a1, 0.1)
+
+                          //                          if (ltu_actual != null)
+                          //                            typedC.onClassifier.asInstanceOf[Learner].asInstanceOf[SparseNetworkLBP].getLTU(LTU_actual).promote(a0, a1, 0.1)
+                          //                          if (ltu_predicted != null)
+                          //                            typedC.onClassifier.asInstanceOf[Learner].asInstanceOf[SparseNetworkLBP].getLTU(LTU_predicted).demote(a0, a1, 0.1)
 
                           // var l = new Array[Int](1)
                           // for (i<-  0 until N) {

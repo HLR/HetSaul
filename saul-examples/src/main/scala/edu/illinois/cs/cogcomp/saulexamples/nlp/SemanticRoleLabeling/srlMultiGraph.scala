@@ -6,6 +6,7 @@ import edu.illinois.cs.cogcomp.core.datastructures.trees.Tree
 import edu.illinois.cs.cogcomp.edison.features.factory._
 import edu.illinois.cs.cogcomp.nlp.corpusreaders.CoNLLColumnFormatReader
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
+import edu.illinois.cs.cogcomp.saul.datamodel.property.PairwiseConjunction
 import edu.illinois.cs.cogcomp.saulexamples.data.SRLFrameManager
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLSensors._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifiers._
@@ -32,6 +33,7 @@ class srlMultiGraph(parseViewName: String = null, frameManager: SRLFrameManager 
 
   val tokens = node[Constituent]((x: Constituent) => x.getTextAnnotation.getCorpusId + ":" + x.getTextAnnotation.getId + ":" + x.getSpan)
 
+  val pairs = join(relations, relations)(_.getSource.getSentenceId == _.getSource.getSentenceId)
   val sentencesToTrees = edge(sentences, trees)
   val sentencesToStringTree = edge(sentences, stringTree)
   val sentencesToTokens = edge(sentences, tokens)
@@ -242,5 +244,9 @@ class srlMultiGraph(parseViewName: String = null, frameManager: SRLFrameManager 
         case _ => argTypeConstraintClassifier(x)
       }
       a
+  }
+  val propertyConjunction = property(relations) {
+    x: Relation =>
+      PairwiseConjunction(List(containsMOD, containsNEG), x)
   }
 }

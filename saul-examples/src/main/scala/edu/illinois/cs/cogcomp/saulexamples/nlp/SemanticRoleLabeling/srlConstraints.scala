@@ -6,14 +6,14 @@ import edu.illinois.cs.cogcomp.lbjava.infer.{ FirstOrderConstant, FirstOrderCons
 import edu.illinois.cs.cogcomp.saul.classifier.ConstrainedClassifier
 import edu.illinois.cs.cogcomp.saul.constraint.ConstraintTypeConversion._
 import edu.illinois.cs.cogcomp.saulexamples.data.XuPalmerCandidateGenerator
-import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.liApp.srlGraphs._
+import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.li_ibt_App.srlGraphs._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifiers.{ argumentTypeLearner, argumentXuIdentifierGivenApredicate, predicateClassifier }
 
 import scala.collection.JavaConversions._
 /** Created by Parisa on 12/23/15.
   */
 object srlConstraints {
-  val noOverlap = ConstrainedClassifier.constraintOf[TextAnnotation] {
+  val noOverlap = ConstrainedClassifier.constraint[TextAnnotation] {
     {
       var a: FirstOrderConstraint = null
       x: TextAnnotation => {
@@ -28,7 +28,7 @@ object srlConstraints {
                 t: Constituent =>
                   {
                     val contains = argCandList.filter(z => z.getTarget.doesConstituentCover(t))
-                    a = a &&& contains.toList._atMost(1)({ p: Relation => (argumentTypeLearner on p).is("candidate") })
+                    a = a and contains.toList._atmost(1)({ p: Relation => (argumentTypeLearner on p).is("candidate") })
                   }
               }
             }
@@ -38,7 +38,7 @@ object srlConstraints {
     }
   } //end of NoOverlap constraint
 
-  val arg_IdentifierClassifier_Constraint = ConstrainedClassifier.constraintOf[Relation] {
+  val arg_IdentifierClassifier_Constraint = ConstrainedClassifier.constraint[Relation] {
 
     x: Relation =>
       {
@@ -47,15 +47,15 @@ object srlConstraints {
       }
   }
 
-  val predArg_IdentifierClassifier_Constraint = ConstrainedClassifier.constraintOf[Relation] {
+  val predArg_IdentifierClassifier_Constraint = ConstrainedClassifier.constraint[Relation] {
     x: Relation =>
       {
-        (predicateClassifier on x.getSource isTrue) &&& (argumentXuIdentifierGivenApredicate on x isTrue) ==>
+        (predicateClassifier on x.getSource isTrue) and (argumentXuIdentifierGivenApredicate on x isTrue) ==>
           (argumentTypeLearner on x isNot "candidate")
       }
   }
 
-  val r_arg_Constraint = ConstrainedClassifier.constraintOf[TextAnnotation] {
+  val r_arg_Constraint = ConstrainedClassifier.constraint[TextAnnotation] {
 
     var a: FirstOrderConstraint = null
 
@@ -70,7 +70,7 @@ object srlConstraints {
               t: Relation =>
                 {
                   for (i <- 0 until values.length)
-                    a = a &&& ((argumentTypeLearner on t) is values(i)) ==>
+                    a = a and ((argumentTypeLearner on t) is values(i)) ==>
                       argCandList.filterNot(x => x.equals(t))._exists {
                         k: Relation => (argumentTypeLearner on k) is values(i).substring(2)
                       }
@@ -83,7 +83,7 @@ object srlConstraints {
     a
   } // end r-arg constraint
 
-  val c_arg_Constraint = ConstrainedClassifier.constraintOf[TextAnnotation] {
+  val c_arg_Constraint = ConstrainedClassifier.constraint[TextAnnotation] {
     var a: FirstOrderConstraint = null
     x: TextAnnotation => {
       a = new FirstOrderConstant(true)
@@ -98,7 +98,7 @@ object srlConstraints {
                 {
                   if (ind > 0)
                     for (i <- 0 until values.length)
-                      a = a &&& ((argumentTypeLearner on t) is values(i)) ==>
+                      a = a and ((argumentTypeLearner on t) is values(i)) ==>
                         sortedCandidates.subList(0, ind)._exists {
                           k: Relation => (argumentTypeLearner on k) is values(i).substring(2)
                         }
@@ -111,7 +111,7 @@ object srlConstraints {
     a
   }
 
-  val legal_arguments_Constraint = ConstrainedClassifier.constraintOf[TextAnnotation] {
+  val legal_arguments_Constraint = ConstrainedClassifier.constraint[TextAnnotation] {
     var a: FirstOrderConstraint = null
     x: TextAnnotation => {
       a = new FirstOrderConstant(true)
@@ -124,7 +124,7 @@ object srlConstraints {
               z =>
                 a = ((argLegalList._exists {
                   t: String => (argumentTypeLearner on z is t)
-                }) ||| (argumentTypeLearner on z is "candidate")) &&& a
+                }) or (argumentTypeLearner on z is "candidate")) and a
             }
           }
       }
@@ -149,7 +149,7 @@ object srlConstraints {
     a
   }
 
-  val noDuplicate = ConstrainedClassifier.constraintOf[TextAnnotation] {
+  val noDuplicate = ConstrainedClassifier.constraint[TextAnnotation] {
     // Predicates have atmost one argument of each type i.e. there is no two arguments of the same type for each predicate
     val values = Array("A0", "A1", "A2", "A3", "A4", "A5", "AA")
     var a: FirstOrderConstraint = null
@@ -161,7 +161,7 @@ object srlConstraints {
             val argCandList = (predicates(y) ~> -relationsToPredicates).toList
             for (t1 <- 0 until argCandList.size - 1) {
               for (t2 <- t1 + 1 until argCandList.size) {
-                a = a &&& (((argumentTypeLearner on argCandList.get(t1)) in values) ==> (((argumentTypeLearner on argCandList.get(t1)) isNot (argumentTypeLearner on argCandList.get(t2)))))
+                a = a and (((argumentTypeLearner on argCandList.get(t1)) in values) ==> (((argumentTypeLearner on argCandList.get(t1)) isNot (argumentTypeLearner on argCandList.get(t2)))))
               }
 
             }
@@ -171,10 +171,10 @@ object srlConstraints {
     }
   }
 
-  val r_and_c_args = ConstrainedClassifier.constraintOf[TextAnnotation] {
+  val r_and_c_args = ConstrainedClassifier.constraint[TextAnnotation] {
     x =>
-      r_arg_Constraint(x) &&& c_arg_Constraint(x) &&& legal_arguments_Constraint(x) &&& noDuplicate(x)
+      r_arg_Constraint(x) and c_arg_Constraint(x) and legal_arguments_Constraint(x) and noDuplicate(x)
   }
 
-} // end srlConstainrs
+} // end srlConstraints
 
