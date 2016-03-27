@@ -22,7 +22,7 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
   /** Whether to use caching */
   val useCache = false
 
-  val loggging = false
+  val loggging = true
 
   var isTraining = false
 
@@ -72,8 +72,8 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
 
   def setExtractor(): Unit = {
     if (feature != null) {
-      if (loggging)
-        println(s"Setting the feature extractors to be ${lbpFeatures.getCompositeChildren}")
+      //if (loggging)
+      println(s"Setting the feature extractors to be ${lbpFeatures.getCompositeChildren}")
       classifier.setExtractor(lbpFeatures)
     } else {
       println("Warning: no features found! ")
@@ -90,7 +90,7 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
     }
   }
 
-  // set paramaters for classifier
+  // set parameters for classifier
   setExtractor()
   setLabeler()
 
@@ -99,12 +99,16 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
     IOUtils.rm(lexFilePath().getPath)
   }
 
+  def printlnModel(): Unit = {
+    classifier.write(System.out)
+  }
+
   def save(): Unit = {
     removeModelFiles()
     val dummyClassifier = new SparseNetworkLearner
     classifier.setExtractor(dummyClassifier)
     classifier.setLabeler(dummyClassifier)
-    classifier.save()
+    classifier.write(lcFilePath().getPath, lexFilePath().getPath)
 
     // after saving, get rid of the dummyClassifier in the classifier.
     setExtractor()
@@ -159,6 +163,12 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
   }
 
   def learn(iteration: Int, data: Iterable[T]): Unit = {
+    val oracle = Property.entitiesToLBJFeature(label)
+    println(s"==> Learning using the feature extractors to be ${lbpFeatures.getCompositeChildren}")
+    println(s"==> Learning using the labeler to be '$oracle'")
+    println(classifier.getExtractor.getCompositeChildren)
+    println(classifier.getLabeler)
+
     println("Learnable: Learn with data of size " + data.size)
     isTraining = true
     val crTokenTest = new LBJIteratorParserScala[T](data)
@@ -222,6 +232,7 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
   }
 
   /** Test with given data, use internally
+    *
     * @param testData
     * @return List of (label, (f1, precision, recall))
     */
@@ -325,6 +336,7 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
   def label: Property[T]
 
   /** A windows of properties
+    *
     * @param before always negative (or 0)
     * @param after always positive (or 0)
     */

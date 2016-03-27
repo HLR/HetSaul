@@ -15,7 +15,7 @@ lazy val commonSettings = Seq(
   ),
   javaOptions ++= List("-Xmx6g"),
   libraryDependencies ++= Seq(
-    "edu.illinois.cs.cogcomp" % "LBJava" % "1.2.8",
+    "edu.illinois.cs.cogcomp" % "LBJava" % "1.2.15" withSources,
     "edu.illinois.cs.cogcomp" % "illinois-core-utilities" % cogcompNLPVersion withSources,
     "com.gurobi" % "gurobi" % "6.0",
     "org.apache.commons" % "commons-math3" % "3.0",
@@ -40,11 +40,11 @@ lazy val saulExamples = (project in file("saul-examples")).
   settings(
     name := "saul-examples",
     libraryDependencies ++= Seq(
-      "edu.illinois.cs.cogcomp" % "illinois-nlp-pipeline" % cogcompPipelineVersion,
+      "edu.illinois.cs.cogcomp" % "illinois-nlp-pipeline" % cogcompPipelineVersion withSources,
       "edu.illinois.cs.cogcomp" % "illinois-curator" % "1.0.0",
       "edu.illinois.cs.cogcomp" % "illinois-edison" % cogcompNLPVersion,
-      "edu.illinois.cs.cogcomp" % "illinois-nlp-readers" % "0.0.2-SNAPSHOT", 
-      "edu.illinois.cs.cogcomp" % "saul-pos-tagger-models" % "1.0"
+      "edu.illinois.cs.cogcomp" % "illinois-nlp-readers" % "0.0.2-SNAPSHOT"
+      //"edu.illinois.cs.cogcomp" % "saul-pos-tagger-models" % "1.0"
     )
   ).dependsOn(saulCore).aggregate(saulCore)
 

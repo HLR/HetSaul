@@ -1,6 +1,6 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation
 
-import edu.illinois.cs.cogcomp.lbjava.learn.SparseNetworkLearner
+import edu.illinois.cs.cogcomp.lbjava.learn.{ SupportVectorMachine, SparseNetworkLearner }
 import edu.illinois.cs.cogcomp.saul.classifier.Learnable
 import edu.illinois.cs.cogcomp.saul.constraint.ConstraintTypeConversion._
 import edu.illinois.cs.cogcomp.saul.datamodel.property.Property
@@ -20,9 +20,10 @@ object EntityRelationClassifiers {
 
   object PersonClassifier extends Learnable[ConllRawToken](EntityRelationDataModel) {
     def label: Property[ConllRawToken] = entityType is "Peop"
-    override def feature = using(word, windowWithin[ConllRawSentence](-2, 2, List(pos)), phrase, containsSubPhraseMent,
-      containsSubPhraseIng, wordLen) // , containsInPersonList, , containsInCityList)*/
-    override lazy val classifier = new SparseNetworkLearner()
+    override def feature = using(word) //, windowWithin[ConllRawSentence](-2, 2, List(pos)), phrase, containsSubPhraseMent,
+    //      containsSubPhraseIng, wordLen) // , containsInPersonList, , containsInCityList)*/
+    override lazy val classifier = new SupportVectorMachine()
+    override val loggging = true
   }
 
   object LocationClassifier extends Learnable[ConllRawToken](EntityRelationDataModel) {
@@ -68,11 +69,24 @@ object EntityRelationClassifiers {
     override lazy val classifier = new SparseNetworkLearner()
   }
 
-  // methods for saving the learned classifiers
   def saveEntityModels() = {
     PersonClassifier.save()
-    OrganizationClassifier.save()
-    LocationClassifier.save()
+    //    OrganizationClassifier.save()
+    //    LocationClassifier.save()
+  }
+
+  def testEntityModels() = {
+    println("Testing independent entity models: ")
+    println("===============================================")
+    println("Person Classifier Evaluation")
+    PersonClassifier.test()
+    //    println("===============================================")
+    //    println("Organization Classifier Evaluation")
+    //    OrganizationClassifier.test()
+    //    println("===============================================")
+    //    println("Location Classifier Evaluation")
+    //    LocationClassifier.test()
+    //    println("===============================================")
   }
 
   def saveIndependentRelationModels() = {
@@ -80,6 +94,15 @@ object EntityRelationClassifiers {
     LivesInClassifier.save()
     LocatedInClassifier.save()
     OrgBasedInClassifier.save()
+  }
+
+  def testIndependentRelationModels() = {
+
+    println("Testing independent relation models: ")
+    WorksForClassifier.test()
+    LivesInClassifier.test()
+    LocatedInClassifier.test()
+    OrgBasedInClassifier.test()
   }
 
   def savePipelineRelationModels() = {
@@ -96,8 +119,8 @@ object EntityRelationClassifiers {
 
   def loadIndependentEntityModels(): Unit = {
     loadModel[ConllRawToken](PersonClassifier)
-    loadModel[ConllRawToken](OrganizationClassifier)
-    loadModel[ConllRawToken](LocationClassifier)
+    //    loadModel[ConllRawToken](OrganizationClassifier)
+    //    loadModel[ConllRawToken](LocationClassifier)
   }
 
   def loadIndependentRelationModels(): Unit = {

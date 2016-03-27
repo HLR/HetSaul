@@ -1,5 +1,6 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation
 
+import edu.illinois.cs.cogcomp.lbjava.learn.SupportVectorMachine
 import edu.illinois.cs.cogcomp.saul.classifier.JointTrain
 import edu.illinois.cs.cogcomp.saulexamples.EntityMentionRelation.datastruct.ConllRelation
 import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.EntityRelationClassifiers._
@@ -33,33 +34,37 @@ object EntityRelationApp {
     val foldSize = 5
     EntityRelationDataModel.populateWithConll()
 
-    // independent entity classifiers
+    println("===============================================")
     println("Person Classifier Evaluation")
-    println("=================================")
-    PersonClassifier.crossValidation(foldSize)
-    println("=================================")
-    println("Organization Classifier Evaluation")
-    println("=================================")
-    OrganizationClassifier.crossValidation(foldSize)
-    println("=================================")
-    println("Location Classifier Evaluation")
-    println("=================================")
-    LocationClassifier.crossValidation(foldSize)
-    println("=================================")
+    //    PersonClassifier.crossValidation(foldSize)
+    PersonClassifier.learn(5)
+    PersonClassifier.classifier.doneLearning()
+    println("PersonClassifier.classifier.demandLexicon().size() = " + PersonClassifier.classifier.demandLexicon().size())
+    //    println("===============================================")
+    //    println("Organization Classifier Evaluation")
+    //    OrganizationClassifier.crossValidation(foldSize)
+    //    println("===============================================")
+    //    println("Location Classifier Evaluation")
+    //    LocationClassifier.crossValidation(foldSize)
+    //    println("===============================================")
 
+    val p = PersonClassifier.classifier.getParameters.asInstanceOf[SupportVectorMachine.Parameters]
+    //    val c = PersonClassifier.classifier.asInstanceOf[SupportVectorMachine]
+    println(PersonClassifier.classifier.getWeights.mkString("-"))
+
+    testEntityModels()
     saveEntityModels()
 
     // independent relation classifiers
-    println("WorksFor Classifier Evaluation")
-    println("=================================")
-    WorksForClassifier.crossValidation(foldSize)
-    println("=================================")
-    println("LivesIn Classifier Evaluation")
-    println("=================================")
-    LivesInClassifier.crossValidation(foldSize)
-    println("=================================")
-
-    saveIndependentRelationModels()
+    //    println("=================================")
+    //    println("WorksFor Classifier Evaluation")
+    //    WorksForClassifier.crossValidation(foldSize)
+    //    println("=================================")
+    //    println("LivesIn Classifier Evaluation")
+    //    LivesInClassifier.crossValidation(foldSize)
+    //    println("=================================")
+    //
+    //    saveIndependentRelationModels()
   }
 
   def trainCVIndependentClassifiers() = {
@@ -70,14 +75,21 @@ object EntityRelationApp {
 
   def testIndependentClassifiers() = {
     EntityRelationDataModel.populateWithConll()
-
-    val k = 5
-    val idx = 0 // or 1, 2, 3, 4
-    val lcFile = PersonClassifier.lcFilePath(s"-crosValidation-k=$k-fold=$idx")
-    val lexFile = PersonClassifier.lexFilePath(s"-crosValidation-k=$k-fold=$idx")
-    PersonClassifier.load(lcFile, lexFile)
-
-    PersonClassifier.test()
+    loadIndependentEntityModels()
+    //    println(PersonClassifier.classifier.getParameters.nonDefaultString())
+    //    println(PersonClassifier.classifier.getParameters.toString)
+    //    println()
+    val p = PersonClassifier.classifier.getParameters.asInstanceOf[SupportVectorMachine.Parameters]
+    val c = PersonClassifier.classifier.asInstanceOf[SupportVectorMachine]
+    println(c.getWeights.mkString("-"))
+    println(p.nonDefaultString())
+    println("p.bias = " + p.bias)
+    println("p.C = " + p.C)
+    println("p.displayLL = " + p.displayLL)
+    println("p.epsilon = " + p.epsilon)
+    println("p.solverType = " + p.solverType)
+    testEntityModels()
+    println("PersonClassifier.classifier.demandLexicon().size() = " + PersonClassifier.classifier.demandLexicon().size())
   }
 
   /** in this scenario the named entity recognizers are trained independently, and given to a relation classifier as
