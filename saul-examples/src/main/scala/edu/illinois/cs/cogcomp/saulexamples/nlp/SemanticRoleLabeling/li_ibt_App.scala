@@ -106,12 +106,13 @@ object li_ibt_App extends App {
   if (joinTrain) {
 
     argumentTypeLearner.setModelDir(jModelDir)
-    argumentTypeLearner.learn(1)
-    argumentTypeLearner.save()
+
+    //argumentTypeLearner.learn(1)
+    //argumentTypeLearner.save()
     // argumentTypeLearner.load(jModelDir + argumentTypeLearner_lc, jModelDir + argumentTypeLearner_lex)
     //logger.info("test independent train after 10 iterations:... ")
     argTypeConstraintClassifier.test(srlGraphs.relations.getTestingInstances, jModelDir + argumentTypeLearner_pred, 100, exclude = "candidate") //(aTr_pred, 100)
-    argumentTypeLearner.test(exclude = "candidate")
+   // argumentTypeLearner.test(exclude = "candidate")
     logger.info("Join train:... ")
     for (i <- 0 until 20) {
 

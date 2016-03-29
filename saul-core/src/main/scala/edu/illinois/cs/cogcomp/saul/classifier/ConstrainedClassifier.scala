@@ -103,7 +103,21 @@ abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val dm: DataMo
             println("Inference is NULL " + name)
           InferenceManager.put(name, inference)
         }
-        inference.valueOf(cls, t)
+        if (cls.getLabelLexicon().size()== 0 )
+        { print("The models have not been trained!")
+          ""
+        }
+         // cls.discreteValue()
+//          else {
+//
+//          if (cls.getLabelLexicon.getMap(cls.getLabeler).discreteValue(t))
+//        }
+        //else
+
+          else
+          inference.valueOf(cls, t)
+
+            // if cls.getLabelLexicon
 
       case None =>
         val name = String.valueOf(infer.subjectTo.hashCode())

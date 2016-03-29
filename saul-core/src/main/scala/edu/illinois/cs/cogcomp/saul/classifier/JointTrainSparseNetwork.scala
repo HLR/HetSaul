@@ -74,53 +74,39 @@ object JointTrainSparseNetwork {
                 typedC.getCandidates(h) foreach {
                   x =>
                     {
-                      //             println(x)
-                      //                  typedC.onClassifier.learn(x)
+                        def trainOnce() = {
 
-                      def trainOnce() = {
+                          val result = typedC.classifier.discreteValue(x)
+                          val trueLabel = oracle.discreteValue(x)
 
-                        val result = typedC.classifier.discreteValue(x)
-                        val simpleResult = typedC.onClassifier.discreteValue(x)
-                        println("Constrained Result=", result, "Simple Result", simpleResult)
-                        if (!simpleResult.equals(result)) {
-                          difference = difference + 1
-                        }
+                          val ilearner = typedC.onClassifier.asInstanceOf[Learner].asInstanceOf[SparseNetworkLBP]
+                          val lLexicon = typedC.onClassifier.getLabelLexicon
+                          var LTU_actual: Int = 0
+                          var LTU_predicted: Int = 0
+                          for (i <- 0 until lLexicon.size()) {
+                            if (lLexicon.lookupKey(i).valueEquals(result))
+                              LTU_predicted = i
+                            if (lLexicon.lookupKey(i).valueEquals(trueLabel))
+                              LTU_actual = i
+                          }
 
-                        //                  val result =  typedC.classifier.discreteValue(x)
-                        //
-                        //                                      println(s"${typedC.onClassifier.scores(x).getScore("true")}")
-                        //                                      println(s"${typedC.onClassifier.scores(x).getScore("false")}")
 
-                        val trueLabel = oracle.discreteValue(x)
 
-                        //                  val classifierToTrain = typedC.classifier
+//                        val simpleResult = typedC.onClassifier.discreteValue(x)
+//                        println("Constrained Result=", result, "Simple Result", simpleResult)
+//                        if (!simpleResult.equals(result)) {
+//                          difference = difference + 1
+//                        }
 
-                        //                    if(result.equals(trueLabel)){
-                        //                      print(Console.GREEN)
-                        //                    }else{
-                        //                      print(Console.RED)
-                        //                    }
-                        //                    print(result + "  ??? " + trueLabel)
-                        //                    println(Console.RESET)
 
-                        //
-                        //               if (result.equals("true") && !typedC.classifier.getLabeler.discreteValue(x).equals("true"))
-                        val ilearner = typedC.onClassifier.asInstanceOf[Learner].asInstanceOf[SparseNetworkLBP]
-                        val lLexicon = typedC.onClassifier.getLabelLexicon
-                        var LTU_actual: Int = 0
-                        var LTU_predicted: Int = 0
-                        for (i <- 0 until lLexicon.size()) {
-                          if (lLexicon.lookupKey(i).valueEquals(result))
-                            LTU_predicted = i
-                          if (lLexicon.lookupKey(i).valueEquals(trueLabel))
-                            LTU_actual = i
-                        }
+
+
                         // The idea is that when the prediction is wrong the LTU of the actual class should be promoted
                         // and the LTU of the predicted class should be demoted.
                         if (!result.equals(trueLabel)) //equals("true") && trueLabel.equals("false")   )
                         {
 
-                          val a = typedC.onClassifier.getExampleArray(x)
+                          val a = typedC.onClassifier.getExampleArray(x,true)
                           val a0 = a(0).asInstanceOf[Array[Int]] //exampleFeatures
                           val a1 = a(1).asInstanceOf[Array[Double]] // exampleValues
                           val exampleLabels = a(2).asInstanceOf[Array[Int]]
@@ -146,71 +132,14 @@ object JointTrainSparseNetwork {
                           if (ltu_predicted != null)
                             ltu_predicted.demote(a0, a1, 0.1)
 
-                          //                          if (ltu_actual != null)
-                          //                            typedC.onClassifier.asInstanceOf[Learner].asInstanceOf[SparseNetworkLBP].getLTU(LTU_actual).promote(a0, a1, 0.1)
-                          //                          if (ltu_predicted != null)
-                          //                            typedC.onClassifier.asInstanceOf[Learner].asInstanceOf[SparseNetworkLBP].getLTU(LTU_predicted).demote(a0, a1, 0.1)
+                          } else {
 
-                          // var l = new Array[Int](1)
-                          // for (i<-  0 until N) {
-                          //  var ltu: LinearThresholdUnit=  ilearner.net.get(i).asInstanceOf[LinearThresholdUnit]
-                          // if (ltu != null) {
-                          //   l(0) = if ((i == label)) 1 else 0
-                          //   ltu.learn(a0, a1, l, labelValues);}
-
-                          //                      println("demote !")
-                          //                      println("promote !")
-
-                          // typedC.onClassifier.asInstanceOf
-
-                          //                      typedC.onClassifier.asInstanceOf[LinearThresholdUnit].demote(a0,a1,0.1)
-
-                          //                    typedC.onClassifier.learn(x)
-                          //      typedC.onClassifier.asInstanceOf[LinearThresholdUnit].promote(a0,a1,0.1)
-
-                          //                    typedC.onClassifier.asInstanceOf[LinearThresholdUnit].promote(a0,a1,0.1)
-
-                          //                      typedC.onClassifier.learn(x)
-                          //                      println("demote !")
-                          //                      println("promote !")
-                        } else {
-
-                          /*if ( result.equals("false") && trueLabel.equals("true")   )
-                    {
-                      //                        println("demote !")
-                      //                        println("promote !")
-
-                      val a  = typedC.onClassifier.getExampleArray(x)
-                      //.map({
-                      val a0 = a(0).asInstanceOf[Array[Int]]
-                      val a1 = a(1).asInstanceOf[Array[Double]]
-                      //                        typedC.onClassifier.asInstanceOf[LinearThresholdUnit].promote(a0,a1,0.1)
-                      //                      typedC.onClassifier.learn(x)
-                      typedC.onClassifier.asInstanceOf[LinearThresholdUnit].demote(a0,a1,0.1)
-                      //                      println("promote !")
-                      //                        typedC.onClassifier.learn(x)
-
-                      //                      typedC.onClassifier.asInstanceOf[LinearThresholdUnit].demote(a0,a1,0.1)
-                    }else{
-                      //                                              println("Correct !")
-                    }
-                    //                    typedC.onClassifier.asInstanceOf[LinearThresholdUnit].doneLearning()*/
-
-                        }
+                   }
 
                       }
 
-                      //                  (0 to 10).foreach{
-                      //                    x =>
-                      //                      print(x)
-                      //                      trainOnce()
-                      //                  }
-                      //                  println("-----------Start----------------")
                       trainOnce()
-                      //                  println("-----------END----------------")
-                      //end if demote
-                      //                  if (result.equals("false") && oracle.discreteValue(x).equals("true"))
-                    }
+                      }
                 }
               }
             }
