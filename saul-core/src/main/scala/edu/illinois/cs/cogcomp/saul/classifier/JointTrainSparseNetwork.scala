@@ -74,39 +74,34 @@ object JointTrainSparseNetwork {
                 typedC.getCandidates(h) foreach {
                   x =>
                     {
-                        def trainOnce() = {
+                      def trainOnce() = {
 
-                          val result = typedC.classifier.discreteValue(x)
-                          val trueLabel = oracle.discreteValue(x)
+                        val result = typedC.classifier.discreteValue(x)
+                        val trueLabel = oracle.discreteValue(x)
 
-                          val ilearner = typedC.onClassifier.asInstanceOf[Learner].asInstanceOf[SparseNetworkLBP]
-                          val lLexicon = typedC.onClassifier.getLabelLexicon
-                          var LTU_actual: Int = 0
-                          var LTU_predicted: Int = 0
-                          for (i <- 0 until lLexicon.size()) {
-                            if (lLexicon.lookupKey(i).valueEquals(result))
-                              LTU_predicted = i
-                            if (lLexicon.lookupKey(i).valueEquals(trueLabel))
-                              LTU_actual = i
-                          }
+                        val ilearner = typedC.onClassifier.asInstanceOf[Learner].asInstanceOf[SparseNetworkLBP]
+                        val lLexicon = typedC.onClassifier.getLabelLexicon
+                        var LTU_actual: Int = 0
+                        var LTU_predicted: Int = 0
+                        for (i <- 0 until lLexicon.size()) {
+                          if (lLexicon.lookupKey(i).valueEquals(result))
+                            LTU_predicted = i
+                          if (lLexicon.lookupKey(i).valueEquals(trueLabel))
+                            LTU_actual = i
+                        }
 
-
-
-//                        val simpleResult = typedC.onClassifier.discreteValue(x)
-//                        println("Constrained Result=", result, "Simple Result", simpleResult)
-//                        if (!simpleResult.equals(result)) {
-//                          difference = difference + 1
-//                        }
-
-
-
+                        //                        val simpleResult = typedC.onClassifier.discreteValue(x)
+                        //                        println("Constrained Result=", result, "Simple Result", simpleResult)
+                        //                        if (!simpleResult.equals(result)) {
+                        //                          difference = difference + 1
+                        //                        }
 
                         // The idea is that when the prediction is wrong the LTU of the actual class should be promoted
                         // and the LTU of the predicted class should be demoted.
                         if (!result.equals(trueLabel)) //equals("true") && trueLabel.equals("false")   )
                         {
 
-                          val a = typedC.onClassifier.getExampleArray(x,true)
+                          val a = typedC.onClassifier.getExampleArray(x, true)
                           val a0 = a(0).asInstanceOf[Array[Int]] //exampleFeatures
                           val a1 = a(1).asInstanceOf[Array[Double]] // exampleValues
                           val exampleLabels = a(2).asInstanceOf[Array[Int]]
@@ -132,14 +127,14 @@ object JointTrainSparseNetwork {
                           if (ltu_predicted != null)
                             ltu_predicted.demote(a0, a1, 0.1)
 
-                          } else {
+                        } else {
 
-                   }
+                        }
 
                       }
 
                       trainOnce()
-                      }
+                    }
                 }
               }
             }

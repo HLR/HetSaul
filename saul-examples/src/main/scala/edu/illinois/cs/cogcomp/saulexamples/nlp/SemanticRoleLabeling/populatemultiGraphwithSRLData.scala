@@ -101,7 +101,7 @@ object populatemultiGraphwithSRLData {
       )
       trainReader.readData()
       logger.info("Annotating {} training sentences", trainReader.textAnnotations.size)
-      val filteredTa = addViewAndFilter(trainReader.textAnnotations.toList).slice(0,20)
+      val filteredTa = addViewAndFilter(trainReader.textAnnotations.toList).slice(0, 20)
       printNumbers(trainReader, "training")
       logger.info("Populating SRLDataModel with training data.")
 
@@ -142,7 +142,7 @@ object populatemultiGraphwithSRLData {
     testReader.readData()
 
     logger.info("Annotating {} test sentences", testReader.textAnnotations.size)
-    val filteredTest = addViewAndFilter(testReader.textAnnotations.toList).slice(0,20)
+    val filteredTest = addViewAndFilter(testReader.textAnnotations.toList).slice(0, 20)
 
     printNumbers(testReader, "test")
 
