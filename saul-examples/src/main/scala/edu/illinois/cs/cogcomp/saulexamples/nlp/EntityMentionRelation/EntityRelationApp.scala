@@ -1,6 +1,6 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation
 
-import edu.illinois.cs.cogcomp.lbjava.learn.SupportVectorMachine
+import edu.illinois.cs.cogcomp.lbjava.learn.{LinearThresholdUnit, SparseNetworkLearner, SupportVectorMachine}
 import edu.illinois.cs.cogcomp.saul.classifier.JointTrain
 import edu.illinois.cs.cogcomp.saulexamples.EntityMentionRelation.datastruct.ConllRelation
 import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.EntityRelationClassifiers._
@@ -11,7 +11,7 @@ import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.EntityRela
 object EntityRelationApp {
   def main(args: Array[String]): Unit = {
     /** Choose the experiment you're interested in by changing the following line */
-    val testType = ERExperimentType.TestFromModel
+    val testType = ERExperimentType.IndependentClassifiers
 
     testType match {
       case ERExperimentType.IndependentClassifiers => trainIndependentClassifiers()
@@ -38,7 +38,6 @@ object EntityRelationApp {
     println("Person Classifier Evaluation")
     //    PersonClassifier.crossValidation(foldSize)
     PersonClassifier.learn(5)
-    PersonClassifier.classifier.doneLearning()
     println("PersonClassifier.classifier.demandLexicon().size() = " + PersonClassifier.classifier.demandLexicon().size())
     //    println("===============================================")
     //    println("Organization Classifier Evaluation")
@@ -48,9 +47,52 @@ object EntityRelationApp {
     //    LocationClassifier.crossValidation(foldSize)
     //    println("===============================================")
 
+/*
     val p = PersonClassifier.classifier.getParameters.asInstanceOf[SupportVectorMachine.Parameters]
-    //    val c = PersonClassifier.classifier.asInstanceOf[SupportVectorMachine]
-    println(PersonClassifier.classifier.getWeights.mkString("-"))
+    val c = PersonClassifier.classifier.asInstanceOf[SupportVectorMachine]
+    println(c.getWeights.mkString("-"))
+    println(p.nonDefaultString())
+    println("p.bias = " + p.bias)
+    println("p.C = " + p.C)
+    println("p.displayLL = " + p.displayLL)
+    println("p.epsilon = " + p.epsilon)
+    println("p.solverType = " + p.solverType)
+    println("PersonClassifier.classifier.getNumClasses = " + PersonClassifier.classifier.getNumClasses)
+*/
+
+/*    val p = PersonClassifier.classifier.getParameters.asInstanceOf[SparseNetworkLearner.Parameters]
+    println("PersonClassifier.classifier.getNumExamples = " + PersonClassifier.classifier.getNumExamples)
+    println("PersonClassifier.classifier.getNumFeatures = " + PersonClassifier.classifier.getNumFeatures)
+    println("PersonClassifier.classifier.getNetwork.size() = " + PersonClassifier.classifier.getNetwork.size())
+    println("PersonClassifier.classifier.getNetwork.toString = " + PersonClassifier.classifier.getNetwork.toString)
+    println("nonDefaultString = " + p.nonDefaultString())
+    println("getAllowableValues = " + p.baseLTU.getAllowableValues)
+    //val ltuArray = PersonClassifier.classifier.getNetwork.toArray.asInstanceOf[Array[LinearThresholdUnit]]
+    val ltu0 = PersonClassifier.classifier.getNetwork.toArray.apply(0).asInstanceOf[LinearThresholdUnit]
+    val ltu1 = PersonClassifier.classifier.getNetwork.toArray.apply(1).asInstanceOf[LinearThresholdUnit]
+
+
+    println("===========\n baseLTU = ")
+    printlnLTU(p.baseLTU)
+    println("===========")
+
+    println("===========\n ltuArray(0) = ")
+    printlnLTU(ltu0)
+    println("===========")
+
+    println("===========\n ltuArray(1) = ")
+    printlnLTU(ltu1)
+    println("===========")
+
+    def printlnLTU(ltu: LinearThresholdUnit): Unit ={
+      println("ltu.getBias = " + ltu.getBias)
+      println("ltu.getThreshold = " + ltu.getThreshold)
+      println("ltu.getInitialWeight = " + ltu.getInitialWeight)
+      println("ltu.getPositiveThickness = " + ltu.getPositiveThickness)
+      println("ltu.getNegativeThickness = " + ltu.getNegativeThickness)
+      println("ltu.getWeightVector.getWeights.size() = " + ltu.getWeightVector.getWeights.size())
+      println("ltu.getWeightVector.getWeights. = " + ltu.getWeightVector.getWeights.toArray.mkString("-"))
+    }*/
 
     testEntityModels()
     saveEntityModels()
@@ -79,6 +121,7 @@ object EntityRelationApp {
     //    println(PersonClassifier.classifier.getParameters.nonDefaultString())
     //    println(PersonClassifier.classifier.getParameters.toString)
     //    println()
+/*
     val p = PersonClassifier.classifier.getParameters.asInstanceOf[SupportVectorMachine.Parameters]
     val c = PersonClassifier.classifier.asInstanceOf[SupportVectorMachine]
     println(c.getWeights.mkString("-"))
@@ -88,6 +131,44 @@ object EntityRelationApp {
     println("p.displayLL = " + p.displayLL)
     println("p.epsilon = " + p.epsilon)
     println("p.solverType = " + p.solverType)
+    println("PersonClassifier.classifier.getNumClasses = " + PersonClassifier.classifier.getNumClasses)
+*/
+
+/*    val p = PersonClassifier.classifier.getParameters.asInstanceOf[SparseNetworkLearner.Parameters]
+    println("PersonClassifier.classifier.getNumExamples = " + PersonClassifier.classifier.getNumExamples)
+    println("PersonClassifier.classifier.getNumFeatures = " + PersonClassifier.classifier.getNumFeatures)
+    println("PersonClassifier.classifier.getNetwork.size() = " + PersonClassifier.classifier.getNetwork.size())
+    println("PersonClassifier.classifier.getNetwork.toString = " + PersonClassifier.classifier.getNetwork.toString)
+    println("nonDefaultString = " + p.nonDefaultString())
+    println("getAllowableValues = " + p.baseLTU.getAllowableValues)
+    //val ltuArray = PersonClassifier.classifier.getNetwork.toArray.asInstanceOf[Array[LinearThresholdUnit]]
+    val ltu0 = PersonClassifier.classifier.getNetwork.toArray.apply(0).asInstanceOf[LinearThresholdUnit]
+    val ltu1 = PersonClassifier.classifier.getNetwork.toArray.apply(1).asInstanceOf[LinearThresholdUnit]
+
+
+    println("===========\n baseLTU = ")
+    printlnLTU(p.baseLTU)
+    println("===========")
+
+    println("===========\n ltuArray(0) = ")
+    printlnLTU(ltu0)
+    println("===========")
+
+    println("===========\n ltuArray(1) = ")
+    printlnLTU(ltu1)
+    println("===========")
+
+    def printlnLTU(ltu: LinearThresholdUnit): Unit ={
+      println("ltu.getBias = " + ltu.getBias)
+      println("ltu.getThreshold = " + ltu.getThreshold)
+      println("ltu.getInitialWeight = " + ltu.getInitialWeight)
+      println("ltu.getPositiveThickness = " + ltu.getPositiveThickness)
+      println("ltu.getNegativeThickness = " + ltu.getNegativeThickness)
+      println("ltu.getWeightVector.getWeights.size() = " + ltu.getWeightVector.getWeights.size())
+      println("ltu.getWeightVector.getWeights. = " + ltu.getWeightVector.getWeights.toArray.mkString("-"))
+    }*/
+
+    tokensTest.slice(0, 20).foreach{tok => println(PersonClassifier.classifier.discreteValue(tok)) }
     testEntityModels()
     println("PersonClassifier.classifier.demandLexicon().size() = " + PersonClassifier.classifier.demandLexicon().size())
   }

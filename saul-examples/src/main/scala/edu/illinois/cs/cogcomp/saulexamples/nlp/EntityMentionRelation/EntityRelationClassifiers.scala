@@ -1,6 +1,6 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation
 
-import edu.illinois.cs.cogcomp.lbjava.learn.{ SupportVectorMachine, SparseNetworkLearner }
+import edu.illinois.cs.cogcomp.lbjava.learn.{StochasticGradientDescent, SupportVectorMachine, SparseNetworkLearner}
 import edu.illinois.cs.cogcomp.saul.classifier.Learnable
 import edu.illinois.cs.cogcomp.saul.constraint.ConstraintTypeConversion._
 import edu.illinois.cs.cogcomp.saul.datamodel.property.Property
@@ -22,7 +22,7 @@ object EntityRelationClassifiers {
     def label: Property[ConllRawToken] = entityType is "Peop"
     override def feature = using(word) //, windowWithin[ConllRawSentence](-2, 2, List(pos)), phrase, containsSubPhraseMent,
     //      containsSubPhraseIng, wordLen) // , containsInPersonList, , containsInCityList)*/
-    override lazy val classifier = new SupportVectorMachine()
+    override lazy val classifier = new StochasticGradientDescent //new SparseNetworkLearner() //new SupportVectorMachine()
     override val loggging = true
   }
 
