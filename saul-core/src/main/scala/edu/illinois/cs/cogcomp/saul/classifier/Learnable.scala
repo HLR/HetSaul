@@ -158,6 +158,7 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
       learnWithDerivedInstances(iteration, targetNode.derivedInstances.values)
     } else {
       learn(iteration, this.fromData)
+      classifier.doneLearning()
     }
     isTraining = false
   }
