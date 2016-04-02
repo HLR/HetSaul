@@ -1,7 +1,7 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.EmailSpam
 
 import edu.illinois.cs.cogcomp.saulexamples.data.DocumentReader
-import edu.illinois.cs.cogcomp.saulexamples.nlp.EmailSpam.spamClassifiers.{ spamClassifierWithCache, deserializedSpamClassifier, spamClassifier }
+import edu.illinois.cs.cogcomp.saulexamples.nlp.EmailSpam.SpamClassifiers._
 
 import scala.collection.JavaConversions._
 
@@ -16,7 +16,7 @@ object SpamApp {
 
   def main(args: Array[String]): Unit = {
     /** Choose the experiment you're interested in by changing the following line */
-    val testType = SpamExperimentType.TrainAndTest
+    val testType = SpamExperimentType.TestSerializatin
 
     testType match {
       case SpamExperimentType.TrainAndTest => TrainAndTestSpamClassifier()
@@ -30,9 +30,9 @@ object SpamApp {
   def TrainAndTestSpamClassifier(): Unit = {
     /** Defining the data and specifying it's location  */
     spamDataModel.docs populate trainData
-    spamClassifier.learn(30)
+    SpamClassifier.learn(30)
     spamDataModel.testWith(testData)
-    spamClassifier.test(testData)
+    SpamClassifier.test(testData)
   }
 
   /** Spam Classifcation, followed by caching the data-model graph. */
@@ -42,11 +42,9 @@ object SpamApp {
     spamDataModel.docs populate trainData
     spamDataModel.deriveInstances()
     spamDataModel.write(graphCacheFile)
-
-    spamClassifierWithCache.learn(30)
-    spamClassifierWithCache.learn(30)
+    SpamClassifierWithCache.learn(30)
     spamDataModel.testWith(testData)
-    spamClassifierWithCache.test(testData)
+    SpamClassifierWithCache.test(testData)
   }
 
   /** Testing the functionality of the cache. `SpamClassifierWithCache` produces the temporary model file need for
@@ -54,10 +52,9 @@ object SpamApp {
     */
   def SpamClassifierFromCache() {
     spamDataModel.load(graphCacheFile)
-    spamClassifierWithCache.learn(30)
-    spamClassifierWithCache.learn(30)
+    SpamClassifierWithCache.learn(30)
     spamDataModel.testWith(testData)
-    spamClassifierWithCache.test(testData)
+    SpamClassifierWithCache.test(testData)
   }
 
   /** Testing the serialization functionality of the model. We first train a model and save it. Then we load the model
@@ -66,15 +63,12 @@ object SpamApp {
     */
   def SpamClassifierWithSerialization(): Unit = {
     spamDataModel.docs populate trainData
-    spamClassifier.learn(30)
-
-    spamClassifier.save()
-
-    println(deserializedSpamClassifier.classifier.getPrunedLexiconSize)
-    deserializedSpamClassifier.load(spamClassifier.lcFilePath(), spamClassifier.lexFilePath())
-
-    val predictionsBeforeSerialization = testData.map(spamClassifier(_))
-    val predictionsAfterSerialization = testData.map(deserializedSpamClassifier(_))
+    SpamClassifier.learn(30)
+    SpamClassifier.save()
+    println(DeserializedSpamClassifier.classifier.getPrunedLexiconSize)
+    DeserializedSpamClassifier.load(SpamClassifier.lcFilePath(), SpamClassifier.lexFilePath())
+    val predictionsBeforeSerialization = testData.map(SpamClassifier(_))
+    val predictionsAfterSerialization = testData.map(DeserializedSpamClassifier(_))
     println(predictionsBeforeSerialization.mkString("/"))
     println(predictionsAfterSerialization.mkString("/"))
     println(predictionsAfterSerialization.indices.forall(it => predictionsBeforeSerialization(it) == predictionsAfterSerialization(it)))
