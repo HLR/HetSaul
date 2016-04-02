@@ -272,7 +272,41 @@ or in your sbt:
 
 And then call the classifiers: 
 ```
+import edu.illinois.cs.cogcomp.saulexamples.EntityMentionRelation.datastruct.{ConllRawSentence, ConllRawToken}
+import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityRelation._
+import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityRelation.EntityRelationClassifiers.{LocationClassifier, PersonClassifier}
 
+import scala.collection.JavaConverters._
+
+object SampleObject {
+  def main(args: Array[String]): Unit = {
+    val tokens = List("Yesterday", "dumb", "Bob", "destroyed", "my", "fancy", "iPhone",
+      "in", "beautiful", "Denver", ",", "Colorado", ".")
+    val pos = List("NN", "JJ", "NNP", "VBD", "PRP$", "JJ", "NN", "IN", "JJ", "NNP", ",", "NNP", ".")
+    val sentence = new ConllRawSentence(0)
+    tokens.zipWithIndex.foreach{ case (tok, idx) =>
+        val conllTok = new ConllRawToken()
+        conllTok.setPhrase(tok)
+        conllTok.setPOS(pos(idx))
+        sentence.addTokens(conllTok)
+    }
+
+    // populating the data in the data model
+    EntityRelationDataModel.sentences.populate(List(sentence), train = false)
+
+    // loading the entity models
+    EntityRelationClassifiers.loadIndependentEntityModels()
+    println("** Persons: ")
+    sentence.sentTokens.asScala.foreach{ tok => if(PersonClassifier(tok) == "true") println(tok.phrase) }
+    println("** Locations: ")
+    sentence.sentTokens.asScala.foreach{ tok => if(LocationClassifier(tok) == "true") println(tok.phrase) }
+
+    // load the relation models
+    EntityRelationClassifiers.loadIndependentRelationModels()
+    EntityRelationClassifiers.loadPipelineRelationModels()
+    // and make prediction using relation classifiers, just like how we did for entities above ... 
+  }
+}
 ```
  
 ## Further reading 

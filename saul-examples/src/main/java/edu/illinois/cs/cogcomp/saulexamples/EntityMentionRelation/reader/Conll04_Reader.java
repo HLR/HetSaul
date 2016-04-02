@@ -25,7 +25,6 @@ public class Conll04_Reader implements Parser {
     private int currentSentenceId;
 
     public Conll04_Reader(String filename, String ty) {
-
         instances = new Vector<>();
         relations = new Vector<>();
         sentences = new Vector<>();

@@ -7,7 +7,7 @@ lazy val root = (project in file(".")).
 lazy val commonSettings = Seq(
   organization := "edu.illinois.cs.cogcomp",
   name := "saul-project",
-  version := "0.1",
+  version := "0.2",
   scalaVersion := "2.11.7",
   resolvers ++= Seq(
     Resolver.mavenLocal,
