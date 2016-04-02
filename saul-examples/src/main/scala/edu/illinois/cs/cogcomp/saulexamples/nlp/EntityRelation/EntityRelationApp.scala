@@ -9,7 +9,8 @@ import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityRelation.EntityRelationCon
 object EntityRelationApp {
   def main(args: Array[String]): Unit = {
     /** Choose the experiment you're interested in by changing the following line */
-    val testType = ERExperimentType.JointTraining
+
+    val testType = ERExperimentType.TestFromModel
 
     testType match {
       case ERExperimentType.IndependentClassifiers => trainIndependentClassifiers()

@@ -22,7 +22,7 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
   /** Whether to use caching */
   val useCache = false
 
-  val loggging = true
+  val loggging = false
 
   var isTraining = false
 
@@ -105,7 +105,7 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
 
   def save(): Unit = {
     removeModelFiles()
-    val dummyClassifier = new SparseNetworkLearner
+    val dummyClassifier = new SparsePerceptron()
     classifier.setExtractor(dummyClassifier)
     classifier.setLabeler(dummyClassifier)
     classifier.write(lcFilePath().getPath, lexFilePath().getPath)
@@ -164,7 +164,7 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
   }
 
   def learn(iteration: Int, data: Iterable[T]): Unit = {
-    if(loggging) {
+    if (loggging) {
       val oracle = Property.entitiesToLBJFeature(label)
       println(s"==> Learning using the feature extractors to be ${lbpFeatures.getCompositeChildren}")
       println(s"==> Learning using the labeler to be '$oracle'")

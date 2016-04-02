@@ -36,7 +36,6 @@ public class Conll04_Reader implements Parser {
         try {
             lines = LineIO.read(filename);
         } catch (FileNotFoundException e) {
-            //IOUtils.lsResources()
             e.printStackTrace();
         }
         String line;

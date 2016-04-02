@@ -1,4 +1,4 @@
-# Entity-Mention-Relation classification 
+# Entity-Relation classification 
 
 This is the problem of recognizing the `kill (KFJ, Oswald)` relation in the sentence "J. V. 
 Oswald was murdered at JFK after his assassin, R. U. KFJ..." This task requires making several
@@ -29,69 +29,71 @@ for this problem. Also there is a summary of the performances for our main class
             local features. In particular, the relation classifier does not know the labels of its entity arguments,
             and the entity classifier does not know the labels of relations in the sentence either. 
             Here is a summary of performances for independent entity classifiers: 
+             
 ```
         ==============================================
         Person Classifier Evaluation
          Label   Precision Recall   F1   LCount PCount
         ----------------------------------------------
-        false       98.728 99.706 99.214  61178  61784
-        true        86.994 60.503 71.369   1990   1384
+        false       99.447 98.472 98.957  61178  60578
+        true        63.900 83.166 72.271   1990   2590
         ----------------------------------------------
-        Accuracy    98.471   -      -      -     63168
+        Accuracy    97.989   -      -      -     63168
         ==============================================
         Organization Classifier Evaluation
          Label   Precision Recall   F1   LCount PCount
         ----------------------------------------------
-        false       98.666 99.798 99.229  61896  62606
-        true        77.758 34.355 47.655   1272    562
+        false       99.069 98.693 98.881  61896  61661
+        true        46.317 54.874 50.234   1272   1507
         ----------------------------------------------
-        Accuracy    98.480   -      -      -     63168
+        Accuracy    97.811   -      -      -     63168
         ==============================================
         Location Classifier Evaluation
          Label   Precision Recall   F1   LCount PCount
         ----------------------------------------------
-        false       98.334 99.676 99.000  60760  61589
-        true        87.524 57.392 69.325   2408   1579
+        false       98.985 98.823 98.904  60760  60661
+        true        71.480 74.419 72.920   2408   2507
         ----------------------------------------------
-        Accuracy    98.064   -      -      -     63168
+        Accuracy    97.893   -      -      -     63168
         ==============================================
-```         
+```
             
 And the summary of performances for independent relation classifiers:
-             
+
 ```
-        ==============================================
-        WorksFor Classifier Evaluation
-         Label   Precision Recall   F1   LCount PCount
-        ----------------------------------------------
-        false       91.317 71.765 80.369    850    668
-        true        20.266 51.261 29.048    119    301
-        ----------------------------------------------
-        Accuracy    69.247   -      -      -       969
-        ==============================================
-        LivesIn Classifier Evaluation
-         Label   Precision Recall   F1   LCount PCount
-        ----------------------------------------------
-        false       78.524 86.127 82.150    692    759
-        true        54.286 41.155 46.817    277    210
-        ----------------------------------------------
-        Accuracy    73.271   -      -      -       969
-        ==============================================
-        LocatedIn Classifier Evaluation
-         Label   Precision Recall   F1   LCount PCount
-        ----------------------------------------------
-        false       99.779 99.889 99.834    903    904
-        true        98.462 96.970 97.710     66     65
-        ----------------------------------------------
-        Accuracy    99.690   -      -      -       969
-        ==============================================
-        OrgBasedIn Classifier Evaluation
-         Label   Precision Recall   F1   LCount PCount
-        ----------------------------------------------
-        false       97.067 99.726 98.378    730    750
-        true        99.087 90.795 94.760    239    219
-        ----------------------------------------------
-        Accuracy    97.523   -      -      -       969 
+         ==============================================
+         WorksFor Classifier Evaluation
+          Label   Precision Recall   F1   LCount PCount
+         ----------------------------------------------
+         false       96.916 51.765 67.485    850    454
+         true        20.388 88.235 33.123    119    515
+         ----------------------------------------------
+         Accuracy    56.244   -      -      -       969
+         ==============================================
+         LivesIn Classifier Evaluation
+          Label   Precision Recall   F1   LCount PCount
+         ----------------------------------------------
+         false       76.319 85.694 80.735    692    777
+         true        48.438 33.574 39.659    277    192
+         ----------------------------------------------
+         Accuracy    70.795   -      -      -       969
+         ==============================================
+         LocatedIn Classifier Evaluation
+          Label   Precision Recall   F1   LCount PCount
+         ----------------------------------------------
+         false       98.899 99.446 99.172    903    908
+         true        91.803 84.848 88.189     66     61
+         ----------------------------------------------
+         Accuracy    98.452   -      -      -       969
+         ==============================================
+         OrgBasedIn Classifier Evaluation
+          Label   Precision Recall   F1   LCount PCount
+         ----------------------------------------------
+         false       99.174 98.630 98.901    730    726
+         true        95.885 97.490 96.680    239    243
+         ----------------------------------------------
+         Accuracy    98.349   -      -      -       969
+         ==============================================
 ```
 
  - Pipeline Training: Pipeline, mimics the typical strategy in solving complex natural language problems – separating a 
@@ -107,83 +109,137 @@ And the summary of performances for independent relation classifiers:
             Here is a summary of pipeline relation classifiers: 
 ```
         ==============================================
-        WorksFor Classifier Evaluation
+        WorksFor Pipeline Classifier Evaluation
          Label   Precision Recall   F1   LCount PCount
         ----------------------------------------------
-        false       93.740 72.235 81.595    850    655
-        true        24.841 65.546 36.028    119    314
+        false       93.608 77.529 84.813    850    704
+        true        27.925 62.185 38.542    119    265
         ----------------------------------------------
-        Accuracy    71.414   -      -      -       969
+        Accuracy    75.645   -      -      -       969
         ==============================================
-        LivesIn Classifier Evaluation
+        LivesIn Pipeline Classifier Evaluation
          Label   Precision Recall   F1   LCount PCount
         ----------------------------------------------
-        false       77.060 87.861 82.107    692    789
-        true        53.333 34.657 42.013    277    180
+        false       78.062 83.815 80.836    692    743
+        true        50.442 41.155 45.328    277    226
         ----------------------------------------------
-        Accuracy    72.652   -      -      -       969
+        Accuracy    71.620   -      -      -       969
         ==============================================
 ```         
             
  - Learning Plus Inference (L+I): In the scenario the classifiers are learned independently but at the test time we use 
             constrained inference to maintain structural consistency. We device constraints to relate independent entity 
             and independent relations together. Here is a summary of the evaluations: 
-            
+             
 ```
         ==============================================
         Person Classifier Evaluation with training
-        
          Label   Precision Recall   F1   LCount PCount
         ----------------------------------------------
-        false       99.298 99.841 99.568 124800 125482
-        true        93.849 77.508 84.899   3917   3235
+        false       99.724 98.875 99.297 124800 123738
+        true        71.802 91.269 80.373   3917   4979
         ----------------------------------------------
-        Accuracy    99.161   -      -      -    128717
+        Accuracy    98.644   -      -      -    128717
         ==============================================
         Organization Classifier Evaluation
-        
          Label   Precision Recall   F1   LCount PCount
         ----------------------------------------------
-        false       99.237 99.801 99.518 126219 126937
-        true        85.899 61.209 71.482   2498   1780
+        false       99.538 99.090 99.314 126219 125650
+        true        62.537 76.781 68.931   2498   3067
         ----------------------------------------------
-        Accuracy    99.052   -      -      -    128717
+        Accuracy    98.657   -      -      -    128717
         ==============================================
         Location Classifier Evaluation
-        
          Label   Precision Recall   F1   LCount PCount
         ----------------------------------------------
-        false       99.038 99.774 99.405 123952 124873
-        true        92.716 74.795 82.797   4765   3844
+        false       99.465 99.255 99.360 123952 123691
+        true        81.635 86.107 83.812   4765   5026
         ----------------------------------------------
-        Accuracy    98.849   -      -      -    128717
+        Accuracy    98.769   -      -      -    128717
         ==============================================
         WorkFor Classifier Evaluation
-        
          Label   Precision Recall   F1   LCount PCount
         ----------------------------------------------
-        false       94.330 91.925 93.112   1647   1605
-        true        69.977 77.307 73.460    401    443
+        false       98.253 81.967 89.374   1647   1374
+        true        55.935 94.015 70.140    401    674
         ----------------------------------------------
-        Accuracy    89.063   -      -      -      2048
+        Accuracy    84.326   -      -      -      2048
         ==============================================
         LivesIn Classifier Evaluation
-        
          Label   Precision Recall   F1   LCount PCount
         ----------------------------------------------
-        false       86.799 97.315 91.757   1527   1712
-        true        87.798 56.622 68.845    521    336
+        false       85.581 96.005 90.494   1527   1713
+        true        81.791 52.591 64.019    521    335
         ----------------------------------------------
-        Accuracy    86.963   -      -      -      2048
-        ==============================================
-```             
+        Accuracy    84.961   -      -      -      2048
+        ==============================================           
+```           
             
  - Joint Training: We seek to train classifiers so they will produce the correct global classification. To
                   this end, the key difference from the other approach is that here, feedback from the inference process 
                   determines which classifiers to train so that together, the classifiers and the inference procedure 
                   yield the desired result. 
 ```
-TODO
+        Peop
+        tp: 1914.0 fp: 480.0 tn: 63142.0 fn: 13.0 
+         accuracy    0.99247890890784 
+         precision   0.7994987468671679 
+         recall      0.9932537623248573 
+         f1          0.8859060402684564 
+        Peop
+        tp: 1915.0 fp: 484.0 tn: 63138.0 fn: 12.0 
+         accuracy    0.9924331416192467 
+         precision   0.7982492705293872 
+         recall      0.9937727036844837 
+         f1          0.8853444290337494 
+        Org
+        tp: 1194.0 fp: 242.0 tn: 64081.0 fn: 32.0 
+         accuracy    0.9958199209751484 
+         precision   0.8314763231197771 
+         recall      0.9738988580750407 
+         f1          0.8970698722764838 
+        Org
+        tp: 1196.0 fp: 242.0 tn: 64081.0 fn: 30.0 
+         accuracy    0.9958504325008772 
+         precision   0.8317107093184979 
+         recall      0.9755301794453507 
+         f1          0.8978978978978979 
+        Loc
+        tp: 2290.0 fp: 1015.0 tn: 62177.0 fn: 67.0 
+         accuracy    0.9834932645806953 
+         precision   0.6928895612708018 
+         recall      0.9715740347899873 
+         f1          0.8089014482515012 
+        Loc
+        tp: 2298.0 fp: 1015.0 tn: 62177.0 fn: 59.0 
+         accuracy    0.9836153106836107 
+         precision   0.693631150015092 
+         recall      0.9749681798896903 
+         f1          0.8105820105820106 
+        Work_For
+        tp: 281.0 fp: 54.0 tn: 743.0 fn: 1.0 
+         accuracy    0.9490268767377201 
+         precision   0.8388059701492537 
+         recall      0.9964539007092199 
+         f1          0.9108589951377634 
+        Work_For
+        tp: 282.0 fp: 1.0 tn: 796.0 fn: 0.0 
+         accuracy    0.9990732159406858 
+         precision   0.9964664310954063 
+         recall      1.0 
+         f1          0.9982300884955753 
+        Live_In
+        tp: 244.0 fp: 147.0 tn: 688.0 fn: 0.0 
+         accuracy    0.8637627432808156 
+         precision   0.6240409207161125 
+         recall      1.0 
+         f1          0.768503937007874 
+        Live_In
+        tp: 243.0 fp: 18.0 tn: 817.0 fn: 1.0 
+         accuracy    0.9823911028730306 
+         precision   0.9310344827586207 
+         recall      0.9959016393442623 
+         f1          0.9623762376237623 
 ```
 
 ## Using it in your code
@@ -223,6 +279,7 @@ And then call the classifiers:
  
 [1] D. Roth and W-t Yih. "A Linear Programming Formulation for Global Inference in Natural Language Tasks." In 
 Proceedings of CoNLL-2004. 2004.
+
 [2] M. Chang, L. Ratinov, and D. Roth. "Structured learning with constrained conditional models." Machine Learning,
     88(3):399–431, 6 2012.
     
