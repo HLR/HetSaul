@@ -24,7 +24,7 @@ object EntityRelationConstrainedClassifiers {
     override val solver = erSolver
   }
 
-  object LocConstrainedClassifier extends ConstrainedClassifier[ConllRawToken, ConllRelation](EntityRelationDataModel, LocatedInClassifier) {
+  object LocConstrainedClassifier extends ConstrainedClassifier[ConllRawToken, ConllRelation](EntityRelationDataModel, LocationClassifier) {
     def subjectTo = relationArgumentConstraints
     override val pathToHead = Some(-EntityRelationDataModel.pairTo2ndArg)
     override def filter(t: ConllRawToken, h: ConllRelation): Boolean = t.wordId == h.wordId2
