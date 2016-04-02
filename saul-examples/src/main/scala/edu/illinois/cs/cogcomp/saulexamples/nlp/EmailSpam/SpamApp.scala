@@ -29,9 +29,9 @@ object SpamApp {
   /** A standard method for testing the Spam Classification problem. Simply training and testing the resulting model.*/
   def TrainAndTestSpamClassifier(): Unit = {
     /** Defining the data and specifying it's location  */
-    spamDataModel.docs populate trainData
+    SpamDataModel.docs populate trainData
     SpamClassifier.learn(30)
-    spamDataModel.testWith(testData)
+    SpamDataModel.testWith(testData)
     SpamClassifier.test(testData)
   }
 
@@ -39,11 +39,11 @@ object SpamApp {
   val graphCacheFile = "models/temp.model"
   def SpamClassifierWithGraphCache(): Unit = {
     /** Defining the data and specifying it's location  */
-    spamDataModel.docs populate trainData
-    spamDataModel.deriveInstances()
-    spamDataModel.write(graphCacheFile)
+    SpamDataModel.docs populate trainData
+    SpamDataModel.deriveInstances()
+    SpamDataModel.write(graphCacheFile)
     SpamClassifierWithCache.learn(30)
-    spamDataModel.testWith(testData)
+    SpamDataModel.testWith(testData)
     SpamClassifierWithCache.test(testData)
   }
 
@@ -51,9 +51,9 @@ object SpamApp {
     * this methdd to run.
     */
   def SpamClassifierFromCache() {
-    spamDataModel.load(graphCacheFile)
+    SpamDataModel.load(graphCacheFile)
     SpamClassifierWithCache.learn(30)
-    spamDataModel.testWith(testData)
+    SpamDataModel.testWith(testData)
     SpamClassifierWithCache.test(testData)
   }
 
@@ -62,7 +62,7 @@ object SpamApp {
     * predictions before serialization.
     */
   def SpamClassifierWithSerialization(): Unit = {
-    spamDataModel.docs populate trainData
+    SpamDataModel.docs populate trainData
     SpamClassifier.learn(30)
     SpamClassifier.save()
     println(DeserializedSpamClassifier.classifier.getPrunedLexiconSize)
