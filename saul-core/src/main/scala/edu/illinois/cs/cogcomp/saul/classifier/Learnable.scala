@@ -72,8 +72,8 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
 
   def setExtractor(): Unit = {
     if (feature != null) {
-      //if (loggging)
-      println(s"Setting the feature extractors to be ${lbpFeatures.getCompositeChildren}")
+      if (loggging)
+        println(s"Setting the feature extractors to be ${lbpFeatures.getCompositeChildren}")
       classifier.setExtractor(lbpFeatures)
     } else {
       println("Warning: no features found! ")
@@ -164,11 +164,13 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
   }
 
   def learn(iteration: Int, data: Iterable[T]): Unit = {
-    val oracle = Property.entitiesToLBJFeature(label)
-    println(s"==> Learning using the feature extractors to be ${lbpFeatures.getCompositeChildren}")
-    println(s"==> Learning using the labeler to be '$oracle'")
-    println(classifier.getExtractor.getCompositeChildren)
-    println(classifier.getLabeler)
+    if(loggging) {
+      val oracle = Property.entitiesToLBJFeature(label)
+      println(s"==> Learning using the feature extractors to be ${lbpFeatures.getCompositeChildren}")
+      println(s"==> Learning using the labeler to be '$oracle'")
+      println(classifier.getExtractor.getCompositeChildren)
+      println(classifier.getLabeler)
+    }
 
     println("Learnable: Learn with data of size " + data.size)
     isTraining = true
@@ -178,7 +180,7 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
     def learnAll(crTokenTest: Parser, remainingIteration: Int): Unit = {
       val v = crTokenTest.next
       if (v == null) {
-        if (remainingIteration % 10 == 0)
+        if (loggging & remainingIteration % 10 == 0)
           println(s"Training: $remainingIteration iterations remain. ${time.Instant.now()} ")
 
         if (remainingIteration > 1) {
@@ -267,22 +269,6 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
 
     //ret toList
   }
-
-  //  def chunkData(ts: List[Iterable[T]], i: Int, curr: Int, acc: (Iterable[T], Iterable[T])): (Iterable[T], Iterable[T]) = {
-  //    ts match {
-  //      case head :: more =>
-  //        acc match {
-  //          case (train, test) =>
-  //            if (i == curr) {
-  //              // we found the test part
-  //              chunkData(more, i, curr + 1, (train, head))
-  //            } else {
-  //              chunkData(more, i, curr + 1, (head ++ train, test))
-  //            }
-  //        }
-  //      case Nil => acc
-  //    }
-  //  }
 
   /** Run k fold cross validation. */
   def crossValidation(k: Int, numIterations: Int = 5, saveModels: Boolean = false): Unit = {
