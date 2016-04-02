@@ -6,7 +6,7 @@ import edu.illinois.cs.cogcomp.saulexamples.EntityMentionRelation.reader.{ Conll
 import scala.collection.JavaConverters._
 
 object EntityRelationSensors {
-  val path = "./data/"
+  val path = "../data/"
   val resourcePath = "../saul-examples/src/main/resources/EntityMentionRelation/"
 
   def readConllData(dir: String): (List[ConllRawSentence], List[ConllRelation], List[ConllRawToken]) = {
@@ -16,10 +16,10 @@ object EntityRelationSensors {
     (sentences, reader.relations.asScala.toList, tokens)
   }
 
-  lazy val (sentencesAll, relationsAll, tokensAll) = readConllData(path + "EntityMentionRelation/conll04.corp")
-  lazy val (sentencesTrain, relationsTrain, tokensTrain) = readConllData(path + "EntityMentionRelation/conll04_train.corp")
-  lazy val (sentencesTest, relationsTest, tokensTest) = readConllData(path + "EntityMentionRelation/conll04_test.corp")
-  lazy val (sentencesSmallSet, testRelationsSmallSet, tokensSmallSet) = readConllData(resourcePath + "conll04-smallDocument.txt")
+  lazy val (sentencesAll, relationsAll, entitiesAll) = readConllData(path + "EntityMentionRelation/conll04.corp")
+  lazy val (sentencesTrain, relationsTrain, entitiesTrain) = readConllData(path + "EntityMentionRelation/conll04_train.corp")
+  lazy val (sentencesTest, relationsTest, entitiesTest) = readConllData(path + "EntityMentionRelation/conll04_test.corp")
+  lazy val (sentencesSmallSet, testRelationsSmallSet, entitiesSmallSet) = readConllData(resourcePath + "conll04-smallDocument.txt")
 
   def cityGazetSensor: GazeteerReader = {
     new GazeteerReader(path + "EntityMentionRelation/known_city.lst", "Gaz:City", true)

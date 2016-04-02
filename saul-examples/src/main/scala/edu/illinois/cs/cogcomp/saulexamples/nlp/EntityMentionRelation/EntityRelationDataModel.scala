@@ -113,12 +113,22 @@ object EntityRelationDataModel extends DataModel {
   }
 
   def populateWithConll() = {
+    println("Sentences = ")
+    println(EntityRelationSensors.sentencesTrain.size)
+    println(EntityRelationSensors.sentencesTest.size)
+    println("relation")
+    println(EntityRelationSensors.relationsTrain.size)
+    println(EntityRelationSensors.relationsTest.size)
+
+    println(EntityRelationSensors.entitiesTrain.size)
+    println(EntityRelationSensors.entitiesTest.size)
+
     sentences.populate(EntityRelationSensors.sentencesTrain)
     sentences.populate(EntityRelationSensors.sentencesTest, train = false)
   }
 
   def populateWithConllSmallSet() = {
-    sentences.populate(EntityRelationSensors.sentencesSmallSet, train = false)
+    sentences.populate(EntityRelationSensors.sentencesSmallSet)
     pairs.populate(EntityRelationSensors.testRelationsSmallSet, train = false)
   }
 }

@@ -1,29 +1,28 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation
 
-import edu.illinois.cs.cogcomp.lbjava.learn.{LinearThresholdUnit, SparseNetworkLearner, SupportVectorMachine}
 import edu.illinois.cs.cogcomp.saul.classifier.JointTrain
 import edu.illinois.cs.cogcomp.saulexamples.EntityMentionRelation.datastruct.ConllRelation
 import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.EntityRelationClassifiers._
-import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.EntityRelationSensors._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.EntityRelationDataModel._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.EntityRelationConstrainedClassifiers._
 
 object EntityRelationApp {
   def main(args: Array[String]): Unit = {
     /** Choose the experiment you're interested in by changing the following line */
-    val testType = ERExperimentType.IndependentClassifiers
+    val testType = ERExperimentType.JointTraining
 
     testType match {
       case ERExperimentType.IndependentClassifiers => trainIndependentClassifiers()
-      case ERExperimentType.PipelineTraining => runPipelineTraining()
-      case ERExperimentType.LPlusITraining => runLPlusI()
-      case ERExperimentType.JointTraining => runJointTraining()
       case ERExperimentType.TestFromModel => testIndependentClassifiers()
+      case ERExperimentType.PipelineTraining => runPipelineTraining()
+      case ERExperimentType.PipelineTestFromModel => testPipelineRelationModels()
+      case ERExperimentType.LPlusI => runLPlusI()
+      case ERExperimentType.JointTraining => runJointTraining()
     }
   }
 
   object ERExperimentType extends Enumeration {
-    val IndependentClassifiers, LPlusITraining, TestFromModel, JointTraining, PipelineTraining = Value
+    val IndependentClassifiers, LPlusI, TestFromModel, JointTraining, PipelineTraining, PipelineTestFromModel = Value
   }
 
   /** in this scenario we train and test classifiers independent of each other. In particular, the relation classifier
@@ -31,146 +30,48 @@ object EntityRelationApp {
     * in the sentence either
     */
   def trainIndependentClassifiers(): Unit = {
-    val foldSize = 5
     EntityRelationDataModel.populateWithConll()
-
-    println("===============================================")
+    val iter = 10
+    println("==============================================")
     println("Person Classifier Evaluation")
-    //    PersonClassifier.crossValidation(foldSize)
-    PersonClassifier.learn(5)
-    println("PersonClassifier.classifier.demandLexicon().size() = " + PersonClassifier.classifier.demandLexicon().size())
-    //    println("===============================================")
-    //    println("Organization Classifier Evaluation")
-    //    OrganizationClassifier.crossValidation(foldSize)
-    //    println("===============================================")
-    //    println("Location Classifier Evaluation")
-    //    LocationClassifier.crossValidation(foldSize)
-    //    println("===============================================")
-
-/*
-    val p = PersonClassifier.classifier.getParameters.asInstanceOf[SupportVectorMachine.Parameters]
-    val c = PersonClassifier.classifier.asInstanceOf[SupportVectorMachine]
-    println(c.getWeights.mkString("-"))
-    println(p.nonDefaultString())
-    println("p.bias = " + p.bias)
-    println("p.C = " + p.C)
-    println("p.displayLL = " + p.displayLL)
-    println("p.epsilon = " + p.epsilon)
-    println("p.solverType = " + p.solverType)
-    println("PersonClassifier.classifier.getNumClasses = " + PersonClassifier.classifier.getNumClasses)
-*/
-
-/*    val p = PersonClassifier.classifier.getParameters.asInstanceOf[SparseNetworkLearner.Parameters]
-    println("PersonClassifier.classifier.getNumExamples = " + PersonClassifier.classifier.getNumExamples)
-    println("PersonClassifier.classifier.getNumFeatures = " + PersonClassifier.classifier.getNumFeatures)
-    println("PersonClassifier.classifier.getNetwork.size() = " + PersonClassifier.classifier.getNetwork.size())
-    println("PersonClassifier.classifier.getNetwork.toString = " + PersonClassifier.classifier.getNetwork.toString)
-    println("nonDefaultString = " + p.nonDefaultString())
-    println("getAllowableValues = " + p.baseLTU.getAllowableValues)
-    //val ltuArray = PersonClassifier.classifier.getNetwork.toArray.asInstanceOf[Array[LinearThresholdUnit]]
-    val ltu0 = PersonClassifier.classifier.getNetwork.toArray.apply(0).asInstanceOf[LinearThresholdUnit]
-    val ltu1 = PersonClassifier.classifier.getNetwork.toArray.apply(1).asInstanceOf[LinearThresholdUnit]
-
-
-    println("===========\n baseLTU = ")
-    printlnLTU(p.baseLTU)
-    println("===========")
-
-    println("===========\n ltuArray(0) = ")
-    printlnLTU(ltu0)
-    println("===========")
-
-    println("===========\n ltuArray(1) = ")
-    printlnLTU(ltu1)
-    println("===========")
-
-    def printlnLTU(ltu: LinearThresholdUnit): Unit ={
-      println("ltu.getBias = " + ltu.getBias)
-      println("ltu.getThreshold = " + ltu.getThreshold)
-      println("ltu.getInitialWeight = " + ltu.getInitialWeight)
-      println("ltu.getPositiveThickness = " + ltu.getPositiveThickness)
-      println("ltu.getNegativeThickness = " + ltu.getNegativeThickness)
-      println("ltu.getWeightVector.getWeights.size() = " + ltu.getWeightVector.getWeights.size())
-      println("ltu.getWeightVector.getWeights. = " + ltu.getWeightVector.getWeights.toArray.mkString("-"))
-    }*/
-
+    PersonClassifier.learn(iter)
+    println("==============================================")
+    println("Organization Classifier Evaluation")
+    OrganizationClassifier.learn(iter)
+    println("==============================================")
+    println("Location Classifier Evaluation")
+    LocationClassifier.learn(iter)
+    println("==============================================")
     testEntityModels()
     saveEntityModels()
 
-    // independent relation classifiers
-    //    println("=================================")
-    //    println("WorksFor Classifier Evaluation")
-    //    WorksForClassifier.crossValidation(foldSize)
-    //    println("=================================")
-    //    println("LivesIn Classifier Evaluation")
-    //    LivesInClassifier.crossValidation(foldSize)
-    //    println("=================================")
-    //
-    //    saveIndependentRelationModels()
+    println("==============================================")
+    println("WorkFor Classifier Evaluation")
+    WorksForClassifier.learn(iter)
+    println("==============================================")
+    println("LivesIn Classifier Evaluation")
+    LivesInClassifier.learn(iter)
+    println("==============================================")
+    println("LocatedIn Classifier Evaluation")
+    LocatedInClassifier.learn(iter)
+    println("==============================================")
+    println("OrgBasedIn Classifier Evaluation")
+    OrgBasedInClassifier.learn(iter)
+    println("==============================================")
+
+    testIndependentRelationModels()
+    saveIndependentRelationModels()
   }
 
-  def trainCVIndependentClassifiers() = {
-    EntityRelationDataModel.populateWithConll()
-    PersonClassifier.crossValidation(5, 5, saveModels = true)
-    PersonClassifier.test()
-  }
-
+  /** This function loads the classifiers trained in function [[trainIndependentClassifiers]] and evaluates on the
+    * test data.
+    */
   def testIndependentClassifiers() = {
     EntityRelationDataModel.populateWithConll()
     loadIndependentEntityModels()
-    //    println(PersonClassifier.classifier.getParameters.nonDefaultString())
-    //    println(PersonClassifier.classifier.getParameters.toString)
-    //    println()
-/*
-    val p = PersonClassifier.classifier.getParameters.asInstanceOf[SupportVectorMachine.Parameters]
-    val c = PersonClassifier.classifier.asInstanceOf[SupportVectorMachine]
-    println(c.getWeights.mkString("-"))
-    println(p.nonDefaultString())
-    println("p.bias = " + p.bias)
-    println("p.C = " + p.C)
-    println("p.displayLL = " + p.displayLL)
-    println("p.epsilon = " + p.epsilon)
-    println("p.solverType = " + p.solverType)
-    println("PersonClassifier.classifier.getNumClasses = " + PersonClassifier.classifier.getNumClasses)
-*/
-
-/*    val p = PersonClassifier.classifier.getParameters.asInstanceOf[SparseNetworkLearner.Parameters]
-    println("PersonClassifier.classifier.getNumExamples = " + PersonClassifier.classifier.getNumExamples)
-    println("PersonClassifier.classifier.getNumFeatures = " + PersonClassifier.classifier.getNumFeatures)
-    println("PersonClassifier.classifier.getNetwork.size() = " + PersonClassifier.classifier.getNetwork.size())
-    println("PersonClassifier.classifier.getNetwork.toString = " + PersonClassifier.classifier.getNetwork.toString)
-    println("nonDefaultString = " + p.nonDefaultString())
-    println("getAllowableValues = " + p.baseLTU.getAllowableValues)
-    //val ltuArray = PersonClassifier.classifier.getNetwork.toArray.asInstanceOf[Array[LinearThresholdUnit]]
-    val ltu0 = PersonClassifier.classifier.getNetwork.toArray.apply(0).asInstanceOf[LinearThresholdUnit]
-    val ltu1 = PersonClassifier.classifier.getNetwork.toArray.apply(1).asInstanceOf[LinearThresholdUnit]
-
-
-    println("===========\n baseLTU = ")
-    printlnLTU(p.baseLTU)
-    println("===========")
-
-    println("===========\n ltuArray(0) = ")
-    printlnLTU(ltu0)
-    println("===========")
-
-    println("===========\n ltuArray(1) = ")
-    printlnLTU(ltu1)
-    println("===========")
-
-    def printlnLTU(ltu: LinearThresholdUnit): Unit ={
-      println("ltu.getBias = " + ltu.getBias)
-      println("ltu.getThreshold = " + ltu.getThreshold)
-      println("ltu.getInitialWeight = " + ltu.getInitialWeight)
-      println("ltu.getPositiveThickness = " + ltu.getPositiveThickness)
-      println("ltu.getNegativeThickness = " + ltu.getNegativeThickness)
-      println("ltu.getWeightVector.getWeights.size() = " + ltu.getWeightVector.getWeights.size())
-      println("ltu.getWeightVector.getWeights. = " + ltu.getWeightVector.getWeights.toArray.mkString("-"))
-    }*/
-
-    tokensTest.slice(0, 20).foreach{tok => println(PersonClassifier.classifier.discreteValue(tok)) }
     testEntityModels()
-    println("PersonClassifier.classifier.demandLexicon().size() = " + PersonClassifier.classifier.demandLexicon().size())
+    loadIndependentRelationModels()
+    testIndependentRelationModels()
   }
 
   /** in this scenario the named entity recognizers are trained independently, and given to a relation classifier as
@@ -178,65 +79,55 @@ object EntityRelationApp {
     * then uses the prediction of entities in addition to other local features to learn the relation identifier.
     */
   def runPipelineTraining(): Unit = {
-    val foldSize = 5
     EntityRelationDataModel.populateWithConll()
 
-    println("Running CV " + foldSize)
-
-    // train independent classifiers
-    //    PersonClassifier.crossValidation(foldSize)
-    //    OrganizationClassifier.crossValidation(foldSize)
-    //    LocationClassifier.crossValidation(foldSize)
-    //    saveEntityModels()
-
-    PersonClassifier.load()
-    OrganizationClassifier.load()
-    LocationClassifier.load()
+    loadIndependentEntityModels()
 
     // train pipeline relation models, which use the prediction of the entity classifiers
-    WorksForClassifierPipeline.crossValidation(foldSize)
-    LivesInClassifierPipeline.crossValidation(foldSize)
-
+    val iter = 10
+    WorksForClassifierPipeline.learn(iter)
+    LivesInClassifierPipeline.learn(iter)
+    testPipelineModels()
     savePipelineRelationModels()
+  }
+
+  /** this function loads the models of the pipeline classifiers and evaluates them on the test data */
+  def testPipelineRelationModels(): Unit = {
+    EntityRelationDataModel.populateWithConll()
+    loadIndependentEntityModels()
+    loadPipelineRelationModels()
+    testPipelineModels()
   }
 
   /** In the scenario the classifiers are learned independently but at the test time we use constrained inference to
     * maintain structural consistency (which would justify the naming "Learning Plus Inference" (L+I).
     */
   def runLPlusI() {
-    val foldSize = 5
     EntityRelationDataModel.populateWithConll()
 
     // independent entity classifiers
-    PersonClassifier.learn(foldSize)
-    OrganizationClassifier.learn(foldSize)
-    LocationClassifier.learn(foldSize)
+    loadIndependentEntityModels()
 
     // independent relation classifiers
-    WorksForClassifier.learn(foldSize)
-    LivesInClassifier.learn(foldSize)
+    loadIndependentRelationModels()
 
     // test using the constraints
+    println("==============================================")
     println("Person Classifier Evaluation with training")
-    println("=================================")
     PerConstrainedClassifier.test(tokens())
-    println("=================================")
+    println("==============================================")
     println("Organization Classifier Evaluation")
-    println("=================================")
     OrgConstrainedClassifier.test(tokens())
-    println("=================================")
+    println("==============================================")
     println("Location Classifier Evaluation")
-    println("=================================")
     LocConstrainedClassifier.test(tokens())
-    println("=================================")
+    println("==============================================")
     println("WorkFor Classifier Evaluation")
-    println("=================================")
     WorksFor_PerOrg_ConstrainedClassifier.test(pairs())
-    println("=================================")
+    println("==============================================")
     println("LivesIn Classifier Evaluation")
-    println("=================================")
     LivesIn_PerOrg_relationConstrainedClassifier.test(pairs())
-    println("=================================")
+    println("==============================================")
   }
 
   /** here we meanwhile training classifiers, we use global inference, in order to overcome the poor local
@@ -247,16 +138,12 @@ object EntityRelationApp {
     val testRels = pairs.getTrainingInstances.toList
     val testTokens = tokens.getTrainingInstances.toList
 
-    val preTrainIteration = 1
+    // load pre-trained models
+    loadIndependentEntityModels()
+    loadIndependentRelationModels()
+
+    // joint training
     val jointTrainIteration = 5
-
-    println(s"Pre-train $preTrainIteration iterations.")
-    if (preTrainIteration > 0) {
-      OrganizationClassifier.learn(preTrainIteration)
-      PersonClassifier.learn(preTrainIteration)
-      LocationClassifier.learn(preTrainIteration)
-    }
-
     println(s"Joint training $jointTrainIteration iterations. ")
     JointTrain.train[ConllRelation](
       EntityRelationDataModel,

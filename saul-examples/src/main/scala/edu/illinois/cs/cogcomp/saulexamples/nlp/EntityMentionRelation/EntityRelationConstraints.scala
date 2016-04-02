@@ -4,7 +4,6 @@ import edu.illinois.cs.cogcomp.saul.classifier.ConstrainedClassifier
 import edu.illinois.cs.cogcomp.saul.constraint.ConstraintTypeConversion._
 import edu.illinois.cs.cogcomp.saulexamples.EntityMentionRelation.datastruct.{ ConllRawSentence, ConllRelation }
 import EntityRelationClassifiers._
-import scala.collection.JavaConverters._
 
 object EntityRelationConstraints {
 

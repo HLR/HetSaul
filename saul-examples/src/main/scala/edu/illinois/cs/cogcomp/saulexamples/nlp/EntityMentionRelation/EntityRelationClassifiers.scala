@@ -1,6 +1,6 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation
 
-import edu.illinois.cs.cogcomp.lbjava.learn.{StochasticGradientDescent, SupportVectorMachine, SparseNetworkLearner}
+import edu.illinois.cs.cogcomp.lbjava.learn.{ StochasticGradientDescent, SupportVectorMachine, SparseNetworkLearner }
 import edu.illinois.cs.cogcomp.saul.classifier.Learnable
 import edu.illinois.cs.cogcomp.saul.constraint.ConstraintTypeConversion._
 import edu.illinois.cs.cogcomp.saul.datamodel.property.Property
@@ -13,24 +13,25 @@ object EntityRelationClassifiers {
   object OrganizationClassifier extends Learnable[ConllRawToken](EntityRelationDataModel) {
     def label: Property[ConllRawToken] = entityType is "Org"
     override lazy val classifier = new SparseNetworkLearner()
-    override def feature = using(word, windowWithin[ConllRawSentence](-2, 2, List(pos)), phrase, containsSubPhraseMent,
-      containsSubPhraseIng, wordLen)
-    /* The gazetteer properties are temporarily removed: containsInPersonList, containsInCityList */
+    override def feature = using(word, windowWithin[ConllRawSentence](-2, 2, List(pos)), phrase,
+      containsSubPhraseMent, containsSubPhraseIng, wordLen)
+    // The gazetteer properties are temporarily removed: containsInPersonList, containsInCityList
   }
 
   object PersonClassifier extends Learnable[ConllRawToken](EntityRelationDataModel) {
     def label: Property[ConllRawToken] = entityType is "Peop"
-    override def feature = using(word) //, windowWithin[ConllRawSentence](-2, 2, List(pos)), phrase, containsSubPhraseMent,
-    //      containsSubPhraseIng, wordLen) // , containsInPersonList, , containsInCityList)*/
-    override lazy val classifier = new StochasticGradientDescent //new SparseNetworkLearner() //new SupportVectorMachine()
-    override val loggging = true
+    override def feature = using(word, windowWithin[ConllRawSentence](-2, 2, List(pos)), phrase,
+      containsSubPhraseMent, containsSubPhraseIng, wordLen)
+    override lazy val classifier = new SparseNetworkLearner()
+    // The gazetteer properties are temporarily removed: containsInPersonList, containsInCityList
   }
 
   object LocationClassifier extends Learnable[ConllRawToken](EntityRelationDataModel) {
     def label: Property[ConllRawToken] = entityType is "Loc"
     override def feature = using(word, windowWithin[ConllRawSentence](-2, 2, List(pos)), phrase, containsSubPhraseMent,
-      containsSubPhraseIng, wordLen) //, containsInPersonList, containsInCityList)*/
+      containsSubPhraseIng, wordLen)
     override lazy val classifier = new SparseNetworkLearner()
+    // The gazetteer properties are temporarily removed: containsInPersonList, containsInCityList
   }
 
   /** independent relation classifiers */
@@ -71,22 +72,22 @@ object EntityRelationClassifiers {
 
   def saveEntityModels() = {
     PersonClassifier.save()
-    //    OrganizationClassifier.save()
-    //    LocationClassifier.save()
+    OrganizationClassifier.save()
+    LocationClassifier.save()
   }
 
   def testEntityModels() = {
     println("Testing independent entity models: ")
-    println("===============================================")
+    println("==============================================")
     println("Person Classifier Evaluation")
     PersonClassifier.test()
-    //    println("===============================================")
-    //    println("Organization Classifier Evaluation")
-    //    OrganizationClassifier.test()
-    //    println("===============================================")
-    //    println("Location Classifier Evaluation")
-    //    LocationClassifier.test()
-    //    println("===============================================")
+    println("==============================================")
+    println("Organization Classifier Evaluation")
+    OrganizationClassifier.test()
+    println("==============================================")
+    println("Location Classifier Evaluation")
+    LocationClassifier.test()
+    println("==============================================")
   }
 
   def saveIndependentRelationModels() = {
@@ -97,17 +98,35 @@ object EntityRelationClassifiers {
   }
 
   def testIndependentRelationModels() = {
-
     println("Testing independent relation models: ")
+    println("==============================================")
+    println("WorksFor Classifier Evaluation")
     WorksForClassifier.test()
+    println("==============================================")
+    println("LivesIn Classifier Evaluation")
     LivesInClassifier.test()
+    println("==============================================")
+    println("LocatedIn Classifier Evaluation")
     LocatedInClassifier.test()
+    println("==============================================")
+    println("OrgBasedIn Classifier Evaluation")
     OrgBasedInClassifier.test()
   }
 
   def savePipelineRelationModels() = {
     WorksForClassifierPipeline.save()
     LivesInClassifierPipeline.save()
+  }
+
+  def testPipelineModels() = {
+    println("Testing pipeline relation models: ")
+    println("==============================================")
+    println("WorksFor Pipeline Classifier Evaluation")
+    WorksForClassifierPipeline.test()
+    println("==============================================")
+    println("LivesIn Pipeline Classifier Evaluation")
+    LivesInClassifierPipeline.test()
+    println("==============================================")
   }
 
   // Loads learned models from the "saul-conll-er-tagger-models" jar package
@@ -119,8 +138,8 @@ object EntityRelationClassifiers {
 
   def loadIndependentEntityModels(): Unit = {
     loadModel[ConllRawToken](PersonClassifier)
-    //    loadModel[ConllRawToken](OrganizationClassifier)
-    //    loadModel[ConllRawToken](LocationClassifier)
+    loadModel[ConllRawToken](OrganizationClassifier)
+    loadModel[ConllRawToken](LocationClassifier)
   }
 
   def loadIndependentRelationModels(): Unit = {
@@ -128,6 +147,11 @@ object EntityRelationClassifiers {
     loadModel[ConllRelation](LivesInClassifier)
     loadModel[ConllRelation](LocatedInClassifier)
     loadModel[ConllRelation](OrgBasedInClassifier)
+  }
+
+  def loadPipelineRelationModels(): Unit = {
+    loadModel[ConllRelation](WorksForClassifierPipeline)
+    loadModel[ConllRelation](LivesInClassifierPipeline)
   }
 }
 
