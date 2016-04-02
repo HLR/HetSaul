@@ -33,7 +33,7 @@ abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val dm: DataMo
   // TODO: add comments to this
   def filter(t: T, head: HEAD): Boolean = true
 
-  val log = true
+  val logger = false
 
   val pathToHead: Option[Edge[T, HEAD]] = None
 
@@ -56,15 +56,15 @@ abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val dm: DataMo
       val l = lst.toSet.toList
 
       if (l.isEmpty) {
-        if (log)
+        if (logger)
           println("Warning: Failed to find head")
         None
       } else if (l.size != 1) {
-        if (log)
+        if (logger)
           println("Find too many heads")
         Some(l.head)
       } else {
-        if (log)
+        if (logger)
           println(s"Found head ${l.head} for child $x")
         Some(l.head)
       }
@@ -82,7 +82,7 @@ abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val dm: DataMo
       }
 
       if (l.isEmpty) {
-        if (log)
+        if (logger)
           println("Failed to find part")
         l.toSeq
       } else {
@@ -98,7 +98,7 @@ abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val dm: DataMo
         var inference = InferenceManager.get(name, head)
         if (inference == null) {
           inference = infer(head)
-          if (log)
+          if (logger)
             println("Inference is NULL " + name)
           InferenceManager.put(name, inference)
         }
