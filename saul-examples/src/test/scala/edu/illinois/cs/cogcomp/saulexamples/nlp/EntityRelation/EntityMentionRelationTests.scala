@@ -1,6 +1,6 @@
-package edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation
+package edu.illinois.cs.cogcomp.saulexamples.nlp.EntityRelation
 
-import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityMentionRelation.EntityRelationClassifiers.{ LocationClassifier, OrganizationClassifier, PersonClassifier }
+import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityRelation.EntityRelationClassifiers.{ LocationClassifier, OrganizationClassifier, PersonClassifier }
 import org.scalatest._
 
 class EntityMentionRelationTests extends FlatSpec with Matchers {
