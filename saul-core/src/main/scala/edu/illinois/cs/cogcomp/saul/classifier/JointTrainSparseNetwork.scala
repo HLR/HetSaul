@@ -118,10 +118,10 @@ object JointTrainSparseNetwork {
                         }
                         // The idea is that when the prediction is wrong the LTU of the actual class should be promoted
                         // and the LTU of the predicted class should be demoted.
+                        val a = typedC.onClassifier.getExampleArray(x)
+
                         if (!result.equals(trueLabel)) //equals("true") && trueLabel.equals("false")   )
                         {
-
-                          val a = typedC.onClassifier.getExampleArray(x)
                           val a0 = a(0).asInstanceOf[Array[Int]] //exampleFeatures
                           val a1 = a(1).asInstanceOf[Array[Double]] // exampleValues
                           val exampleLabels = a(2).asInstanceOf[Array[Int]]
