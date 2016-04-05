@@ -99,6 +99,8 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
     IOUtils.rm(lexFilePath().getPath)
   }
 
+  /** This function prints a summary of the classifier
+    */
   def printlnModel(): Unit = {
     classifier.write(System.out)
   }
@@ -226,28 +228,24 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
 
   def forget() = this.classifier.forget()
 
-  case class Result(f1: Double, precision: Double, recall: Double)
-
-  def test(): List[(String, Result)] = {
+  def test(): List[(String, (Double, Double, Double))] = {
     isTraining = false
     val data = this.datamodel.getNodeWithType[T].getTestingInstances
     test(data)
   }
 
   /** Test with given data, use internally
-    *
     * @param testData
     * @return List of (label, (f1, precision, recall))
     */
-  def test(testData: Iterable[T]): List[(String, Result)] = {
+  def test(testData: Iterable[T]): List[(String, (Double, Double, Double))] = {
     isTraining = false
     val testReader = new LBJIteratorParserScala[T](testData)
     testReader.reset()
     val tester = TestDiscrete.testDiscrete(classifier, classifier.getLabeler, testReader)
     tester.printPerformance(System.out)
-    tester.getLabels.map { label =>
-      (label, Result(tester.getF1(label), tester.getPrecision(label), tester.getRecall(label)))
-    }.toList
+    val ret = tester.getLabels.map { label => (label, (tester.getF1(label), tester.getPrecision(label), tester.getRecall(label))) }
+    ret.toList
   }
 
   def testContinuos(): Unit = {
@@ -270,60 +268,84 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
     //ret toList
   }
 
+  def chunkData(ts: List[Iterable[T]], i: Int, curr: Int, acc: (Iterable[T], Iterable[T])): (Iterable[T], Iterable[T]) = {
+    ts match {
+      case head :: more =>
+        acc match {
+          case (train, test) =>
+            if (i == curr) {
+              // we found the test part
+              chunkData(more, i, curr + 1, (train, head))
+            } else {
+              chunkData(more, i, curr + 1, (head ++ train, test))
+            }
+        }
+      case Nil => acc
+    }
+  }
+
   /** Run k fold cross validation. */
-  def crossValidation(k: Int, numIterations: Int = 5, saveModels: Boolean = false): Unit = {
+  def crossValidation(k: Int) = {
     val allData = this.fromData
 
     if (loggging)
       println(s"Running cross validation on ${allData.size} data   ")
 
-    def splitIdx(i: Int): Int = i * allData.size / k
+    val groupSize = Math.ceil(allData.size / k).toInt
+    val groups = allData.grouped(groupSize).toList
 
-    /** generating k-fold test and train sets */
-    val trainAndTestDataList = {
-      (0 until k).map { fold =>
-        val (prefix, rest) = allData.splitAt(splitIdx(fold))
-        val (test, postfix) = rest.splitAt(splitIdx(fold + 1) - splitIdx(fold))
-        val train = prefix ++ postfix
-        (train, test)
+    val loops = if (k == 1) {
+      (groups.head, Nil) :: Nil
+    } else {
+      (0 until k) map {
+        i => chunkData(groups, i, 0, (Nil, Nil))
       }
     }
 
-    val results = trainAndTestDataList.zipWithIndex.flatMap {
+    def printTestResult(result: (String, (Double, Double, Double))): Unit = {
+      result match {
+        case (label, (f1, precision, recall)) =>
+          println(s"  $label    $f1    $precision     $recall   ")
+      }
+    }
+
+    val results = loops.zipWithIndex map {
       case ((trainingSet, testingSet), idx) =>
         println(s"Running fold $idx")
         println(s"Learn with ${trainingSet.size}")
         println(s"Test with ${testingSet.size}")
 
         this.classifier.forget()
-        this.learn(numIterations, trainingSet)
-        if (saveModels) {
-          classifier.setModelLocation(lcFilePath(s"-crosValidation-k=$k-fold=$idx"))
-          classifier.setLexiconLocation(lexFilePath(s"-crosValidation-k=$k-fold=$idx"))
-          this.save()
-        }
-        this.test(testingSet)
+        this.learn(10, trainingSet)
+        val testResult = this.test(testingSet)
+        testResult
     }
 
-    def resultToList(someResult: Result): List[Double] = {
-      List(someResult.f1, someResult.precision, someResult.recall)
+    def sumTuple(a: (Double, Double, Double), b: (Double, Double, Double)): (Double, Double, Double) = {
+      (a._1 + b._1, a._2 + b._2, a._3 + b._3)
+    }
+
+    def avgTuple(a: (Double, Double, Double), size: Int): (Double, Double, Double) = {
+      (a._1 / size, a._2 / size, a._3 / size)
     }
 
     println("  label    f1    precision     recall   ")
 
-    results.groupBy { case (label: String, _) => label }.mapValues { labelAndResult =>
-      val (label, result) = labelAndResult.unzip
-      val length = labelAndResult.length
-      val avgResult = result.map(resultToList).transpose.map(_.sum / length)
-      println(s"  $label    ${avgResult(0)}    ${avgResult(1)}     ${avgResult(2)}   ")
-    }
+    results.flatten.toList.groupBy({
+      tu: (String, (Double, Double, Double)) => tu._1
+    }).foreach({
+      case (label, l) =>
+        val t = l.length
+        val avg = avgTuple(l.map(_._2).reduce(sumTuple), t)
+
+        printTestResult((label, avg))
+    })
   }
 
   /** Label property foor users classifier */
   def label: Property[T]
 
   /** A windows of properties
-    *
     * @param before always negative (or 0)
     * @param after always positive (or 0)
     */
