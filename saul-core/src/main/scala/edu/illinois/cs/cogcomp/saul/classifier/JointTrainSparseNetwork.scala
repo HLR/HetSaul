@@ -1,8 +1,8 @@
 package edu.illinois.cs.cogcomp.saul.classifier
 
-import edu.illinois.cs.cogcomp.lbjava.learn.{Learner, LinearThresholdUnit}
+import edu.illinois.cs.cogcomp.lbjava.learn.{ Learner, LinearThresholdUnit }
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
-import org.slf4j.{Logger, LoggerFactory}
+import org.slf4j.{ Logger, LoggerFactory }
 
 import scala.reflect.ClassTag
 /** Created by Parisa on 5/22/15.
@@ -80,12 +80,12 @@ object JointTrainSparseNetwork {
                       def trainOnce() = {
 
                         val result = typedC.classifier.discreteValue(x)
-//                        val exampleArray = typedC.onClassifier.getExampleArray(x, true);
-//                        val simpleResult = typedC.onClassifier.discreteValue( exampleArray(0).asInstanceOf[Array[Int]], exampleArray(1).asInstanceOf[Array[Double]]);
-//                        println("Constrained Result=", result, "Simple Result", simpleResult)
-//                        if (!simpleResult.equals(result)) {
-//                          difference = difference + 1
-//                        }
+                        //                        val exampleArray = typedC.onClassifier.getExampleArray(x, true);
+                        //                        val simpleResult = typedC.onClassifier.discreteValue( exampleArray(0).asInstanceOf[Array[Int]], exampleArray(1).asInstanceOf[Array[Double]]);
+                        //                        println("Constrained Result=", result, "Simple Result", simpleResult)
+                        //                        if (!simpleResult.equals(result)) {
+                        //                          difference = difference + 1
+                        //                        }
 
                         //                  val result =  typedC.classifier.discreteValue(x)
                         //
