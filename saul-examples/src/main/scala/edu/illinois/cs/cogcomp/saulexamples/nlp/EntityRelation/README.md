@@ -271,7 +271,7 @@ or in your sbt:
 ```
 
 And then call the classifiers: 
-```
+```scala
 import edu.illinois.cs.cogcomp.saulexamples.EntityMentionRelation.datastruct.{ConllRawSentence, ConllRawToken}
 import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityRelation._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityRelation.EntityRelationClassifiers.{LocationClassifier, PersonClassifier}
