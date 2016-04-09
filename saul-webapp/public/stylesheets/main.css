@@ -67,6 +67,9 @@ input[type="text"], textarea {
     background-color: blue;
     height: 5px;
 }
+#pbar{
+    margin-top: 20px;
+}
 
 .well2{
     margin-left: 5px;

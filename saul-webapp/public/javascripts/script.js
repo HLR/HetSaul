@@ -655,8 +655,8 @@ var generateSchemaGraphFromJson = function(data){
 var displayOutput = function(data) {
     $("#tab3").addClass("active");
     $("#tab3").html('')
-    var info = $("<p></p>").text("info: \n" + data["info"]);
-    var error = $("<p style='color:red;'></p>").text("error: \n" + data["error"]);
+    var info = $("<p></p>").text("Info: \n" + data["stdout"]);
+    var error = $("<p style='color:red;'></p>").text("Error: \n" + data["stderr"]);
     $("#tab3").append(info);
     $("#tab3").append(error);
 }
@@ -710,8 +710,7 @@ var onRunSuccess = function(data) {
     $("#pbar").hide();
     alertError(data);
     $("#gtab3").click();
-    changeTab("tab3");
-    
+    displayOutput(data);
 }
 
 var onQuerySuccess = function(data) {
@@ -725,12 +724,12 @@ var onVisualizeSuccess = function(data) {
     generateSchemaGraphFromJson(data['dataModelSchema']);
 
     if(data['populatedModel'] != null){
-             $("#gtab2").click();
-     generatePopulatedGraphFromJson(data['populatedModel']);
+        $("#gtab2").click();
+        generatePopulatedGraphFromJson(data['populatedModel']);
 
     }  
     if(data['log'] != null){ 
-                $("#gtab3").click();
+        ("#gtab3").click();
         displayOutput(data['log']);
 
     }
