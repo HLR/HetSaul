@@ -9,11 +9,7 @@ body, html {
     height:100%;
     width: auto;
 }
-.recenter{
-    float: right;
-    height: 50px;
-    width: 50px;
-}
+
 #right_col {
     float:right;
     width:49%;
@@ -77,22 +73,22 @@ input[type="text"], textarea {
     min-height: 20px;
 }
 
-    li.active a, li.active a:hover {
-        background:#fff;
-        color:#4c4c4c;
-    }
+li.active a, li.active a:hover {
+    background:#fff;
+    color:#4c4c4c;
+}
 
-    /*----- Content of Tabs -----*/
-    .tab-content {
-        border-radius:3px;
-        box-shadow:-1px 1px 1px rgba(0,0,0,0.15);
-        background:#fff;
-    }
+/*----- Content of Tabs -----*/
+.tab-content {
+    border-radius:3px;
+    box-shadow:-1px 1px 1px rgba(0,0,0,0.15);
+    background:#fff;
+}
 
-        .tab {
-            display:none;
-        }
+.tab {
+    display:none;
+}
 
-        .tab.active {
-            display:block;
-        }
+.tab.active {
+    display:block;
+}

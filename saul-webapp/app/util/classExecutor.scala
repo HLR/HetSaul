@@ -33,8 +33,8 @@ object classExecutor {
     var outBuffer = List[String]()
     var errBuffer = List[String]()
     val outputLogger = ProcessLogger(
-      (line: String) => { outBuffer = outBuffer :+ line },
-      (line: String) => { errBuffer = errBuffer :+ line }
+      (line: String) => { outBuffer = outBuffer :+ (line+"\n")},
+      (line: String) => { errBuffer = errBuffer :+ (line+"\n")}
     )
     val status = cmd ! outputLogger
     (outBuffer, errBuffer, status)

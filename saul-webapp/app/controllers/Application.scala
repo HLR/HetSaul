@@ -286,7 +286,7 @@ class Application extends Controller {
     }
 
     def displayPrompt {
-      // no.
+      // Nothing for now
     }
 
     override def reset {

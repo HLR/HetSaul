@@ -19,7 +19,8 @@
             routes.javascript.Application.acceptQuery,
             routes.javascript.Application.visualize
         )
-        <script src="@routes.Assets.versioned("javascripts/script.js")" type="text/javascript"></script>
+        <script src="@routes.Assets.versioned("javascripts/main.js")" type="text/javascript"></script>
+        <script src="@routes.Assets.versioned("javascripts/graph.js")" type="text/javascript"></script>
         <script src="@routes.Assets.versioned("javascripts/ace/ace.js")" type="text/javascript" charset="utf-8"></script>
         <script src="@routes.Assets.versioned("javascripts/ace/mode-scala.js")" type="text/javascript" charset="utf-8"></script>
         <script src="@routes.Assets.versioned("javascripts/ace/mode-java.js")" type="text/javascript" charset="utf-8"></script>
@@ -122,10 +123,10 @@
                     <button type="query" class="btn btn-default" id="queryBtn">Query</button>
                 </div>
                 <div style="text-align: center">
-                    <button type="compile" class="btn btn-default" id="compileBtn">Compile</button>
+                    <button type="compile" class="btn btn-default" id="compileBtn">Schema</button>
                     <!--<button type="stop" class="btn btn-default">Stop</button>-->
                     <button type="populate" class="btn btn-default" id="populateBtn">Populate</button>
-                    <button type="run" class="btn btn-default" id="runBtn">Run</button>
+                    <button type="run" class="btn btn-default" id="runBtn">Console Output</button>
                     <button type="visualize" class="btn btn-default" id="visualizeBtn">Visualize all</button>
                 </div>
             </div>
@@ -141,7 +142,7 @@
                 <div class="tab-content">
                     <div id="tab1" class="tab active">
                         <div class="panel panel-default">
-                        	<div class="alert alert-success nodevalue" id="nodevalue" role="showvalue"><span class="text" id="nodetext1"></span><div class="btn btn-success recenter"><span class="glyphicon glyphicon-screenshot" aria-hidden="true"></span></div></div>
+                        	<div class="alert alert-success nodevalue" id="nodevalue" role="showvalue"><span class="text" id="nodetext1"></span></div>
                             <div class="panel-body" id="graphParent1" style="height: 350px; text-align: center">
                                 <div id="schemaGraphContainer"></div>
                             </div>
@@ -150,7 +151,7 @@
 
                     <div id="tab2" class="tab">
                         <div class="panel panel-default">
-                            <div class="alert alert-success nodevalue" id="nodevalue2" role="showvalue"><span class="text" id="nodetext2"></span><div class="btn btn-success recenter"><span class="glyphicon glyphicon-screenshot" aria-hidden="true"></span></div></div>
+                            <div class="alert alert-success nodevalue" id="nodevalue2" role="showvalue"><span class="text" id="nodetext2"></span></div>
                             <div class="panel-body" id="graphParent2" style="height: 350px; text-align: center">
                                 <div id="populatedGraphContainer"></div>
 

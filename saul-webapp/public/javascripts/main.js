@@ -1,85 +1,18 @@
-var colors = ["#000000", "#FFFF00", "#1CE6FF", "#FF34FF", "#FF4A46", "#008941", "#006FA6", "#A30059",
-        "#FFDBE5", "#7A4900", "#0000A6", "#63FFAC", "#B79762", "#004D43", "#8FB0FF", "#997D87"];
-
 $(document).ready(function(){
+
     installGraphsTabClick();
+    installLeftPanelClick();
+
     $("#hoverBar").click(function() {
         $('.page-header').toggle();
     });
-  sigma.classes.graph.addMethod('neighbors', function(nodeId) {
-    var k,
-        neighbors = {},
-        index = this.allNeighborsIndex[nodeId] || {};
+    $("#errors").hide();
 
-    for (k in index)
-      neighbors[k] = this.nodesIndex[k];
+    setupExamples();
 
-    return neighbors;
-  });
+})
 
-        $("#errors").hide();
-        setEditor("editor1","scala"); 
-        $("#fileList").children("li").each(function(){
-            installTabClickedAction($(this));
-        });
-
-        $("#selectedFile").change(function() {
-            if (!window.FileReader) {
-                alert('Your browser is not supported');
-                return false;
-            }
-            var input = $("#selectedFile").get(0);
-
-            // Create a reader object
-            var reader = new FileReader();
-            if (input.files.length) {
-                var textFile = input.files[0];
-                // Read the file
-                reader.readAsText(textFile);
-                // When it's loaded, process it
-                $(reader).on('load', processFile);
-            }else {
-                alert('Please upload a file before continuing')
-            } 
-        });
-
-        $("#compileBtn").click(function(){
-            updateCode(0);
-        });
-
-        $("#populateBtn").click(function(){
-            updateCode(1);
-        });
-
-        $("#runBtn").click(function() {
-            updateCode(2);
-        });
-
-        $("#queryBtn").click(function() {
-            updateCode(3);
-        });
-
-        $("#visualizeBtn").click(function() {
-            updateCode(-1);
-        });
-
-        $("#newmodel").click(function(){
-            var content = ["package test","","import edu.illinois.cs.cogcomp.saul.datamodel.DataModel","","object $$$$$$ extends DataModel {","","}"];
-             newFile(content);
-        });
-        $("#newcla").click(function(){
-             var content = ["package test","","import edu.illinois.cs.cogcomp.saul.classifier.Learnable","","object $$$$$$ {","","    object $$$$$$Classifier extends Learnable[???](yourDataModel) {","    ","    }","}"];
-             newFile(content);
-        });
-        $("#newapp").click(function(){
-             var content = ["package test","","object $$$$$$ {","","    def main(args: Array[String]) {","    ","    }","}"];
-             newFile(content);
-        });
-
-        $("#deleteFile").click(function(){
-            deleteFile();
-        });
-
+var setupExamples = function(){
         $("#ToyExample").click(function(){
             deleteAllFiles();
             var content = ["package test","","import edu.illinois.cs.cogcomp.saul.datamodel.DataModel","import logging.logger.{ error, info }", "","object $$$$$$ extends DataModel {","","    val firstNames = node[String]","    val lastNames = node[String]","    val name = edge(firstNames,lastNames)","    val prefix = property(firstNames,\"prefix\")((s: String) => s.charAt(1).toString)","    val prefix2 = property(firstNames,\"prefix\")((s: String) => s.charAt(0).toString)","","    def main(args : Array[String]): Unit ={","        firstNames.populate(Seq(\"Dave\",\"John\",\"Mark\",\"Michael\"))","        lastNames.populate(Seq(\"Dell\",\"Jacobs\",\"Maron\",\"Mario\"))","        name.populateWith(_.charAt(0) == _.charAt(0))","    }","}"];
@@ -143,7 +76,69 @@ $(document).ready(function(){
         });
 
 */
-})
+}
+
+var installLeftPanelClick = function(){
+    setEditor("editor1","scala"); 
+    $("#fileList").children("li").each(function(){
+        installTabClickedAction($(this));
+    });
+
+    $("#selectedFile").change(function() {
+        if (!window.FileReader) {
+            alert('Your browser is not supported');
+            return false;
+        }
+        var input = $("#selectedFile").get(0);
+
+        var reader = new FileReader();
+        if (input.files.length) {
+            var textFile = input.files[0];
+
+            reader.readAsText(textFile);
+            $(reader).on('load', processFile);
+        }else {
+            alert('Please upload a file before continuing')
+        } 
+    });
+
+    $("#compileBtn").click(function(){
+        updateCode(0);
+    });
+
+    $("#populateBtn").click(function(){
+        updateCode(1);
+    });
+
+    $("#runBtn").click(function() {
+        updateCode(2);
+    });
+
+    $("#queryBtn").click(function() {
+        updateCode(3);
+    });
+
+    $("#visualizeBtn").click(function() {
+        updateCode(-1);
+    });
+
+    $("#newmodel").click(function(){
+        var content = ["package test","","import edu.illinois.cs.cogcomp.saul.datamodel.DataModel","","object $$$$$$ extends DataModel {","","}"];
+        newFile(content);
+    });
+    $("#newcla").click(function(){
+        var content = ["package test","","import edu.illinois.cs.cogcomp.saul.classifier.Learnable","","object $$$$$$ {","","    object $$$$$$Classifier extends Learnable[???](yourDataModel) {","    ","    }","}"];
+        newFile(content);
+    });
+    $("#newapp").click(function(){
+        var content = ["package test","","object $$$$$$ {","","    def main(args: Array[String]) {","    ","    }","}"];
+        newFile(content);
+    });
+
+    $("#deleteFile").click(function(){
+        deleteFile();
+    });
+}
 function installGraphsTabClick(){
     $("#gtabs").children("li").each(function(){
         $(this).click(function(){
@@ -175,16 +170,15 @@ var deleteAllFiles = function(){
     }
 }
 var deleteFile = function(){
-                //switch to other tabs
-            $("#fileList").children(".active").each(function(){
-                $(this).remove();
-            });
-            $("#workspace").children(".active").each(function(){
-                $(this).remove();
-            });
-            $("#fileList").children("li").first().addClass("active");
-            $("#workspace").children().first().addClass("active");
-            $("#workspace").children().first().show();
+    $("#fileList").children(".active").each(function(){
+        $(this).remove();
+    });
+    $("#workspace").children(".active").each(function(){
+        $(this).remove();
+    });
+    $("#fileList").children("li").first().addClass("active");
+    $("#workspace").children().first().addClass("active");
+    $("#workspace").children().first().show();
 
 }
 var setEditor = function(editorId,mode, content){
@@ -300,7 +294,7 @@ var installTabClickedAction = function(tab){
                 $(this).removeClass("active");
                 $(this).hide(); 
             })
-//            $("#code"+idx).addClass("active");
+
             $("#editor"+idx).show();
             $("#editor"+idx).addClass("active");
             ace.edit("editor"+idx).focus();
@@ -369,289 +363,6 @@ var updateCode = function(event){
         });
 };
 
-var enableColoringNeighbors = function(s){
-    s.graph.nodes().forEach(function(n) {
-        n.originalColor = n.color;
-    });
-    s.graph.edges().forEach(function(e) {
-        e.originalColor = e.color;
-    });
-
-      // When a node is clicked, we check for each node
-      // if it is a neighbor of the clicked one. If not,
-      // we set its color as grey, and else, it takes its
-      // original color.
-      // We do the same for the edges, and we only keep
-      // edges that have both extremities colored.
-
-    s.bind('clickNode', function(e) {
-
-        var nodeId = e.data.node.id,
-            toKeep = s.graph.neighbors(nodeId);
-        toKeep[nodeId] = e.data.node;
-
-        s.graph.nodes().forEach(function(n) {
-          if (toKeep[n.id])
-            n.color = n.assignedColor;
-          else
-            n.color = '#eee';
-        });
-
-        s.graph.edges().forEach(function(e) {
-          if (toKeep[e.source] && toKeep[e.target])
-            e.color = e.assignedColor;
-          else
-            e.color = '#eee';
-        });
-        s.refresh();
-    });
-
-    s.bind('clickStage', function(e) {
-        s.graph.nodes().forEach(function(n) {
-          n.color = n.originalColor;
-        });
-
-        s.graph.edges().forEach(function(e) {
-          e.color = e.originalColor;
-        });
-
-        // Same as in the previous event:
-        s.refresh();
-    });
-}
-var generatePopulatedGraphFromJson = function(jsonData) {
-
-    $('#populatedGraphContainer').remove();
-    $('#graphParent2').html('<div id="populatedGraphContainer"></div>');
-    var s = new sigma({renderer: {
-        container: document.getElementById('populatedGraphContainer'),
-        type: 'canvas'
-    },
-        settings: {
-        edgeLabelSize: 'proportional',
-        labelThreshold: 10
-    }});
-
-    $('#graphParent2').parent().find(".recenter").click(function(){
-        generatePopulatedGraphFromJson(jsonData);
-    });
-    s.bind('overNode',function(e){
-        $("#nodetext2").text(e.data.node.label);
-    });
-    var dragListener = sigma.plugins.dragNodes(s, s.renderers[0]);
-    /*dragListener.bind('drag', function(event) {
-        s.graph.neighbors(event.node.id).forEach(function(e) {
-            e.x = event.node.x;
-            e.y = event.node.y;
-        })
-    });
-*/
-
-    var data = jsonData['full']
-    var selectedData = jsonData['selected']
-    var nodeId = 0;
-    var nodeDict = {};
-    var nodePropertyCount = {};
-    var totalNumNodes = 0;
-    for(var nodeGroup in data['nodes']) {
-        totalNumNodes += data['nodes'][nodeGroup].length;
-    }
-
-    var getNodeByLabel = function(label){
-        var id = nodeDict[label];
-        return s.graph.nodes(id);
-    }
-    var selectedNodes = {}
-    var selectedProps = {}
-    var nodeGroupCount = 0;
-    for(var nodeGroup in data['nodes']) {
-        nodeGroupCount++;
-        for(var node in data['nodes'][nodeGroup]) {
-            var nodeValue = data['nodes'][nodeGroup][node]
-            nodePropertyCount[nodeValue] = 0;
-            var curId = ++nodeId
-            nodeDict[nodeValue] = 'n' + curId;
-            var nodeColor = colors[nodeGroupCount % colors.length]
-            if(selectedData != null) {
-                if(!(nodeGroup in selectedData['nodes'])) {
-                    nodeColor = '#eee'
-                } else {
-                    if($.inArray(nodeValue, selectedData['nodes'][nodeGroup]) == -1) {
-                        nodeColor = '#eee'
-                    } else {
-                        selectedNodes['n' + curId] = true
-                        selectedProps[nodeValue] = selectedData['properties'][nodeValue]
-                    }
-                }
-            }
-            s.graph.addNode({
-                id: 'n' + nodeId,
-                label: data['nodes'][nodeGroup][node],
-                size: 3,
-                x: (totalNumNodes > 30 ? 3*(3+(nodeId / 30)) : 1) * Math.cos(2 * nodeId * Math.PI / (totalNumNodes > 30 ? 30 : totalNumNodes)),
-                y: (totalNumNodes > 30 ? 3*(3+(nodeId / 30)) : 1) * Math.sin(2 * nodeId * Math.PI / (totalNumNodes > 30 ? 30 : totalNumNodes)),
-                color: nodeColor,
-                assignedColor: colors[nodeGroupCount % colors.length]
-            });
-            
-        };
-    };
-
-    var edgeId = 0;
-    for(var source in data['edges']) {
-        for(var targetNode in data['edges'][source]) {
-            var edgeColor = s.graph.nodes(nodeDict[source]).color
-            if(s.graph.nodes(nodeDict[data['edges'][source][targetNode]]).color == '#eee') {
-                edgeColor = '#eee'
-            }
-            s.graph.addEdge({
-                id: 'e' + edgeId++,
-                source: nodeDict[source],
-                target: nodeDict[data['edges'][source][targetNode]],
-                type: 'curve',
-                color: edgeColor
-            });
-        }
-    };
-
-    var propertyCount = 0
-    for(var node in data['properties']){
-        for(var propertyIndex in data['properties'][node]){
-            for(var pI in data['properties'][node][propertyIndex]){
-            propertyCount ++;
-            ++nodePropertyCount[node];
-            var nodeColor = colors[propertyCount % colors.length]
-            //If this property is not associated with a node that's queried
-            if(selectedData != null) {
-                if(!(nodeDict[node] in selectedNodes)) {
-                    nodeColor = '#eee'
-                } else {
-                    //If this property is not the queried property
-                    if(!(node in selectedProps)) {
-                        nodeColor = '#eee'
-                    } else {
-                        var find = false
-                        for(var i in selectedProps[node]) {
-                            if(pI in selectedProps[node][i]) {
-                                find = true
-                                break
-                            }
-                        }
-                        if(!find) {
-                            nodeColor = '#eee'
-                        }
-                    }
-                }
-            }
-            var parentNode = getNodeByLabel(node);
-            s.graph.addNode({
-                id: 'p' + propertyCount,
-                label: pI+": "+data['properties'][node][propertyIndex][pI],
-                size: 1,
-                x: parentNode.x + 1 * Math.cos(2 * nodePropertyCount[node] * Math.PI / 6),
-                y: parentNode.y + 1 * Math.sin(2 * nodePropertyCount[node] * Math.PI / 6),
-                color: nodeColor,
-                assignedColor: colors[propertyCount % colors.length]
-            });
-            var edgeColor = s.graph.nodes(nodeDict[node]).color
-            if(nodeColor == '#eee') {
-                edgeColor = '#eee'
-            }
-            s.graph.addEdge({
-                id: 'e'+ edgeId++,
-                source: nodeDict[node],
-                target: 'p' + propertyCount,
-                type: 'curve',
-                color: edgeColor,
-                assignedColor: s.graph.nodes(nodeDict[node]).assignedColor
-            });
-            }
-        }
-    }
-
-    enableColoringNeighbors(s);
-    s.refresh();
-    $("#populatedGraphContainer").css("position","absolute");
-}
-
-var generateSchemaGraphFromJson = function(data){
-
-    $('#schemaGraphContainer').remove();
-    $('#graphParent1').html('<div id="schemaGraphContainer"></div>');
-    var s = new sigma({renderer: {
-        container: document.getElementById('schemaGraphContainer'),
-        type: 'canvas'
-    },
-        settings: {
-        edgeLabelSize: 'proportional',
-        labelThreshold: 0
-    }});
-
-    $('#graphParent1').parent().find(".recenter").click(function(){
-        generateSchemaGraphFromJson(data);
-    });
-    s.bind('overNode',function(e){
-        $("#nodetext1").text(e.data.node.label);
-    });
-    var dragListener = sigma.plugins.dragNodes(s, s.renderers[0]);
-    var nodeId = 0;
-    var nodeDict = {};
-    var nodePropertyCount = {};
-
-    for(var node in data['nodes']){
-        nodePropertyCount[data['nodes'][node]] = 0;
-        nodeDict[data['nodes'][node]] = 'n'+ ++nodeId;
-        s.graph.addNode({
-            id: 'n'+ nodeId,
-            label: data['nodes'][node],
-            size: 3,
-            x: Math.cos(2 * nodeId * Math.PI / data['nodes'].length),
-            y: Math.sin(2 * nodeId * Math.PI / data['nodes'].length),
-            color: "#ec5148"
-        });
-    };
-
-    var edgeId = 0;
-    for(var edge in data['edges']){
-        s.graph.addEdge({
-            id: 'e'+ edgeId++,
-            // Reference extremities:
-            source: nodeDict[data['edges'][edge][0]],
-            target: nodeDict[data['edges'][edge][1]],
-            type: 'curve'
-        });
-    };
-
-    var getNodeByLabel = function(label){
-        var id = nodeDict[label];
-        return s.graph.nodes(id);
-    }
-
-    //generate properties nodes and edges
-    for(var property in data['properties']){
-        ++nodePropertyCount[data['properties'][property]];
-        var parentNode = getNodeByLabel(data['properties'][property]);
-        s.graph.addNode({
-            id: 'p' + property + nodePropertyCount[data['properties'][property]],
-            label: property,
-            size: 1,
-            x: parentNode.x + 0.5 * Math.cos(2 * nodePropertyCount[data['properties'][property]] * Math.PI / 6),
-            y: parentNode.y + 0.5 * Math.sin(2 * nodePropertyCount[data['properties'][property]] * Math.PI / 6),
-            color: "#0000ff"
-        });
-        s.graph.addEdge({
-            id: 'e'+ edgeId++,
-            source: nodeDict[data['properties'][property]],
-            target: 'p' + property + nodePropertyCount[data['properties'][property]],
-            type: 'curve'
-        });
-    }
-
-    enableColoringNeighbors(s);
-    s.refresh();
-    $("#schemaGraphContainer").css("position","absolute");
-}
-
 var displayOutput = function(data) {
     $("#tab3").addClass("active");
     $("#tab3").html('')
@@ -661,13 +372,6 @@ var displayOutput = function(data) {
     $("#tab3").append(error);
 }
 
-jQuery(document).ready(function() {
-    $('.tabs .tab-links a').on('click', function(e)  {
-        var currentAttrValue = jQuery(this).attr('href');
-        changeTab(currentAttrValue)
-        e.preventDefault();
-    });
-});
 
 var alertError = function(data) {
     alert(JSON.stringify(data));
