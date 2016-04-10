@@ -200,9 +200,7 @@ class Application extends Controller {
           case _ => false
         }) match {
           case Some(x) => x match {
-            case model: DataModel => {
-              dataModelJsonInterface.getPopulatedInstancesJson(model)
-            }
+            case model: DataModel => dataModelJsonInterface.getPopulatedInstancesJson(model)
             case _ => getErrorJson(Json.toJson("Error"))
           }
           case _ => getErrorJson(Json.toJson("No DataModel found."))

@@ -9,9 +9,6 @@ object classExecutor {
   def containsMain(clazz: Any): Boolean = {
     clazz match {
       case ob: Object => {
-        for (method <- ob.getClass.getMethods()) {
-          //println(method.getName)
-        }
         val mainEntry = ob.getClass.getMethods find (x => x.getName eq "main")
         mainEntry match {
           case Some(x) => true
@@ -33,8 +30,8 @@ object classExecutor {
     var outBuffer = List[String]()
     var errBuffer = List[String]()
     val outputLogger = ProcessLogger(
-      (line: String) => { outBuffer = outBuffer :+ (line+"\n")},
-      (line: String) => { errBuffer = errBuffer :+ (line+"\n")}
+      (line: String) => { outBuffer = outBuffer :+ (line + "\n") },
+      (line: String) => { errBuffer = errBuffer :+ (line + "\n") }
     )
     val status = cmd ! outputLogger
     (outBuffer, errBuffer, status)
