@@ -108,10 +108,6 @@ final class Compiler(rootDir: String, completeClasspath: String, reporterCallbac
     // Load and instantiate compiled class.
     val name = fileName.split('.')
     val runtimeMirror = universe.runtimeMirror(classLoader)
-    //val clazz = classLoader.loadClass(packageName + "." + name(0))
-    //val constructor = clazz.getConstructor()
-    //constructor.setAccessible(true)
-    //val instance = constructor.newInstance()
     try {
 
       val module = runtimeMirror.staticModule(packageName + "." + name(0))

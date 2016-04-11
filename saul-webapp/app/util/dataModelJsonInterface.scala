@@ -101,8 +101,7 @@ object dataModelJsonInterface {
       }
       edgesJson
     }
-
-    //TODO: make it generic for filtered properties also
+    1
     def buildPropertiesJson(nodes: Array[(String, AnyRef)]): List[(String, Map[String, String])] = {
       var propertiesJson = List[(String, Map[String, String])]()
       for (p <- properties) {
@@ -191,7 +190,6 @@ object dataModelJsonInterface {
       "nodes" -> JsArray(nodes.map(node => JsString(node.getName))),
       "edges" -> Json.toJson(edgesDict),
       "properties" -> Json.toJson(propertyDict)
-
     ))
 
     json
