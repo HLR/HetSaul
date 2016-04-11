@@ -58,12 +58,12 @@ public class GazeteerReader {
 	
 	public boolean testMembership(String[] cand){
 		String[] phrases;
-		for(int i=0;i<listGazet.size();i++){
-			phrases=listGazet.get(i).split(" |\n|\t");
-			if(phrases.length!=cand.length) return false;
-			
-			for(int j=0;j<cand.length;j++){
-				if(!phrases[j].equals(cand[j])){
+		for (String aListGazet : listGazet) {
+			phrases = aListGazet.split(" |\n|\t");
+			if (phrases.length != cand.length) return false;
+
+			for (int j = 0; j < cand.length; j++) {
+				if (!phrases[j].equals(cand[j])) {
 					return false;
 				}
 			}
@@ -80,7 +80,6 @@ public class GazeteerReader {
 	
 	public boolean subArray(String[] big, String[] small, int index){
 		for(int i=0;i<small.length;i++){
-		
 			if(!big[i+index].equals(small[i])){
 				return false;
 			}
@@ -89,12 +88,11 @@ public class GazeteerReader {
 	}
 	
 	public boolean containsAny(ConllRawToken ct){
-		String[] temp1,temp2;
-		temp2=ct.getWords(true);
-		for(int i=0;i<listWords.size();i++){
-			temp1=listWords.get(i);
-			for(int j=0;j<=temp2.length-temp1.length;j++){
-				if(subArray(temp2,temp1,j)){
+		String[] temp1, temp2 = ct.getWords(true);
+		for (String[] listWord : listWords) {
+			temp1 = listWord;
+			for (int j = 0; j <= temp2.length - temp1.length; j++) {
+				if (subArray(temp2, temp1, j)) {
 					return true;
 				}
 			}
@@ -105,10 +103,10 @@ public class GazeteerReader {
 	public boolean isContainedIn(ConllRawToken ct){
 		String[] temp1,temp2;
 		temp2=ct.getWords(true);
-		for(int i=0;i<listWords.size();i++){
-			temp1=listWords.get(i);
-			for(int j=0;j<=temp1.length-temp2.length;j++){
-				if(subArray(temp1,temp2,j)){
+		for (String[] listWord : listWords) {
+			temp1 = listWord;
+			for (int j = 0; j <= temp1.length - temp2.length; j++) {
+				if (subArray(temp1, temp2, j)) {
 					return true;
 				}
 			}

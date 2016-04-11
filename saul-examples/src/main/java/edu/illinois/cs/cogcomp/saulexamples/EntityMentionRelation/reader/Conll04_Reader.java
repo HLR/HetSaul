@@ -11,12 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
-
-/**
- * Created by haowu on 2/9/15.
- */
-public class Conll04_ReaderNew implements Parser {
-
+public class Conll04_Reader implements Parser {
 
     public Vector<ConllRawToken> instances;
     public Vector<ConllRawSentence> sentences;
@@ -29,8 +24,7 @@ public class Conll04_ReaderNew implements Parser {
     private int currentPairId;
     private int currentSentenceId;
 
-    public Conll04_ReaderNew(String filename, String ty) {
-
+    public Conll04_Reader(String filename, String ty) {
         instances = new Vector<>();
         relations = new Vector<>();
         sentences = new Vector<>();
@@ -41,7 +35,6 @@ public class Conll04_ReaderNew implements Parser {
         try {
             lines = LineIO.read(filename);
         } catch (FileNotFoundException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         String line;

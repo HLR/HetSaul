@@ -90,7 +90,7 @@ trait DataModel {
     } else {
       val r = this.EDGES.filter {
         r =>
-          r.to.tag.equals(tag) && r.from.tag.equals(headTag) && r.forward.name.isDefined && name.equals(r.forward.name.get)
+          r.from.tag.equals(tag) && r.to.tag.equals(headTag) && r.forward.name.isDefined && name.equals(r.forward.name.get)
       }
 
       // there must be only one such relation
@@ -99,7 +99,7 @@ trait DataModel {
       } else if (r.size > 1) {
         throw new Exception(s"Found too many relations between $tag to $headTag,\nPlease specify a name")
       } else {
-        r.head.asInstanceOf[Link[T, HEAD]].neighborsOf(t)
+        r.head.forward.asInstanceOf[Link[T, HEAD]].neighborsOf(t)
       }
     }
   }

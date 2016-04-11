@@ -18,36 +18,33 @@ case class CombinedDiscreteProperty[T <: AnyRef](
 
   val name = "combined++" + atts.map(x => { x.name }).mkString("+")
 
-  override def makeClassifierWithName(n: String): Classifier = {
-    new ClassifierContainsInLBP {
+  val packageName = "LBP_Package"
 
-      this.containingPackage = "LBP_Package"
-      this.name = n
+  override def makeClassifierWithName(n: String): Classifier = new ClassifierContainsInLBP {
+    this.containingPackage = packageName
+    this.name = n
 
-      override def getOutputType: String = {
-        "mixed%"
-      }
+    override def getOutputType: String = "mixed%"
 
-      def classify(instance: AnyRef): FeatureVector = {
-        val t: T = instance.asInstanceOf[T]
-        val featureVector = new FeatureVector()
-        atts.foreach(_.addToFeatureVector(t, featureVector))
-        featureVector
-      }
+    def classify(instance: AnyRef): FeatureVector = {
+      val t: T = instance.asInstanceOf[T]
+      val featureVector = new FeatureVector()
+      atts.foreach(_.addToFeatureVector(t, featureVector))
+      featureVector
+    }
 
-      override def classify(examples: Array[AnyRef]): Array[FeatureVector] = {
-        super.classify(examples)
-      }
+    override def classify(examples: Array[AnyRef]): Array[FeatureVector] = {
+      super.classify(examples)
+    }
 
-      override def getCompositeChildren: util.LinkedList[_] = {
-        val result: util.LinkedList[Classifier] = new util.LinkedList[Classifier]()
-        atts.foreach(x => result.add(x.classifier))
-        result
-      }
+    override def getCompositeChildren: util.LinkedList[_] = {
+      val result: util.LinkedList[Classifier] = new util.LinkedList[Classifier]()
+      atts.foreach(x => result.add(x.classifier))
+      result
+    }
 
-      override def discreteValue(example: AnyRef): String = {
-        atts.head(example.asInstanceOf[T]).asInstanceOf[String]
-      }
+    override def discreteValue(example: AnyRef): String = {
+      atts.head(example.asInstanceOf[T]).asInstanceOf[String]
     }
   }
 
