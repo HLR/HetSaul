@@ -11,18 +11,18 @@ object SpamApp {
   val testData = new DocumentReader("../data/EmailSpam/test").docs.toList
 
   object SpamExperimentType extends Enumeration {
-    val TrainAndTest, CacheGraph, TestUsingGraphCache, TestSerializatin = Value
+    val TrainAndTest, CacheGraph, TestUsingGraphCache, TestSerialization = Value
   }
 
   def main(args: Array[String]): Unit = {
     /** Choose the experiment you're interested in by changing the following line */
-    val testType = SpamExperimentType.TestSerializatin
+    val testType = SpamExperimentType.TestSerialization
 
     testType match {
       case SpamExperimentType.TrainAndTest => TrainAndTestSpamClassifier()
       case SpamExperimentType.CacheGraph => SpamClassifierWithGraphCache()
       case SpamExperimentType.TestUsingGraphCache => SpamClassifierFromCache()
-      case SpamExperimentType.TestSerializatin => SpamClassifierWithSerialization()
+      case SpamExperimentType.TestSerialization => SpamClassifierWithSerialization()
     }
   }
 
