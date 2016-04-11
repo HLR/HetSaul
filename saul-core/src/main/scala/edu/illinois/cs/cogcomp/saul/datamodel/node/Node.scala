@@ -65,7 +65,7 @@ class Node[T <: AnyRef](val keyFunc: T => Any = (x: T) => x, val tag: ClassTag[T
     node
   }
 
-  def clear = {
+  def clear() = {
     collection.clear()
     trainingSet.clear()
     testingSet.clear()

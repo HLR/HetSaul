@@ -14,7 +14,6 @@ public class ConllRawToken {
     public void setPhrase(String phrase) {
         this.phrase = phrase;
         splitWords = phrase.split("/");
-
     }
 
     public void setPOS(String POS) {
@@ -38,8 +37,7 @@ public class ConllRawToken {
         if (POS != null ? !POS.equals(that.POS) : that.POS != null) return false;
         if (entType != null ? !entType.equals(that.entType) : that.entType != null) return false;
         if (phrase != null ? !phrase.equals(that.phrase) : that.phrase != null) return false;
-        if (relatedTokens != null ? !relatedTokens.equals(that.relatedTokens) : that.relatedTokens != null)
-            return false;
+        if (relatedTokens != null ? !relatedTokens.equals(that.relatedTokens) : that.relatedTokens != null) return false;
         if (s != null ? !s.equals(that.s) : that.s != null) return false;
         if (!Arrays.equals(splitPOS, that.splitPOS)) return false;
         if (!Arrays.equals(splitWords, that.splitWords)) return false;
@@ -64,10 +62,8 @@ public class ConllRawToken {
     }
 
     public String getPhrase(boolean isLowerCase) {
-        if (isLowerCase) {
-            return (new String(phrase)).toLowerCase();
-        }
-
+        if (isLowerCase)
+            return phrase.toLowerCase();
         return phrase;
     }
 
@@ -90,16 +86,6 @@ public class ConllRawToken {
 
         return (t);
     }
-
-    public ConllRelation getparteners(ConllRawToken e) {
-        for (int i = 0; i < s.relations.size(); i++) {
-            if (s.relations.elementAt(i).e1.wordId == e.wordId || s.relations.elementAt(i).e2.wordId == e.wordId) {
-
-            }
-        }
-        return (t);
-    }
-
 
     public void printInstance() {
         System.out.println("sent: " + sentId + " wordId: " + wordId + " phrase: " + phrase + " POS: " + POS + " entity type: " + entType);

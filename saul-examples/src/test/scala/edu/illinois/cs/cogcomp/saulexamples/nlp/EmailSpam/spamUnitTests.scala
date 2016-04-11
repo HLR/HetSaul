@@ -3,7 +3,7 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp.EmailSpam
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
 import edu.illinois.cs.cogcomp.saulexamples.data.Document
 import edu.illinois.cs.cogcomp.saulexamples.nlp.EdisonFeatures.toyDataGenerator
-import edu.illinois.cs.cogcomp.saulexamples.nlp.EmailSpam.spamClassifiers.spamClassifier
+import edu.illinois.cs.cogcomp.saulexamples.nlp.EmailSpam.SpamClassifiers._
 import org.scalatest._
 
 class SpamUnitTests extends FlatSpec with Matchers {
@@ -39,9 +39,9 @@ class SpamUnitTests extends FlatSpec with Matchers {
 
   "classifier " should "overfit" in {
     val trainData = toyDataGenerator.generateToyDocuments(20)
-    spamDataModel.docs populate trainData
-    spamClassifier.learn(100)
-    spamClassifier(trainData.head) should be(trainData.head.getLabel)
+    SpamDataModel.docs populate trainData
+    SpamClassifier.learn(100)
+    SpamClassifier(trainData.head) should be(trainData.head.getLabel)
   }
 }
 
