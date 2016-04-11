@@ -49,23 +49,23 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
   /** specifications of the classifier and its model files  */
   classifier.setReadLexiconOnDemand()
   val modelDir = "models/"
-  val lcFilePath = new URL(new URL("file:"), modelDir + getClassNameForClassifier + ".lc")
-  val lexFilePath = new URL(new URL("file:"), modelDir + getClassNameForClassifier + ".lex")
+  def lcFilePath(suffix: String = "") = new URL(new URL("file:"), modelDir + getClassNameForClassifier + suffix + ".lc")
+  def lexFilePath(suffix: String = "") = new URL(new URL("file:"), modelDir + getClassNameForClassifier + suffix + ".lex")
   IOUtils.mkdir(modelDir)
-  classifier.setModelLocation(lcFilePath)
-  classifier.setLexiconLocation(lexFilePath)
+  classifier.setModelLocation(lcFilePath())
+  classifier.setLexiconLocation(lexFilePath())
 
   // create .lex file if it does not exist
-  if (!IOUtils.exists(lexFilePath.getPath)) {
-    val lexFile = ExceptionlessOutputStream.openCompressedStream(lexFilePath)
+  if (!IOUtils.exists(lexFilePath().getPath)) {
+    val lexFile = ExceptionlessOutputStream.openCompressedStream(lexFilePath())
     if (classifier.getCurrentLexicon == null) lexFile.writeInt(0)
     else classifier.getCurrentLexicon.write(lexFile)
     lexFile.close()
   }
 
   // create .lc file if it does not exist
-  if (!IOUtils.exists(lcFilePath.getPath)) {
-    val lcFile = ExceptionlessOutputStream.openCompressedStream(lcFilePath)
+  if (!IOUtils.exists(lcFilePath().getPath)) {
+    val lcFile = ExceptionlessOutputStream.openCompressedStream(lcFilePath())
     classifier.write(lcFile)
     lcFile.close()
   }
@@ -90,21 +90,27 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
     }
   }
 
-  // set paramaters for classifier
+  // set parameters for classifier
   setExtractor()
   setLabeler()
 
   def removeModelFiles(): Unit = {
-    IOUtils.rm(lcFilePath.getPath)
-    IOUtils.rm(lexFilePath.getPath)
+    IOUtils.rm(lcFilePath().getPath)
+    IOUtils.rm(lexFilePath().getPath)
+  }
+
+  /** This function prints a summary of the classifier
+    */
+  def printlnModel(): Unit = {
+    classifier.write(System.out)
   }
 
   def save(): Unit = {
     removeModelFiles()
-    val dummyClassifier = new SparseNetworkLearner
+    val dummyClassifier = new SparsePerceptron()
     classifier.setExtractor(dummyClassifier)
     classifier.setLabeler(dummyClassifier)
-    classifier.save()
+    classifier.write(lcFilePath().getPath, lexFilePath().getPath)
 
     // after saving, get rid of the dummyClassifier in the classifier.
     setExtractor()
@@ -137,7 +143,7 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
   }
 
   def load(): Unit = {
-    load(lcFilePath.getPath, lexFilePath.getPath)
+    load(lcFilePath().getPath, lexFilePath().getPath)
   }
 
   def learn(iteration: Int, filePath: String = datamodel.defaultDIFilePath): Unit = {
@@ -154,13 +160,21 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
       learnWithDerivedInstances(iteration, targetNode.derivedInstances.values)
     } else {
       learn(iteration, this.fromData)
+      classifier.doneLearning()
     }
     isTraining = false
   }
 
   def learn(iteration: Int, data: Iterable[T]): Unit = {
-    if (loggging)
-      println("Learnable: Learn with data of size " + data.size)
+    if (loggging) {
+      val oracle = Property.entitiesToLBJFeature(label)
+      println(s"==> Learning using the feature extractors to be ${lbpFeatures.getCompositeChildren}")
+      println(s"==> Learning using the labeler to be '$oracle'")
+      println(classifier.getExtractor.getCompositeChildren)
+      println(classifier.getLabeler)
+    }
+
+    println("Learnable: Learn with data of size " + data.size)
     isTraining = true
     val crTokenTest = new LBJIteratorParserScala[T](data)
     crTokenTest.reset()
@@ -335,7 +349,7 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
     * @param before always negative (or 0)
     * @param after always positive (or 0)
     */
-  def windowWithIn[U <: AnyRef](before: Int, after: Int, properties: List[Property[T]])(implicit uTag: ClassTag[U]): Property[T] = {
+  def windowWithin[U <: AnyRef](before: Int, after: Int, properties: List[Property[T]])(implicit uTag: ClassTag[U]): Property[T] = {
     val fls = datamodel.getRelatedFieldsBetween[T, U]
     getWindowWithFilters(before, after, fls.map(e => (t: T) => e.neighborsOf(t).head), properties)
   }
@@ -353,11 +367,11 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
   }
 
   def nextWithIn[U <: AnyRef](properties: List[Property[T]])(implicit uTag: ClassTag[U]): Property[T] = {
-    this.windowWithIn[U](0, 1, properties.toList)
+    this.windowWithin[U](0, 1, properties.toList)
   }
 
   def prevWithIn[U <: AnyRef](property: Property[T]*)(implicit uTag: ClassTag[U]): Property[T] = {
-    this.windowWithIn[U](-1, 0, property.toList)
+    this.windowWithin[U](-1, 0, property.toList)
   }
 
   def nextOf(properties: List[Property[T]]): Property[T] = {
