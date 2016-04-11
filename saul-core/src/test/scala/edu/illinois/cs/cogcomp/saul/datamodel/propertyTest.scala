@@ -1,5 +1,6 @@
 package edu.illinois.cs.cogcomp.saul.datamodel
 
+import edu.illinois.cs.cogcomp.saul.datamodel.property.PairwiseConjunction
 import org.scalatest._
 
 /** testing techniques for properties */
@@ -32,6 +33,10 @@ class propertyTest extends FlatSpec with Matchers {
     // Test cached properties (calling them multiple times)
     stringPropertyWithCache(new toyClass).mkString should be("cachedValue")
     stringPropertyWithCache(new toyClass).mkString should be("cachedValue")
+
+    conjunctionProperty(new toyClass).mkString(",") should be("string_value_funnyRange_ranged")
+    conjunctionProperty1(new toyClass).size should be(3)
+    conjunctionProperty1(new toyClass).mkString(",") should be("string_value_funnyRange_ranged,string_value_boolean_true,funnyRange_ranged_boolean_true")
   }
 
   "properties" should "use reasonable default names if not specified" in {
@@ -102,6 +107,12 @@ object toyDataModel extends DataModel {
   // ranged property
   val rangedProperty = property(toys, "funnyRange")("string") {
     x: toyClass => "ranged"
+  }
+  val conjunctionProperty = property(toys) {
+    x: toyClass => PairwiseConjunction(List(stringProperty, rangedProperty), x)
+  }
+  val conjunctionProperty1 = property(toys) {
+    x: toyClass => PairwiseConjunction(List(stringProperty, rangedProperty, booleanProperty), x)
   }
 }
 
