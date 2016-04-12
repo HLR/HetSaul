@@ -20,5 +20,5 @@ object ModelConfigs {
   val argumentTypeLearner_pred = "/classifier-predictions.txt"
   val argumentIdentifier_lc = "/edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifiers.argumentXuIdentifierGivenApredicate$.lc"
   val argumentIdentifier_lex = "/edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifiers.argumentXuIdentifierGivenApredicate$.lex"
-  // val predicateIdentifier_ls =
+
 }

@@ -24,7 +24,7 @@ import scala.collection.JavaConversions._
   */
 object populatemultiGraphwithSRLData {
 
-  def apply[T <: AnyRef](testOnly: Boolean = false, useGoldPredicate: Boolean = false, useGoldArgBoundaries: Boolean = false): srlMultiGraph = {
+  def apply[T <: AnyRef](testOnly: Boolean = false, useGoldPredicate: Boolean = false, useGoldArgBoundaries: Boolean = false, triplets: Boolean = false): srlMultiGraph = {
 
     val logger: Logger = LoggerFactory.getLogger(this.getClass)
     val rm = new ExamplesConfigurator().getDefaultConfig
@@ -90,7 +90,7 @@ object populatemultiGraphwithSRLData {
     }
 
     val trainingFromSection = 2
-    val trainingToSection = 21
+    val trainingToSection = 2
     var gr: srlMultiGraph = null
     if (!testOnly) {
       logger.info("Reading training data from sections {} to {}", trainingFromSection, trainingToSection)
@@ -101,7 +101,7 @@ object populatemultiGraphwithSRLData {
       )
       trainReader.readData()
       logger.info("Annotating {} training sentences", trainReader.textAnnotations.size)
-      val filteredTa = addViewAndFilter(trainReader.textAnnotations.toList)
+      val filteredTa = addViewAndFilter(trainReader.textAnnotations.toList).slice(0, 20)
       printNumbers(trainReader, "training")
       logger.info("Populating SRLDataModel with training data.")
 
@@ -142,7 +142,7 @@ object populatemultiGraphwithSRLData {
     testReader.readData()
 
     logger.info("Annotating {} test sentences", testReader.textAnnotations.size)
-    val filteredTest = addViewAndFilter(testReader.textAnnotations.toList)
+    val filteredTest = addViewAndFilter(testReader.textAnnotations.toList).slice(0, 20)
 
     printNumbers(testReader, "test")
 

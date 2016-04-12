@@ -5,7 +5,7 @@ import edu.illinois.cs.cogcomp.lbjava.learn.SparseAveragedPerceptron
 import edu.illinois.cs.cogcomp.saul.classifier.{ Learnable, SparseNetworkLBP }
 import edu.illinois.cs.cogcomp.saul.constraint.ConstraintTypeConversion._
 import edu.illinois.cs.cogcomp.saul.datamodel.property.Property
-import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.liApp._
+import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.li_ibt_App._
 
 /** Created by Parisa on 12/30/15.
   */

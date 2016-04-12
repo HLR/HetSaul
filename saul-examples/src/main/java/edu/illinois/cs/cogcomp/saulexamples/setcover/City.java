@@ -4,7 +4,6 @@ import edu.illinois.cs.cogcomp.lbjava.parse.LineByLine;
 
 import java.util.Collection;
 import java.util.TreeMap;
-//import LBJ2.parse.LineByLine;
 
 public class City {
 

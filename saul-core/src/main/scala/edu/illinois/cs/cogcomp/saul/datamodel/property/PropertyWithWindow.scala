@@ -2,15 +2,11 @@ package edu.illinois.cs.cogcomp.saul.datamodel.property
 
 import java.util
 
-import edu.illinois.cs.cogcomp.lbjava.classify.Classifier
-import edu.illinois.cs.cogcomp.lbjava.classify.FeatureVector
+import edu.illinois.cs.cogcomp.lbjava.classify.{ Classifier, FeatureVector }
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
-import edu.illinois.cs.cogcomp.saul.datamodel.property.features.{ DataSensitiveLBJFeature, ClassifierContainsInLBP }
-import edu.illinois.cs.cogcomp.saul.datamodel.property.features.discrete.DiscreteCollectionProperty
-import edu.illinois.cs.cogcomp.saul.datamodel.property.features.discrete.DiscreteProperty
-import edu.illinois.cs.cogcomp.saul.datamodel.property.features.discrete.DiscreteGenProperty
-import edu.illinois.cs.cogcomp.saul.datamodel.property.features.real.RealProperty
-import edu.illinois.cs.cogcomp.saul.datamodel.property.features.real.RealGenProperty
+import edu.illinois.cs.cogcomp.saul.datamodel.property.features.DataSensitiveLBJFeature
+import edu.illinois.cs.cogcomp.saul.datamodel.property.features.discrete.{ DiscreteGenProperty, DiscreteProperty }
+import edu.illinois.cs.cogcomp.saul.datamodel.property.features.real.{ RealGenProperty, RealProperty }
 
 import scala.reflect.ClassTag
 

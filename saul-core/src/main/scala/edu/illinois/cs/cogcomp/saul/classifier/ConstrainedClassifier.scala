@@ -1,7 +1,7 @@
 package edu.illinois.cs.cogcomp.saul.classifier
 
 import edu.illinois.cs.cogcomp.lbjava.classify.TestDiscrete
-import edu.illinois.cs.cogcomp.lbjava.infer.{ FirstOrderConstraint, InferenceManager }
+import edu.illinois.cs.cogcomp.lbjava.infer._
 import edu.illinois.cs.cogcomp.lbjava.learn.Learner
 import edu.illinois.cs.cogcomp.lbjava.parse.Parser
 import edu.illinois.cs.cogcomp.saul.TestWithStorage
@@ -23,18 +23,27 @@ abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val dm: DataMo
   type LEFT = T
   type RIGHT = HEAD
 
+  def className: String = this.getClass.getName
+
   def __allowableValues: List[String] = "*" :: "*" :: Nil
 
   def subjectTo: LfsConstraint[HEAD]
 
+  def solver: ILPSolver = new GurobiHook()
+
+  // TODO: add comments to this
   def filter(t: T, head: HEAD): Boolean = true
+
+  val log = false
 
   val pathToHead: Option[Edge[T, HEAD]] = None
 
+  /** syntactic suger to create simple calls to the function */
   def apply(example: AnyRef): String = classifier.discreteValue(example: AnyRef)
 
-  def findHead(x: T): Option[HEAD] = {
+  override val classifier = lbjClassifier.classifier
 
+  def findHead(x: T): Option[HEAD] = {
     if (tType.equals(headType)) {
       Some(x.asInstanceOf[HEAD])
     } else {
@@ -48,31 +57,18 @@ abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val dm: DataMo
       val l = lst.toSet.toList
 
       if (l.isEmpty) {
-
+        if (log)
+          println("Warning: Failed to find head")
         None
-        //        throw new Exception("Failed to find head")
-
-        //        null.asInstanceOf[HEAD]
-
+      } else if (l.size != 1) {
+        if (log)
+          println("Find too many heads")
+        Some(l.head)
       } else {
-        if (l.size != 1) {
-
-          //        println( l )
-
-          //        throw new Exception("Find too many heads")
-          //        throw new Exception("Find too many heads")
-          Some(l.head)
-
-        } else {
-          // size == 1
-
-          //        println(s"Found head ${l.head} for child ${x}")
-
-          Some(l.head)
-        }
-
+        if (log)
+          println(s"Found head ${l.head} for child $x")
+        Some(l.head)
       }
-
     }
   }
 
@@ -87,37 +83,40 @@ abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val dm: DataMo
       }
 
       if (l.isEmpty) {
-        print("Failed to find part")
+        if (log)
+          println("Failed to find part")
         l.toSeq
       } else {
         l.filter(filter(_, head)).toSeq
       }
-
     }
-
   }
 
-  def buildWithConstrain(infer: InferenceCondition[T, HEAD], cls: Learner)(t: T): String = {
+  def buildWithConstraint(infer: InferenceCondition[T, HEAD], cls: Learner)(t: T): String = {
+    val lex = cls.getLabelLexicon
+    var flag = false
+    for (i <- 0 until lex.size()) {
+      if (lex.lookupKey(i).valueEquals(cls.getLabeler().discreteValue(t)))
+        flag = true
+    }
     findHead(t) match {
       case Some(head) =>
         val name = String.valueOf(infer.subjectTo.hashCode())
-
         var inference = InferenceManager.get(name, head)
 
         if (inference == null) {
-
           inference = infer(head)
-          //      println(inference)
-          //      println("Inference NULL" + name)
-
+          if (log)
+            println("Inference is NULL " + name)
           InferenceManager.put(name, inference)
         }
-
-        val result: String = inference.valueOf(cls, t)
-        result
+        if (!flag) {
+          print("The models have not been trained for this label!")
+          ""
+        } else
+          inference.valueOf(cls, t)
 
       case None =>
-
         val name = String.valueOf(infer.subjectTo.hashCode())
 
         //        var inference = InferenceManager.get(name, head)
@@ -137,26 +136,21 @@ abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val dm: DataMo
 
         //        "false"
         cls.discreteValue(t)
-
     }
-
   }
 
-  def buildWithConstrain(infer: InferenceCondition[T, HEAD])(t: T): String = {
-    buildWithConstrain(infer, onClassifier)(t)
+  def buildWithConstraint(inferenceCondition: InferenceCondition[T, HEAD])(t: T): String = {
+    buildWithConstraint(inferenceCondition, onClassifier)(t)
   }
 
-  def cName: String = this.getClass.getName
-  // TODO: Pick a better name
-  def lbjClassifier = dm.property[T](dm.getNodeWithType[T], cName)("*", "*") {
-    x: T => buildWithConstrain(subjectTo.createInferenceCondition[T](this.dm).convertToType[T], onClassifier)(x)
+  private def getSolverInstance = solver match {
+    case _: OJalgoHook => () => new OJalgoHook()
+    case _: GurobiHook => () => new GurobiHook()
   }
 
-  override val classifier = lbjClassifier.classifier
-
-  //  def test() : Unit = {
-  //    this.onClassifier.
-  //  }
+  def lbjClassifier = dm.property[T](dm.getNodeWithType[T], className)("*", "*") {
+    x: T => buildWithConstraint(subjectTo.createInferenceCondition[T](this.dm, getSolverInstance()).convertToType[T], onClassifier)(x)
+  }
 
   def learn(it: Int): Unit = {
     val ds = dm.getNodeWithType[T].getTrainingInstances
@@ -164,7 +158,6 @@ abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val dm: DataMo
   }
 
   def learn(iteration: Int, data: Iterable[T]): Unit = {
-    println()
     //    featureExtractor.setDMforAll(this.datamodel)
 
     val crTokenTest = new LBJIteratorParserScala[T](data)
@@ -184,12 +177,51 @@ abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val dm: DataMo
         this.onClassifier.learn(v)
         learnAll(crTokenTest, remainingIteration)
       }
-
     }
 
     learnAll(crTokenTest, iteration)
-
   }
+
+  //  def test(): List[(String, (Double, Double, Double))] = {
+  //
+  //    val allHeads = this.dm.getNodeWithType[HEAD].getTestingInstances
+  //    //    allHeads foreach( t => println(s"  [HEAD]  Using thie head ${t} "))
+  //
+  //    val data: List[T] = if (tType.equals(headType)) {
+  //      allHeads.map(_.asInstanceOf[T]).toList
+  //    } else {
+  //      this.pathToHead match {
+  //        case Some(path) => allHeads.map(h => path.backward.neighborsOf(h)).toList.flatten
+  //        case _ => (allHeads map (h => this.dm.getFromRelation[HEAD, T](h))).toList.flatten
+  //      }
+  //    }
+  //    test(data)
+  //  }
+  //
+  //  /** Test with given data, use internally
+  //    *
+  //    * @param testData
+  //    * @return List of (label, (f1,precision,recall))
+  //    */
+  //  def test(testData: Iterable[T]): List[(String, (Double, Double, Double))] = {
+  //    println()
+  //    val testReader = new LBJIteratorParserScala[T](testData)
+  //    //    println("Here is the test!")
+  //    testReader.reset()
+  //
+  //    //    testData.toList.map{
+  //    //     t : T =>
+  //    //       println(s"Eval ${t}")
+  //    //       (t,classifier.discreteValue(t))
+  //    //    }.foreach(println)
+  //
+  //    val tester = TestDiscrete.testDiscrete(classifier, onClassifier.getLabeler, testReader)
+  //    tester.printPerformance(System.out)
+  //    tester.getLabels.map { label =>
+  //      (label, (tester.getF1(label), tester.getPrecision(label), tester.getRecall(label)))
+  //    }.toList
+  //  }
+  //}
 
   def test(outFile: String = null, outputGranularity: Int = 0, exclude: String = ""): List[(String, (Double, Double, Double))] = {
 
@@ -223,23 +255,16 @@ abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val dm: DataMo
     val ret = tester.getLabels.map({
       label => (label, (tester.getF1(label), tester.getPrecision(label), tester.getRecall(label)))
     })
-
     ret toList
   }
-
 }
 
 object ConstrainedClassifier {
-
   val ConstraintManager = scala.collection.mutable.HashMap[Int, LfsConstraint[_]]()
-
-  def constraintOf[HEAD <: AnyRef](f: HEAD => FirstOrderConstraint)(implicit headTag: ClassTag[HEAD]): LfsConstraint[HEAD] = {
-
+  def constraint[HEAD <: AnyRef](f: HEAD => FirstOrderConstraint)(implicit headTag: ClassTag[HEAD]): LfsConstraint[HEAD] = {
     val hash = f.hashCode()
-
     ConstraintManager.getOrElseUpdate(hash, new LfsConstraint[HEAD] {
       override def makeConstrainDef(x: HEAD): FirstOrderConstraint = f(x)
     }).asInstanceOf[LfsConstraint[HEAD]]
   }
-
 }

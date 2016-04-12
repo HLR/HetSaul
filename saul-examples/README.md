@@ -12,7 +12,7 @@ problem. This example shows declarative first order constraint programming in Sa
 are propositionalized and form an integer linear program (ILP) which are solved using Gurobi as our backend solver.
  Note that there is no training/learning involved in this example. 
  
-2. [Entity-Relation Extraction](src/main/scala/edu/illinois/cs/cogcomp/saulexamples/nlp/EntityMentionRelation/README.md): 
+2. [Entity-Relation Extraction](src/main/scala/edu/illinois/cs/cogcomp/saulexamples/nlp/EntityRelation/README.md): 
 The entity-relation extraction task through 
 which designing various training and prediction configurations are exemplified. 
 One can see how local, global and pipeline configurations are designed, used and evaluated in Saul.
@@ -21,8 +21,12 @@ One can see how local, global and pipeline configurations are designed, used and
 A third example which is a binary classification task 
 to classify text documents as either Spam or Not Spam was also created.
 
-4. [Semantic Role Labeling](src/main/scala/edu/illinois/cs/cogcomp/saulexamples/nlp/README.md): 
-a task in natural language processing consisting of the detection of the semantic arguments associated with the predicate or verb of a sentence and their classification into their specific roles.
+4. [Semantic Role Labeling](src/main/scala/edu/illinois/cs/cogcomp/saulexamples/nlp/SemanticRoleLabeling/README.md): 
+a task in natural language processing consisting of the detection of the semantic arguments associated with the predicate 
+or verb of a sentence and their classification into their specific roles.
+
+5. [Part-of-Speech Tagging](src/main/scala/edu/illinois/cs/cogcomp/saulexamples/nlp/POSTagger/README.md): 
+Part-of-Speech Tagging is the identification of words as nouns, verbs, adjectives, adverbs, etc. 
 
 * Note: Examples are under active development. 
 

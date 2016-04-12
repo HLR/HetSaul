@@ -5,7 +5,7 @@ import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.ModelConfig
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifiers._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlConstraintClassifiers.argTypeConstraintClassifier
 import org.slf4j.{ Logger, LoggerFactory }
-object liApp extends App {
+object li_ibt_App extends App {
   //train parameters
   val pipelineTrain = false
   val joinTrain = true
@@ -23,7 +23,7 @@ object liApp extends App {
 
   val logger: Logger = LoggerFactory.getLogger(this.getClass)
 
-  val srlGraphs = populatemultiGraphwithSRLData(testOnly = false, useGoldPredicate, useGoldBoundaries)
+  val srlGraphs = populatemultiGraphwithSRLData(testOnly = false, useGoldPredicate, useGoldBoundaries) //, pairOfpairs)
 
   import srlGraphs._
 
@@ -38,6 +38,7 @@ object liApp extends App {
     val modelLEXa = aModelDir + argumentTypeLearner_lex
     argumentTypeLearner.load(modelLCa, modelLEXa)
     argumentTypeLearner.test(exclude = "candidate")
+    // This is to print to file for standard CoNLL evaluation -commented out for later
     //    val goldOutFile = "srl.gold"
     //    val goldWriter = new PrintWriter(new File(goldOutFile))
     //    val predOutFile = "srl.predicted"
@@ -94,6 +95,7 @@ object liApp extends App {
     argumentTypeLearner.load(modelLCa, modelLEXa)
     argumentTypeLearner.test(prediction = typeArgumentPipeGivenGoldPredicate, groundTruth = argumentLabelGold, exclude = "candidate") //grounexclude = "candidate")
   }
+
   if (testWithConstraints && !pipeline) {
     val modelLCc = cModelDir + argumentTypeLearner_lc
     val modelLEXc = cModelDir + argumentTypeLearner_lex
@@ -102,36 +104,26 @@ object liApp extends App {
   }
 
   if (joinTrain) {
-    //argumentTypeLearner.load(cModelDir + argumentTypeLearner_lc, cModelDir + argumentTypeLearner_lex)
 
     argumentTypeLearner.setModelDir(jModelDir)
-    argumentTypeLearner.learn(10)
-    argumentTypeLearner.save()
-    argumentTypeLearner.load(jModelDir + argumentTypeLearner_lc, jModelDir + argumentTypeLearner_lex)
-    logger.info("test independent train after 10 iterations:... ")
-    argumentTypeLearner.test(exclude = "candidate")
+
+    //argumentTypeLearner.learn(1)
+    //argumentTypeLearner.save()
+    // argumentTypeLearner.load(jModelDir + argumentTypeLearner_lc, jModelDir + argumentTypeLearner_lex)
+    //logger.info("test independent train after 10 iterations:... ")
+    // argTypeConstraintClassifier.test(srlGraphs.relations.getTestingInstances, jModelDir + argumentTypeLearner_pred, 100, exclude = "candidate") //(aTr_pred, 100)
+    // argumentTypeLearner.test(exclude = "candidate")
     logger.info("Join train:... ")
-    for (i <- 0 until 100) {
-      JointTrainSparseNetwork(srlGraphs, argTypeConstraintClassifier :: Nil, 10)
-      if (i % 10 == 0) {
-        logger.info("test join train after " + i + " iterations:... ")
-        argumentTypeLearner.save()
-        argTypeConstraintClassifier.test(srlGraphs.relations.getTestingInstances, aModelDir + argumentTypeLearner_pred, 100, exclude = "candidate") //(aTr_pred, 100)
-      }
+    for (i <- 0 until 20) {
+
+      JointTrainSparseNetwork(srlGraphs, argTypeConstraintClassifier :: Nil, 5)
+      logger.info("test join train on testing data after " + (i * 5) + " iterations:... ")
+      argumentTypeLearner.save()
+      argTypeConstraintClassifier.test(srlGraphs.relations.getTestingInstances, jModelDir + argumentTypeLearner_pred, 200, exclude = "candidate") //(aTr_pred, 100)
+      logger.info("test join train on training data after " + (i * 5) + " iterations:... ")
+      argTypeConstraintClassifier.test(srlGraphs.relations.getTrainingInstances, jModelDir + argumentTypeLearner_pred, 200, exclude = "candidate") //(aTr_pred, 100)
     }
   }
-
-  //  arg_Is_TypeConstraintClassifier.test()
-
-  // print("argument identifier L+I model (join with classifciation) test results:")
-
-  // arg_IdentifyConstraintClassifier.test()
-
-  // print("argument classifier L+I model (join with classifciation) test results:")
-
-  // arg_Is_TypeConstraintClassifier.test()
-
-  //print("argument classifier L+I model considering background knowledge  test results:")
 
   if (pipelineTrain) {
     val modelLCb = bModelDir + argumentIdentifier_lc
@@ -140,9 +132,12 @@ object liApp extends App {
     val training = relations.getTrainingInstances.filter(x => argumentXuIdentifierGivenApredicate(x).equals("true"))
     argumentTypeLearner.setModelDir("pipeModels_cTr")
     argumentTypeLearner.learn(100, training)
+    logger.info("Test without pipeline:")
     argumentTypeLearner.test(exclude = "candidate")
     argumentTypeLearner.save()
+    logger.info("Test with pipeline:")
     argumentTypeLearner.test(prediction = typeArgumentPipeGivenGoldPredicate, groundTruth = argumentLabelGold, exclude = "candidate") //grounexclude = "candidate")
-
   }
+
 }
+
