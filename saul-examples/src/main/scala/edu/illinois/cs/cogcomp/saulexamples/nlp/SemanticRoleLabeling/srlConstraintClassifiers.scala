@@ -9,7 +9,7 @@ import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlConstrai
 /** Created by Parisa on 12/27/15.
   */
 object srlConstraintClassifiers {
-  import li_ibt_App._
+  import srlApp._
   object argTypeConstraintClassifier extends ConstrainedClassifier[Relation, TextAnnotation](srlGraphs, argumentTypeLearner) {
     def subjectTo = r_and_c_args
     override val pathToHead = Some(-srlGraphs.sentencesToRelations)
