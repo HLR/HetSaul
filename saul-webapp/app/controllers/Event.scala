@@ -2,6 +2,7 @@ package controllers
 
 sealed trait Event
 
+// Events the application can received from frontend
 object Event {
 
   final case class DisplayModel() extends Event

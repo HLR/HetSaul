@@ -51,14 +51,12 @@ final class Compiler(rootDir: String, completeClasspath: String, reporterCallbac
     // Compile source file.
     val compiler: JavaCompiler = ToolProvider.getSystemJavaCompiler();
     compiler.run(null, null, null, names2: _*);
-
   }
 
   def compileScala(files: Map[String, String]): Iterable[Any] = {
     initializeClassLoader
     files map {
       case (name, code) => {
-
         play.api.Logger.info("Compiling Scala code.")
         val sourceFiles = files map { x: (String, String) =>
           x match {
@@ -126,7 +124,6 @@ final class Compiler(rootDir: String, completeClasspath: String, reporterCallbac
       }
       case _ =>
     }
-
   }
 
 }

@@ -2,7 +2,7 @@ package util
 
 import edu.illinois.cs.cogcomp.saul.datamodel.node.{ PropertySet, InstanceSet }
 
-object visualizer {
+object VisualizerInstance {
 
   var propertySet: PropertySet[AnyRef, AnyRef] = null
   var instanceSet: InstanceSet[AnyRef] = null
