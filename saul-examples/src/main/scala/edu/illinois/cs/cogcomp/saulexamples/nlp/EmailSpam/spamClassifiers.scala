@@ -1,8 +1,7 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.EmailSpam
 
-import edu.illinois.cs.cogcomp.lbjava.learn.{ SupportVectorMachine, SparseNetworkLearner }
+import edu.illinois.cs.cogcomp.lbjava.learn.SupportVectorMachine
 import edu.illinois.cs.cogcomp.saul.classifier.Learnable
-import edu.illinois.cs.cogcomp.saul.constraint.ConstraintTypeConversion._
 import edu.illinois.cs.cogcomp.saulexamples.data.Document
 import edu.illinois.cs.cogcomp.saulexamples.nlp.EmailSpam.SpamDataModel._
 
