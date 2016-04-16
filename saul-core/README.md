@@ -16,7 +16,7 @@ Visit each link for its content
 
  1. [Introduction](doc/INTRO.md)
  2. [Installation] (doc/INSTALLATION.md)
- 3. [Conceptual Structure of a Saul Program](doc/CONCEPTUALSTRUCTURE.md)
+ 3. [Conceptual structure of a Saul program](doc/CONCEPTUALSTRUCTURE.md)
  2. [Data modeling and feature extraction](doc/DATAMODELING.md)
  3. [Learners and constraints](doc/SAULLANGUAGE.md)
  4. [Model configurations](doc/Models.md)
