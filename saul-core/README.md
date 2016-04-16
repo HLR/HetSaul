@@ -1,21 +1,20 @@
 # Saul: Declarative Learning  Based Programming
 
-Saul is a modeling language implemented as s domain specific language (DSL) in Scala. The main goal of Saul is to facilitate designing machine learning models with arbitrary configurations for the application programmer, including: 
+Saul is a modeling language implemented as a domain specific language (DSL) in Scala.
+The main goal of Saul is to facilitate designing machine learning models with arbitrary configurations for the application programmer, including:
 
-* designing local models i.e. single classifiers. (Learning only models (LO)). 
-* designing CCM models in which the independent classifiers are trained but they are used later together for global decision making in prediction time. (Learning+Inference (L+I)). 
-* designing global models for joint training and joint inference (Inference-Based-Training (IBT)).
-* Pipeline models for complex problems where the output of each layer is used as the input of the next layer.
-* Graph-based query language for design of complex features. 
+* Interacting with raw data and setting it in a flexible graph structure (i.e. data model) using the original available data structures.
+* Relational feature extraction by flexible querying from the data model graph.
+* Designing flexible learning models including various configurations.
 
-The flexibility in designing the above configurations helps rapid development of software systems with one or more learned functions, designed for use with the Java and Scala programming language. 
-
-Saul offers a convenient, declarative syntax for classifier and constraint definition directly in terms of the objects in the programmer's application. With Saul, the details of feature extraction, learning, model evaluation, and inference are all abstracted away from the programmer, leaving him to reason more directly about his application.
+The The flexibility in designing above components helps rapid development of intelligent AI software systems with one or more learned functions that interact with each other.
+Saul offers a convenient, declarative syntax for classifier and constraint definition directly in terms of the objects in the programmer's application.
+With Saul, the details of feature extraction, learning, model evaluation, and inference are all abstracted away from the programmer, leaving him to reason more directly about his application.
 
 # Tutorial
 Visit each link for its content
  1. [Introduction](doc/INTRO.md)
- 2. [Basics and definitions](doc/DEFINITIONS.md)
+ 2. [Data modeling and feature extraction](doc/DATAMODELING.md)
  3. [A working example: classifiying newsgroup documents into topics](doc/20NEWSGROUP.md)
  4. [Syntax of LBJava](doc/LBJLANGUAGE.md)
  5. [LBJava library](doc/LBJLIBRARY.md)
