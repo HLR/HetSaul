@@ -10,14 +10,8 @@ public class Patient {
     public String sample_type;
     public String patient_id;
     public int age_of_diagnosis;
-
- //   public String GMID;
- //   public String WeiID;
-//    public String batch;
-    //o.gender=columns[5];
     public String age;
     public String ethnicity;
- //   public String hidden;
     public ArrayList<Double> drag_response=new ArrayList<Double>();
     public ArrayList<Double> g_Expression=new ArrayList<Double>();
 }

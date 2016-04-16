@@ -1,20 +1,15 @@
 package controllers
 
 import controllers.Event._
-
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
 import logging.logger
-
 import play.api.mvc._
 import play.api.libs.json._
-
 import java.io.File
-
 import scala.collection.mutable
 import scala.reflect.internal.util.{ BatchSourceFile, Position }
 import scala.tools.nsc.Settings
 import scala.tools.nsc.reporters.{ Reporter, AbstractReporter }
-
 import _root_.util.reflectUtils._
 import _root_.util._
 
@@ -151,7 +146,7 @@ class Application extends Controller {
   }
 
   private def execute(event: Event, request: Request[JsValue]) = {
-    //new File(rootDir).mkdirs()
+
     IOUtils.cleanUpTmpFolder(rootDir)
     val files = parseRequest(event, request)
     files match {
@@ -174,20 +169,12 @@ class Application extends Controller {
   }
 
   private def displayModel(scalaInstances: Iterable[Any]): JsValue = {
-    val result = scalaInstances find (x => x match {
-      case model: DataModel => true
+    //Assume there is only one DataModel in the files
+    scalaInstances find (x => x match {
+      case model: DataModel => return dataModelJsonInterface.getSchemaJson(model)
       case _ => false
-    })
-
-    result match {
-
-      case Some(x) => x match {
-
-        case model: DataModel => dataModelJsonInterface.getSchemaJson(model)
-        case _ => getErrorJson(Json.toJson("Error"))
-      }
-      case _ => getErrorJson(Json.toJson("No DataModel found."))
-    }
+    }) 
+    return getErrorJson(Json.toJson("No DataModel found."))
   }
 
   private def populateModel(scalaInstances: Iterable[Any], fileMap: Map[String, String], compiler: Compiler): JsValue = {
@@ -196,26 +183,18 @@ class Application extends Controller {
         visualizer.init
         compiler.executeWithoutLog(x)
         scalaInstances find (x => x match {
-          case model: DataModel => true
+          case model: DataModel => return dataModelJsonInterface.getPopulatedInstancesJson(model)
           case _ => false
-        }) match {
-          case Some(x) => x match {
-            case model: DataModel => dataModelJsonInterface.getPopulatedInstancesJson(model)
-            case _ => getErrorJson(Json.toJson("Error"))
-          }
-          case _ => getErrorJson(Json.toJson("No DataModel found."))
-        }
+        })
+        return getErrorJson(Json.toJson("No DataModel found."))
       }
       case _ => getErrorJson(Json.toJson("No main method found.(Try changing the filename if you are certain you have a main method)"))
     }
   }
 
   private def runMain(scalaInstances: Iterable[Any]): JsValue = {
-
     val result = scalaInstances find (x => classExecutor.containsMain(x))
-
     result match {
-
       case Some(x) => {
         x match {
           case ob: Object => {
@@ -238,7 +217,6 @@ class Application extends Controller {
   }
 
   private def compile(fileMap: Map[String, String]) = {
-
     val (javaFiles, scalaFiles) = fileMap partition {
       case (k, v) => k contains ".java"
     }

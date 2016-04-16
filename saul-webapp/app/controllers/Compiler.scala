@@ -6,11 +6,8 @@ import java.net.{ URL, URLClassLoader }
 import java.nio.charset.StandardCharsets
 import java.nio.file.Files
 import javax.tools.{ ToolProvider, JavaCompiler }
-
 import scala.collection.JavaConverters._
-
 import util.reflectUtils._
-
 import scala.reflect.internal.util.BatchSourceFile
 import scala.reflect.runtime._
 import scala.tools.nsc.{ Global, Settings }
@@ -38,6 +35,7 @@ final class Compiler(rootDir: String, completeClasspath: String, reporterCallbac
     val names = files map {
       case (k, v) => {
         // Save source in .java file.
+        // TODO: compatibility on Windows machines
         val filePath = getCodePackageName(v).replaceAll("\\.", "/") + "/" + k
         val sourceFile: File = new File(root, filePath);
         sourceFile.getParentFile().mkdirs();
@@ -90,7 +88,6 @@ final class Compiler(rootDir: String, completeClasspath: String, reporterCallbac
           throw new CompilerException(msgs)
         }
         val clazz = instantiateClass(name, getCodePackageName(code))
-
         clazz
       }
 
@@ -109,12 +106,8 @@ final class Compiler(rootDir: String, completeClasspath: String, reporterCallbac
     val name = fileName.split('.')
     val runtimeMirror = universe.runtimeMirror(classLoader)
     try {
-
       val module = runtimeMirror.staticModule(packageName + "." + name(0))
-
       val obj = runtimeMirror.reflectModule(module)
-      println(obj.instance)
-
       obj.instance
     } catch {
       case _ => throw new CompilerException(List(List("Instantiation Error. Did you get the path to the training data correct?")))
@@ -122,8 +115,6 @@ final class Compiler(rootDir: String, completeClasspath: String, reporterCallbac
   }
 
   def executeWithoutLog(file: Any): Unit = {
-    println(file)
-    //val cls : Class[_] = Class.forName(className,true,classLoader)
     val cls = file.getClass()
     cls.getMethods().find(x => x.getName eq "main") match {
       case Some(x) => {

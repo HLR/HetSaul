@@ -16,10 +16,6 @@ public class Sample_Reader {
         String[] columns = line.split("\t|\n");
         if (columns.length >= 4) {
             o.sampleID = columns[0];
-            //  o.patient_id= columns[1];
-            //  o.GMID=columns[2];
-            //  o.WeiID=columns[3];
-            //  o.batch=columns[4];
             o.gender = columns[5];
             if(columns[6].equals("NA")){
                 o.age = "0";
@@ -27,13 +23,6 @@ public class Sample_Reader {
                 o.age = columns[6];
             }
             o.ethnicity = columns[7];
-            //  o.hidden=columns[8];
-
-            // o.cancer_type = columns[1];
-            //o.gender = columns[2];
-            //    o.sample_type = columns[3];
-            //   o.patient_id = columns[4];
-            // o.age_of_diagnosis = (int) Float.parseFloat(columns[5]);
             return o;
         } else
             return null;
@@ -54,6 +43,6 @@ public class Sample_Reader {
             Patient x = makeElement(line);
             if (x != null)
                 patientCollection.add(x);
-               }
+        }
     }
 }

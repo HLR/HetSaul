@@ -2,7 +2,7 @@ package edu.illinois.cs.cogcomp.saulexamples.bioInformatics.regressionModel
 
 import edu.illinois.cs.cogcomp.saul.datamodel.node.Path
 import edu.illinois.cs.cogcomp.saulexamples.bioInformatics.regressionModel.Classifiers.dResponseClassifier
-import edu.illinois.cs.cogcomp.saulexamples.bioInformatics.regressionModel.knowEngDataModel._
+import edu.illinois.cs.cogcomp.saulexamples.bioInformatics.regressionModel.KnowEngDataModel._
 import edu.illinois.cs.cogcomp.saulexamples.bioInformatics.{ Gene, Edges, Sample_Reader, drugExampleReader }
 
 import scala.collection.JavaConversions._
@@ -31,7 +31,6 @@ object myApp {
     genes(genes().head) ~> -geneGenes prop textSimilarity
 
     genes(Path.findPath(genes().head, genes, genes().head).asInstanceOf[Seq[Gene]]) prop gene_GoTerm
-    //.filter(x=> gene_GoTerm(x.asInstanceOf[Gene]).equals("Go1"))
 
     dResponseClassifier.learn(1)
 

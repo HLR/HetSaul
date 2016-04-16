@@ -3,12 +3,12 @@ package edu.illinois.cs.cogcomp.saulexamples.bioInformatics.regressionModel
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
 import edu.illinois.cs.cogcomp.saulexamples.bioInformatics._
 import edu.illinois.cs.cogcomp.saulexamples.bioInformatics.regressionModel.Classifiers.dResponseClassifier
-import edu.illinois.cs.cogcomp.saulexamples.bioInformatics.regressionModel.bioSensors._
+import edu.illinois.cs.cogcomp.saulexamples.bioInformatics.regressionModel.BioSensors._
 
 import scala.collection.JavaConversions._
 /** Created by Parisa on 6/24/15.
   */
-object knowEngDataModel extends DataModel {
+object KnowEngDataModel extends DataModel {
 
   val patients = node[Patient]
   val genes = node[Gene]

@@ -20,20 +20,13 @@ public class drugExampleReader {
         String[] columns=line.split("\\s+");
         if (columns.length>=4) {
             o.sampleID = columns[0];
-         //   o.patient_id= columns[1];// called lable-ID
-          //  o.GMID=columns[2];
-         //   o.WeiID=columns[3];
-         //   o.batch=columns[4];
-            o.gender=columns[1];
-            o.age=columns[2];
-            o.ethnicity=columns[3];
-        //    o.hidden=columns[8];
-
-            // o.cancer_type = columns[1];
-            //o.gender = columns[2];
-            //    o.sample_type = columns[3];
-            //   o.patient_id = columns[4];
-            // o.age_of_diagnosis = (int) Float.parseFloat(columns[5]);
+            o.gender = columns[5];
+            if(columns[6].equals("NA")){
+                o.age = "0";
+            }else{
+                o.age = columns[6];
+            }
+            o.ethnicity = columns[7];
             return o;
         }else
             return null;
@@ -53,10 +46,6 @@ public class drugExampleReader {
                     o.response = findDvalue(columns[i]);
                     pdList.add(o);
                 }
-           /* o.gender = columns[2];
-            o.sample_type = scolumns[3];
-            o.patient_id = columns[4];
-            o.age_of_diagnosis = (int) Float.parseFloat(columns[5]);*/
                 return pdList;
         }
 
@@ -68,8 +57,6 @@ public class drugExampleReader {
         String[] columns=line.split("\t|\n");
         if (columns.length>=6) {
 
-            //  o.dResponse = columns[0];
-
             for (int i=1;i<=columns.length-1;i++){
                 PatientGene o=new PatientGene();
                 o.sample_ID = columns[0];
@@ -78,10 +65,6 @@ public class drugExampleReader {
                 gp.add(o);
             }
 
-           /* o.gender = columns[2];
-            o.sample_type = scolumns[3];
-            o.patient_id = columns[4];
-            o.age_of_diagnosis = (int) Float.parseFloat(columns[5]);*/
             return gp;
         }else
             return null;
@@ -102,14 +85,12 @@ public class drugExampleReader {
       }
       while (drag_res.ready()) {
           line=drag_res.readLine();
-         // System.out.println(line);
           if(line.isEmpty()){
               continue;
           }
           ArrayList<PatientDrug> x=makeDElement(line);
           if (x!=null)
               responseCollection.addAll(x);
-          //	print_sample_element(x);
       }
       return responseCollection;
   }
@@ -124,14 +105,12 @@ public class drugExampleReader {
       String[] geneNames = line.split("\t|\n");
       while (genEx.ready()) {
           line=genEx.readLine();
-         // System.out.println(line);
           if(line.isEmpty()){
               continue;
           }
           ArrayList<PatientGene> x=makeGExElement(line,geneNames);
           if (x!=null)
               samplGExCollection.addAll(x);
-          //	print_sample_element(x);
       }
       return samplGExCollection;
   }
@@ -147,14 +126,12 @@ public class drugExampleReader {
         }
         while (clinicalptr.ready()) {
             line=clinicalptr.readLine();
-          //  System.out.println(line);
             if(line.isEmpty()){
                 continue;
             }
             Patient x=makeElement(line);
             if (x!=null)
                 patientCollection.add(x);
-            //	print_sample_element(x);
         }
 
         BufferedReader drag_res = new BufferedReader(new FileReader(filename2));
@@ -163,14 +140,12 @@ public class drugExampleReader {
         }
         while (drag_res.ready()) {
             line=drag_res.readLine();
-            //System.out.println(line);
             if(line.isEmpty()){
                 continue;
             }
             ArrayList<PatientDrug> x=makeDElement(line);
             if (x!=null)
                 responseCollection.addAll(x);
-            //	print_sample_element(x);
         }
          BufferedReader genEx = new BufferedReader(new FileReader(filename3));
          if (genEx.ready()){
@@ -179,15 +154,12 @@ public class drugExampleReader {
         String[] geneNames=line.split("\t|\n");
          while (genEx.ready()) {
              line=genEx.readLine();
-
-            // System.out.println(line);
              if(line.isEmpty()){
                  continue;
              }
             ArrayList<PatientGene> x=makeGExElement(line, geneNames);
              if (x!=null)
                  samplGExCollection.addAll(x);
-             //	print_sample_element(x);
          }
 
          // remove patiens with null data as drag response:
