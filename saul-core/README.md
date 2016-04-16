@@ -12,6 +12,18 @@ The flexibility in designing the above configurations helps rapid development of
 
 Saul offers a convenient, declarative syntax for classifier and constraint definition directly in terms of the objects in the programmer's application. With Saul, the details of feature extraction, learning, model evaluation, and inference are all abstracted away from the programmer, leaving him to reason more directly about his application.
 
+# Tutorial
+Visit each link for its content
+ 1. [Introduction](doc/INTRO.md)
+ 2. [Basics and definitions](doc/DEFINITIONS.md)
+ 3. [A working example: classifiying newsgroup documents into topics](doc/20NEWSGROUP.md)
+ 4. [Syntax of LBJava](doc/LBJLANGUAGE.md)
+ 5. [LBJava library](doc/LBJLIBRARY.md)
+ 6. [Installation and Commandline options](doc/INSTALLATION.md)
+ 7. [A working example: regression](doc/REGRESSION.md)
+ 8. [Learning Algorithms](doc/ALGORITHMS.md)
+
+
 ## Prerequisite:
  * JDK 1.6 or above
  * [Scala](http://www.scala-lang.org/) 2.11.7  

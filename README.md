@@ -5,8 +5,8 @@
  
 The project contains two modules. See the readme files for each module: 
 
-- Saul-Core: [The README of the core of the Saul project](saul-core/README.md)  
-- Saul-Examples: [The README of the examples package](saul-examples/README.md)
+- [Saul core](saul-core/README.md)
+- [Saul examples](saul-examples/README.md)
 
 The project's [official chat group is at Slack](https://cogcomp.slack.com/messages/saul/)
 
