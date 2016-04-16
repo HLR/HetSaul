@@ -12,10 +12,6 @@ import edu.illinois.cs.cogcomp.saul.lbjrelated.LBJLearnerEquivalent
 
 object ConstraintTypeConversion {
 
-  implicit def singlePropertyToList[T <: AnyRef](property: Property[T]): List[Property[T]] = {
-    property :: Nil
-  }
-
   implicit def learnerToLFS(l: Learner): LBJLearnerEquivalent = {
     new LBJLearnerEquivalent {
       override val classifier = l
