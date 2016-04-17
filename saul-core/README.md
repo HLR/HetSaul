@@ -5,9 +5,9 @@ The main goal of Saul is to facilitate designing machine learning models with ar
 
 * Interacting with raw data and setting it in a flexible graph structure (i.e. data model) using the original available data structures.
 * Relational feature extraction by flexible querying from the data model graph.
-* Designing flexible learning models including various configurations.
+* Designing flexible learning models including various configurations in which learners interact.
 
-The The flexibility in designing above components helps rapid development of intelligent AI software systems with one or more learned functions that interact with each other.
+The flexibility in designing above components helps rapid development of intelligent AI systems with one or more learned functions that interact with each other.
 Saul offers a convenient, declarative syntax for classifier and constraint definition directly in terms of the objects in the programmer's application.
 With Saul, the details of feature extraction, learning, model evaluation, and inference are all abstracted away from the programmer, leaving him to reason more directly about his application.
 
