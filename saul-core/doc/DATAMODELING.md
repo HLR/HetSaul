@@ -6,10 +6,12 @@ Definition:
 ```scala
 val n = node[A]
 ```
+
 Get all the instances of a node:
 ```scala
 n()
 ```
+
 To start querying using a custom collection:
 ```scala
 val coll: Iterable[A] = ...
@@ -23,14 +25,17 @@ Definition:
 val n2 = node[B]
 val e = edge(n,n2)
 ```
+
 Get all neighbors of all instances of `n`:
 ```scala
 n() ~> e
 ```
+
 Get all neighbors of some of the instances of `n`:
 ```scala
 n(coll) ~> e
 ```
+
 Reverse Query, get all neighbors of all instances of `n2`:
 ```scala
 n2() ~> -e
@@ -100,7 +105,7 @@ equality of one property with a value, equality of two properties, p.contains(x)
 ## Example Combinations
 ```scala
 val n1 = node[A]
-val n2 = node [B]
+val n2 = node[B]
 val n3 = node[C]
 
 val e1 = edge(n1, n2)

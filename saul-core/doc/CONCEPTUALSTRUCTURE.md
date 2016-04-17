@@ -5,8 +5,7 @@ The provided constructs are designed to enable declarative programing for the fo
 components of each application that uses learning and inference.
 
 ### Data Model:
-The data model in Saul conceptually is represented with a graph containing nodes, edges,
-and their properties. Defining entities with the following constructs:
+The data model in Saul conceptually is represented with a graph containing nodes, the edges between them and their properties.
 
   - `Node`: The different types of objects, for example documents, sound files, pictures, text documents, etc.
   - `Edge`: In a graph with nodes of type `Node`, their connections can be defined with `Edge`s.
@@ -25,19 +24,18 @@ val relations = node[ConllRawRelation]
 This line of code defines an entity of type `ConllRawToken` and names it as `tokens`.
 
 #### Defining properties
+
 This is done via the `property` function,
 
 ```scala
-val pos = property[ConllRawToken]("pos") {
+val pos = property(token) {
    (t: ConllRawToken) => t.POS
 }
   ```
 
-In this definition `"pos"` is the name of the property and it can be chosen arbitrarily. The definition
-inside `{ .... }` is  the definition of a sensor which given an object of type `ConllRawToken`
+In this definition `pos` is defined to be a property of nodes of type token. The definition
+inside `{ .... }` is  the definition of a sensor which given an object of type `ConllRawToken` i.e. the tye of node and
 generates an output property value (in this case, using the POS tag of an object of type `ConllRawToken`).
-
-
 
 #### Defining edges
 
