@@ -2,6 +2,7 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp.EntityRelation
 
 import edu.illinois.cs.cogcomp.saul.classifier.ClassifierUtils
 import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityRelation.EntityRelationClassifiers._
+import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityRelation.EntityRelationConstrainedClassifiers.{ WorksFor_PerOrg_ConstrainedClassifier, OrgConstrainedClassifier, PerConstrainedClassifier }
 import org.scalatest._
 
 class EntityRelationTests extends FlatSpec with Matchers {
@@ -34,6 +35,13 @@ class EntityRelationTests extends FlatSpec with Matchers {
       WorksForClassifierPipeline, LivesInClassifierPipeline
     )
     val scores = WorksForClassifierPipeline.test() ++ LivesInClassifierPipeline.test()
+    scores.foreach { case (label, score) => (score._1 > minScore) should be(true) }
+  }
+
+  "L+I entity-relation classifiers " should " should work. " in {
+    ClassifierUtils.TestClassifiers(PersonClassifier, OrganizationClassifier, LocationClassifier,
+      WorksForClassifier, LivesInClassifier, LocatedInClassifier, OrgBasedInClassifier)
+    val scores = PerConstrainedClassifier.test() ++ WorksFor_PerOrg_ConstrainedClassifier.test()
     scores.foreach { case (label, score) => (score._1 > minScore) should be(true) }
   }
 }
