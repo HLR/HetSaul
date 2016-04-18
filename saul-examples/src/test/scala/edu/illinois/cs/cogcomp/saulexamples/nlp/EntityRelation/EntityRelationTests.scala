@@ -1,5 +1,6 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.EntityRelation
 
+import edu.illinois.cs.cogcomp.saul.classifier.ClassifierUtils
 import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityRelation.EntityRelationClassifiers._
 import org.scalatest._
 
@@ -8,21 +9,30 @@ class EntityRelationTests extends FlatSpec with Matchers {
   EntityRelationDataModel.populateWithConllSmallSet()
 
   "entity classifier " should " should work. " in {
-    EntityRelationClassifiers.loadIndependentEntityModels()
+    ClassifierUtils.LoadClassifier(
+      EntityRelationApp.jarModelPath,
+      PersonClassifier, OrganizationClassifier, LocationClassifier
+    )
     val scores = PersonClassifier.test() ++ OrganizationClassifier.test() ++ LocationClassifier.test()
     scores.foreach { case (label, score) => (score._1 > minScore) should be(true) }
   }
 
   "independent relation classifier " should " should work. " in {
-    EntityRelationClassifiers.loadIndependentRelationModels()
+    ClassifierUtils.LoadClassifier(
+      EntityRelationApp.jarModelPath,
+      WorksForClassifier, LivesInClassifier, LocatedInClassifier, OrgBasedInClassifier
+    )
     val scores = WorksForClassifier.test() ++ LivesInClassifier.test() ++
       LocatedInClassifier.test() ++ OrgBasedInClassifier.test()
     scores.foreach { case (label, score) => (score._1 > minScore) should be(true) }
   }
 
   "pipeline relation classifiers " should " should work. " in {
-    EntityRelationClassifiers.loadIndependentEntityModels()
-    EntityRelationClassifiers.loadPipelineRelationModels()
+    ClassifierUtils.LoadClassifier(
+      EntityRelationApp.jarModelPath,
+      PersonClassifier, OrganizationClassifier, LocationClassifier,
+      WorksForClassifierPipeline, LivesInClassifierPipeline
+    )
     val scores = WorksForClassifierPipeline.test() ++ LivesInClassifierPipeline.test()
     scores.foreach { case (label, score) => (score._1 > minScore) should be(true) }
   }
