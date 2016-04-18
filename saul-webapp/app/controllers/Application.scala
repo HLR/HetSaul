@@ -2,7 +2,7 @@ package controllers
 
 import controllers.Event._
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
-import logging.logger
+import logging.Logger
 import play.api.mvc._
 import play.api.libs.json._
 import java.io.File
@@ -69,15 +69,15 @@ class Application extends Controller {
             val dm = getDataModel(scalaInstances)
             dm match {
               case Some(dataModel) => {
-                val dataModelSchema = dataModelJsonInterface.getSchemaJson(dataModel)
+                val dataModelSchema = DataModelJsonInterface.getSchemaJson(dataModel)
                 //If main class found, execute and get output and data population results
                 val executionResult = executeMain(scalaInstances, fileMap, compiler)
                 executionResult match {
                   case Some(x) => {
                     Ok(JsObject(Seq(
                       "dataModelSchema" -> dataModelSchema,
-                      "populatedModel" -> dataModelJsonInterface.getPopulatedInstancesJson(dataModel),
-                      "log" -> JsObject(logger.gather.map(record => (record._1, JsString(record._2))))
+                      "populatedModel" -> DataModelJsonInterface.getPopulatedInstancesJson(dataModel),
+                      "log" -> JsObject(Logger.gather.map(record => (record._1, JsString(record._2))))
                     )))
                   }
                   case None => {
@@ -114,10 +114,10 @@ class Application extends Controller {
   }
 
   private def executeMain(scalaInstances: Iterable[Any], fileMap: Map[String, String], compiler: Compiler): Option[Unit] = {
-    scalaInstances find (x => classExecutor.containsMain(x)) match {
+    scalaInstances find (x => ClassExecutor.containsMain(x)) match {
       case Some(x) => {
-        visualizer.init
-        logger.init
+        VisualizerInstance.init
+        Logger.init
         Some(compiler.executeWithoutLog(x))
       }
       case None => None
@@ -132,7 +132,7 @@ class Application extends Controller {
             val dataMap = jsonData.as[Map[String, String]]
             val query = dataMap("query")
             val files = Json.parse(dataMap("files")).as[Map[String, String]]
-            val fileMap = queryPreprocessor.preprocess(files, query)
+            val fileMap = QueryPreprocessor.preprocess(files, query)
             fileMap match {
               case Some(files) => Some(files)
               case None => None
@@ -171,19 +171,19 @@ class Application extends Controller {
   private def displayModel(scalaInstances: Iterable[Any]): JsValue = {
     //Assume there is only one DataModel in the files
     scalaInstances find (x => x match {
-      case model: DataModel => return dataModelJsonInterface.getSchemaJson(model)
+      case model: DataModel => return DataModelJsonInterface.getSchemaJson(model)
       case _ => false
-    }) 
+    })
     return getErrorJson(Json.toJson("No DataModel found."))
   }
 
   private def populateModel(scalaInstances: Iterable[Any], fileMap: Map[String, String], compiler: Compiler): JsValue = {
-    scalaInstances find (x => classExecutor.containsMain(x)) match {
+    scalaInstances find (x => ClassExecutor.containsMain(x)) match {
       case Some(x) => {
-        visualizer.init
+        VisualizerInstance.init
         compiler.executeWithoutLog(x)
         scalaInstances find (x => x match {
-          case model: DataModel => return dataModelJsonInterface.getPopulatedInstancesJson(model)
+          case model: DataModel => return DataModelJsonInterface.getPopulatedInstancesJson(model)
           case _ => false
         })
         return getErrorJson(Json.toJson("No DataModel found."))
@@ -193,12 +193,12 @@ class Application extends Controller {
   }
 
   private def runMain(scalaInstances: Iterable[Any]): JsValue = {
-    val result = scalaInstances find (x => classExecutor.containsMain(x))
+    val result = scalaInstances find (x => ClassExecutor.containsMain(x))
     result match {
       case Some(x) => {
         x match {
           case ob: Object => {
-            val output = classExecutor.execute(ob.getClass.getName.init, completeClasspath)
+            val output = ClassExecutor.execute(ob.getClass.getName.init, completeClasspath)
             Json.obj(
               "stdout" -> output._1,
               "stderr" -> output._2,
@@ -270,7 +270,6 @@ class Application extends Controller {
       messages.clear()
     }
   }
-
 }
 
 trait MessageCollector {

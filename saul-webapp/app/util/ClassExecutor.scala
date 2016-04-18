@@ -4,7 +4,7 @@ import java.io.{ InputStreamReader, BufferedReader }
 
 import scala.sys.process._
 
-object classExecutor {
+object ClassExecutor {
 
   def containsMain(clazz: Any): Boolean = {
     clazz match {
@@ -19,13 +19,12 @@ object classExecutor {
     }
   }
 
-  /** @param className The main class to execute
+  /** Execute the main class
+    * @param className The main class to execute
     * @param classPath The classpath argument
-    * @return Output from STDOUT, output from STDERR, value return on exit
+    * @return          Output from STDOUT, output from STDERR, value return on program exit
     */
-  //TODO: further handle exception
   def execute(className: String, classPath: String): (List[String], List[String], Int) = {
-
     val cmd = Seq("scala", "-cp", classPath, className)
     var outBuffer = List[String]()
     var errBuffer = List[String]()

@@ -6,23 +6,20 @@ import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
 import edu.illinois.cs.cogcomp.saul.datamodel.edge.Edge
 import edu.illinois.cs.cogcomp.saul.datamodel.node.{ NodeProperty, Node }
 
-object dataModelJsonInterface {
+object DataModelJsonInterface {
 
   import play.api.libs.json._
   def getPopulatedInstancesJson(dm: DataModel): JsValue = {
-
     val declaredFields = dm.getClass.getDeclaredFields
     val nodes = declaredFields.filter(_.getType.getSimpleName == "Node")
     val edges = declaredFields.filter(_.getType.getSimpleName == "Edge")
     val properties = declaredFields.filter(_.getType.getSimpleName.contains("Property")).filterNot(_.getName.contains("$module"))
-
     def getObjs(fields: Array[Field]) = {
       fields.map { n =>
         n.setAccessible(true)
         (n.getName, n.get(dm))
       }
     }
-
     val nodesObjs = getObjs(nodes)
     val edgesObjs = getObjs(edges)
     val propsObjs = getObjs(properties)
@@ -43,13 +40,12 @@ object dataModelJsonInterface {
     }
 
     /** Function used for query 'prop'
-      *
       * @return json representation of the queried properties and associated nodes
       */
     def getPropertyQueryJson: JsObject = {
-      val instanceSet = visualizer.propertySet.underlying
-      val property = visualizer.propertySet.property
-      val queryNodesObjs = nodesObjs.filter(node => node._2 eq instanceSet.node)
+      val instanceSet = VisualizerInstance.propertySet.underlying
+      val property = VisualizerInstance.propertySet.property
+      val queryNodesObjs = nodesObjs.filter { case (_, instance) => instance eq instanceSet.node }
       val name = queryNodesObjs(0)._1
       val nodesJson = Map(name ->
         instanceSet.instances.map(x => name + x.hashCode.toString).toArray)
@@ -63,15 +59,15 @@ object dataModelJsonInterface {
       parseJsonGraph(nodesJson, edgesJson, propsJson)
     }
 
-    /** Function used for query '~>' and 'filter'
+    /** Function used to get the sub-graph after query '~>' and 'filter'
       *
-      * @return
+      * @return json representation of the queried nodes and associated edges after query
       */
     def getInstanceQueryJson: JsObject = {
-      val queryNodesObjs = nodesObjs.filter(node => node._2 eq visualizer.instanceSet.node)
+      val queryNodesObjs = nodesObjs.filter { case (_, instance) => instance eq VisualizerInstance.instanceSet.node }
       val name = queryNodesObjs(0)._1
       val nodesJson = Map(name ->
-        visualizer.instanceSet.instances.map(x => name + x.hashCode.toString).toArray)
+        VisualizerInstance.instanceSet.instances.map(x => name + x.hashCode.toString).toArray)
       val invertedNodesMap: Map[Object, String] = queryNodesObjs.map(_.swap).toMap
       val edgesJson = buildEdgeJson(invertedNodesMap)
       val propertiesJson = buildPropertiesJson(queryNodesObjs)
@@ -101,7 +97,12 @@ object dataModelJsonInterface {
       }
       edgesJson
     }
-    1
+
+    /** Build the json object representing the sub-graphs of properties
+      *
+      * @param nodes  Nodes of the datamodel
+      * @return       Json object represeting the sub-graphs of properties
+      */
     def buildPropertiesJson(nodes: Array[(String, AnyRef)]): List[(String, Map[String, String])] = {
       var propertiesJson = List[(String, Map[String, String])]()
       for (p <- properties) {
@@ -134,9 +135,9 @@ object dataModelJsonInterface {
     }
 
     val selectedGraph: JsValue = {
-      if (visualizer.instanceSet != null) {
+      if (VisualizerInstance.instanceSet != null) {
         getInstanceQueryJson
-      } else if (visualizer.propertySet != null) {
+      } else if (VisualizerInstance.propertySet != null) {
         getPropertyQueryJson
       } else {
         JsNull

@@ -1,14 +1,13 @@
 package logging
 
-//TODO: change to stateless logger to handle asynchronous conditions
-object logger {
+object Logger {
 
   val collector: Map[String, StringBuilder] = Map[String, StringBuilder](
     "info" -> new StringBuilder(),
     "error" -> new StringBuilder()
   )
 
-  def init = { collector foreach (record => record._2.clear) }
+  def init = collector foreach { case (_, record) => record.clear }
 
   def info(message: String): Unit = {
     collector.get("info") match {
@@ -22,6 +21,6 @@ object logger {
     }
   }
 
-  def gather: Map[String, String] = { collector map (record => (record._1, record._2.toString)) }
+  def gather: Map[String, String] = collector map { case (logType, record) => (logType, record.toString) }
 }
 
