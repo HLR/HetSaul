@@ -7,6 +7,7 @@ import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityRelation.EntityRelationDat
 import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityRelation.EntityRelationConstrainedClassifiers._
 
 object EntityRelationApp {
+  // learned models from the "saul-conll-er-tagger-models" jar package
   val jarModelPath = "edu/illinois/cs/cogcomp/saulexamples/nlp/EntityRelation/models/"
 
   def main(args: Array[String]): Unit = {

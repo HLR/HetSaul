@@ -19,6 +19,7 @@ object POSConfigurator extends Configurator {
   val trainDataSmall = new Property("trainDataSmall", prefix + "00-18_small.br")
   val trainAndDevData = new Property("trainAndDevData", prefix + "00-21.br")
   val testData = new Property("testData", prefix + "22-24.br")
+  // models from the "saul-pos-tagger-models" jar package
   val jarModelPath = "edu/illinois/cs/cogcomp/saulexamples/nlp/POSTagger/models/"
   override def getDefaultConfig: ResourceManager = {
     val props = Array(trainData, trainDataSmall, trainAndDevData, testData)
