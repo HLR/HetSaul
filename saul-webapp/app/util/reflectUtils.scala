@@ -1,7 +1,8 @@
 package util
 
-object reflectUtils {
+object ReflectUtils {
 
+  //Example input: package somePackageName;
   val re = """package\s(.*)\s""".r
 
   def getCodePackageName(code: String) = {
@@ -11,15 +12,11 @@ object reflectUtils {
     }
   }
 
-  /*
-     *    * For a given FQ classname,
-     *    trick the resource finder into telling us the containing jar.
-     *
-     * */
   def classPathOfClass(className: String) = {
     val resource = className.split('.').mkString("/", "/", ".class")
     val path = getClass.getResource(resource).getPath
     if (path.indexOf("file:") >= 0) {
+      //using path after 5 characters which excludes "file:"
       val indexOfFile = path.indexOf("file:") + 5
       val indexOfSeparator = path.lastIndexOf('!')
       List(path.substring(indexOfFile, indexOfSeparator))

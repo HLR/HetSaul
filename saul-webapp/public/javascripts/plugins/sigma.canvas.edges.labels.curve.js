@@ -69,7 +69,6 @@
       Math.pow(size, -1 / settings('edgeLabelSizePowRatio'));
 
     context.save();
-
     
     if (edge.active) {
       context.font = [

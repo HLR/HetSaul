@@ -7,7 +7,7 @@ import java.nio.charset.StandardCharsets
 import java.nio.file.Files
 import javax.tools.{ ToolProvider, JavaCompiler }
 import scala.collection.JavaConverters._
-import util.reflectUtils._
+import util.ReflectUtils._
 import scala.reflect.internal.util.BatchSourceFile
 import scala.reflect.runtime._
 import scala.tools.nsc.{ Global, Settings }

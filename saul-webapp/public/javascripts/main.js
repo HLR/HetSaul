@@ -261,7 +261,6 @@ var enableEditingTabName = function(tab){
                 label.text(text);
                 changeEditorMode(ace.edit("editor"+idx),"scala");
             }
-
             label.show();
             $('#tempName').remove()
             $("#fileList .active").removeData("executing");
@@ -272,29 +271,24 @@ var enableEditingTabName = function(tab){
 var installTabClickedAction = function(tab){
     tab.click(function(){
 
-        if($(this).hasClass("active")){
-        
+        if($(this).hasClass("active")){        
             var $this = $(this);
             if ($this.data("executing")) return;
             $this.data("executing", true);
             //edit the file name
             enableEditingTabName($(this));
         }
-        else{
-            
+        else{        
             //switch to other tabs
             $("#fileList").children(".active").each(function(){
                 $(this).removeClass("active");
             })
-
             tab.addClass("active");
-
             var idx = tab.attr('id').match(/\d+$/)[0];
             $("#workspace").children(".active").each(function(){
                 $(this).removeClass("active");
                 $(this).hide(); 
             })
-
             $("#editor"+idx).show();
             $("#editor"+idx).addClass("active");
             ace.edit("editor"+idx).focus();
@@ -310,13 +304,10 @@ var getAllFiles = function(){
         var codeName = $(this).text();
         files[codeName] = ace.edit(codeId).getValue();
     })
-
     return JSON.stringify(files);
-    
 }
 
 var updateCode = function(event){
-    //jsRoutes.controllers.Application.updateCode($("#code1").text()).ajax(callback);
     var rURL;
     var onSuccess;
     if (event == 0) {
@@ -406,8 +397,7 @@ var onPopulateSuccess = function(data) {
     $("#pbar").hide();
     alertError(data);
     $("#gtab2").click();
-    generatePopulatedGraphFromJson(data);
-    
+    generatePopulatedGraphFromJson(data);    
 }
 
 var onRunSuccess = function(data) {
@@ -426,16 +416,13 @@ var onVisualizeSuccess = function(data) {
     alertError(data);
     $("#gtab1").click();
     generateSchemaGraphFromJson(data['dataModelSchema']);
-
     if(data['populatedModel'] != null){
         $("#gtab2").click();
         generatePopulatedGraphFromJson(data['populatedModel']);
-
     }  
     if(data['log'] != null){ 
         ("#gtab3").click();
         displayOutput(data['log']);
-
     }
 }
 
