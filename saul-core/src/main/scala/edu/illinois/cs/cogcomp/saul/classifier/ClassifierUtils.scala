@@ -1,6 +1,6 @@
 package edu.illinois.cs.cogcomp.saul.classifier
 
-/** Utility functions for various operations (e.g. training, testing, saving, etc) multiple classifiers.
+/** Utility functions for various operations (e.g. training, testing, saving, etc) on multiple classifiers.
   */
 object ClassifierUtils {
   val evalSeparator = "==============================================="
