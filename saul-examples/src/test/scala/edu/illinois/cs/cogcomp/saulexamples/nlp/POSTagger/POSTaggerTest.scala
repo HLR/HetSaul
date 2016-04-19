@@ -1,6 +1,7 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.POSTagger
 
 import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
+import edu.illinois.cs.cogcomp.saul.classifier.ClassifierUtils
 import edu.illinois.cs.cogcomp.saulexamples.nlp.POSTagger.POSClassifiers._
 import edu.illinois.cs.cogcomp.core.utilities.DummyTextAnnotationGenerator
 
@@ -90,7 +91,10 @@ class POSTaggerTest extends FlatSpec with Matchers {
   "POSBaseline " should " should work. " in {
     val toyConstituents = DummyTextAnnotationGenerator.generateBasicTextAnnotation(1).getView(ViewNames.TOKENS).getConstituents
     POSDataModel.tokens.populate(toyConstituents, train = false)
-    POSClassifiers.loadModelsFromPackage()
+    ClassifierUtils.LoadClassifier(
+      POSConfigurator.jarModelPath,
+      BaselineClassifier, MikheevClassifier, POSTaggerKnown, POSTaggerUnknown
+    )
     val baselineLabelMap = Map("To" -> "TO", "or" -> "CC", "not" -> "RB", ";" -> ":",
       "that" -> "IN", "is" -> "VBZ", "question" -> "NN", "." -> ".")
     toyConstituents.forall { cons =>
@@ -102,7 +106,10 @@ class POSTaggerTest extends FlatSpec with Matchers {
   "POSUnknown " should " should work. " in {
     val toyConstituents = DummyTextAnnotationGenerator.generateBasicTextAnnotation(1).getView(ViewNames.TOKENS).getConstituents
     POSDataModel.tokens.populate(toyConstituents, train = false)
-    POSClassifiers.loadModelsFromPackage()
+    ClassifierUtils.LoadClassifier(
+      POSConfigurator.jarModelPath,
+      BaselineClassifier, MikheevClassifier, POSTaggerKnown, POSTaggerUnknown
+    )
     val posUnknownLabelMap = Map("or" -> "CC", "not" -> "RB",
       "that" -> "IN", "is" -> "VBZ", "question" -> "NN")
     println("toyConstituents.size = " + toyConstituents.size)
@@ -115,7 +122,10 @@ class POSTaggerTest extends FlatSpec with Matchers {
   "POS combined classifier " should " should work. " in {
     val toyConstituents = DummyTextAnnotationGenerator.generateBasicTextAnnotation(1).getView(ViewNames.TOKENS).getConstituents
     POSDataModel.tokens.populate(toyConstituents, train = false)
-    POSClassifiers.loadModelsFromPackage()
+    ClassifierUtils.LoadClassifier(
+      POSConfigurator.jarModelPath,
+      BaselineClassifier, MikheevClassifier, POSTaggerKnown, POSTaggerUnknown
+    )
     val combinedClassifierLabelMap = Map("To" -> "TO", "or" -> "CC", "not" -> "RB", ";" -> ":",
       "is" -> "VBZ", "the" -> "DT", "question" -> "NN", "." -> ".")
     toyConstituents.forall { cons =>
