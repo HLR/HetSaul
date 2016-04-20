@@ -35,15 +35,13 @@ object EntityRelationApp {
   def trainIndependentClassifiers(): Unit = {
     EntityRelationDataModel.populateWithConll()
     val iter = 10
-    // entity classifiers
-    ClassifierUtils.LearnClassifiers(iter, PersonClassifier, OrganizationClassifier, LocationClassifier)
-    ClassifierUtils.TestClassifiers(PersonClassifier, OrganizationClassifier, LocationClassifier)
-    ClassifierUtils.SaveClassifiers(PersonClassifier, OrganizationClassifier, LocationClassifier)
-
-    // relation classifiers
-    ClassifierUtils.LearnClassifiers(iter, WorksForClassifier, LivesInClassifier, LocatedInClassifier, OrgBasedInClassifier)
-    ClassifierUtils.TestClassifiers(WorksForClassifier, LivesInClassifier, LocatedInClassifier, OrgBasedInClassifier)
-    ClassifierUtils.SaveClassifiers(WorksForClassifier, LivesInClassifier, LocatedInClassifier, OrgBasedInClassifier)
+    // independent entity and relation classifiers
+    ClassifierUtils.LearnClassifiers(iter, PersonClassifier, OrganizationClassifier, LocationClassifier,
+      WorksForClassifier, LivesInClassifier, LocatedInClassifier, OrgBasedInClassifier)
+    ClassifierUtils.TestClassifiers(PersonClassifier, OrganizationClassifier, LocationClassifier,
+      WorksForClassifier, LivesInClassifier, LocatedInClassifier, OrgBasedInClassifier)
+    ClassifierUtils.SaveClassifiers(PersonClassifier, OrganizationClassifier, LocationClassifier,
+      WorksForClassifier, LivesInClassifier, LocatedInClassifier, OrgBasedInClassifier)
   }
 
   /** This function loads the classifiers trained in function [[trainIndependentClassifiers]] and evaluates on the
