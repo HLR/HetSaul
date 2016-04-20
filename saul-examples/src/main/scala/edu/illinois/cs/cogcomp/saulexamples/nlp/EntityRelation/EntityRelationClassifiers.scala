@@ -8,7 +8,6 @@ import edu.illinois.cs.cogcomp.saulexamples.EntityMentionRelation.datastruct.{ C
 import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityRelation.EntityRelationDataModel._
 
 object EntityRelationClassifiers {
-
   /** independent entity classifiers */
   object OrganizationClassifier extends Learnable[ConllRawToken](EntityRelationDataModel) {
     def label: Property[ConllRawToken] = entityType is "Org"
