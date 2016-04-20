@@ -1,6 +1,8 @@
 package edu.illinois.cs.cogcomp.saulexamples.EntityMentionRelation.reader;
 
+import edu.illinois.cs.cogcomp.LbjNer.IO.ResourceUtilities;
 import edu.illinois.cs.cogcomp.saulexamples.EntityMentionRelation.datastruct.ConllRawToken;
+import org.ojalgo.netio.BufferedInputStreamReader;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -11,12 +13,16 @@ public class GazeteerReader {
     public ArrayList<String> listGazet;
     public ArrayList<String[]> listWords;
 
-    public GazeteerReader(String fileName, String listName, boolean isLowerCase) {
+    public GazeteerReader(String fileName, String listName, boolean isLowerCase, boolean asResource) {
         try {
             this.listName = listName;
             listGazet = new ArrayList<>();
             listWords = new ArrayList<>();
-            BufferedReader reader = new BufferedReader(new FileReader(fileName));
+            BufferedReader reader = null;
+            if (asResource)
+                reader = new BufferedInputStreamReader(ResourceUtilities.loadResource(fileName));
+            else
+                reader = new BufferedReader(new FileReader(fileName));
             String line = null;
             while ((line = reader.readLine()) != null) {
                 line = line.trim();
@@ -33,9 +39,13 @@ public class GazeteerReader {
         }
     }
 
-    public void addFile(String fileName, boolean isLowerCase) {
+    public void addFile(String fileName, boolean isLowerCase, boolean asResource) {
         try {
-            BufferedReader reader = new BufferedReader(new FileReader(fileName));
+            BufferedReader reader = null;
+            if (asResource)
+                reader = new BufferedInputStreamReader(ResourceUtilities.loadResource(fileName));
+            else
+                reader = new BufferedReader(new FileReader(fileName));
             String line = null;
             while ((line = reader.readLine()) != null) {
                 line = line.trim();

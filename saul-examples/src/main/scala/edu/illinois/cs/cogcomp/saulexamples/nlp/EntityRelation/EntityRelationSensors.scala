@@ -22,12 +22,12 @@ object EntityRelationSensors {
   lazy val (sentencesSmallSet, testRelationsSmallSet, entitiesSmallSet) = readConllData(resourcePath + "conll04-smallDocument.txt")
 
   def cityGazetSensor: GazeteerReader = {
-    new GazeteerReader(path + "EntityMentionRelation/known_city.lst", "Gaz:City", true)
+    new GazeteerReader(path + "EntityMentionRelation/known_city.lst", "Gaz:City", true, true)
   }
 
   def personGazetSensor: GazeteerReader = {
-    val personGazet = new GazeteerReader(path + "EntityMentionRelation/known_maleFirst.lst", "Gaz:Person", true)
-    personGazet.addFile(path + "EntityMentionRelation/known_femaleFirst.lst", true)
+    val personGazet = new GazeteerReader(path + "EntityMentionRelation/known_maleFirst.lst", "Gaz:Person", true, true)
+    personGazet.addFile(path + "EntityMentionRelation/known_femaleFirst.lst", true, true)
     personGazet
   }
 
