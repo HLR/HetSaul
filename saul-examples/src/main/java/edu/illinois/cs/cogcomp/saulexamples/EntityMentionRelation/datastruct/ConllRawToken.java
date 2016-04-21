@@ -37,7 +37,8 @@ public class ConllRawToken {
         if (POS != null ? !POS.equals(that.POS) : that.POS != null) return false;
         if (entType != null ? !entType.equals(that.entType) : that.entType != null) return false;
         if (phrase != null ? !phrase.equals(that.phrase) : that.phrase != null) return false;
-        if (relatedTokens != null ? !relatedTokens.equals(that.relatedTokens) : that.relatedTokens != null) return false;
+        if (relatedTokens != null ? !relatedTokens.equals(that.relatedTokens) : that.relatedTokens != null)
+            return false;
         if (s != null ? !s.equals(that.s) : that.s != null) return false;
         if (!Arrays.equals(splitPOS, that.splitPOS)) return false;
         if (!Arrays.equals(splitWords, that.splitWords)) return false;
