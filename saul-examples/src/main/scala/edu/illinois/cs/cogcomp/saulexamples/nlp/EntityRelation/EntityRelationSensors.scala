@@ -9,6 +9,11 @@ object EntityRelationSensors {
   val path = "../data/"
   val resourcePath = "../saul-examples/src/main/resources/EntityMentionRelation/"
 
+  // Create single instances of Gazeteers and cache then with the object.
+  lazy val cityGazetSensor = new GazeteerReader("gazeteer/known_city.lst", "Gaz:City", true, true)
+  lazy val personGazetSensor = new GazeteerReader("gazeteer/known_maleFirst.lst", "Gaz:Person", true, true)
+  personGazetSensor.addFile("gazeteer/known_femaleFirst.lst", true, true)
+
   def readConllData(dir: String): (List[ConllRawSentence], List[ConllRelation], List[ConllRawToken]) = {
     val reader = new Conll04_Reader(dir, "Token")
     val sentences = reader.sentences.asScala.toList
@@ -20,16 +25,6 @@ object EntityRelationSensors {
   lazy val (sentencesTrain, relationsTrain, entitiesTrain) = readConllData(path + "EntityMentionRelation/conll04_train.corp")
   lazy val (sentencesTest, relationsTest, entitiesTest) = readConllData(path + "EntityMentionRelation/conll04_test.corp")
   lazy val (sentencesSmallSet, testRelationsSmallSet, entitiesSmallSet) = readConllData(resourcePath + "conll04-smallDocument.txt")
-
-  def cityGazetSensor: GazeteerReader = {
-    new GazeteerReader(path + "EntityMentionRelation/known_city.lst", "Gaz:City", true)
-  }
-
-  def personGazetSensor: GazeteerReader = {
-    val personGazet = new GazeteerReader(path + "EntityMentionRelation/known_maleFirst.lst", "Gaz:Person", true)
-    personGazet.addFile(path + "EntityMentionRelation/known_femaleFirst.lst", true)
-    personGazet
-  }
 
   def sentenceToRelation_GeneratingSensor(s: ConllRawSentence): List[ConllRelation] = {
     s.relations.asScala.toList
