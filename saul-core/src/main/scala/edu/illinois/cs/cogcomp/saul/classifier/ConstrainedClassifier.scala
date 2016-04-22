@@ -29,6 +29,8 @@ abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val dm: DataMo
 
   def className: String = this.getClass.getName
 
+  def getClassSimpleNameForClassifier = this.getClass.getSimpleName
+
   def __allowableValues: List[String] = "*" :: "*" :: Nil
 
   def subjectTo: LfsConstraint[HEAD]
