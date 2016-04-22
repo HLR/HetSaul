@@ -13,6 +13,11 @@ import edu.illinois.cs.cogcomp.saul.parser.LBJIteratorParserScala
 
 import scala.reflect.ClassTag
 
+/** The input to a ConstrainedClassifier is of type `T`. However given an input, the inference is based upon the
+  * head object of type `HEAD` corresponding to the input (of type `T`).
+  * @tparam T the object type given to the classifier as input
+  * @tparam HEAD the object type inference is based upon
+  */
 abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val dm: DataModel, val onClassifier: Learner)(
   implicit
   val tType: ClassTag[T],
@@ -30,11 +35,21 @@ abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val dm: DataMo
 
   def solver: ILPSolver = new GurobiHook()
 
-  // TODO: add comments to this
+  /** The function is used to filter the generated candidates from the head object; remember that the inference starts
+    * from the head object. This function finds the objects of type `T` which are connected to the target object of
+    * type `HEAD`. If we don't define `filter`, by default it returns all objects connected to `HEAD`.
+    * The filter is useful for the `JointTraining` when we go over all global objects and generate all contained object
+    * that serve as examples for the basic classifiers involved in the `JoinTraining`. It is possible that we do not
+    * want to use all possible candidates but some of them, for example when we have a way to filter the negative
+    * candidates, this can come in the filter.
+    */
   def filter(t: T, head: HEAD): Boolean = true
 
   val logger = false
 
+  /** The `pathToHead` returns only one object of type HEAD, if there are many of them i.e. `Iterable[HEAD]` then it
+    * simply returns the `head` of the `Iterable`
+    */
   val pathToHead: Option[Edge[T, HEAD]] = None
 
   /** syntactic suger to create simple calls to the function */
