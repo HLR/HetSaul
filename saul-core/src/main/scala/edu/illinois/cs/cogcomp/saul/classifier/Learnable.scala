@@ -232,16 +232,6 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
     * @param testData
     * @return List of (label, (f1, precision, recall))
     */
-  def test(testData: Iterable[T]): List[(String, (Double, Double, Double))] = {
-    isTraining = false
-    val testReader = new LBJIteratorParserScala[T](testData)
-    testReader.reset()
-    val tester = TestDiscrete.testDiscrete(classifier, classifier.getLabeler, testReader)
-    tester.printPerformance(System.out)
-    val ret = tester.getLabels.map { label => (label, (tester.getF1(label), tester.getPrecision(label), tester.getRecall(label))) }
-    ret.toList
-  }
-
   def test(testData: Iterable[T] = null, prediction: Property[T] = null, groundTruth: Property[T] = null, exclude: String = ""): List[(String, (Double, Double, Double))] = {
     isTraining = false
     val testReader = new LBJIteratorParserScala[T](if (testData == null) this.datamodel.getNodeWithType[T].getTestingInstances else testData)
