@@ -178,7 +178,7 @@ abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val dm: DataMo
     * @return List of (label, (f1,precision,recall))
     */
 
-  def test(testData: Iterable[T]=null, outFile: String= null , outputGranularity: Int=0, exclude: String=""): List[(String, (Double, Double, Double))] = {
+  def test(testData: Iterable[T] = null, outFile: String = null, outputGranularity: Int = 0, exclude: String = ""): List[(String, (Double, Double, Double))] = {
     println()
     val testReader = new LBJIteratorParserScala[T](
       if (testData == null) {
