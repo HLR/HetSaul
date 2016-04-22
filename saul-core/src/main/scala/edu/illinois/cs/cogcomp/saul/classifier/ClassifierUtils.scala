@@ -5,7 +5,7 @@ package edu.illinois.cs.cogcomp.saul.classifier
 object ClassifierUtils {
   val evalSeparator = "==============================================="
 
-  object LearnClassifiers {
+  object TrainClassifiers {
     def apply[T <: AnyRef](c: (Learnable[T], Iterable[T])*) = {
       c.foreach {
         case (learner, trainInstances) =>
@@ -35,15 +35,6 @@ object ClassifierUtils {
       println(evalSeparator)
     }
 
-    def apply(iter: Integer, trainInstances: Iterable[_], c: (Learnable[_])*)(implicit d1: DummyImplicit) = {
-      c.foreach { learner =>
-        println(evalSeparator)
-        println("Training " + learner.getClassSimpleNameForClassifier)
-        learner.learn(iter)
-      }
-      println(evalSeparator)
-    }
-
     def apply(iter: Integer, c: (Learnable[_])*)(implicit d1: DummyImplicit, d2: DummyImplicit) = {
       c.foreach { learner =>
         println(evalSeparator)
@@ -54,42 +45,47 @@ object ClassifierUtils {
     }
   }
 
+  // TODO: simplify the output type of test
   object TestClassifiers {
-    def apply[T <: AnyRef](c: (Learnable[T], Iterable[T])*) = {
-      c.foreach {
+    def apply[T <: AnyRef](c: (Learnable[T], Iterable[T])*): Seq[List[(String, (Double, Double, Double))]] = {
+      val testResults = c.map {
         case (learner, testInstances) =>
           println(evalSeparator)
           println("Evaluating " + learner.getClassSimpleNameForClassifier)
           learner.test(testInstances)
       }
       println(evalSeparator)
+      testResults
     }
 
-    def apply[T <: AnyRef](testInstances: Iterable[T], c: Learnable[T]*) = {
-      c.foreach { learner =>
+    def apply[T <: AnyRef](testInstances: Iterable[T], c: Learnable[T]*): Seq[List[(String, (Double, Double, Double))]] = {
+      val testResults = c.map { learner =>
         println(evalSeparator)
         println("Evaluating " + learner.getClassSimpleNameForClassifier)
         learner.test(testInstances)
       }
       println(evalSeparator)
+      testResults
     }
 
-    def apply(c: Learnable[_]*)(implicit d1: DummyImplicit, d2: DummyImplicit) = {
-      c.foreach { learner =>
+    def apply(c: Learnable[_]*)(implicit d1: DummyImplicit, d2: DummyImplicit): Seq[List[(String, (Double, Double, Double))]] = {
+      val testResults = c.map { learner =>
         println(evalSeparator)
         println("Evaluating " + learner.getClassSimpleNameForClassifier)
         learner.test()
       }
       println(evalSeparator)
+      testResults
     }
 
-    def apply(c: ConstrainedClassifier[_, _]*)(implicit d1: DummyImplicit, d2: DummyImplicit, d3: DummyImplicit) = {
-      c.foreach { learner =>
+    def apply(c: ConstrainedClassifier[_, _]*)(implicit d1: DummyImplicit, d2: DummyImplicit, d3: DummyImplicit): Seq[List[(String, (Double, Double, Double))]] = {
+      val testResults = c.map { learner =>
         println(evalSeparator)
         println("Evaluating " + learner.getClassSimpleNameForClassifier)
         learner.test()
       }
       println(evalSeparator)
+      testResults
     }
   }
 

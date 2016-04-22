@@ -36,7 +36,7 @@ object EntityRelationApp {
     EntityRelationDataModel.populateWithConll()
     val iter = 10
     // independent entity and relation classifiers
-    ClassifierUtils.LearnClassifiers(iter, PersonClassifier, OrganizationClassifier, LocationClassifier,
+    ClassifierUtils.TrainClassifiers(iter, PersonClassifier, OrganizationClassifier, LocationClassifier,
       WorksForClassifier, LivesInClassifier, LocatedInClassifier, OrgBasedInClassifier)
     ClassifierUtils.TestClassifiers(PersonClassifier, OrganizationClassifier, LocationClassifier,
       WorksForClassifier, LivesInClassifier, LocatedInClassifier, OrgBasedInClassifier)
@@ -68,7 +68,7 @@ object EntityRelationApp {
 
     // train pipeline relation models, which use the prediction of the entity classifiers
     val iter = 10
-    ClassifierUtils.LearnClassifiers(iter, WorksForClassifierPipeline, LivesInClassifierPipeline)
+    ClassifierUtils.TrainClassifiers(iter, WorksForClassifierPipeline, LivesInClassifierPipeline)
     ClassifierUtils.TestClassifiers(WorksForClassifierPipeline, LivesInClassifierPipeline)
     ClassifierUtils.SaveClassifiers(WorksForClassifierPipeline, LivesInClassifierPipeline)
   }
