@@ -4,6 +4,7 @@ import edu.illinois.cs.cogcomp.lbjava.classify.TestDiscrete
 import edu.illinois.cs.cogcomp.lbjava.infer._
 import edu.illinois.cs.cogcomp.lbjava.learn.Learner
 import edu.illinois.cs.cogcomp.lbjava.parse.Parser
+import edu.illinois.cs.cogcomp.saul.TestWithStorage
 import edu.illinois.cs.cogcomp.saul.classifier.infer.InferenceCondition
 import edu.illinois.cs.cogcomp.saul.constraint.LfsConstraint
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
@@ -170,44 +171,36 @@ abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val dm: DataMo
     learnAll(crTokenTest, iteration)
   }
 
-  def test(): List[(String, (Double, Double, Double))] = {
-
-    val allHeads = this.dm.getNodeWithType[HEAD].getTestingInstances
-    //    allHeads foreach( t => println(s"  [HEAD]  Using thie head ${t} "))
-
-    val data: List[T] = if (tType.equals(headType)) {
-      allHeads.map(_.asInstanceOf[T]).toList
-    } else {
-      this.pathToHead match {
-        case Some(path) => allHeads.map(h => path.backward.neighborsOf(h)).toList.flatten
-        case _ => (allHeads map (h => this.dm.getFromRelation[HEAD, T](h))).toList.flatten
-      }
-    }
-    test(data)
-  }
-
   /** Test with given data, use internally
     *
-    * @param testData
+    * @param testData The input data as an `Iterable` of type `T`
+    * @param outFile The file to write the predictions (can be `null`)
     * @return List of (label, (f1,precision,recall))
     */
-  def test(testData: Iterable[T]): List[(String, (Double, Double, Double))] = {
+
+  def test(testData: Iterable[T]=null, outFile: String= null , outputGranularity: Int=0, exclude: String=""): List[(String, (Double, Double, Double))] = {
     println()
-    val testReader = new LBJIteratorParserScala[T](testData)
-    //    println("Here is the test!")
+    val testReader = new LBJIteratorParserScala[T](
+      if (testData == null) {
+        val allHeads = this.dm.getNodeWithType[HEAD].getTestingInstances
+        val data: List[T] = if (tType.equals(headType)) {
+          allHeads.map(_.asInstanceOf[T]).toList
+        } else {
+          this.pathToHead match {
+            case Some(path) => allHeads.map(h => path.backward.neighborsOf(h)).toList.flatten
+            case _ => (allHeads map (h => this.dm.getFromRelation[HEAD, T](h))).toList.flatten
+          }
+        }
+        data
+      } else testData
+    )
     testReader.reset()
-
-    //    testData.toList.map{
-    //     t : T =>
-    //       println(s"Eval ${t}")
-    //       (t,classifier.discreteValue(t))
-    //    }.foreach(println)
-
-    val tester = TestDiscrete.testDiscrete(classifier, onClassifier.getLabeler, testReader)
-    tester.printPerformance(System.out)
-    tester.getLabels.map { label =>
-      (label, (tester.getF1(label), tester.getPrecision(label), tester.getRecall(label)))
-    }.toList
+    val tester: TestDiscrete = new TestDiscrete()
+    TestWithStorage.test(tester, classifier, onClassifier.getLabeler, testReader, outFile, outputGranularity, exclude)
+    val ret = tester.getLabels.map({
+      label => (label, (tester.getF1(label), tester.getPrecision(label), tester.getRecall(label)))
+    })
+    ret toList
   }
 }
 

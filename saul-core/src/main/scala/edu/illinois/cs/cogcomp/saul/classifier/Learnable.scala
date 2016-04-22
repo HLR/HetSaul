@@ -228,12 +228,6 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
 
   def forget() = this.classifier.forget()
 
-  def test(): List[(String, (Double, Double, Double))] = {
-    isTraining = false
-    val data = this.datamodel.getNodeWithType[T].getTestingInstances
-    test(data)
-  }
-
   /** Test with given data, use internally
     * @param testData
     * @return List of (label, (f1, precision, recall))
@@ -243,6 +237,22 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
     val testReader = new LBJIteratorParserScala[T](testData)
     testReader.reset()
     val tester = TestDiscrete.testDiscrete(classifier, classifier.getLabeler, testReader)
+    tester.printPerformance(System.out)
+    val ret = tester.getLabels.map { label => (label, (tester.getF1(label), tester.getPrecision(label), tester.getRecall(label))) }
+    ret.toList
+  }
+
+  def test(testData: Iterable[T] = null, prediction: Property[T] = null, groundTruth: Property[T] = null, exclude: String = ""): List[(String, (Double, Double, Double))] = {
+    isTraining = false
+    val testReader = new LBJIteratorParserScala[T](if (testData == null) this.datamodel.getNodeWithType[T].getTestingInstances else testData)
+    testReader.reset()
+    val tester = if (prediction == null && groundTruth == null)
+      TestDiscrete.testDiscrete(classifier, classifier.getLabeler, testReader)
+    else
+      TestDiscrete.testDiscrete(prediction.classifier, groundTruth.classifier, testReader)
+    if (!exclude.isEmpty) {
+      tester.addNull(exclude)
+    }
     tester.printPerformance(System.out)
     val ret = tester.getLabels.map { label => (label, (tester.getF1(label), tester.getPrecision(label), tester.getRecall(label))) }
     ret.toList
