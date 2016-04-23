@@ -263,7 +263,7 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
     val testReader = new LBJIteratorParserScala[T](testData)
     testReader.reset()
     val tester = new TestContinuous(classifier, classifier.getLabeler, testReader)
-   }
+  }
 
   def chunkData(ts: List[Iterable[T]], i: Int, curr: Int, acc: (Iterable[T], Iterable[T])): (Iterable[T], Iterable[T]) = {
     ts match {

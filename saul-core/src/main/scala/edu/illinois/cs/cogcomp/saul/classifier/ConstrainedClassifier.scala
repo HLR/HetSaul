@@ -171,7 +171,6 @@ abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val dm: DataMo
     learnAll(crTokenTest, iteration)
   }
 
-
   /** Test with given data, use internally
     * @param testData if the collection of data (which is and Iterable of type T) is not given it is derived from the data model based on its type
     * @param exclude it is the label that we want to exclude for evaluation, this is useful for evaluating the multi-class classifiers when we need to measure overall F1 instead of accuracy and we need to exclude the negative class
