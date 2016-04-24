@@ -11,9 +11,9 @@ import scala.collection.JavaConversions._
 object EntityRelationDataModel extends DataModel {
 
   /** Nodes & Edges */
-  val tokens = node[ConllRawToken] //((x: ConllRawToken) => x.wordId + ":" + x.sentId)
-  val sentences = node[ConllRawSentence] //((x: ConllRawSentence) => x.sentId)
-  val pairs = node[ConllRelation] //((x: ConllRelation) => x.wordId1 + ":" + x.wordId2 + ":" + x.sentId)
+  val tokens = node[ConllRawToken]
+  val sentences = node[ConllRawSentence]
+  val pairs = node[ConllRelation]
 
   val sentenceToToken = edge(sentences, tokens)
   val sentencesToPairs = edge(sentences, pairs)

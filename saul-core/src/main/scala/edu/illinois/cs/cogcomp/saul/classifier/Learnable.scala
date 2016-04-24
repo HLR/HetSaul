@@ -32,6 +32,8 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
 
   def getClassNameForClassifier = this.getClass.getCanonicalName
 
+  def getClassSimpleNameForClassifier = this.getClass.getSimpleName
+
   def feature: List[Property[T]] = datamodel.getPropertiesForType[T]
 
   /** filter out the label from the features */
