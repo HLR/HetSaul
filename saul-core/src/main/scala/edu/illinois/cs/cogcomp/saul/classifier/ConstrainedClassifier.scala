@@ -174,28 +174,32 @@ abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val dm: DataMo
   }
 
   /** Test with given data, use internally
+    * @return List of (label, (f1, precision, recall))
+    */
+  def test() : List[(String, (Double, Double, Double))] = {
+    val allHeads = this.dm.getNodeWithType[HEAD].getTestingInstances
+    val data: List[T] = if (tType.equals(headType)) {
+      allHeads.map(_.asInstanceOf[T]).toList
+    } else {
+      this.pathToHead match {
+        case Some(path) => allHeads.map(h => path.backward.neighborsOf(h)).toList.flatten
+        case _ => (allHeads map (h => this.dm.getFromRelation[HEAD, T](h))).toList.flatten
+      }
+    }
+
+    test(data)
+  }
+
+  /** Test with given data, use internally
     * @param testData if the collection of data (which is and Iterable of type T) is not given it is derived from the data model based on its type
     * @param exclude it is the label that we want to exclude for evaluation, this is useful for evaluating the multi-class classifiers when we need to measure overall F1 instead of accuracy and we need to exclude the negative class
     * @param outFile The file to write the predictions (can be `null`)
     * @return List of (label, (f1,precision,recall))
     */
 
-  def test(testData: Iterable[T] = null, outFile: String = null, outputGranularity: Int = 0, exclude: String = ""): List[(String, (Double, Double, Double))] = {
+  def test(testData: Iterable[T], outFile: String = null, outputGranularity: Int = 0, exclude: String = ""): List[(String, (Double, Double, Double))] = {
     println()
-    val testReader = new LBJIteratorParserScala[T](
-      if (testData == null) {
-        val allHeads = this.dm.getNodeWithType[HEAD].getTestingInstances
-        val data: List[T] = if (tType.equals(headType)) {
-          allHeads.map(_.asInstanceOf[T]).toList
-        } else {
-          this.pathToHead match {
-            case Some(path) => allHeads.map(h => path.backward.neighborsOf(h)).toList.flatten
-            case _ => (allHeads map (h => this.dm.getFromRelation[HEAD, T](h))).toList.flatten
-          }
-        }
-        data
-      } else testData
-    )
+    val testReader = new LBJIteratorParserScala[T](testData)
     testReader.reset()
     val tester: TestDiscrete = new TestDiscrete()
     TestWithStorage.test(tester, classifier, onClassifier.getLabeler, testReader, outFile, outputGranularity, exclude)
