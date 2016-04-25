@@ -5,6 +5,7 @@ import edu.illinois.cs.cogcomp.core.utilities.configuration.{ Property, Resource
 import edu.illinois.cs.cogcomp.lbj.pos.POSLabeledUnknownWordParser
 import edu.illinois.cs.cogcomp.lbjava.classify.TestDiscrete
 import edu.illinois.cs.cogcomp.nlp.corpusreaders.PennTreebankPOSReader
+import edu.illinois.cs.cogcomp.saul.classifier.ClassifierUtils
 import edu.illinois.cs.cogcomp.saul.parser.LBJIteratorParserScala
 import edu.illinois.cs.cogcomp.saulexamples.nlp.POSTagger.POSClassifiers._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.POSTagger.POSDataModel._
@@ -18,7 +19,8 @@ object POSConfigurator extends Configurator {
   val trainDataSmall = new Property("trainDataSmall", prefix + "00-18_small.br")
   val trainAndDevData = new Property("trainAndDevData", prefix + "00-21.br")
   val testData = new Property("testData", prefix + "22-24.br")
-
+  // models from the "saul-pos-tagger-models" jar package
+  val jarModelPath = "edu/illinois/cs/cogcomp/saulexamples/nlp/POSTagger/models/"
   override def getDefaultConfig: ResourceManager = {
     val props = Array(trainData, trainDataSmall, trainAndDevData, testData)
     new ResourceManager(generateProperties(props))
@@ -83,15 +85,16 @@ object POSTaggerApp {
     testPOSTagger()
 
     // saving all the models
-    saveModels()
+    ClassifierUtils.SaveClassifiers(BaselineClassifier, MikheevClassifier, POSTaggerKnown, POSTaggerUnknown)
   }
 
   /** Loading the serialized models as a dependency */
   def testWithPretrainedModels(): Unit = {
     POSDataModel.tokens.populate(testData, train = false)
-
-    POSClassifiers.loadModelsFromPackage()
-
+    ClassifierUtils.LoadClassifier(
+      POSConfigurator.jarModelPath,
+      BaselineClassifier, MikheevClassifier, POSTaggerKnown, POSTaggerUnknown
+    )
     testPOSTagger()
   }
 

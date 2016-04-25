@@ -7,7 +7,6 @@ import edu.illinois.cs.cogcomp.saulexamples.EntityMentionRelation.datastruct.{ C
 import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityRelation.EntityRelationDataModel._
 
 object EntityRelationClassifiers {
-
   /** independent entity classifiers */
   object OrganizationClassifier extends Learnable[ConllRawToken](EntityRelationDataModel) {
     def label: Property[ConllRawToken] = entityType is "Org"
@@ -67,90 +66,6 @@ object EntityRelationClassifiers {
     override def label: Property[ConllRelation] = relationType is "Live_In"
     override def feature = using(relFeature, relPos, entityPrediction)
     override lazy val classifier = new SparsePerceptron()
-  }
-
-  def saveEntityModels() = {
-    PersonClassifier.save()
-    OrganizationClassifier.save()
-    LocationClassifier.save()
-  }
-
-  def testEntityModels() = {
-    println("Testing independent entity models: ")
-    println("==============================================")
-    println("Person Classifier Evaluation")
-    PersonClassifier.test()
-    println("==============================================")
-    println("Organization Classifier Evaluation")
-    OrganizationClassifier.test()
-    println("==============================================")
-    println("Location Classifier Evaluation")
-    LocationClassifier.test()
-    println("==============================================")
-  }
-
-  def saveIndependentRelationModels() = {
-    WorksForClassifier.save()
-    LivesInClassifier.save()
-    LocatedInClassifier.save()
-    OrgBasedInClassifier.save()
-  }
-
-  def testIndependentRelationModels() = {
-    println("Testing independent relation models: ")
-    println("==============================================")
-    println("WorksFor Classifier Evaluation")
-    WorksForClassifier.test()
-    println("==============================================")
-    println("LivesIn Classifier Evaluation")
-    LivesInClassifier.test()
-    println("==============================================")
-    println("LocatedIn Classifier Evaluation")
-    LocatedInClassifier.test()
-    println("==============================================")
-    println("OrgBasedIn Classifier Evaluation")
-    OrgBasedInClassifier.test()
-  }
-
-  def savePipelineRelationModels() = {
-    WorksForClassifierPipeline.save()
-    LivesInClassifierPipeline.save()
-  }
-
-  def testPipelineModels() = {
-    println("Testing pipeline relation models: ")
-    println("==============================================")
-    println("WorksFor Pipeline Classifier Evaluation")
-    WorksForClassifierPipeline.test()
-    println("==============================================")
-    println("LivesIn Pipeline Classifier Evaluation")
-    LivesInClassifierPipeline.test()
-    println("==============================================")
-  }
-
-  // Loads learned models from the "saul-conll-er-tagger-models" jar package
-  def loadModel[T <: AnyRef](x: Learnable[T]): Unit = {
-    val jarModelPath = "edu/illinois/cs/cogcomp/saulexamples/nlp/EntityRelation/models/"
-    val prefix = jarModelPath + x.getClassNameForClassifier
-    x.load(prefix + ".lc", prefix + ".lex")
-  }
-
-  def loadIndependentEntityModels(): Unit = {
-    loadModel[ConllRawToken](PersonClassifier)
-    loadModel[ConllRawToken](OrganizationClassifier)
-    loadModel[ConllRawToken](LocationClassifier)
-  }
-
-  def loadIndependentRelationModels(): Unit = {
-    loadModel[ConllRelation](WorksForClassifier)
-    loadModel[ConllRelation](LivesInClassifier)
-    loadModel[ConllRelation](LocatedInClassifier)
-    loadModel[ConllRelation](OrgBasedInClassifier)
-  }
-
-  def loadPipelineRelationModels(): Unit = {
-    loadModel[ConllRelation](WorksForClassifierPipeline)
-    loadModel[ConllRelation](LivesInClassifierPipeline)
   }
 }
 

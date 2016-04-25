@@ -19,35 +19,6 @@ object POSClassifiers {
       POSTaggerUnknown.classifier.valueOf(x, MikheevClassifier.classifier.allowableTags(x)).getStringValue
   }
 
-  // Loads learned models from the "saul-pos-tagger-models" jar package
-  def loadModelsFromPackage(): Unit = {
-    val jarModelPath = "edu/illinois/cs/cogcomp/saulexamples/nlp/POSTagger/models/"
-
-    def loadModel(x: Learnable[Constituent]): Unit = {
-      val prefix = jarModelPath + x.getClassNameForClassifier
-      x.load(prefix + ".lc", prefix + ".lex")
-    }
-
-    loadModel(BaselineClassifier)
-    loadModel(MikheevClassifier)
-    loadModel(POSTaggerKnown)
-    loadModel(POSTaggerUnknown)
-  }
-
-  def loadSavedModels(): Unit = {
-    BaselineClassifier.load()
-    MikheevClassifier.load()
-    POSTaggerKnown.load()
-    POSTaggerUnknown.load()
-  }
-
-  def saveModels(): Unit = {
-    BaselineClassifier.save()
-    MikheevClassifier.save()
-    POSTaggerKnown.save()
-    POSTaggerUnknown.save()
-  }
-
   object POSTaggerKnown extends Learnable[Constituent](POSDataModel) {
     def label = POSLabel
     override def feature = using(wordForm, baselineTarget, labelTwoBefore, labelOneBefore,
