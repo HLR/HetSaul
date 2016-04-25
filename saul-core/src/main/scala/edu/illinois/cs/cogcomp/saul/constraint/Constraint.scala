@@ -2,19 +2,13 @@ package edu.illinois.cs.cogcomp.saul.constraint
 
 import edu.illinois.cs.cogcomp.lbjava.infer._
 import edu.illinois.cs.cogcomp.lbjava.learn.Learner
-import edu.illinois.cs.cogcomp.saul.datamodel.property.Property
 import edu.illinois.cs.cogcomp.saul.lbjrelated.LBJLearnerEquivalent
 
 /** We need to define the langauge of constraints here to work with the first order constraints that are programmed in
   * our main LBP script. The wrapper just gives us a java firstorderconstraint object in the shell of an scala object.
   * in this way our language works on scala objects.
   */
-
 object ConstraintTypeConversion {
-
-  implicit def singlePropertyToList[T <: AnyRef](property: Property[T]): List[Property[T]] = {
-    property :: Nil
-  }
 
   implicit def learnerToLFS(l: Learner): LBJLearnerEquivalent = {
     new LBJLearnerEquivalent {
