@@ -233,7 +233,7 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
   /** Test with given data, use internally
     * @return List of (label, (f1, precision, recall))
     */
-  def test() : List[(String, (Double, Double, Double))] = {
+  def test(): List[(String, (Double, Double, Double))] = {
     val testData = this.datamodel.getNodeWithType[T].getTestingInstances
     test(testData)
   }

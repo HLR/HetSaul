@@ -191,7 +191,7 @@ abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val dm: DataMo
   /** Test with given data, use internally
     * @return List of (label, (f1, precision, recall))
     */
-  def test() : List[(String, (Double, Double, Double))] = {
+  def test(): List[(String, (Double, Double, Double))] = {
     val allHeads = this.dm.getNodeWithType[HEAD].getTestingInstances
     val data: List[T] = if (tType.equals(headType)) {
       allHeads.map(_.asInstanceOf[T]).toList
