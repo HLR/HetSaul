@@ -4,6 +4,7 @@ import edu.illinois.cs.cogcomp.lbjava.classify.TestDiscrete
 import edu.illinois.cs.cogcomp.lbjava.infer._
 import edu.illinois.cs.cogcomp.lbjava.learn.Learner
 import edu.illinois.cs.cogcomp.lbjava.parse.Parser
+import edu.illinois.cs.cogcomp.saul.TestWithStorage
 import edu.illinois.cs.cogcomp.saul.classifier.infer.InferenceCondition
 import edu.illinois.cs.cogcomp.saul.constraint.LfsConstraint
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
@@ -187,11 +188,11 @@ abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val dm: DataMo
     learnAll(crTokenTest, iteration)
   }
 
+  /** Test with given data, use internally
+    * @return List of (label, (f1, precision, recall))
+    */
   def test(): List[(String, (Double, Double, Double))] = {
-
     val allHeads = this.dm.getNodeWithType[HEAD].getTestingInstances
-    //    allHeads foreach( t => println(s"  [HEAD]  Using thie head ${t} "))
-
     val data: List[T] = if (tType.equals(headType)) {
       allHeads.map(_.asInstanceOf[T]).toList
     } else {
@@ -200,31 +201,27 @@ abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val dm: DataMo
         case _ => (allHeads map (h => this.dm.getFromRelation[HEAD, T](h))).toList.flatten
       }
     }
+
     test(data)
   }
 
   /** Test with given data, use internally
-    *
-    * @param testData
+    * @param testData if the collection of data (which is and Iterable of type T) is not given it is derived from the data model based on its type
+    * @param exclude it is the label that we want to exclude for evaluation, this is useful for evaluating the multi-class classifiers when we need to measure overall F1 instead of accuracy and we need to exclude the negative class
+    * @param outFile The file to write the predictions (can be `null`)
     * @return List of (label, (f1,precision,recall))
     */
-  def test(testData: Iterable[T]): List[(String, (Double, Double, Double))] = {
+
+  def test(testData: Iterable[T], outFile: String = null, outputGranularity: Int = 0, exclude: String = ""): List[(String, (Double, Double, Double))] = {
     println()
     val testReader = new LBJIteratorParserScala[T](testData)
-    //    println("Here is the test!")
     testReader.reset()
-
-    //    testData.toList.map{
-    //     t : T =>
-    //       println(s"Eval ${t}")
-    //       (t,classifier.discreteValue(t))
-    //    }.foreach(println)
-
-    val tester = TestDiscrete.testDiscrete(classifier, onClassifier.getLabeler, testReader)
-    tester.printPerformance(System.out)
-    tester.getLabels.map { label =>
-      (label, (tester.getF1(label), tester.getPrecision(label), tester.getRecall(label)))
-    }.toList
+    val tester: TestDiscrete = new TestDiscrete()
+    TestWithStorage.test(tester, classifier, onClassifier.getLabeler, testReader, outFile, outputGranularity, exclude)
+    val ret = tester.getLabels.map({
+      label => (label, (tester.getF1(label), tester.getPrecision(label), tester.getRecall(label)))
+    })
+    ret toList
   }
 }
 
