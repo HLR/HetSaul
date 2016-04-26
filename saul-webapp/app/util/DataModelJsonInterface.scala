@@ -31,7 +31,7 @@ object DataModelJsonInterface {
     def getFullJson = {
       val nodesJson = nodesObjs.map {
         case (name, node) =>
-          (name, node.asInstanceOf[Node[_]].getAllInstances.map(x => name + x.hashCode.toString).toArray)
+          (name, node.asInstanceOf[Node[_]].getAllInstances.map(x => (name + x.hashCode.toString, x.toString)).toMap)
       } toMap
       val invertedNodesMap: Map[Object, String] = nodesObjs.map(_.swap).toMap
       val edgesJson = buildEdgeJson(invertedNodesMap)
@@ -48,7 +48,7 @@ object DataModelJsonInterface {
       val queryNodesObjs = nodesObjs.filter { case (_, instance) => instance eq instanceSet.node }
       val name = queryNodesObjs(0)._1
       val nodesJson = Map(name ->
-        instanceSet.instances.map(x => name + x.hashCode.toString).toArray)
+        instanceSet.instances.map(x => (name + x.hashCode.toString, x.toString)).toMap)
       val invertedNodesMap: Map[Object, String] = queryNodesObjs.map(_.swap).toMap
       val queryPropsObjs = propsObjs.filter(prop => prop._2 eq property)
       val invertedPropsMap: Map[Object, String] = queryPropsObjs.map(_.swap).toMap
@@ -67,7 +67,7 @@ object DataModelJsonInterface {
       val queryNodesObjs = nodesObjs.filter { case (_, instance) => instance eq VisualizerInstance.instanceSet.node }
       val name = queryNodesObjs(0)._1
       val nodesJson = Map(name ->
-        VisualizerInstance.instanceSet.instances.map(x => name + x.hashCode.toString).toArray)
+        VisualizerInstance.instanceSet.instances.map(x => (name + x.hashCode.toString, x.toString)).toMap)
       val invertedNodesMap: Map[Object, String] = queryNodesObjs.map(_.swap).toMap
       val edgesJson = buildEdgeJson(invertedNodesMap)
       val propertiesJson = buildPropertiesJson(queryNodesObjs)
@@ -123,7 +123,7 @@ object DataModelJsonInterface {
     }
 
     def parseJsonGraph(
-      nodesJson: Map[String, Array[String]],
+      nodesJson: Map[String, Map[String,String]],
       edgesJson: List[(String, String)],
       propertiesJson: List[(String, Map[String, String])]
     ): JsObject = {

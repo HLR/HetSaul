@@ -10,7 +10,7 @@ import scala.collection.mutable
 import scala.reflect.internal.util.{ BatchSourceFile, Position }
 import scala.tools.nsc.Settings
 import scala.tools.nsc.reporters.{ Reporter, AbstractReporter }
-import _root_.util.reflectUtils._
+import _root_.util.ReflectUtils._
 import _root_.util._
 
 object Application {
@@ -21,13 +21,13 @@ object Application {
     "scala.tools.nsc.Interpreter",
     "scala.AnyVal",
     "edu.illinois.cs.cogcomp.saulexamples.nlp.EmailSpam.SpamApp",
-    "edu.illinois.cs.cogcomp.saulexamples.bioInformatics.regressionModel.myApp",
+    "edu.illinois.cs.cogcomp.saulexamples.bioInformatics.regressionModel.MyApp",
     "edu.illinois.cs.cogcomp.saul.datamodel.DataModel",
     "edu.illinois.cs.cogcomp.lbjava.parse.Parser",
     "edu.illinois.cs.cogcomp.core.datastructures.textannotation.TextAnnotation",
     "edu.illinois.cs.cogcomp.nlp.pipeline.IllinoisPipelineFactory",
     "edu.illinois.cs.cogcomp.curator.CuratorFactory",
-    "util.visualizer"
+    "util.VisualizerInstance"
   ).flatMap(x => classPathOfClass(x)) ::: List(rootDir)).mkString(File.pathSeparator)
 
 }
@@ -183,7 +183,7 @@ class Application extends Controller {
         VisualizerInstance.init
         compiler.executeWithoutLog(x)
         scalaInstances find (x => x match {
-          case model: DataModel => return DataModelJsonInterface.getPopulatedInstancesJson(model)
+          case model: DataModel => Statistics.getStatistics(model);return DataModelJsonInterface.getPopulatedInstancesJson(model)
           case _ => false
         })
         return getErrorJson(Json.toJson("No DataModel found."))

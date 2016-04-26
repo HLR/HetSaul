@@ -1,8 +1,10 @@
 import sys, getopt
 from os import listdir
 from os.path import isfile, join, basename
+#used for turning .java and .scala files to javascript string array
+#Usage: python fileToArray.py -d PathToDirectory or python fileToArray.py -f PathToFile
 
-outdir = "/tmp/"
+outdir = "/tmp/" #output path
 def main(argv):
 	directory = ''
 	filename = ''

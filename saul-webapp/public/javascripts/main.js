@@ -15,7 +15,7 @@ $(document).ready(function(){
 var setupExamples = function(){
         $("#ToyExample").click(function(){
             deleteAllFiles();
-            var content = ["package test","","import edu.illinois.cs.cogcomp.saul.datamodel.DataModel","import logging.logger.{ error, info }", "","object $$$$$$ extends DataModel {","","    val firstNames = node[String]","    val lastNames = node[String]","    val name = edge(firstNames,lastNames)","    val prefix = property(firstNames,\"prefix\")((s: String) => s.charAt(1).toString)","    val prefix2 = property(firstNames,\"prefix\")((s: String) => s.charAt(0).toString)","","    def main(args : Array[String]): Unit ={","        firstNames.populate(Seq(\"Dave\",\"John\",\"Mark\",\"Michael\"))","        lastNames.populate(Seq(\"Dell\",\"Jacobs\",\"Maron\",\"Mario\"))","        name.populateWith(_.charAt(0) == _.charAt(0))","    }","}"];
+            var content = ["package test","","import edu.illinois.cs.cogcomp.saul.datamodel.DataModel","import logging.Logger.{ error, info }", "","object $$$$$$ extends DataModel {","","    val firstNames = node[String]","    val lastNames = node[String]","    val name = edge(firstNames,lastNames)","    val prefix = property(firstNames,\"prefix\")((s: String) => s.charAt(1).toString)","    val prefix2 = property(firstNames,\"prefix\")((s: String) => s.charAt(0).toString)","","    def main(args : Array[String]): Unit ={","        firstNames.populate(Seq(\"Dave\",\"John\",\"Mark\",\"Michael\"))","        lastNames.populate(Seq(\"Dell\",\"Jacobs\",\"Maron\",\"Mario\"))","        name.populateWith(_.charAt(0) == _.charAt(0))","    }","}"];
             newFile(content);
         });
 
@@ -365,7 +365,6 @@ var displayOutput = function(data) {
 
 
 var alertError = function(data) {
-    alert(JSON.stringify(data));
     console.log(JSON.stringify(data));
     if(data['error']){
         var message = "";

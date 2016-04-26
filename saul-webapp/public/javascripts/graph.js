@@ -90,9 +90,8 @@ var generatePopulatedGraphFromJson = function(jsonData) {
     var nodePropertyCount = {};
     var totalNumNodes = 0;
     for(var nodeGroup in data['nodes']) {
-        totalNumNodes += data['nodes'][nodeGroup].length;
+        totalNumNodes += Object.keys(data['nodes'][nodeGroup]).length;
     }
-
     var getNodeByLabel = function(label){
         var id = nodeDict[label];
         return s.graph.nodes(id);
@@ -103,26 +102,26 @@ var generatePopulatedGraphFromJson = function(jsonData) {
     for(var nodeGroup in data['nodes']) {
         nodeGroupCount++;
         for(var node in data['nodes'][nodeGroup]) {
-            var nodeValue = data['nodes'][nodeGroup][node]
-            nodePropertyCount[nodeValue] = 0;
-            var curId = ++nodeId
-            nodeDict[nodeValue] = 'n' + curId;
-            var nodeColor = colors[nodeGroupCount % colors.length]
+            nodePropertyCount[node] = 0;
+            var curId = ++nodeId;
+            nodeDict[node] = 'n' + curId;
+            var nodeColor = colors[nodeGroupCount % colors.length];
             if(selectedData != null) {
                 if(!(nodeGroup in selectedData['nodes'])) {
-                    nodeColor = '#eee'
+                    nodeColor = '#eee';
                 } else {
-                    if($.inArray(nodeValue, selectedData['nodes'][nodeGroup]) == -1) {
-                        nodeColor = '#eee'
+                    if($.inArray(node, selectedData['nodes'][nodeGroup]) == -1) {
+                        nodeColor = '#eee';
                     } else {
-                        selectedNodes['n' + curId] = true
-                        selectedProps[nodeValue] = selectedData['properties'][nodeValue]
+                        selectedNodes['n' + curId] = true;
+                        selectedProps[node] = selectedData['properties'][node];
                     }
                 }
             }
+
             s.graph.addNode({
                 id: 'n' + nodeId,
-                label: data['nodes'][nodeGroup][node],
+                label: node+": "+data['nodes'][nodeGroup][node],
                 size: 3,
                 x: (totalNumNodes > 30 ? 3*(3+(nodeId / 30)) : 1) * Math.cos(2 * nodeId * Math.PI / (totalNumNodes > 30 ? 30 : totalNumNodes)),
                 y: (totalNumNodes > 30 ? 3*(3+(nodeId / 30)) : 1) * Math.sin(2 * nodeId * Math.PI / (totalNumNodes > 30 ? 30 : totalNumNodes)),

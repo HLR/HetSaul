@@ -14,7 +14,12 @@ object ReflectUtils {
 
   def classPathOfClass(className: String) = {
     val resource = className.split('.').mkString("/", "/", ".class")
-    val path = getClass.getResource(resource).getPath
+    var path = ""
+    try{
+      path = getClass.getResource(resource).getPath
+    } catch {
+      case e: Exception => play.api.Logger.info(resource + " not found.\n")
+    }
     if (path.indexOf("file:") >= 0) {
       //using path after 5 characters which excludes "file:"
       val indexOfFile = path.indexOf("file:") + 5
