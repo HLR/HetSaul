@@ -1,5 +1,6 @@
 package edu.illinois.cs.cogcomp.saul.classifier
 
+import java.io.File
 import java.net.URL
 
 import edu.illinois.cs.cogcomp.core.io.IOUtils
@@ -52,7 +53,7 @@ abstract class Learnable[T <: AnyRef](val node: Node[T], val parameters: Paramet
   /** specifications of the classifier and its model files  */
   classifier.setReadLexiconOnDemand()
 
-  val modelDir = "models/"
+  val modelDir = "models" + File.separator
   def lcFilePath(suffix: String = "") = new URL(new URL("file:"), modelDir + getClassNameForClassifier + suffix + ".lc")
   def lexFilePath(suffix: String = "") = new URL(new URL("file:"), modelDir + getClassNameForClassifier + suffix + ".lex")
   IOUtils.mkdir(modelDir)
