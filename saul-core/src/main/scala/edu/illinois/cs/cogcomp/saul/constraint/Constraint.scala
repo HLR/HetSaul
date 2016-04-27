@@ -2,19 +2,13 @@ package edu.illinois.cs.cogcomp.saul.constraint
 
 import edu.illinois.cs.cogcomp.lbjava.infer._
 import edu.illinois.cs.cogcomp.lbjava.learn.Learner
-import edu.illinois.cs.cogcomp.saul.datamodel.property.Property
 import edu.illinois.cs.cogcomp.saul.lbjrelated.LBJLearnerEquivalent
 
 /** We need to define the langauge of constraints here to work with the first order constraints that are programmed in
   * our main LBP script. The wrapper just gives us a java firstorderconstraint object in the shell of an scala object.
   * in this way our language works on scala objects.
   */
-
 object ConstraintTypeConversion {
-
-  implicit def singlePropertyToList[T <: AnyRef](property: Property[T]): List[Property[T]] = {
-    property :: Nil
-  }
 
   implicit def learnerToLFS(l: Learner): LBJLearnerEquivalent = {
     new LBJLearnerEquivalent {
@@ -121,4 +115,19 @@ class LHSFirstOrderEqualityWithValueLBP(cls: Learner, t: AnyRef) {
   def isTrue: FirstOrderConstraint = is("true")
 
   def isNotTrue: FirstOrderConstraint = is("false")
+
+  def isNot(v: String): FirstOrderConstraint = {
+    new FirstOrderNegation(new FirstOrderEqualityWithValue(true, lbjRepr, v))
+  }
+
+  def isNot(v: LHSFirstOrderEqualityWithValueLBP): FirstOrderConstraint = {
+    new FirstOrderNegation(new FirstOrderEqualityWithVariable(true, lbjRepr, v.lbjRepr))
+  }
+
+  def in(v: Array[String]): FirstOrderConstraint = {
+    val falseConstant = new FirstOrderDisjunction(new FirstOrderConstant(false), new FirstOrderConstant(false))
+    v.foldRight(falseConstant) { (value, newConstraint) =>
+      new FirstOrderDisjunction(new FirstOrderEqualityWithValue(true, lbjRepr, value), newConstraint)
+    }
+  }
 }
