@@ -9,15 +9,10 @@ import edu.illinois.cs.cogcomp.saul.lbjrelated.LBJLearnerEquivalent
   * in this way our language works on scala objects.
   */
 object ConstraintTypeConversion {
-
   implicit def learnerToLFS(l: Learner): LBJLearnerEquivalent = {
     new LBJLearnerEquivalent {
       override val classifier = l
     }
-  }
-
-  implicit def LfsToLearner(l: LBJLearnerEquivalent): Learner = {
-    l.classifier
   }
 
   implicit def constraintWrapper(p: FirstOrderConstraint): FirstOrderConstraints = {

@@ -6,7 +6,6 @@ import edu.illinois.cs.cogcomp.lbjava.learn.Learner
 import edu.illinois.cs.cogcomp.saul.TestWithStorage
 import edu.illinois.cs.cogcomp.saul.classifier.infer.InferenceCondition
 import edu.illinois.cs.cogcomp.saul.constraint.LfsConstraint
-import edu.illinois.cs.cogcomp.saul.constraint.ConstraintTypeConversion._
 import edu.illinois.cs.cogcomp.saul.datamodel.edge.Edge
 import edu.illinois.cs.cogcomp.saul.lbjrelated.{ LBJLearnerEquivalent, LBJClassifierEquivalent }
 import edu.illinois.cs.cogcomp.saul.parser.LBJIteratorParserScala
@@ -20,7 +19,8 @@ import scala.reflect.ClassTag
   * @tparam HEAD the object type inference is based upon
   */
 abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val onClassifier: LBJLearnerEquivalent)(
-  implicit val tType: ClassTag[T],
+  implicit
+  val tType: ClassTag[T],
   implicit val headType: ClassTag[HEAD]
 ) extends LBJClassifierEquivalent {
 
@@ -88,7 +88,7 @@ abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val onClassifi
       if (l.isEmpty) {
         if (logger)
           println("Failed to find part")
-        l.toSeq
+        Seq.empty[T]
       } else {
         l.filter(filter(_, head)).toSeq
       }
@@ -114,7 +114,7 @@ abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val onClassifi
   }
 
   def buildWithConstraint(inferenceCondition: InferenceCondition[T, HEAD])(t: T): String = {
-    buildWithConstraint(inferenceCondition, onClassifier)(t)
+    buildWithConstraint(inferenceCondition, onClassifier.classifier)(t)
   }
 
   private def getSolverInstance = solver match {
@@ -125,7 +125,10 @@ abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val onClassifi
   override val classifier = new Classifier() {
     override def classify(o: scala.Any) = new FeatureVector(featureValue(discreteValue(o)))
     override def discreteValue(o: scala.Any): String =
-      buildWithConstraint(subjectTo.createInferenceCondition[T](getSolverInstance()).convertToType[T], onClassifier)(o.asInstanceOf[T])
+      buildWithConstraint(
+        subjectTo.createInferenceCondition[T](getSolverInstance()).convertToType[T],
+        onClassifier.classifier
+      )(o.asInstanceOf[T])
   }
 
   /** Test with given data, use internally
