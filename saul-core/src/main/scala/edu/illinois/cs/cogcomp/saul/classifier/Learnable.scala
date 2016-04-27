@@ -1,6 +1,5 @@
 package edu.illinois.cs.cogcomp.saul.classifier
 
-import java.io.File
 import java.net.URL
 
 import edu.illinois.cs.cogcomp.core.io.IOUtils
@@ -10,8 +9,10 @@ import edu.illinois.cs.cogcomp.lbjava.learn._
 import edu.illinois.cs.cogcomp.lbjava.parse.Parser
 import edu.illinois.cs.cogcomp.lbjava.util.ExceptionlessOutputStream
 import edu.illinois.cs.cogcomp.saul.TestContinuous
+import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
+import edu.illinois.cs.cogcomp.saul.datamodel.edge.Link
 import edu.illinois.cs.cogcomp.saul.datamodel.node.Node
-import edu.illinois.cs.cogcomp.saul.datamodel.property.{ CombinedDiscreteProperty, Property }
+import edu.illinois.cs.cogcomp.saul.datamodel.property.{ PropertyWithWindow, CombinedDiscreteProperty, Property }
 import edu.illinois.cs.cogcomp.saul.lbjrelated.LBJLearnerEquivalent
 import edu.illinois.cs.cogcomp.saul.parser.LBJIteratorParserScala
 import org.slf4j.{ Logger, LoggerFactory }
@@ -263,6 +264,7 @@ abstract class Learnable[T <: AnyRef](val node: Node[T], val parameters: Paramet
   def forget() = this.classifier.forget()
 
   /** Test with given data, use internally
+    *
     * @return List of (label, (f1, precision, recall))
     */
   def test(): List[(String, (Double, Double, Double))] = {
@@ -271,6 +273,7 @@ abstract class Learnable[T <: AnyRef](val node: Node[T], val parameters: Paramet
   }
 
   /** Test with given data, use internally
+    *
     * @param testData if the collection of data is not given it is derived from the data model based on its type
     * @param prediction it is the property that we want to evaluate it if it is null then the prediction of the classifier is the default
     * @param groundTruth it is the property that we want to evaluate the prediction against it, if it is null then the gold label derived from the classifier is used
@@ -381,22 +384,28 @@ abstract class Learnable[T <: AnyRef](val node: Node[T], val parameters: Paramet
   /** Label property for users classifier */
   def label: Property[T]
 
-//  /** A windows of properties
-//    * @param before always negative (or 0)
-//    * @param after always positive (or 0)
-//    */
-//  def windowWithin[U <: AnyRef](before: Int, after: Int, properties: List[Property[T]])(implicit uTag: ClassTag[U]): Property[T] = {
-//    val fls = this.datamodel.getRelatedFieldsBetween[T, U]
-//    getWindowWithFilters(before, after, fls.map(e => (t: T) => e.neighborsOf(t).head), properties)
-//  }
-//
-//  def window(before: Int, after: Int)(properties: List[Property[T]]): Property[T] = {
-//    getWindowWithFilters(before, after, Nil, properties)
-//  }
-//
-//  private def getWindowWithFilters(before: Int, after: Int, filters: Iterable[T => Any], properties: List[Property[T]]): Property[T] = {
-//    new PropertyWithWindow[T](this.datamodel, before, after, filters, properties)
-//  }
+  /** A windows of properties
+    *
+    * @param before always negative (or 0)
+    * @param after always positive (or 0)
+    */
+  def windowWithin[U <: AnyRef](datamodel: DataModel, before: Int, after: Int, properties: List[Property[T]])(implicit uTag: ClassTag[U], tTag: ClassTag[T]) = {
+    val fromTag = tTag
+    val toTag = uTag
+
+    val fls = datamodel.EDGES.filter(r => r.from.tag.equals(fromTag) && r.to.tag.equals(toTag)).map(_.forward.asInstanceOf[Link[T, U]]) ++
+      datamodel.EDGES.filter(r => r.to.tag.equals(fromTag) && r.from.tag.equals(toTag)).map(_.backward.asInstanceOf[Link[T, U]])
+
+    getWindowWithFilters(before, after, fls.map(e => (t: T) => e.neighborsOf(t).head), properties)
+  }
+
+  def window(before: Int, after: Int)(properties: List[Property[T]]): Property[T] = {
+    getWindowWithFilters(before, after, Nil, properties)
+  }
+
+  private def getWindowWithFilters(before: Int, after: Int, filters: Iterable[T => Any], properties: List[Property[T]]): Property[T] = {
+    new PropertyWithWindow[T](node, before, after, filters, properties)
+  }
 
   def using(properties: Property[T]*): List[Property[T]] = {
     properties.toList
@@ -406,29 +415,20 @@ abstract class Learnable[T <: AnyRef](val node: Node[T], val parameters: Paramet
     using(properties: _*)
   }
 
-//  def nextWithIn[U <: AnyRef](properties: List[Property[T]])(implicit uTag: ClassTag[U]): Property[T] = {
-//    this.windowWithin[U](0, 1, properties.toList)
-//  }
-//
-//  def prevWithIn[U <: AnyRef](property: Property[T]*)(implicit uTag: ClassTag[U]): Property[T] = {
-//    this.windowWithin[U](-1, 0, property.toList)
-//  }
-//
-//  def nextOf(properties: List[Property[T]]): Property[T] = {
-//    window(0, 1)(properties)
-//  }
-//
-//  def prevOf(properties: List[Property[T]]): Property[T] = {
-//    window(0, 1)(properties)
-//  }
-//
-//  def relationalProperty[U <: AnyRef](implicit uTag: ClassTag[U]): Property[T] = {
-//    val fts: List[Property[U]] = this.datamodel.getPropertiesForType[U]
-//    relationalProperty[U](fts)
-//  }
-//
-//  def relationalProperty[U <: AnyRef](ls: List[Property[U]])(implicit uTag: ClassTag[U]): Property[T] = {
-//    val fts = this.datamodel.getPropertiesForType[U]
-//    new RelationalFeature[T, U](this.datamodel, fts)
-//  }
+  def nextWithIn[U <: AnyRef](datamodel: DataModel, properties: List[Property[T]])(implicit uTag: ClassTag[U]): Property[T] = {
+    this.windowWithin[U](datamodel, 0, 1, properties.toList)
+  }
+
+  def prevWithIn[U <: AnyRef](datamodel: DataModel, property: Property[T]*)(implicit uTag: ClassTag[U]): Property[T] = {
+    this.windowWithin[U](datamodel, -1, 0, property.toList)
+  }
+
+  def nextOf(properties: List[Property[T]]): Property[T] = {
+    window(0, 1)(properties)
+  }
+
+  def prevOf(properties: List[Property[T]]): Property[T] = {
+    window(0, 1)(properties)
+  }
+
 }

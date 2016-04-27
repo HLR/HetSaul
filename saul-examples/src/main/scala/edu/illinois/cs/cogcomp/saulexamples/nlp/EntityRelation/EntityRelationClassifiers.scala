@@ -11,16 +11,14 @@ object EntityRelationClassifiers {
   object OrganizationClassifier extends Learnable(tokens) {
     def label: Property[ConllRawToken] = entityType is "Org"
     override lazy val classifier = new SparsePerceptron()
-//    windowWithin[ConllRawSentence](-2, 2, List(pos)) ,
-    override def feature = using(word, phrase,
+    override def feature = using(word, windowWithin[ConllRawSentence](EntityRelationDataModel, -2, 2, List(pos)), phrase,
       containsSubPhraseMent, containsSubPhraseIng, wordLen)
     // The gazetteer properties are temporarily removed: containsInPersonList, containsInCityList
   }
 
   object PersonClassifier extends Learnable(tokens) {
     def label: Property[ConllRawToken] = entityType is "Peop"
-//    windowWithin[ConllRawSentence](-2, 2, List(pos)),
-    override def feature = using(word, phrase,
+    override def feature = using(word, windowWithin[ConllRawSentence](EntityRelationDataModel, -2, 2, List(pos)), phrase,
       containsSubPhraseMent, containsSubPhraseIng, wordLen)
     override lazy val classifier = new SparsePerceptron()
     // The gazetteer properties are temporarily removed: containsInPersonList, containsInCityList
@@ -28,8 +26,7 @@ object EntityRelationClassifiers {
 
   object LocationClassifier extends Learnable(tokens) {
     def label: Property[ConllRawToken] = entityType is "Loc"
-//    windowWithin[ConllRawSentence](-2, 2, List(pos)),
-    override def feature = using(word, phrase, containsSubPhraseMent,
+    override def feature = using(word, windowWithin[ConllRawSentence](EntityRelationDataModel, -2, 2, List(pos)), phrase, containsSubPhraseMent,
       containsSubPhraseIng, wordLen)
     override lazy val classifier = new SparsePerceptron()
     // The gazetteer properties are temporarily removed: containsInPersonList, containsInCityList
