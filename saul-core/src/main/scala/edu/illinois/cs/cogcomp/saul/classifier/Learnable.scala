@@ -6,7 +6,6 @@ import edu.illinois.cs.cogcomp.core.io.IOUtils
 import edu.illinois.cs.cogcomp.lbjava.classify.{ FeatureVector, TestDiscrete }
 import edu.illinois.cs.cogcomp.lbjava.learn.Learner.Parameters
 import edu.illinois.cs.cogcomp.lbjava.learn._
-import edu.illinois.cs.cogcomp.lbjava.parse.Parser
 import edu.illinois.cs.cogcomp.lbjava.util.ExceptionlessOutputStream
 import edu.illinois.cs.cogcomp.saul.TestContinuous
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
@@ -15,6 +14,8 @@ import edu.illinois.cs.cogcomp.saul.datamodel.node.Node
 import edu.illinois.cs.cogcomp.saul.datamodel.property.{ PropertyWithWindow, CombinedDiscreteProperty, Property }
 import edu.illinois.cs.cogcomp.saul.lbjrelated.LBJLearnerEquivalent
 import edu.illinois.cs.cogcomp.saul.parser.LBJIteratorParserScala
+
+import org.slf4j.helpers.NOPLogger
 import org.slf4j.{ Logger, LoggerFactory }
 
 import scala.reflect.ClassTag
@@ -24,7 +25,7 @@ abstract class Learnable[T <: AnyRef](val node: Node[T], val parameters: Paramet
   val useCache = false
 
   val logging = true
-  val logger: Logger = LoggerFactory.getLogger(this.getClass)
+  val logger: Logger = if (logging) LoggerFactory.getLogger(this.getClass) else NOPLogger.NOP_LOGGER;
 
   var isTraining = false
 
@@ -75,8 +76,8 @@ abstract class Learnable[T <: AnyRef](val node: Node[T], val parameters: Paramet
 
   def setExtractor(): Unit = {
     if (feature != null) {
-      if (logging)
-        logger.info("Setting the feature extractors to be {}", lbpFeatures.getCompositeChildren)
+      logger.info("Setting the feature extractors to be {}", lbpFeatures.getCompositeChildren)
+
       classifier.setExtractor(lbpFeatures)
     } else {
       logger.warn("Warning: no features found!")
@@ -86,9 +87,8 @@ abstract class Learnable[T <: AnyRef](val node: Node[T], val parameters: Paramet
   def setLabeler(): Unit = {
     if (label != null) {
       val oracle = Property.entitiesToLBJFeature(label)
-      if (logging) {
-        logger.info("Setting the labeler to be '{}", oracle)
-      }
+      logger.info("Setting the labeler to be '{}", oracle)
+
       classifier.setLabeler(oracle)
     }
   }
@@ -200,38 +200,27 @@ abstract class Learnable[T <: AnyRef](val node: Node[T], val parameters: Paramet
   def learn(iteration: Int, data: Iterable[T]): Unit = {
     createFiles()
 
-    if (logging) {
+    if (logger.isInfoEnabled) {
       val oracle = Property.entitiesToLBJFeature(label)
-      println(s"==> Learning using the feature extractors to be ${lbpFeatures.getCompositeChildren}")
-      println(s"==> Learning using the labeler to be '$oracle'")
-      println(classifier.getExtractor.getCompositeChildren)
-      println(classifier.getLabeler)
-    }
+      logger.info("==> Learning using the feature extractors to be {}", lbpFeatures.getCompositeChildren)
+      logger.info("==> Learning using the labeler to be '{}'", oracle)
+      logger.info(classifier.getExtractor.getCompositeChildren.toString)
+      logger.info(classifier.getLabeler.toString)
 
-    println("Learnable: Learn with data of size " + data.size)
+      logger.info("Learnable: Learn with data of size {}", data.size)
+      logger.info("Training: {} iterations remain.", iteration)
+    }
 
     isTraining = true
-    val crTokenTest = new LBJIteratorParserScala[T](data)
-    crTokenTest.reset()
 
-    def learnAll(crTokenTest: Parser, remainingIteration: Int): Unit = {
-      val v = crTokenTest.next
-      if (v == null) {
-        if (logging & remainingIteration % 10 == 0)
-          logger.info("Training: {} iterations remain.", remainingIteration)
+    (iteration to 1 by -1).foreach(remainingIteration => {
+      if (remainingIteration % 10 == 0)
+        logger.info("Training: {} iterations remain.", remainingIteration)
 
-        if (remainingIteration > 1) {
-          crTokenTest.reset()
-          node.clearPropertyCache()
-          learnAll(crTokenTest, remainingIteration - 1)
-        }
-      } else {
-        classifier.learn(v)
-        learnAll(crTokenTest, remainingIteration)
-      }
-    }
+      node.clearPropertyCache()
+      data.foreach(classifier.learn)
+    })
 
-    learnAll(crTokenTest, iteration)
     classifier.doneLearning()
     isTraining = false
   }
@@ -307,7 +296,8 @@ abstract class Learnable[T <: AnyRef](val node: Node[T], val parameters: Paramet
     new TestContinuous(classifier, classifier.getLabeler, testReader)
   }
 
-  def chunkData(ts: List[Iterable[T]], i: Int, curr: Int, acc: (Iterable[T], Iterable[T])): (Iterable[T], Iterable[T]) = {
+  @scala.annotation.tailrec
+  private final def chunkData(ts: List[Iterable[T]], i: Int, curr: Int, acc: (Iterable[T], Iterable[T])): (Iterable[T], Iterable[T]) = {
     ts match {
       case head :: more =>
         acc match {
@@ -327,8 +317,7 @@ abstract class Learnable[T <: AnyRef](val node: Node[T], val parameters: Paramet
   def crossValidation(k: Int) = {
     val allData = this.fromData
 
-    if (logging)
-      logger.info("Running cross validation on {} data", allData.size)
+    logger.info("Running cross validation on {} data", allData.size)
 
     val groupSize = Math.ceil(allData.size / k).toInt
     val groups = allData.grouped(groupSize).toList

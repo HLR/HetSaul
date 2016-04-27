@@ -40,6 +40,7 @@ object JointTrain {
     train[HEAD](node, cls, it)
   }
 
+  @scala.annotation.tailrec
   def train[HEAD <: AnyRef](node: Node[HEAD], cls: List[ConstrainedClassifier[_, HEAD]], it: Int)(implicit headTag: ClassTag[HEAD]): Unit = {
     // forall members in collection of the head (dm.t) do
 
