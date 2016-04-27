@@ -47,25 +47,25 @@ class InferenceQuantifierTests extends FlatSpec with Matchers {
 
   import SomeDM._
   object AtLeastSomeNeighborhoods extends ConstrainedClassifier[Neighborhood, City](new ContainsStation()) {
-    override val pathToHead = -cityContainsNeighborhoods
+    override val pathToHead = Some(-cityContainsNeighborhoods)
     override def subjectTo = atLeastSomeNeighborsAreCoveredConstraint
     override val solver = new OJalgoHook
   }
 
   object AtLeastSomeNeighborhoodsUsingAtMost extends ConstrainedClassifier[Neighborhood, City](new ContainsStation()) {
-    override val pathToHead = -cityContainsNeighborhoods
+    override val pathToHead = Some(-cityContainsNeighborhoods)
     override def subjectTo = atLeastSomeNeighborsAreCoveredConstraintUsingAtMost
     override val solver = new OJalgoHook
   }
 
   object AllNeighborhoods extends ConstrainedClassifier[Neighborhood, City](new ContainsStation()) {
-    override val pathToHead = -cityContainsNeighborhoods
+    override val pathToHead = Some(-cityContainsNeighborhoods)
     override def subjectTo = allNeighborsAreCoveredConstraint
     override val solver = new OJalgoHook
   }
 
   object ASingleNeighborhood extends ConstrainedClassifier[Neighborhood, City](new ContainsStation()) {
-    override val pathToHead = -cityContainsNeighborhoods
+    override val pathToHead = Some(-cityContainsNeighborhoods)
     override def subjectTo = singleNeighborsAreCoveredConstraint
     override val solver = new OJalgoHook
   }

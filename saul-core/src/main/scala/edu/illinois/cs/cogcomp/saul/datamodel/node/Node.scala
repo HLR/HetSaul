@@ -72,7 +72,7 @@ class Node[T <: AnyRef](
     node
   }
 
-  def clear = {
+  def clear() = {
     collection.clear()
     trainingSet.clear()
     testingSet.clear()
