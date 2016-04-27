@@ -54,9 +54,8 @@ object JointTrain {
         h =>
           {
             cls.foreach {
-              case c: ConstrainedClassifier[_, HEAD] =>
-                type C = c.LEFT
-                val typedC = c.asInstanceOf[ConstrainedClassifier[_, HEAD]]
+              case classifier: ConstrainedClassifier[_, HEAD] =>
+                val typedC = classifier.asInstanceOf[ConstrainedClassifier[_, HEAD]]
                 val oracle = typedC.onClassifier.getLabeler
 
                 typedC.getCandidates(h) foreach {
@@ -65,20 +64,18 @@ object JointTrain {
                       def trainOnce() = {
                         val result = typedC.classifier.discreteValue(x)
                         val trueLabel = oracle.discreteValue(x)
+
                         if (result.equals("true") && trueLabel.equals("false")) {
                           val a = typedC.onClassifier.getExampleArray(x)
                           val a0 = a(0).asInstanceOf[Array[Int]]
                           val a1 = a(1).asInstanceOf[Array[Double]]
                           typedC.onClassifier.asInstanceOf[LinearThresholdUnit].promote(a0, a1, 0.1)
-                        } else {
-                          if (result.equals("false") && trueLabel.equals("true")) {
-                            val a = typedC.onClassifier.getExampleArray(x)
-                            val a0 = a(0).asInstanceOf[Array[Int]]
-                            val a1 = a(1).asInstanceOf[Array[Double]]
-                            typedC.onClassifier.asInstanceOf[LinearThresholdUnit].demote(a0, a1, 0.1)
-                          } else {}
+                        } else if (result.equals("false") && trueLabel.equals("true")) {
+                          val a = typedC.onClassifier.getExampleArray(x)
+                          val a0 = a(0).asInstanceOf[Array[Int]]
+                          val a1 = a(1).asInstanceOf[Array[Double]]
+                          typedC.onClassifier.asInstanceOf[LinearThresholdUnit].demote(a0, a1, 0.1)
                         }
-
                       }
                       trainOnce()
                     }

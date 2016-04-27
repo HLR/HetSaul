@@ -374,6 +374,15 @@ abstract class Learnable[T <: AnyRef](val node: Node[T], val parameters: Paramet
   /** Label property for users classifier */
   def label: Property[T]
 
+  def using(properties: Property[T]*): List[Property[T]] = {
+    properties.toList
+  }
+
+  def using(properties: List[Property[T]]): List[Property[T]] = {
+    using(properties: _*)
+  }
+
+  // TODO Move the window properties out of Learner class.
   /** A windows of properties
     *
     * @param before always negative (or 0)
@@ -395,14 +404,6 @@ abstract class Learnable[T <: AnyRef](val node: Node[T], val parameters: Paramet
 
   private def getWindowWithFilters(before: Int, after: Int, filters: Iterable[T => Any], properties: List[Property[T]]): Property[T] = {
     new PropertyWithWindow[T](node, before, after, filters, properties)
-  }
-
-  def using(properties: Property[T]*): List[Property[T]] = {
-    properties.toList
-  }
-
-  def using(properties: List[Property[T]]): List[Property[T]] = {
-    using(properties: _*)
   }
 
   def nextWithIn[U <: AnyRef](datamodel: DataModel, properties: List[Property[T]])(implicit uTag: ClassTag[U]): Property[T] = {

@@ -14,6 +14,7 @@ import scala.reflect.ClassTag
 
 /** The input to a ConstrainedClassifier is of type `T`. However given an input, the inference is based upon the
   * head object of type `HEAD` corresponding to the input (of type `T`).
+  *
   * @tparam T the object type given to the classifier as input
   * @tparam HEAD the object type inference is based upon
   */
@@ -62,23 +63,24 @@ abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val onClassifi
     } else {
       if (pathToHead.isEmpty) {
         if (logger) println("Warning pathToHead not defined properly!")
-        return None
-      }
-
-      val l = pathToHead.get.forward.neighborsOf(x).toSet.toList
-
-      if (l.isEmpty) {
-        if (logger)
-          println("Warning: Failed to find head")
         None
-      } else if (l.size != 1) {
-        if (logger)
-          println("Find too many heads")
-        Some(l.head)
       } else {
-        if (logger)
-          println(s"Found head ${l.head} for child $x")
-        Some(l.head)
+
+        val l = pathToHead.get.forward.neighborsOf(x).toSet.toList
+
+        if (l.isEmpty) {
+          if (logger)
+            println("Warning: Failed to find head")
+          None
+        } else if (l.size != 1) {
+          if (logger)
+            println("Find too many heads")
+          Some(l.head)
+        } else {
+          if (logger)
+            println(s"Found head ${l.head} for child $x")
+          Some(l.head)
+        }
       }
     }
   }
@@ -89,17 +91,18 @@ abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val onClassifi
     } else {
       if (pathToHead.isEmpty) {
         if (logger) println("Warning pathToHead not defined properly!")
-        return Nil
-      }
-
-      val l = pathToHead.get.backward.neighborsOf(head)
-
-      if (l.isEmpty) {
-        if (logger)
-          println("Failed to find part")
-        l.toSeq
+        Nil
       } else {
-        l.filter(filter(_, head)).toSeq
+
+        val l = pathToHead.get.backward.neighborsOf(head)
+
+        if (l.isEmpty) {
+          if (logger)
+            println("Failed to find part")
+          l.toSeq
+        } else {
+          l.filter(filter(_, head)).toSeq
+        }
       }
     }
   }
@@ -126,15 +129,13 @@ abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val onClassifi
     buildWithConstraint(inferenceCondition, onClassifier)(t)
   }
 
-  def cName: String = this.getClass.getName
-
   private def getSolverInstance = solver match {
     case _: OJalgoHook => () => new OJalgoHook()
     case _: GurobiHook => () => new GurobiHook()
   }
 
   override val classifier = new Classifier() {
-    override def classify(o: scala.Any): FeatureVector = new FeatureVector(featureValue(discreteValue(o)))
+    override def classify(o: scala.Any) = new FeatureVector(featureValue(discreteValue(o)))
     override def discreteValue(o: scala.Any): String =
       buildWithConstraint(subjectTo.createInferenceCondition[T](getSolverInstance()).convertToType[T], onClassifier)(o.asInstanceOf[T])
   }
@@ -146,17 +147,18 @@ abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val onClassifi
   def test(): List[(String, (Double, Double, Double))] = {
     if (pathToHead.isEmpty) {
       if (logger) println("Warning pathToHead not defined properly!")
-      return Nil
-    }
-
-    val allHeads: List[HEAD] = pathToHead.get.to.getTestingInstances.toList
-    val data: List[T] = if (tType.equals(headType)) {
-      allHeads.map(_.asInstanceOf[T])
+      Nil
     } else {
-      allHeads.flatMap(h => pathToHead.get.backward.neighborsOf(h))
-    }
 
-    test(data)
+      val allHeads: List[HEAD] = pathToHead.get.to.getTestingInstances.toList
+      val data: List[T] = if (tType.equals(headType)) {
+        allHeads.map(_.asInstanceOf[T])
+      } else {
+        allHeads.flatMap(h => pathToHead.get.backward.neighborsOf(h))
+      }
+
+      test(data)
+    }
   }
 
   /** Test with given data, use internally
