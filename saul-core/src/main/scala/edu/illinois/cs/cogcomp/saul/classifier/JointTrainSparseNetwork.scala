@@ -2,6 +2,7 @@ package edu.illinois.cs.cogcomp.saul.classifier
 
 import edu.illinois.cs.cogcomp.lbjava.learn.{ Learner, LinearThresholdUnit }
 import edu.illinois.cs.cogcomp.saul.datamodel.node.Node
+import edu.illinois.cs.cogcomp.saul.constraint.ConstraintTypeConversion._
 
 import scala.reflect.ClassTag
 

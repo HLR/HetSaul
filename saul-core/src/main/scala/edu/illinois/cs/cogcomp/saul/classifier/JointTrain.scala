@@ -4,6 +4,8 @@ import edu.illinois.cs.cogcomp.lbjava.classify.Classifier
 import edu.illinois.cs.cogcomp.lbjava.learn.LinearThresholdUnit
 import edu.illinois.cs.cogcomp.saul.datamodel.node.Node
 
+import edu.illinois.cs.cogcomp.saul.constraint.ConstraintTypeConversion._
+
 import scala.reflect.ClassTag
 
 /** Created by parisakordjamshidi on 29/01/15.

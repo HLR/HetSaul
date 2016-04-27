@@ -13,14 +13,14 @@ object EntityRelationConstrainedClassifiers {
   object OrgConstrainedClassifier extends ConstrainedClassifier[ConllRawToken, ConllRelation](OrganizationClassifier) {
     def subjectTo = relationArgumentConstraints
     override val pathToHead = Some(-EntityRelationDataModel.pairTo2ndArg)
-    override def filter(t: ConllRawToken, h: ConllRelation): Boolean = t.wordId == h.wordId1
+    override def filter(t: ConllRawToken, h: ConllRelation): Boolean = t.wordId == h.wordId2
     override val solver = erSolver
   }
 
   object PerConstrainedClassifier extends ConstrainedClassifier[ConllRawToken, ConllRelation](PersonClassifier) {
     def subjectTo = relationArgumentConstraints
     override val pathToHead = Some(-EntityRelationDataModel.pairTo1stArg)
-    override def filter(t: ConllRawToken, h: ConllRelation): Boolean = t.wordId == h.wordId2
+    override def filter(t: ConllRawToken, h: ConllRelation): Boolean = t.wordId == h.wordId1
     override val solver = erSolver
   }
 
