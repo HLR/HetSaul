@@ -7,7 +7,7 @@ import edu.illinois.cs.cogcomp.saul.TestWithStorage
 import edu.illinois.cs.cogcomp.saul.classifier.infer.InferenceCondition
 import edu.illinois.cs.cogcomp.saul.constraint.LfsConstraint
 import edu.illinois.cs.cogcomp.saul.datamodel.edge.Edge
-import edu.illinois.cs.cogcomp.saul.lbjrelated.LBJClassifierEquivalent
+import edu.illinois.cs.cogcomp.saul.lbjrelated.{ LBJLearnerEquivalent, LBJClassifierEquivalent }
 import edu.illinois.cs.cogcomp.saul.parser.LBJIteratorParserScala
 
 import scala.reflect.ClassTag
@@ -18,7 +18,7 @@ import scala.reflect.ClassTag
   * @tparam T the object type given to the classifier as input
   * @tparam HEAD the object type inference is based upon
   */
-abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val onClassifier: Learner)(
+abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val onClassifier: LBJLearnerEquivalent)(
   implicit
   val tType: ClassTag[T],
   implicit val headType: ClassTag[HEAD]
@@ -58,51 +58,39 @@ abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val onClassifi
   def apply(example: AnyRef): String = classifier.discreteValue(example: AnyRef)
 
   def findHead(x: T): Option[HEAD] = {
-    if (tType.equals(headType)) {
+    if (tType.equals(headType) || pathToHead.isEmpty) {
       Some(x.asInstanceOf[HEAD])
     } else {
-      if (pathToHead.isEmpty) {
-        if (logger) println("Warning pathToHead not defined properly!")
+      val l = pathToHead.get.forward.neighborsOf(x).toSet.toList
+
+      if (l.isEmpty) {
+        if (logger)
+          println("Warning: Failed to find head")
         None
+      } else if (l.size != 1) {
+        if (logger)
+          println("Find too many heads")
+        Some(l.head)
       } else {
-
-        val l = pathToHead.get.forward.neighborsOf(x).toSet.toList
-
-        if (l.isEmpty) {
-          if (logger)
-            println("Warning: Failed to find head")
-          None
-        } else if (l.size != 1) {
-          if (logger)
-            println("Find too many heads")
-          Some(l.head)
-        } else {
-          if (logger)
-            println(s"Found head ${l.head} for child $x")
-          Some(l.head)
-        }
+        if (logger)
+          println(s"Found head ${l.head} for child $x")
+        Some(l.head)
       }
     }
   }
 
   def getCandidates(head: HEAD): Seq[T] = {
-    if (tType.equals(headType)) {
+    if (tType.equals(headType) || pathToHead.isEmpty) {
       head.asInstanceOf[T] :: Nil
     } else {
-      if (pathToHead.isEmpty) {
-        if (logger) println("Warning pathToHead not defined properly!")
-        Nil
+      val l = pathToHead.get.backward.neighborsOf(head)
+
+      if (l.isEmpty) {
+        if (logger)
+          println("Failed to find part")
+        Seq.empty[T]
       } else {
-
-        val l = pathToHead.get.backward.neighborsOf(head)
-
-        if (l.isEmpty) {
-          if (logger)
-            println("Failed to find part")
-          l.toSeq
-        } else {
-          l.filter(filter(_, head)).toSeq
-        }
+        l.filter(filter(_, head)).toSeq
       }
     }
   }
@@ -126,7 +114,7 @@ abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val onClassifi
   }
 
   def buildWithConstraint(inferenceCondition: InferenceCondition[T, HEAD])(t: T): String = {
-    buildWithConstraint(inferenceCondition, onClassifier)(t)
+    buildWithConstraint(inferenceCondition, onClassifier.classifier)(t)
   }
 
   private def getSolverInstance = solver match {
@@ -137,7 +125,10 @@ abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val onClassifi
   override val classifier = new Classifier() {
     override def classify(o: scala.Any) = new FeatureVector(featureValue(discreteValue(o)))
     override def discreteValue(o: scala.Any): String =
-      buildWithConstraint(subjectTo.createInferenceCondition[T](getSolverInstance()).convertToType[T], onClassifier)(o.asInstanceOf[T])
+      buildWithConstraint(
+        subjectTo.createInferenceCondition[T](getSolverInstance()).convertToType[T],
+        onClassifier.classifier
+      )(o.asInstanceOf[T])
   }
 
   /** Test with given data, use internally
@@ -145,20 +136,20 @@ abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val onClassifi
     * @return List of (label, (f1, precision, recall))
     */
   def test(): List[(String, (Double, Double, Double))] = {
-    if (pathToHead.isEmpty) {
-      if (logger) println("Warning pathToHead not defined properly!")
-      Nil
-    } else {
-
-      val allHeads: List[HEAD] = pathToHead.get.to.getTestingInstances.toList
-      val data: List[T] = if (tType.equals(headType)) {
-        allHeads.map(_.asInstanceOf[T])
+    val allHeads: Iterable[HEAD] = {
+      if (pathToHead.isEmpty) {
+        onClassifier match {
+          case clf: Learnable[T] => clf.node.getTestingInstances.asInstanceOf[Iterable[HEAD]]
+          case _ => println("ERROR: pathToHead is not provided and the onClassifier is not a Learnable!"); Nil
+        }
       } else {
-        allHeads.flatMap(h => pathToHead.get.backward.neighborsOf(h))
+        pathToHead.get.to.getTestingInstances
       }
-
-      test(data)
     }
+
+    val data: List[T] = allHeads.flatMap(getCandidates).toList.distinct
+
+    test(data)
   }
 
   /** Test with given data, use internally
