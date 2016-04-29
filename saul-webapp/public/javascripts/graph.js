@@ -11,6 +11,19 @@ $(document).ready(function(){
 
         return neighbors;
     });
+
+    //enable div for showing statistics
+    new Tether({
+        element: '#statisticsWrapper',
+        target: '.tabs',
+        attachment: 'bottom right',
+        targetAttachment: 'middle left',
+    });
+    $('#statisticsWrapper').hide();
+
+    $(document).on('click','#statCloseBtn',function(){
+        $('#statisticsWrapper').hide();
+    });
 });
 var enableColoringNeighbors = function(s){
     s.graph.nodes().forEach(function(n) {
@@ -74,6 +87,15 @@ var generatePopulatedGraphFromJson = function(jsonData) {
     s.bind('overNode',function(e){
         $("#nodetext1").text(e.data.node.label);
     });
+    s.bind('clickNode', function(e) {
+        $('#statisticsWrapper').show();
+        var index = e.data.node.id;
+        $('#statisticsWrapper').empty();
+        $('#statisticsWrapper').append('<span id="statCloseBtn" class="glyphicon glyphicon-remove" aria-hidden="true"></span>');
+        for(var key in s.graph.nodes(index).stat){
+            $('#statisticsWrapper').append("<h4>·"+key+": "+s.graph.nodes(index).stat[key]+"</h4>");
+        };
+    });
     var dragListener = sigma.plugins.dragNodes(s, s.renderers[0]);
     /*dragListener.bind('drag', function(event) {
         s.graph.neighbors(event.node.id).forEach(function(e) {
@@ -128,7 +150,11 @@ var generatePopulatedGraphFromJson = function(jsonData) {
                 color: nodeColor,
                 assignedColor: colors[nodeGroupCount % colors.length]
             });
-            
+            var nodesArray = s.graph.nodes();
+            nodesArray[nodesArray.length-1].stat = new Array();
+            for(var key in jsonData['Statistics']['nodes'][nodeGroup]){
+                nodesArray[nodesArray.length-1].stat[key] = jsonData['Statistics']['nodes'][nodeGroup][key];
+            }
         };
     };
 
@@ -188,6 +214,11 @@ var generatePopulatedGraphFromJson = function(jsonData) {
                 color: nodeColor,
                 assignedColor: colors[propertyCount % colors.length]
             });
+            var nodesArray = s.graph.nodes();
+            nodesArray[nodesArray.length-1].stat = new Array();
+            for(var key in jsonData['Statistics']['properties'][pI]){
+                nodesArray[nodesArray.length-1].stat[key] = jsonData['Statistics']['properties'][pI][key];
+            }
             var edgeColor = s.graph.nodes(nodeDict[node]).color
             if(nodeColor == '#eee') {
                 edgeColor = '#eee'

@@ -30,7 +30,19 @@ body, html {
 .code{
     display: none;
 }
-
+#statisticsWrapper{
+    min-height: 150px;
+    overflow: hidden;
+    width: 400px;
+    z-index: 1000;
+    border-radius: 5px;
+    padding: 3px;
+}
+#statCloseBtn{
+    position: absolute;
+    right:0;
+    top:0;
+}
 .nodevalue{
     display: absolute;
     height: 100px;

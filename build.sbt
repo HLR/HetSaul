@@ -56,7 +56,7 @@ lazy val saulWebapp = (project in file("saul-webapp")).
     name := "saul-webapp",
     libraryDependencies ++= Seq(
       "org.webjars" %% "webjars-play" % "2.4.0-1",
-      "org.webjars" % "bootstrap" % "3.1.1-2",
+      "org.webjars" % "bootstrap" % "3.3.6",
       "org.webjars.bower" % "tether-shepherd" % "1.1.3",
       "org.webjars" % "ace" % "1.2.2",
       "org.webjars" % "sigma.js" % "1.0.3",
