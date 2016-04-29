@@ -40,7 +40,7 @@ object JointTrainSparseNetwork {
                       def trainOnce() = {
                         val result = typedClassifier.classifier.discreteValue(candidate)
                         val trueLabel = oracle.discreteValue(candidate)
-                        val ilearner = typedClassifier.onClassifier.asInstanceOf[Learner].asInstanceOf[SparseNetworkLBP]
+                        val ilearner = typedClassifier.onClassifier.classifier.asInstanceOf[Learner].asInstanceOf[SparseNetworkLBP]
                         val lLexicon = typedClassifier.onClassifier.getLabelLexicon
                         var LTU_actual: Int = 0
                         var LTU_predicted: Int = 0

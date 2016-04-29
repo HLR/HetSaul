@@ -69,12 +69,12 @@ object JointTrain {
                           val a = typedC.onClassifier.getExampleArray(x)
                           val a0 = a(0).asInstanceOf[Array[Int]]
                           val a1 = a(1).asInstanceOf[Array[Double]]
-                          typedC.onClassifier.asInstanceOf[LinearThresholdUnit].promote(a0, a1, 0.1)
+                          typedC.onClassifier.classifier.asInstanceOf[LinearThresholdUnit].promote(a0, a1, 0.1)
                         } else if (result.equals("false") && trueLabel.equals("true")) {
                           val a = typedC.onClassifier.getExampleArray(x)
                           val a0 = a(0).asInstanceOf[Array[Int]]
                           val a1 = a(1).asInstanceOf[Array[Double]]
-                          typedC.onClassifier.asInstanceOf[LinearThresholdUnit].demote(a0, a1, 0.1)
+                          typedC.onClassifier.classifier.asInstanceOf[LinearThresholdUnit].demote(a0, a1, 0.1)
                         }
                       }
                       trainOnce()
