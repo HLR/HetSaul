@@ -39,8 +39,11 @@ class EntityRelationTests extends FlatSpec with Matchers {
   }
 
   "L+I entity-relation classifiers " should " should work. " in {
-    ClassifierUtils.TestClassifiers(PersonClassifier, OrganizationClassifier, LocationClassifier,
-      WorksForClassifier, LivesInClassifier, LocatedInClassifier, OrgBasedInClassifier)
+    ClassifierUtils.LoadClassifier(
+      EntityRelationApp.jarModelPath,
+      PersonClassifier, OrganizationClassifier, LocationClassifier,
+      WorksForClassifier, LivesInClassifier, LocatedInClassifier, OrgBasedInClassifier
+    )
     val scores = PerConstrainedClassifier.test() ++ WorksFor_PerOrg_ConstrainedClassifier.test()
     scores.foreach { case (label, score) => (score._1 > minScore) should be(true) }
   }
