@@ -33,7 +33,7 @@ body, html {
 
 .nodevalue{
     display: absolute;
-    height: 50px;
+    height: 100px;
     overflow: scroll;
 }
 input[type="text"], textarea {

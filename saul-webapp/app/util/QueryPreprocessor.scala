@@ -2,7 +2,7 @@ package util
 
 object QueryPreprocessor {
 
-  val importStatement = "import util.visualizer._\n"
+  val importStatement = "import util.VisualizerInstance._\n"
 
   /** This method is used for query processing from input box
     * and incorporate query into program body

@@ -72,7 +72,7 @@ var generatePopulatedGraphFromJson = function(jsonData) {
         generatePopulatedGraphFromJson(jsonData);
     });
     s.bind('overNode',function(e){
-        $("#nodetext2").text(e.data.node.label);
+        $("#nodetext1").text(e.data.node.label);
     });
     var dragListener = sigma.plugins.dragNodes(s, s.renderers[0]);
     /*dragListener.bind('drag', function(event) {

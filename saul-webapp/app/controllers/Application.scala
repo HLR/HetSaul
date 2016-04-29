@@ -183,7 +183,7 @@ class Application extends Controller {
         VisualizerInstance.init
         compiler.executeWithoutLog(x)
         scalaInstances find (x => x match {
-          case model: DataModel => Statistics.getStatistics(model);return DataModelJsonInterface.getPopulatedInstancesJson(model)
+          case model: DataModel => return DataModelJsonInterface.getPopulatedInstancesJson(model).as[JsObject] + ("Statistics" -> Statistics.getStatistics(model))
           case _ => false
         })
         return getErrorJson(Json.toJson("No DataModel found."))

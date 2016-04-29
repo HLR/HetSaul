@@ -3,6 +3,7 @@ package edu.illinois.cs.cogcomp.saulexamples.EntityMentionRelation.datastruct;
 public class ConllRawInstance {
     public int sentId, wordId;
     public String entType, POS, phrase;
+
     public void printInstance() {
         System.out.println("sent: " + sentId + " wordId: " + wordId + " phrase: " + phrase + " POS: " + POS + " entity type: " + entType);
     }

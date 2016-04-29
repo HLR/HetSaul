@@ -33,36 +33,34 @@ object Statistics {
 	}
 
 	def getPropertyStatistics(nodeTuples : Iterable[(String,_)], propsObjs : Iterable[(String,_)]) = {
-		var stat = Map[String,String]()
+		var stat = Map[String,Map[String,String]]()
 		propsObjs foreach { case (propertyType, instance) =>
-
 			val propertyObj = instance.asInstanceOf[NodeProperty[AnyRef]]
 			val l : List[List[String]]= nodeTuples.map{ case(_,n) if n == propertyObj.node =>
 				n.asInstanceOf[Node[AnyRef]].getAllInstances.map(x => propertyObj(x).toString).toList
 				case _ => List[String]()
 			}.toList
 			val valueList = l.flatten
-			stat = getArrayStatistics(propertyType,valueList,stat)
+			stat = stat + (propertyType -> getArrayStatistics(propertyType,valueList))
 		}
 		println(stat)
 		Json.toJson(stat)
 	}
 	def getNodeStatistics(nodeTuples : Iterable[(String,_)]) = {
-		var stat = Map[String,String]()
+		var stat = Map[String,Map[String,String]]()
 
 		nodeTuples foreach { case (nodeType, instance) =>
 
 			val valueList = instance.asInstanceOf[Node[_]].getAllInstances.map(x => x.toString).toList
-			stat = stat + ("Number of " + nodeType -> valueList.length.toString)
-			stat = getArrayStatistics(nodeType,valueList,stat)
+			stat = stat + (nodeType -> (getArrayStatistics(nodeType,valueList) + ("Number of " + nodeType -> valueList.length.toString)))
 			//TODO: add some metric for strings
 		}
 		println(stat)
 		Json.toJson(stat)
 	}
 
-	def getArrayStatistics(typ: String,valueList : List[String], stat:Map[String,String]) = {
-		var stat2 = stat
+	def getArrayStatistics(typ: String,valueList : List[String]) = {
+		var stat2 = Map[String,String]()
 		isNumberArray(valueList) match {
 			case true => {
 					stat2 = stat2 + (typ+"'s variance" -> getVariance(valueList))
