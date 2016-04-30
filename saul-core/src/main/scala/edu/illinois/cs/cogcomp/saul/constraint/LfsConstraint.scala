@@ -2,7 +2,6 @@ package edu.illinois.cs.cogcomp.saul.constraint
 
 import edu.illinois.cs.cogcomp.lbjava.infer.{ ILPSolver, ParameterizedConstraint, FirstOrderConstraint }
 import edu.illinois.cs.cogcomp.saul.classifier.infer.InferenceCondition
-import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
 
 import scala.reflect.ClassTag
 
@@ -34,8 +33,8 @@ abstract class LfsConstraint[T <: AnyRef](implicit val tag: ClassTag[T]) {
 
   val lc = this
 
-  def createInferenceCondition[C <: AnyRef](dm: DataModel, solver: ILPSolver)(implicit cTag: ClassTag[C]): InferenceCondition[C, T] = {
-    new InferenceCondition[C, T](dm, solver) {
+  def createInferenceCondition[C <: AnyRef](solver: ILPSolver)(implicit cTag: ClassTag[C]): InferenceCondition[C, T] = {
+    new InferenceCondition[C, T](solver) {
       override def subjectTo: LfsConstraint[T] = lc
     }
   }

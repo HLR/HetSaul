@@ -14,7 +14,7 @@ case class DiscreteProperty[T <: AnyRef](
   override def makeClassifierWithName(__name: String): Classifier = range match {
     case Some(r) =>
       new ClassifierContainsInLBP() {
-        private var __allowableValues: Array[String] = r.toArray.asInstanceOf[Array[String]]
+        private val __allowableValues: Array[String] = r.toArray
 
         this.containingPackage = "LBP_Package"
         this.name = __name

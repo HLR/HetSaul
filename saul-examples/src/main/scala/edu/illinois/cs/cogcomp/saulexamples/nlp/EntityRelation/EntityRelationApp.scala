@@ -112,7 +112,7 @@ object EntityRelationApp {
     val jointTrainIteration = 5
     println(s"Joint training $jointTrainIteration iterations. ")
     JointTrain.train[ConllRelation](
-      EntityRelationDataModel,
+      pairs,
       PerConstrainedClassifier :: OrgConstrainedClassifier :: LocConstrainedClassifier ::
         WorksFor_PerOrg_ConstrainedClassifier :: LivesIn_PerOrg_relationConstrainedClassifier :: Nil,
       jointTrainIteration
