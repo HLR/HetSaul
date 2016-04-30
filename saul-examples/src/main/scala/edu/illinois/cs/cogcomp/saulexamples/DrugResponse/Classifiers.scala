@@ -13,5 +13,10 @@ object Classifiers {
     override def feature = using(cP1)
     override lazy val classifier = new StochasticGradientDescent
   }
+  object DrugResponseRegressor extends Learnable[PatientDrug](KnowEngDataModel){
+    def label = drugResponse
+    override  def feature = using(pathWayGExpression)
+    override lazy val classifier = new StochasticGradientDescent
+  }
 }
 

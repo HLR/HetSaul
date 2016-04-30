@@ -1,15 +1,15 @@
 package edu.illinois.cs.cogcomp.saulexamples.DrugResponse
 
 import edu.illinois.cs.cogcomp.saul.datamodel.node.Path
-import edu.illinois.cs.cogcomp.saulexamples.DrugResponse.Classifiers.dResponseClassifier
+import edu.illinois.cs.cogcomp.saulexamples.DrugResponse.Classifiers.DrugResponseRegressor
 import edu.illinois.cs.cogcomp.saulexamples.DrugResponse.KnowEngDataModel._
-import edu.illinois.cs.cogcomp.saulexamples.bioInformatics.{ Gene, Edges, Sample_Reader, drugExampleReader }
+import edu.illinois.cs.cogcomp.saulexamples.bioInformatics._
 
 import scala.collection.JavaConversions._
 /** Created by Parisa on 6/25/15.
   */
 object myApp {
-
+ def SGroupby(x: property)
   def main(args: Array[String]): Unit = {
 
     val patients_data = new Sample_Reader("./data/biology/individual_samples.txt").patientCollection.slice(0, 5)
@@ -17,6 +17,7 @@ object myApp {
     val GCollection = new Edges("./data/biology/edgesGG.txt").geneCollection.slice(0, 10)
     val patient_gene_data = new drugExampleReader().pgReader("./data/biology/gene2med_probe_expr.txt").filter((x => GCollection.exists(y => (y.GeneID.equals(x.Gene_ID))))).slice(0, 5)
     val GGCollection = new Edges("./data/biology/edgesGG.txt").edgeCollection.slice(0, 20)
+
 
     patients.populate(patients_data)
     patientDrug.populate(patient_drug_data)
@@ -32,9 +33,28 @@ object myApp {
 
     genes(Path.findPath(genes().head, genes, genes().head).asInstanceOf[Seq[Gene]]) prop gene_GoTerm
 
-    dResponseClassifier.learn(1)
+    val a= genes().groupBy(gene_KEGG(_))
 
-    dResponseClassifier.testContinuos(patient_drug_data)
+    val o1= genes().head.KEGG.foreach(y=>(genes().head,y))
+
+    val o= genes().map(x=> x.KEGG.map(y => (x.GeneName,y))).flatten.groupBy(_._2).map(x=> (x._1,x._2.map(t1=> t1._1)))
+    val t1= o.get("hsa01040")
+    val p1 = property(patientDrug) {
+      x: PatientDrug => x.response.doubleValue()
+    }
+    property(patientDrug) {
+
+     x:PatientDrug  =>  x.dResponse.asInstanceOf[List[Double]]
+      //o.get("hsa01040").
+    }
+
+    print(a)
+   // dResponseClassifier.learn(1)
+
+   // dResponseClassifier.testContinuos(patient_drug_data)
+    DrugResponseRegressor.learn(1)
+    DrugResponseRegressor.testContinuos(patientDrug.getTrainingInstances)
 
   }
+
 }

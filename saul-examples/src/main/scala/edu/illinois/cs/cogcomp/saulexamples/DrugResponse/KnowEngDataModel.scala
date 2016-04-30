@@ -63,6 +63,15 @@ object KnowEngDataModel extends DataModel {
   val drugResponse = property(patientDrug) {
     x: PatientDrug => x.response.doubleValue()
   }
+
+  val genesGroupedPerPathway = genes().map(x=> x.KEGG.map(y => (x.GeneName,y))).flatten.groupBy(_._2).map(x=> (x._1,x._2.map(t1=> t1._1)))
+
+  val pathWayGExpression = property(patientDrug, ordered = true) {
+    x: PatientDrug =>
+      val myPathwayGenes = genesGroupedPerPathway.get("hsa01040")
+      this.patientGene().filter(y => x.pid == y.sample_ID).filter( x => myPathwayGenes.contains(x.Gene_ID)).map(x =>x.gExpression).asInstanceOf[List[Double]]
+  }
+
   val similarity = property(geneGene) {
     x: GeneGene => x.similarity.doubleValue()
   }
