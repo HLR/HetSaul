@@ -1,11 +1,12 @@
 package edu.illinois.cs.cogcomp.saulexamples.DrugResponse
 
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
-import edu.illinois.cs.cogcomp.saulexamples.bioInformatics._
-import edu.illinois.cs.cogcomp.saulexamples.DrugResponse.Classifiers.dResponseClassifier
 import edu.illinois.cs.cogcomp.saulexamples.DrugResponse.BioSensors._
-
+import edu.illinois.cs.cogcomp.saulexamples.DrugResponse.Classifiers.dResponseClassifier
+import edu.illinois.cs.cogcomp.saulexamples.bioInformatics._
+import Queries._
 import scala.collection.JavaConversions._
+
 /** Created by Parisa on 6/24/15.
   */
 object KnowEngDataModel extends DataModel {
@@ -71,7 +72,7 @@ object KnowEngDataModel extends DataModel {
   }
 
   val genesGroupedPerPathway = genes().map(x => x.KEGG.map(y => (x.GeneName, y))).flatten.groupBy(_._2).map(x => (x._1, x._2.map(t1 => t1._1)))
-
+  val genesGroupedPerPathway2 = SGroupBy(genes, gene_KEGG, geneName)
   val pathWayGExpression = property(patientDrug, ordered = true) {
     x: PatientDrug =>
       val myPathwayGenes = genesGroupedPerPathway.get("hsa01040")
