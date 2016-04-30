@@ -4,7 +4,7 @@ import edu.illinois.cs.cogcomp.saul.datamodel.node.Path
 import edu.illinois.cs.cogcomp.saulexamples.DrugResponse.Classifiers.DrugResponseRegressor
 import edu.illinois.cs.cogcomp.saulexamples.DrugResponse.KnowEngDataModel._
 import edu.illinois.cs.cogcomp.saulexamples.bioInformatics._
-
+import Queries._
 import scala.collection.JavaConversions._
 /** Created by Parisa on 6/25/15.
   */
@@ -24,10 +24,9 @@ object myApp {
     genes.populate(GCollection)
     geneGene.populate(GGCollection)
 
-    val genesGroupedPerPathway2 =  SGroupBy(genes, gene_KEGG, geneName)
+    val genesGroupedPerPathway2 = SGroupBy(genes, gene_KEGG, geneName)
 
     val genesGroupedPerPathway = genes().map(x => x.KEGG.map(y => (x.GeneName, y))).flatten.groupBy(_._2).map(x => (x._1, x._2.map(t1 => t1._1)))
-
 
     patientDrug().filter(x => drugResponse(x) > 12)
 
