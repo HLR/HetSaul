@@ -29,12 +29,15 @@ object KnowEngDataModel extends DataModel {
   val age = property(patients) {
     x: Patient => x.age.toDouble
   }
+
   val gender = property(patients) {
     x: Patient => x.gender
   }
+
   val ethnicity = property(patients) {
     x: Patient => x.ethnicity
   }
+
   val geneName = property(genes) {
     x: Gene => x.GeneName
   }
@@ -44,14 +47,17 @@ object KnowEngDataModel extends DataModel {
       if (x.GO_term == null)
         List("") else (x.GO_term.toList)
   }
+
   val gene_KEGG = property(genes) {
     x: Gene =>
       if (x.KEGG == null)
         List("") else x.KEGG.toList
   }
+
   val gene_motif = property(genes) {
     x: Gene => x.motif_u5_gc.doubleValue()
   }
+
   val gene_pfam_domain = property(genes) {
     x: Gene => x.pfam_domain.doubleValue()
   }
@@ -64,12 +70,12 @@ object KnowEngDataModel extends DataModel {
     x: PatientDrug => x.response.doubleValue()
   }
 
-  val genesGroupedPerPathway = genes().map(x=> x.KEGG.map(y => (x.GeneName,y))).flatten.groupBy(_._2).map(x=> (x._1,x._2.map(t1=> t1._1)))
+  val genesGroupedPerPathway = genes().map(x => x.KEGG.map(y => (x.GeneName, y))).flatten.groupBy(_._2).map(x => (x._1, x._2.map(t1 => t1._1)))
 
   val pathWayGExpression = property(patientDrug, ordered = true) {
     x: PatientDrug =>
       val myPathwayGenes = genesGroupedPerPathway.get("hsa01040")
-      this.patientGene().filter(y => x.pid == y.sample_ID).filter( x => myPathwayGenes.contains(x.Gene_ID)).map(x =>x.gExpression).asInstanceOf[List[Double]]
+      this.patientGene().filter(y => x.pid == y.sample_ID).filter(x => myPathwayGenes.contains(x.Gene_ID)).map(x => x.gExpression).asInstanceOf[List[Double]]
   }
 
   val similarity = property(geneGene) {
