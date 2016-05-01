@@ -369,8 +369,12 @@ abstract class Learnable[T <: AnyRef](val datamodel: DataModel, val parameters: 
     new PropertyWithWindow[T](this.datamodel, before, after, filters, properties)
   }
 
-  def using(properties: List[Property[T]]*): List[Property[T]] = {
-    properties.toList.flatten
+  def using(properties: Property[T]*): List[Property[T]] = {
+    properties.toList
+  }
+
+  def using(properties: List[Property[T]]): List[Property[T]] = {
+    using(properties: _*)
   }
 
   def nextWithIn[U <: AnyRef](properties: List[Property[T]])(implicit uTag: ClassTag[U]): Property[T] = {
