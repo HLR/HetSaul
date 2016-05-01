@@ -88,7 +88,7 @@ object EntityRelationApp {
     EntityRelationDataModel.populateWithConll()
 
     // load all independent models
-    ClassifierUtils.TestClassifiers(PersonClassifier, OrganizationClassifier, LocationClassifier,
+    ClassifierUtils.LoadClassifier(jarModelPath, PersonClassifier, OrganizationClassifier, LocationClassifier,
       WorksForClassifier, LivesInClassifier, LocatedInClassifier, OrgBasedInClassifier)
 
     // Test using constrained classifiers
@@ -105,14 +105,14 @@ object EntityRelationApp {
     val testTokens = tokens.getTrainingInstances.toList
 
     // load pre-trained independent models
-    ClassifierUtils.TestClassifiers(PersonClassifier, OrganizationClassifier, LocationClassifier,
+    ClassifierUtils.LoadClassifier(jarModelPath, PersonClassifier, OrganizationClassifier, LocationClassifier,
       WorksForClassifier, LivesInClassifier, LocatedInClassifier, OrgBasedInClassifier)
 
     // joint training
     val jointTrainIteration = 5
     println(s"Joint training $jointTrainIteration iterations. ")
     JointTrain.train[ConllRelation](
-      EntityRelationDataModel,
+      pairs,
       PerConstrainedClassifier :: OrgConstrainedClassifier :: LocConstrainedClassifier ::
         WorksFor_PerOrg_ConstrainedClassifier :: LivesIn_PerOrg_relationConstrainedClassifier :: Nil,
       jointTrainIteration

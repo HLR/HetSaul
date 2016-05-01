@@ -2,11 +2,12 @@ package edu.illinois.cs.cogcomp.saul.datamodel.node
 
 import edu.illinois.cs.cogcomp.lbjava.classify.FeatureVector
 import edu.illinois.cs.cogcomp.lbjava.util.{ ExceptionlessInputStream, ExceptionlessOutputStream }
+import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
 import edu.illinois.cs.cogcomp.saul.datamodel.property.Property
 import edu.illinois.cs.cogcomp.saul.datamodel.property.features.discrete.DiscreteProperty
 import edu.illinois.cs.cogcomp.saul.datamodel.edge.Edge
 
-import scala.collection.mutable.{ Map => MutableMap, LinkedHashSet => MutableSet, ArrayBuffer }
+import scala.collection.mutable.{ HashMap => MutableHashMap, Map => MutableMap, LinkedHashSet => MutableSet, ListBuffer, ArrayBuffer }
 import scala.collection.mutable
 import scala.reflect.ClassTag
 
@@ -19,7 +20,10 @@ trait NodeProperty[T <: AnyRef] extends Property[T] {
   * @param keyFunc key function used to extract the key
   * @tparam T base type of the instances
   */
-class NodeInstance[T](val t: T, val keyFunc: T => Any) {
+class NodeInstance[T](
+  val t: T,
+  val keyFunc: T => Any
+) {
   val key: Any = keyFunc(t)
   def apply = t
 
@@ -31,7 +35,10 @@ class NodeInstance[T](val t: T, val keyFunc: T => Any) {
 }
 
 /** A Node E is an instances of base types T */
-class Node[T <: AnyRef](val keyFunc: T => Any = (x: T) => x, val tag: ClassTag[T]) {
+class Node[T <: AnyRef](
+  val keyFunc: T => Any = (x: T) => x,
+  val tag: ClassTag[T]
+) {
 
   type NT = NodeInstance[T]
 
@@ -114,8 +121,8 @@ class Node[T <: AnyRef](val keyFunc: T => Any = (x: T) => x, val tag: ClassTag[T
   }
 
   def populateFrom(n: Node[_]): Unit = {
-    populate(n.getTrainingInstances.map(_.asInstanceOf[T]), true, false)
-    populate(n.getTestingInstances.map(_.asInstanceOf[T]), false, false)
+    populate(n.getTrainingInstances.map(_.asInstanceOf[T]), train = true, populateEdge = false)
+    populate(n.getTestingInstances.map(_.asInstanceOf[T]), train = false, populateEdge = false)
   }
 
   /** Operator for adding a sequence of T into my table. */
@@ -274,6 +281,14 @@ class Node[T <: AnyRef](val keyFunc: T => Any = (x: T) => x, val tag: ClassTag[T
         featureVector.read(in)
         derivedInstances.put(id, featureVector)
     }
+  }
+
+  /** list of hashmaps used inside properties for caching sensor values */
+  final val propertyCacheList = new ListBuffer[MutableHashMap[_, Any]]()
+
+  def clearPropertyCache[T](): Unit = {
+    println("clean property cache: cleaning " + propertyCacheList.size + " maps")
+    propertyCacheList.foreach(_.asInstanceOf[MutableHashMap[T, Any]].clear)
   }
 }
 

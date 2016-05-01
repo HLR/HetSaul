@@ -1,25 +1,24 @@
 package edu.illinois.cs.cogcomp.saul.classifier
 
-import edu.illinois.cs.cogcomp.lbjava.classify.TestDiscrete
+import edu.illinois.cs.cogcomp.lbjava.classify.{ Classifier, FeatureVector, TestDiscrete }
 import edu.illinois.cs.cogcomp.lbjava.infer._
 import edu.illinois.cs.cogcomp.lbjava.learn.Learner
-import edu.illinois.cs.cogcomp.lbjava.parse.Parser
 import edu.illinois.cs.cogcomp.saul.TestWithStorage
 import edu.illinois.cs.cogcomp.saul.classifier.infer.InferenceCondition
 import edu.illinois.cs.cogcomp.saul.constraint.LfsConstraint
-import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
 import edu.illinois.cs.cogcomp.saul.datamodel.edge.Edge
-import edu.illinois.cs.cogcomp.saul.lbjrelated.LBJClassifierEquivalent
+import edu.illinois.cs.cogcomp.saul.lbjrelated.{ LBJLearnerEquivalent, LBJClassifierEquivalent }
 import edu.illinois.cs.cogcomp.saul.parser.LBJIteratorParserScala
 
 import scala.reflect.ClassTag
 
 /** The input to a ConstrainedClassifier is of type `T`. However given an input, the inference is based upon the
   * head object of type `HEAD` corresponding to the input (of type `T`).
+  *
   * @tparam T the object type given to the classifier as input
   * @tparam HEAD the object type inference is based upon
   */
-abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val dm: DataModel, val onClassifier: Learner)(
+abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val onClassifier: LBJLearnerEquivalent)(
   implicit
   val tType: ClassTag[T],
   implicit val headType: ClassTag[HEAD]
@@ -55,23 +54,14 @@ abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val dm: DataMo
     */
   val pathToHead: Option[Edge[T, HEAD]] = None
 
-  /** syntactic suger to create simple calls to the function */
+  /** syntactic sugar to create simple calls to the function */
   def apply(example: AnyRef): String = classifier.discreteValue(example: AnyRef)
 
-  override val classifier = lbjClassifier.classifier
-
   def findHead(x: T): Option[HEAD] = {
-    if (tType.equals(headType)) {
+    if (tType.equals(headType) || pathToHead.isEmpty) {
       Some(x.asInstanceOf[HEAD])
     } else {
-      val lst = pathToHead match {
-        case Some(e) =>
-          //          println(s"Searching via ${s}")
-          e.forward.neighborsOf(x)
-        case _ => dm.getFromRelation[T, HEAD](x)
-      }
-
-      val l = lst.toSet.toList
+      val l = pathToHead.get.forward.neighborsOf(x).toSet.toList
 
       if (l.isEmpty) {
         if (logger)
@@ -90,19 +80,15 @@ abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val dm: DataMo
   }
 
   def getCandidates(head: HEAD): Seq[T] = {
-
-    if (tType.equals(headType)) {
+    if (tType.equals(headType) || pathToHead.isEmpty) {
       head.asInstanceOf[T] :: Nil
     } else {
-      val l = pathToHead match {
-        case Some(e) => e.backward.neighborsOf(head)
-        case _ => dm.getFromRelation[HEAD, T](head)
-      }
+      val l = pathToHead.get.backward.neighborsOf(head)
 
       if (l.isEmpty) {
         if (logger)
           println("Failed to find part")
-        l.toSeq
+        Seq.empty[T]
       } else {
         l.filter(filter(_, head)).toSeq
       }
@@ -123,30 +109,12 @@ abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val dm: DataMo
         inference.valueOf(cls, t)
 
       case None =>
-        val name = String.valueOf(infer.subjectTo.hashCode())
-
-        //        var inference = InferenceManager.get(name, head)
-        //
-        //        if (inference == null) {
-        //
-        //          inference = infer(head)
-        //          //      println(inference)
-        //          //      println("Inference NULL" + name)
-        //
-        //          InferenceManager.put(name, inference)
-        //        }
-        //
-        //
-        //        val result: String = inference.valueOf(cls, t)
-        //        result
-
-        //        "false"
         cls.discreteValue(t)
     }
   }
 
   def buildWithConstraint(inferenceCondition: InferenceCondition[T, HEAD])(t: T): String = {
-    buildWithConstraint(inferenceCondition, onClassifier)(t)
+    buildWithConstraint(inferenceCondition, onClassifier.classifier)(t)
   }
 
   private def getSolverInstance = solver match {
@@ -154,58 +122,38 @@ abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val dm: DataMo
     case _: GurobiHook => () => new GurobiHook()
   }
 
-  def lbjClassifier = dm.property[T](dm.getNodeWithType[T], className)("*", "*") {
-    x: T => buildWithConstraint(subjectTo.createInferenceCondition[T](this.dm, getSolverInstance()).convertToType[T], onClassifier)(x)
-  }
-
-  def learn(it: Int): Unit = {
-    val ds = dm.getNodeWithType[T].getTrainingInstances
-    this.learn(it, ds)
-  }
-
-  def learn(iteration: Int, data: Iterable[T]): Unit = {
-    //    featureExtractor.setDMforAll(this.datamodel)
-
-    val crTokenTest = new LBJIteratorParserScala[T](data)
-    crTokenTest.reset()
-
-    def learnAll(crTokenTest: Parser, remainingIteration: Int): Unit = {
-      //      println(remainingIteration)
-      val v = crTokenTest.next
-      if (v == null) {
-
-        if (remainingIteration > 0) {
-          crTokenTest.reset()
-          learnAll(crTokenTest, remainingIteration - 1)
-        }
-      } else {
-        //        println("Learning with example " + v)
-        this.onClassifier.learn(v)
-        learnAll(crTokenTest, remainingIteration)
-      }
-    }
-
-    learnAll(crTokenTest, iteration)
+  override val classifier = new Classifier() {
+    override def classify(o: scala.Any) = new FeatureVector(featureValue(discreteValue(o)))
+    override def discreteValue(o: scala.Any): String =
+      buildWithConstraint(
+        subjectTo.createInferenceCondition[T](getSolverInstance()).convertToType[T],
+        onClassifier.classifier
+      )(o.asInstanceOf[T])
   }
 
   /** Test with given data, use internally
+    *
     * @return List of (label, (f1, precision, recall))
     */
   def test(): List[(String, (Double, Double, Double))] = {
-    val allHeads = this.dm.getNodeWithType[HEAD].getTestingInstances
-    val data: List[T] = if (tType.equals(headType)) {
-      allHeads.map(_.asInstanceOf[T]).toList
-    } else {
-      this.pathToHead match {
-        case Some(path) => allHeads.map(h => path.backward.neighborsOf(h)).toList.flatten
-        case _ => (allHeads map (h => this.dm.getFromRelation[HEAD, T](h))).toList.flatten
+    val allHeads: Iterable[HEAD] = {
+      if (pathToHead.isEmpty) {
+        onClassifier match {
+          case clf: Learnable[T] => clf.node.getTestingInstances.asInstanceOf[Iterable[HEAD]]
+          case _ => println("ERROR: pathToHead is not provided and the onClassifier is not a Learnable!"); Nil
+        }
+      } else {
+        pathToHead.get.to.getTestingInstances
       }
     }
+
+    val data: List[T] = allHeads.flatMap(getCandidates).toList.distinct
 
     test(data)
   }
 
   /** Test with given data, use internally
+    *
     * @param testData if the collection of data (which is and Iterable of type T) is not given it is derived from the data model based on its type
     * @param exclude it is the label that we want to exclude for evaluation, this is useful for evaluating the multi-class classifiers when we need to measure overall F1 instead of accuracy and we need to exclude the negative class
     * @param outFile The file to write the predictions (can be `null`)

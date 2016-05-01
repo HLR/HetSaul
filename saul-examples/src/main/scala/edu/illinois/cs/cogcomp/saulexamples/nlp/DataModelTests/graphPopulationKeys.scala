@@ -1,7 +1,7 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.DataModelTests
 
-import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{ Sentence, TextAnnotation }
 import edu.illinois.cs.cogcomp.saulexamples.data.DocumentReader
+import edu.illinois.cs.cogcomp.saulexamples.nlp.DataModelTests.modelWithKeys._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.CommonSensors
 
 import scala.collection.JavaConversions._
@@ -14,11 +14,11 @@ object graphPopulationKeys {
     val sentenceList = taList.flatMap(x => x.sentences())
 
     /** population */
-    modelWithKeys.document populate taList
-    modelWithKeys.sentence populate sentenceList
+    document populate taList
+    sentence populate sentenceList
 
-    val x1 = modelWithKeys.getFromRelation[Sentence, TextAnnotation](sentenceList.head)
-    val x2 = modelWithKeys.getFromRelation[TextAnnotation, Sentence](taList.head)
+    val x1 = sentence() ~> -docTosen
+    val x2 = document() ~> docTosen
 
     println(s"x1.size = ${x1.size}")
     println(s"x2.size = ${x2.size}")
