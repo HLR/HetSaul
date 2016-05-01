@@ -1,6 +1,6 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.EntityRelation
 
-import edu.illinois.cs.cogcomp.saul.classifier.{ ClassifierUtils, JointTrain2 }
+import edu.illinois.cs.cogcomp.saul.classifier.{ ClassifierUtils, JointTrain }
 import edu.illinois.cs.cogcomp.saulexamples.EntityMentionRelation.datastruct.ConllRelation
 import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityRelation.EntityRelationClassifiers._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityRelation.EntityRelationDataModel._
@@ -111,7 +111,7 @@ object EntityRelationApp {
     // joint training
     val jointTrainIteration = 5
     println(s"Joint training $jointTrainIteration iterations. ")
-    JointTrain2.train[ConllRelation](
+    JointTrain.train[ConllRelation](
       pairs,
       PerConstrainedClassifier :: OrgConstrainedClassifier :: LocConstrainedClassifier ::
         WorksFor_PerOrg_ConstrainedClassifier :: LivesIn_PerOrg_relationConstrainedClassifier :: Nil,
