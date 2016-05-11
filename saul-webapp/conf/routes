@@ -4,7 +4,7 @@
 
 # Home page
 GET     /                           controllers.Application.index
-
+GET		/graph					controllers.Application.graph
 # Run main application
 POST    /runCode                controllers.Application.acceptRunMain
 

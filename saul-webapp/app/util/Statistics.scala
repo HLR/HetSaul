@@ -6,6 +6,9 @@ import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
 import edu.illinois.cs.cogcomp.saul.datamodel.edge.Edge
 import edu.illinois.cs.cogcomp.saul.datamodel.node.{ NodeProperty, Node }
 
+/**
+ *	A utility class for generating statistics about a trained datamodel
+ */
 object Statistics {
 
 	def getStatistics(dm : DataModel) = {
@@ -70,8 +73,10 @@ object Statistics {
 			}
 			case _ =>
 		}
+		stat2 = stat2 + (typ + "'s frequency distribution" -> getFrequency(valueList))
 		stat2
 	}
+
 	def isNumberArray(list : Iterable[String]) : Boolean = {
 		try{
 			(list.toList)(0).toDouble
@@ -81,6 +86,9 @@ object Statistics {
 		return true
 	}
 
+	def getFrequency(list: Iterable[String]) = {
+		Json.toJson(list.toSeq.groupBy(identity).mapValues(_.size)).toString
+	}
 	def getVariance(list : Iterable[String]) = {
 		val mean = getMean(list).toDouble
 		val l = list.map(_.toDouble).map(x=>Math.pow(mean-x,2)).toList

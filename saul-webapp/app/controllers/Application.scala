@@ -42,6 +42,10 @@ class Application extends Controller {
     Ok(views.html.main("Saul Visualization Web Interface"))
   }
 
+  def graph = Action { implicit request =>
+    Ok(views.html.graph("Graph Visualization"))
+  }
+
   def acceptDisplayModel = Action(parse.json) { implicit request =>
     execute(DisplayModel(), request)
   }

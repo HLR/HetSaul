@@ -7,6 +7,7 @@
     <title>@title</title>
     @helper.javascriptRouter("jsRoutes")(
     routes.javascript.Application.index,
+    routes.javascript.Application.graph,
     routes.javascript.Application.acceptRunMain,
     routes.javascript.Application.acceptDisplayModel,
     routes.javascript.Application.acceptPopulateModel,
@@ -141,6 +142,8 @@
         <li class="active" id="gtab1" value="tab1"><a >Data Model</a></li>
         <li class="" id="gtab2" value="tab2"><a>Populated Data Model</a></li>
         <li class="" id="gtab3" value="tab3"><a>Running Result</a></li>
+        <button class="btn btn-default" class="leftBtn" id="rescale-graph">Resize</button>
+        <button class="btn btn-default" class="leftBtn" id="maximize">Maximize</button>
     </ul>
 
     <div class="tab-content">
