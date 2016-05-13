@@ -17,7 +17,7 @@ class IterableToLBJavaParser[T <: AnyRef](val data: Iterable[T]) extends Parser 
     }
   }
 
-  override def close(): Unit = { }
+  override def close(): Unit = {}
 
   override def reset(): Unit = {
     if (data != null) this.it = Some(data.iterator)

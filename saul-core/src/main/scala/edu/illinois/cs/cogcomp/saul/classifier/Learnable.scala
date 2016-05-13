@@ -7,7 +7,7 @@ import edu.illinois.cs.cogcomp.core.io.IOUtils
 import edu.illinois.cs.cogcomp.lbjava.classify.{ FeatureVector, TestDiscrete }
 import edu.illinois.cs.cogcomp.lbjava.learn.Learner.Parameters
 import edu.illinois.cs.cogcomp.lbjava.learn._
-import edu.illinois.cs.cogcomp.lbjava.parse.{Parser, FoldParser}
+import edu.illinois.cs.cogcomp.lbjava.parse.{ Parser, FoldParser }
 import edu.illinois.cs.cogcomp.lbjava.parse.FoldParser.SplitPolicy
 import edu.illinois.cs.cogcomp.lbjava.util.ExceptionlessOutputStream
 import edu.illinois.cs.cogcomp.saul.TestContinuous
@@ -16,12 +16,14 @@ import edu.illinois.cs.cogcomp.saul.datamodel.edge.Link
 import edu.illinois.cs.cogcomp.saul.datamodel.node.Node
 import edu.illinois.cs.cogcomp.saul.datamodel.property.{ PropertyWithWindow, CombinedDiscreteProperty, Property }
 import edu.illinois.cs.cogcomp.saul.lbjrelated.LBJLearnerEquivalent
-import edu.illinois.cs.cogcomp.saul.parser.{LBJavaParserToIterable, IterableToLBJavaParser}
+import edu.illinois.cs.cogcomp.saul.parser.{ LBJavaParserToIterable, IterableToLBJavaParser }
 
 import org.slf4j.helpers.NOPLogger
 import org.slf4j.{ Logger, LoggerFactory }
 
 import scala.reflect.ClassTag
+
+case class Result(label: String, f1: Double, precision: Double, recall: Double)
 
 abstract class Learnable[T <: AnyRef](val node: Node[T], val parameters: Parameters = new Learner.Parameters)(implicit tag: ClassTag[T]) extends LBJLearnerEquivalent {
   /** Whether to use caching */
@@ -259,11 +261,9 @@ abstract class Learnable[T <: AnyRef](val node: Node[T], val parameters: Paramet
 
   def forget() = this.classifier.forget()
 
-  case class Result(label: String, f1: Double, precision: Double, recall: Double)
-
   /** Test with the test data, retrieve internally
- *
-    * @return List of [[Learnable.Result]]
+    *
+    * @return List of [[Result]]
     */
   def test(): Seq[Result] = {
     val testData = node.getTestingInstances
@@ -276,7 +276,7 @@ abstract class Learnable[T <: AnyRef](val node: Node[T], val parameters: Paramet
     * @param prediction it is the property that we want to evaluate it if it is null then the prediction of the classifier is the default
     * @param groundTruth it is the property that we want to evaluate the prediction against it, if it is null then the gold label derived from the classifier is used
     * @param exclude it is the label that we want to exclude fro evaluation, this is useful for evaluating the multi-class classifiers when we need to measure overall F1 instead of accuracy and we need to exclude the negative class
-    * @return List of [[Learnable.Result]]
+    * @return List of [[Result]]
     */
   def test(testData: Iterable[T], prediction: Property[T] = null, groundTruth: Property[T] = null, exclude: String = ""): Seq[Result] = {
     isTraining = false
@@ -326,7 +326,7 @@ abstract class Learnable[T <: AnyRef](val node: Node[T], val parameters: Paramet
   }
 
   /** Run k fold cross validation.
- *
+    *
     * @param k number of folds
     * @param splitPolicy strategy to split the instances into k folds; it can be set to [[SplitPolicy.random]],
     *                    [[SplitPolicy.sequential]], [[SplitPolicy.kth]] or [[SplitPolicy.manual]].
@@ -335,7 +335,7 @@ abstract class Learnable[T <: AnyRef](val node: Node[T], val parameters: Paramet
     val testReader = new IterableToLBJavaParser[T](trainingInstances)
     val foldParser = new FoldParser(testReader, k, splitPolicy, 0, false)
 
-    val a = (0 until k).map{ fold =>
+    val a = (0 until k).map { fold =>
       foldParser.setPivot(fold)
       foldParser.setFromPivot(false)
       this.learn(10, foldParser.getParser)

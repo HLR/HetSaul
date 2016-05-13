@@ -135,7 +135,7 @@ abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val onClassifi
     *
     * @return List of (label, (f1, precision, recall))
     */
-  def test(): List[(String, (Double, Double, Double))] = {
+  def test(): Seq[Result] = {
     val allHeads: Iterable[HEAD] = {
       if (pathToHead.isEmpty) {
         onClassifier match {
@@ -160,16 +160,15 @@ abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val onClassifi
     * @return List of (label, (f1,precision,recall))
     */
 
-  def test(testData: Iterable[T], outFile: String = null, outputGranularity: Int = 0, exclude: String = ""): List[(String, (Double, Double, Double))] = {
+  def test(testData: Iterable[T], outFile: String = null, outputGranularity: Int = 0, exclude: String = ""): Seq[Result] = {
     println()
     val testReader = new IterableToLBJavaParser[T](testData)
     testReader.reset()
     val tester: TestDiscrete = new TestDiscrete()
     TestWithStorage.test(tester, classifier, onClassifier.getLabeler, testReader, outFile, outputGranularity, exclude)
-    val ret = tester.getLabels.map({
-      label => (label, (tester.getF1(label), tester.getPrecision(label), tester.getRecall(label)))
-    })
-    ret toList
+    tester.getLabels.map {
+      label => Result(label, tester.getF1(label), tester.getPrecision(label), tester.getRecall(label))
+    }
   }
 }
 
