@@ -1,10 +1,10 @@
-## Conceptual Structure
+# Conceptual Structure
 
 Each Saul program is a general purpose Scala program in which Saul DSL high level constructs are used to design application programs.
 The provided constructs are designed to enable declarative programing for the following conceptual
 components of each application that uses learning and inference.
 
-### Data Model:
+## Data Model:
 The data model in Saul conceptually is represented with a graph containing nodes, the edges between them and their properties.
 
   - `Node`: The different types of objects, for example documents, sound files, pictures, text documents, etc.
@@ -12,7 +12,7 @@ The data model in Saul conceptually is represented with a graph containing nodes
   - `Property`: The attributes of a node, for example a node of type `Document` can have properties
   such as `Title`, `Subject`, `Author`, `Body`, etc.
 
-#### Defining nodes
+### Defining nodes
 
 This is done using the `node` function,
 
@@ -23,7 +23,7 @@ val relations = node[ConllRawRelation]
 
 This line of code defines an entity of type `ConllRawToken` and names it as `tokens`.
 
-#### Defining properties
+### Defining properties
 
 This is done via the `property` function,
 
@@ -31,13 +31,38 @@ This is done via the `property` function,
 val pos = property(token) {
    (t: ConllRawToken) => t.POS
 }
-  ```
+```
 
 In this definition `pos` is defined to be a property of nodes of type token. The definition
 inside `{ .... }` is  the definition of a sensor which given an object of type `ConllRawToken` i.e. the tye of node and
 generates an output property value (in this case, using the POS tag of an object of type `ConllRawToken`).
 
-#### Defining edges
+#### Parameterized properties 
+Suppose you want to define properties which get some parameters; this can be important when we want to programmatically 
+define many properties which differ only in some parameters. Here are two example properties which differ slightly: 
+
+```scala
+val mathchWordING = property(token) {
+   (t: ConllRawToken) => t.rawString.contains("ing")
+}
+
+val mathchWordTION = property(token) {
+   (t: ConllRawToken) => t.rawString.contains("tion")
+}
+```
+
+One matches for existence of "ing" and the other one checks for existence of "tion". Since they are almost the same, 
+we can combine them as a parameterized property, by adding a parameter `(param: String) =>` before the property definition: 
+
+```scala 
+val mathchWord = (param: String) => property(token) {
+   (t: ConllRawToken) => t.rawString.contains(param)
+}
+```
+
+Note that there is no limitation on the number/types of the extra parameters passed to properties. 
+
+### Defining edges
 
 This is done via several constructs depending on the type of the relationships. Here is an example definition,
 
@@ -47,14 +72,14 @@ val tokenSentenceEdge = edge(tokens, relations)
 
 This definition creates edges between the two `Node`s we defined previously.
 
-#### Sensors
-   ##### Sensors for properties
+### Sensors
+#### Sensors for properties
 
    As mentioned above in the body of property definition an arbitrary sensor can be called.
    `(t: ConllRawToken) => t.POS`
    This will return a primitive data type i.e. String, real, etc.
 
-   ##### Sensors for edges
+#### Sensors for edges
 
    Defining the sensors on edges is a very important step to make the whole graph and the necessary connections.
    Conceptually there are two types of sensors:
@@ -68,13 +93,13 @@ This definition creates edges between the two `Node`s we defined previously.
    `e1.addSensor(_.charAt(0) == _.charAt(0))`
 
 
-### Instantiation Data Model
+## Instantiation Data Model
 TODO
 
-### Graph Queries
+## Graph Queries
 TODO
 
-### Classifiers
+## Classifiers
 Here are the basic types essential for using classifiers.
 
   - `Label`: The "category" of the one object. For example, in a classification task, the category
@@ -94,7 +119,7 @@ object orgClassifier extends Learnable[ConllRawToken](ErDataModelExample) {
 }
 ```
 
-### Constraints
+## Constraints
 A "constraint" is a logical restriction over possible values that can be assigned to a number of variables;
 For example, a binary constraint could be `{if {A} then NOT {B}}`.
 In Saul, the constraints are defined for the assignments to class labels.
@@ -109,7 +134,7 @@ val PersonWorkFor=ConstraintClassifier.constraintOf[ConllRelation] {
   }
 }
 ```
-### Constrained Classifiers
+## Constrained Classifiers
 A constrained classifier can be defined in the following form:
 
 ```scala
@@ -122,7 +147,7 @@ object LocConstraintClassifier extends ConstraintClassifier[ConllRawToken, Conll
 }
 ```
 
-### Running Applications and Evaluation
+## Running Applications and Evaluation
 * Training and Prediction Paradigms:
 * Running Applications and Evaluation: application is a program that uses the declared classifiers and acts upon them: train them, test them or use them in predictions for further analysis in the program.
 
