@@ -8,7 +8,7 @@ import edu.illinois.cs.cogcomp.saul.classifier.infer.InferenceCondition
 import edu.illinois.cs.cogcomp.saul.constraint.LfsConstraint
 import edu.illinois.cs.cogcomp.saul.datamodel.edge.Edge
 import edu.illinois.cs.cogcomp.saul.lbjrelated.{ LBJLearnerEquivalent, LBJClassifierEquivalent }
-import edu.illinois.cs.cogcomp.saul.parser.LBJIteratorParserScala
+import edu.illinois.cs.cogcomp.saul.parser.IterableToLBJavaParser
 
 import scala.reflect.ClassTag
 
@@ -162,7 +162,7 @@ abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val onClassifi
 
   def test(testData: Iterable[T], outFile: String = null, outputGranularity: Int = 0, exclude: String = ""): List[(String, (Double, Double, Double))] = {
     println()
-    val testReader = new LBJIteratorParserScala[T](testData)
+    val testReader = new IterableToLBJavaParser[T](testData)
     testReader.reset()
     val tester: TestDiscrete = new TestDiscrete()
     TestWithStorage.test(tester, classifier, onClassifier.getLabeler, testReader, outFile, outputGranularity, exclude)
