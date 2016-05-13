@@ -1,6 +1,5 @@
 package edu.illinois.cs.cogcomp.saul.classifier
 
-import edu.illinois.cs.cogcomp.saul.classifier.Learnable
 /** Utility functions for various operations (e.g. training, testing, saving, etc) on multiple classifiers.
   */
 object ClassifierUtils {

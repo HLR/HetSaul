@@ -202,7 +202,7 @@ abstract class Learnable[T <: AnyRef](val node: Node[T], val parameters: Paramet
     isTraining = false
   }
 
-  def learn(iteration: Int = 10, parser: Parser): Unit = {
+  def learn(iteration: Int = 10, parser: Parser)(implicit dummyImplicit: DummyImplicit): Unit = {
     val trainingIterable = new LBJavaParserToIterable[T](parser)
     learn(iteration, trainingIterable)
   }
@@ -281,10 +281,10 @@ abstract class Learnable[T <: AnyRef](val node: Node[T], val parameters: Paramet
   def test(testData: Iterable[T], prediction: Property[T] = null, groundTruth: Property[T] = null, exclude: String = ""): Seq[Result] = {
     isTraining = false
     val testParser = new IterableToLBJavaParser[T](testData)
-    test(testParser)
+    test(testParser, prediction, groundTruth, exclude)
   }
 
-  def test(testParser: Parser, prediction: Property[T] = null, groundTruth: Property[T] = null, exclude: String = ""): Seq[Result] = {
+  def test(testParser: Parser, prediction: Property[T], groundTruth: Property[T], exclude: String): Seq[Result] = {
     testParser.reset()
     val tester = if (prediction == null && groundTruth == null)
       TestDiscrete.testDiscrete(classifier, classifier.getLabeler, testParser)
@@ -338,9 +338,9 @@ abstract class Learnable[T <: AnyRef](val node: Node[T], val parameters: Paramet
     val a = (0 until k).map { fold =>
       foldParser.setPivot(fold)
       foldParser.setFromPivot(false)
-      this.learn(10, foldParser.getParser)
+      //this.learn(10, foldParser.getParser)
       foldParser.setFromPivot(true)
-      this.test(foldParser.getParser)
+      //this.test(foldParser.getParser)
     }
   }
 
