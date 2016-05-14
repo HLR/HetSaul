@@ -23,8 +23,6 @@ import org.slf4j.{ Logger, LoggerFactory }
 
 import scala.reflect.ClassTag
 
-case class Result(label: String, f1: Double, precision: Double, recall: Double)
-
 abstract class Learnable[T <: AnyRef](val node: Node[T], val parameters: Parameters = new Learner.Parameters)(implicit tag: ClassTag[T]) extends LBJLearnerEquivalent {
   /** Whether to use caching */
   val useCache = false
@@ -263,9 +261,9 @@ abstract class Learnable[T <: AnyRef](val node: Node[T], val parameters: Paramet
 
   /** Test with the test data, retrieve internally
     *
-    * @return List of [[Result]]
+    * @return a [[Results]] object
     */
-  def test(): Seq[Result] = {
+  def test(): Results = {
     val testData = node.getTestingInstances
     test(testData)
   }
@@ -276,25 +274,32 @@ abstract class Learnable[T <: AnyRef](val node: Node[T], val parameters: Paramet
     * @param prediction it is the property that we want to evaluate it if it is null then the prediction of the classifier is the default
     * @param groundTruth it is the property that we want to evaluate the prediction against it, if it is null then the gold label derived from the classifier is used
     * @param exclude it is the label that we want to exclude fro evaluation, this is useful for evaluating the multi-class classifiers when we need to measure overall F1 instead of accuracy and we need to exclude the negative class
-    * @return List of [[Result]]
+    * @return List of [[Results]]
     */
-  def test(testData: Iterable[T], prediction: Property[T] = null, groundTruth: Property[T] = null, exclude: String = ""): Seq[Result] = {
+  def test(testData: Iterable[T], prediction: Property[T] = null, groundTruth: Property[T] = null, exclude: String = "",
+    outputGranularity: Int = 0): Results = {
     isTraining = false
     val testParser = new IterableToLBJavaParser[T](testData)
-    test(testParser, prediction, groundTruth, exclude)
+    test(testParser, prediction, groundTruth, exclude, outputGranularity)
   }
 
-  def test(testParser: Parser, prediction: Property[T], groundTruth: Property[T], exclude: String): Seq[Result] = {
+  def test(testParser: Parser, prediction: Property[T], groundTruth: Property[T], exclude: String, outputGranularity: Int): Results = {
     testParser.reset()
     val tester = if (prediction == null && groundTruth == null)
       TestDiscrete.testDiscrete(classifier, classifier.getLabeler, testParser)
     else
-      TestDiscrete.testDiscrete(prediction.classifier, groundTruth.classifier, testParser)
+      TestDiscrete.testDiscrete(new TestDiscrete(), prediction.classifier, groundTruth.classifier, testParser, logging, outputGranularity)
     if (!exclude.isEmpty) {
       tester.addNull(exclude)
     }
     tester.printPerformance(System.out)
-    tester.getLabels.map { label => Result(label, tester.getF1(label), tester.getPrecision(label), tester.getRecall(label)) }
+    val perLabelResults = tester.getLabels.map { label =>
+      ResultPerLabel(label, tester.getF1(label), tester.getPrecision(label), tester.getRecall(label),
+        tester.getAllClasses, tester.getLabeled(label), tester.getPredicted(label), tester.getCorrect(label))
+    }
+    val overalResultArray = tester.getOverallStats()
+    val overalResult = OverallResult(overalResultArray(0), overalResultArray(1), overalResultArray(2))
+    Results(perLabelResults, ClassifierUtils.getAverageResults(perLabelResults), overalResult)
   }
 
   /** Test with real-valued (continuous) data. Runs Spearman's and Pearson's correlations.
@@ -325,22 +330,38 @@ abstract class Learnable[T <: AnyRef](val node: Node[T], val parameters: Paramet
     }
   }
 
-  /** Run k fold cross validation.
+  /** Run k fold cross validation using the training data. The strategy to split the instances can be set to
+    * [[SplitPolicy.random]], [[SplitPolicy.sequential]], [[SplitPolicy.kth]] or [[SplitPolicy.manual]]
+    * if the data splitting policy is not 'Manual', the number of folds must be greater than 1. Otherwise it's value
+    * doesn't really matter.
     *
     * @param k number of folds
-    * @param splitPolicy strategy to split the instances into k folds; it can be set to [[SplitPolicy.random]],
-    *                    [[SplitPolicy.sequential]], [[SplitPolicy.kth]] or [[SplitPolicy.manual]].
+    * @param splitPolicy strategy to split the instances into k folds.
     */
-  def crossValidation(k: Int, splitPolicy: SplitPolicy = SplitPolicy.random) = {
+  def crossValidation(k: Int, splitPolicy: SplitPolicy = SplitPolicy.random,
+    prediction: Property[T] = null, groundTruth: Property[T] = null, exclude: String = "", outputGranularity: Int = 0): Unit /*Seq[Results]*/ = {
     val testReader = new IterableToLBJavaParser[T](trainingInstances)
-    val foldParser = new FoldParser(testReader, k, splitPolicy, 0, false)
-
-    val a = (0 until k).map { fold =>
+    println("trainingInstances inside crossValidation =  " + trainingInstances.size)
+    val foldParser = new FoldParser(testReader, k, splitPolicy, 0, false, trainingInstances.size)
+    (0 until k).map { fold =>
       foldParser.setPivot(fold)
       foldParser.setFromPivot(false)
       //this.learn(10, foldParser.getParser)
+      // remove this block:
+      val trainingIterable = new LBJavaParserToIterable[T](foldParser.getParser).iterator()
+      println("training instances = ")
+      println(trainingIterable.size)
+      // until here
+
+      foldParser.reset()
       foldParser.setFromPivot(true)
-      //this.test(foldParser.getParser)
+      //this.test(foldParser.getParser, prediction, groundTruth, exclude, outputGranularity)
+      // remove this block
+      val testingIterable = new LBJavaParserToIterable[T](foldParser.getParser).iterator()
+      println("testing instances = ")
+      println(testingIterable.size)
+      println("========")
+      // until here
     }
   }
 
