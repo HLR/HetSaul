@@ -1,10 +1,13 @@
 package edu.illinois.cs.cogcomp.saulexamples.DrugResponse
 
+import edu.illinois.cs.cogcomp.lbjava.learn.SparsePerceptron
+import edu.illinois.cs.cogcomp.saul.classifier.{ClassifierUtils, Learnable}
 import edu.illinois.cs.cogcomp.saul.datamodel.node.Path
 import edu.illinois.cs.cogcomp.saulexamples.DrugResponse.Classifiers.DrugResponseRegressor
 import edu.illinois.cs.cogcomp.saulexamples.DrugResponse.KnowEngDataModel._
+import edu.illinois.cs.cogcomp.saulexamples.DrugResponse.Queries._
 import edu.illinois.cs.cogcomp.saulexamples.bioInformatics._
-import Queries._
+
 import scala.collection.JavaConversions._
 /** Created by Parisa on 6/25/15.
   */
@@ -24,7 +27,27 @@ object myApp {
     genes.populate(GCollection)
     geneGene.populate(GGCollection)
 
+    val a = new DrugResponseRegressor("sdd")
+
+    val myLearners= (genes() prop gene_KEGG).flatten.toList.distinct.map(pathwayX =>  new DrugResponseRegressor(pathwayX) /*{
+        object t extends Learnable[PatientDrug](patientDrug) {
+          def label = drugResponse
+
+          override def feature = using(pathWayGExpression)
+
+          override lazy val classifier = new SparsePerceptron()
+        }
+    }*/
+    )
+    val a = ClassifierUtils.TestClassifiers(myLearners).sortBy{ b =>
+      val c = b.unzip
+    }
+   myLearners.test(testingData).SortwithAccuracy()
+
+
+
     val genesGroupedPerPathway2 = SGroupBy(genes, gene_KEGG, geneName)
+   // genes SGroupBy gene_KEGG Select geneName
 
     val genesGroupedPerPathway = genes().map(x => x.KEGG.map(y => (x.GeneName, y))).flatten.groupBy(_._2).map(x => (x._1, x._2.map(t1 => t1._1)))
 
@@ -38,10 +61,10 @@ object myApp {
 
     // dResponseClassifier.learn(1)
 
-    // dResponseClassifier.testContinuos(patient_drug_data)
+    //dResponseClassifier.testContinuos(patient_drug_data)
     DrugResponseRegressor.learn(1)
-    DrugResponseRegressor.testContinuos(patientDrug.getTrainingInstances)
-
+    //DrugResponseRegressor.testContinuos(patientDrug.getTrainingInstances)
+    print("finished!")
   }
 
 }

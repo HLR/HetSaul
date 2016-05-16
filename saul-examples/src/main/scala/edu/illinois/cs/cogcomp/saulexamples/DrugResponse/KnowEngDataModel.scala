@@ -4,7 +4,7 @@ import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
 import edu.illinois.cs.cogcomp.saulexamples.DrugResponse.BioSensors._
 import edu.illinois.cs.cogcomp.saulexamples.DrugResponse.Classifiers.dResponseClassifier
 import edu.illinois.cs.cogcomp.saulexamples.bioInformatics._
-import Queries._
+
 import scala.collection.JavaConversions._
 
 /** Created by Parisa on 6/24/15.
@@ -72,15 +72,27 @@ object KnowEngDataModel extends DataModel {
   }
 
   val genesGroupedPerPathway = genes().map(x => x.KEGG.map(y => (x.GeneName, y))).flatten.groupBy(_._2).map(x => (x._1, x._2.map(t1 => t1._1)))
-  val genesGroupedPerPathway2 = SGroupBy(genes, gene_KEGG, geneName)
-  val pathWayGExpression = property(patientDrug, ordered = true) {
+  //val genesGroupedPerPathway3 = genes().map(x => x.KEGG.map(y => (x , y))).flatten.groupBy(_._2).map(x => (x._1, x._2.map(t1 => t1._1)))
+
+  //val genesGroupedPerPathway2 = SGroupBy(genes, gene_KEGG, geneName)
+  val pathWayGExpression = (pathway: String) => property(patientDrug, ordered = true) {
     x: PatientDrug =>
-      val myPathwayGenes = genesGroupedPerPathway.get("hsa01040")
-      this.patientGene().filter(y => x.pid == y.sample_ID).filter(x => myPathwayGenes.contains(x.Gene_ID)).map(x => x.gExpression).asInstanceOf[List[Double]]
+      val myPathwayGenes = genesGroupedPerPathway.get(pathway) // ("hsa01040")
+      var a= this.patientGene().filter(y => x.pid == y.sample_ID).filter(x => myPathwayGenes.contains(x.Gene_ID)).map(x => x.gExpression).asInstanceOf[List[Double]]
+      a=  0.1::0.2::0.5::a
+   a
   }
+
+ // val pathwayNeighbors = genesGroupedPerPathway3.get("hsa01040").foreach(gen => if (((genes(gen)~> -geneGenes) prop PPIBioGrid).equals(1)) {})
+//  val pathwayNeighbors4 = genesGroupedPerPathway3.get("hsa01040").map(
+//      gen =>
+//      (genes(gen)~> -geneGenes).filter(rel=> PPIBioGrid(rel).equals(1))).flatten
 
   val similarity = property(geneGene) {
     x: GeneGene => x.similarity.doubleValue()
+  }
+  val PPIBioGrid= property(geneGene) {
+    x: GeneGene => x.PPI_BioGRID
   }
   val textSimilarity = property(geneGene) {
     x: GeneGene => x.STRING_textmining

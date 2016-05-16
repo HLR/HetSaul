@@ -282,7 +282,8 @@ trait DataModel {
   var hasDerivedInstances = false
 
   def deriveInstances() = {
-    NODES.foreach { node =>
+    NODES.foreach {
+      node =>
       val relatedProperties = PROPERTIES.filter(property => property.tag.equals(node.tag)).toList
       node.deriveInstances(relatedProperties)
     }
