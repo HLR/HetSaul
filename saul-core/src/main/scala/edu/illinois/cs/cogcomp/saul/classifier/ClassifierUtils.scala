@@ -45,6 +45,7 @@ object ClassifierUtils {
     }
   }
 
+
   // TODO: simplify the output type of test
   object TestClassifiers {
     def apply[T <: AnyRef](c: (Learnable[T], Iterable[T])*): Seq[List[(String, (Double, Double, Double))]] = {
@@ -69,6 +70,16 @@ object ClassifierUtils {
     }
 
     def apply(c: Learnable[_]*)(implicit d1: DummyImplicit, d2: DummyImplicit): Seq[List[(String, (Double, Double, Double))]] = {
+      val testResults = c.map { learner =>
+        println(evalSeparator)
+        println("Evaluating " + learner.getClassSimpleNameForClassifier)
+        learner.test()
+      }
+      println(evalSeparator)
+      testResults
+    }
+
+    def apply(c: List[Learnable[_]])(implicit d1: DummyImplicit, d2: DummyImplicit): Seq[List[(String, (Double, Double, Double))]] = {
       val testResults = c.map { learner =>
         println(evalSeparator)
         println("Evaluating " + learner.getClassSimpleNameForClassifier)

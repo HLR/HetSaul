@@ -1,7 +1,7 @@
 package edu.illinois.cs.cogcomp.saulexamples.DrugResponse
 
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
-import edu.illinois.cs.cogcomp.saulexamples.DrugResponse.BioSensors._
+import edu.illinois.cs.cogcomp.saulexamples.DrugResponse.bioSensors._
 import edu.illinois.cs.cogcomp.saulexamples.DrugResponse.Classifiers.dResponseClassifier
 import edu.illinois.cs.cogcomp.saulexamples.bioInformatics._
 

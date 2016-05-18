@@ -4,7 +4,7 @@ import edu.illinois.cs.cogcomp.saulexamples.bioInformatics._
 
 /** Created by Parisa on 1/24/16.
   */
-object BioSensors {
+object bioSensors {
 
   def patientDrugMatchSensor(x: PatientDrug, patient: Patient): Boolean = {
     x.pid == patient.patient_id

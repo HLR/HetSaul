@@ -15,7 +15,7 @@ public class Sample_Reader {
         Patient o = new Patient();
         String[] columns = line.split("\t|\n");
         if (columns.length >= 4) {
-            o.sampleID = columns[0];
+            o.patient_id = columns[0];
             o.gender = columns[5];
             if(columns[6].equals("NA")){
                 o.age = "0";

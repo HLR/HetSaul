@@ -1,7 +1,6 @@
 package edu.illinois.cs.cogcomp.saulexamples.DrugResponse
 
-import edu.illinois.cs.cogcomp.lbjava.learn.SparsePerceptron
-import edu.illinois.cs.cogcomp.saul.classifier.{ClassifierUtils, Learnable}
+import edu.illinois.cs.cogcomp.saul.classifier.ClassifierUtils
 import edu.illinois.cs.cogcomp.saul.datamodel.node.Path
 import edu.illinois.cs.cogcomp.saulexamples.DrugResponse.Classifiers.DrugResponseRegressor
 import edu.illinois.cs.cogcomp.saulexamples.DrugResponse.KnowEngDataModel._
@@ -39,10 +38,11 @@ object myApp {
         }
     }*/
     )
-    val a = ClassifierUtils.TestClassifiers(myLearners).sortBy{ b =>
-      val c = b.unzip
-    }
-   myLearners.test(testingData).SortwithAccuracy()
+    ClassifierUtils.TestClassifiers(myLearners)
+//    val a = ClassifierUtils.TestClassifiers(myLearners).sortBy{ b =>
+//      val c = b.unzip
+//    }
+   myLearners.map( x => x.test())//.SortwithAccuracy()
 
 
 
@@ -62,7 +62,7 @@ object myApp {
     // dResponseClassifier.learn(1)
 
     //dResponseClassifier.testContinuos(patient_drug_data)
-    DrugResponseRegressor.learn(1)
+    //DrugResponseRegressor.learn(1)
     //DrugResponseRegressor.testContinuos(patientDrug.getTrainingInstances)
     print("finished!")
   }
