@@ -78,20 +78,20 @@ object KnowEngDataModel extends DataModel {
   val pathWayGExpression = (pathway: String) => property(patientDrug, ordered = true) {
     x: PatientDrug =>
       val myPathwayGenes = genesGroupedPerPathway.get(pathway) // ("hsa01040")
-      var a= this.patientGene().filter(y => x.pid == y.sample_ID).filter(x => myPathwayGenes.contains(x.Gene_ID)).map(x => x.gExpression).asInstanceOf[List[Double]]
-      a=  0.1::0.2::0.5::a
-   a
+      var a = this.patientGene().filter(y => x.pid == y.sample_ID).filter(x => myPathwayGenes.contains(x.Gene_ID)).map(x => x.gExpression).asInstanceOf[List[Double]]
+      a = 0.1 :: 0.2 :: 0.5 :: a
+      a
   }
 
- // val pathwayNeighbors = genesGroupedPerPathway3.get("hsa01040").foreach(gen => if (((genes(gen)~> -geneGenes) prop PPIBioGrid).equals(1)) {})
-//  val pathwayNeighbors4 = genesGroupedPerPathway3.get("hsa01040").map(
-//      gen =>
-//      (genes(gen)~> -geneGenes).filter(rel=> PPIBioGrid(rel).equals(1))).flatten
+  // val pathwayNeighbors = genesGroupedPerPathway3.get("hsa01040").foreach(gen => if (((genes(gen)~> -geneGenes) prop PPIBioGrid).equals(1)) {})
+  //  val pathwayNeighbors4 = genesGroupedPerPathway3.get("hsa01040").map(
+  //      gen =>
+  //      (genes(gen)~> -geneGenes).filter(rel=> PPIBioGrid(rel).equals(1))).flatten
 
   val similarity = property(geneGene) {
     x: GeneGene => x.similarity.doubleValue()
   }
-  val PPIBioGrid= property(geneGene) {
+  val PPIBioGrid = property(geneGene) {
     x: GeneGene => x.PPI_BioGRID
   }
   val textSimilarity = property(geneGene) {

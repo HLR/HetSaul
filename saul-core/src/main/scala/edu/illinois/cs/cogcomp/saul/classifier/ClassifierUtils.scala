@@ -45,7 +45,6 @@ object ClassifierUtils {
     }
   }
 
-
   // TODO: simplify the output type of test
   object TestClassifiers {
     def apply[T <: AnyRef](c: (Learnable[T], Iterable[T])*): Seq[List[(String, (Double, Double, Double))]] = {

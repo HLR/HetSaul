@@ -28,7 +28,7 @@ object myApp {
 
     val a = new DrugResponseRegressor("sdd")
 
-    val myLearners= (genes() prop gene_KEGG).flatten.toList.distinct.map(pathwayX =>  new DrugResponseRegressor(pathwayX) /*{
+    val myLearners = (genes() prop gene_KEGG).flatten.toList.distinct.map(pathwayX => new DrugResponseRegressor(pathwayX) /*{
         object t extends Learnable[PatientDrug](patientDrug) {
           def label = drugResponse
 
@@ -36,18 +36,15 @@ object myApp {
 
           override lazy val classifier = new SparsePerceptron()
         }
-    }*/
-    )
+    }*/ )
     ClassifierUtils.TestClassifiers(myLearners)
-//    val a = ClassifierUtils.TestClassifiers(myLearners).sortBy{ b =>
-//      val c = b.unzip
-//    }
-   myLearners.map( x => x.test())//.SortwithAccuracy()
-
-
+    //    val a = ClassifierUtils.TestClassifiers(myLearners).sortBy{ b =>
+    //      val c = b.unzip
+    //    }
+    myLearners.map(x => x.test()) //.SortwithAccuracy()
 
     val genesGroupedPerPathway2 = SGroupBy(genes, gene_KEGG, geneName)
-   // genes SGroupBy gene_KEGG Select geneName
+    // genes SGroupBy gene_KEGG Select geneName
 
     val genesGroupedPerPathway = genes().map(x => x.KEGG.map(y => (x.GeneName, y))).flatten.groupBy(_._2).map(x => (x._1, x._2.map(t1 => t1._1)))
 
