@@ -23,7 +23,7 @@ public class TestWithStorage {
         }
 
         for (Object example = parser.next(); example != null; example = parser.next(), ++processed) {
-            if (processed % outputGranularity == 0)
+            if (outputGranularity > 0 && processed % outputGranularity == 0)
                 System.out.println(processed + " examples tested at " + new Date());
 
             totalTime -= System.currentTimeMillis();
@@ -52,6 +52,5 @@ public class TestWithStorage {
         System.out.println("Average evaluation time: " + (totalTime / (1000.0 * processed)) + " seconds\n");
         tester.printPerformance(System.out);
     }
-
 
 }
