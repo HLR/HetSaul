@@ -69,7 +69,7 @@ object srlApp extends App {
     val modelLEXb = modelDir + argumentIdentifier_lex
     argumentXuIdentifierGivenApredicate.load(modelLCb, modelLEXb)
     val training = relations.getTrainingInstances.filter(x => argumentXuIdentifierGivenApredicate(x).equals("true"))
-    argumentTypeLearner.setModelDir(modelDir)
+   // argumentTypeLearner.setModelDir(modelDir) todo where is the set model?
     argumentTypeLearner.learn(100, training)
     logger.info("Test without pipeline:")
     argumentTypeLearner.test(exclude = "candidate")
@@ -93,13 +93,11 @@ object srlApp extends App {
     argumentTypeLearner.load(modelLCa, modelLEXa)
 
     if (testWithConstraints)
-      argumentTypeLearner.test(
-        prediction = typeArgumentPipeGivenGoldPredicateConstrained,
+      argumentTypeLearner.test(prediction = typeArgumentPipeGivenGoldPredicateConstrained,
         groundTruth = argumentLabelGold, exclude = "candidate"
       )
     else
-      argumentTypeLearner.test(
-        prediction = typeArgumentPipeGivenGoldPredicate,
+      argumentTypeLearner.test(prediction = typeArgumentPipeGivenGoldPredicate,
         groundTruth = argumentLabelGold, exclude = "candidate"
       )
   } else {
