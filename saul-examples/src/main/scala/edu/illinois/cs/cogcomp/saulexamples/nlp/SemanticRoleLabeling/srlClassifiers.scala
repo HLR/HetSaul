@@ -1,9 +1,8 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling
 
-import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{ Constituent, Relation }
+import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{Constituent, Relation}
 import edu.illinois.cs.cogcomp.lbjava.learn.SparseAveragedPerceptron
-import edu.illinois.cs.cogcomp.saul.classifier.{ Learnable, SparseNetworkLBP }
-import edu.illinois.cs.cogcomp.saul.constraint.ConstraintTypeConversion._
+import edu.illinois.cs.cogcomp.saul.classifier.{Learnable, SparseNetworkLBP}
 import edu.illinois.cs.cogcomp.saul.datamodel.property.Property
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlApp._
 
@@ -13,7 +12,7 @@ object srlClassifiers {
   import srlGraphs._
   //TODO This needs to be overriden by the user; change it to be dynamic
   val parameters = new SparseAveragedPerceptron.Parameters()
-  object predicateClassifier extends Learnable[Constituent](srlGraphs, parameters) {
+  object predicateClassifier extends Learnable[Constituent](predicates, parameters) {
 
     //TODO These are not used during Learner's initialization
     def label: Property[Constituent] = isPredicateGold
@@ -21,12 +20,12 @@ object srlClassifiers {
     override lazy val classifier = new SparseNetworkLBP
   }
 
-  object predicateSenseClassifier extends Learnable[Constituent](srlGraphs, parameters) {
+  object predicateSenseClassifier extends Learnable[Constituent](predicates, parameters) {
     def label = predicateSenseGold
     override lazy val classifier = new SparseNetworkLBP
   }
 
-  object argumentTypeLearner extends Learnable[Relation](srlGraphs, parameters) {
+  object argumentTypeLearner extends Learnable[Relation](relations, parameters) {
     def label = argumentLabelGold
     override def feature = using(containsMOD, containsNEG, clauseFeatures, chunkPathPattern, chunkEmbedding, chunkLength,
       constituentLength, argPOSWindow, argWordWindow, headwordRelation, syntacticFrameRelation, pathRelation,
@@ -34,7 +33,7 @@ object srlClassifiers {
     override lazy val classifier = new SparseNetworkLBP
   }
 
-  object argumentXuIdentifierGivenApredicate extends Learnable[Relation](srlGraphs, parameters) {
+  object argumentXuIdentifierGivenApredicate extends Learnable[Relation](relations, parameters) {
 
     def label = isArgumentXuGold
     override def feature = using(headwordRelation, syntacticFrameRelation, pathRelation,

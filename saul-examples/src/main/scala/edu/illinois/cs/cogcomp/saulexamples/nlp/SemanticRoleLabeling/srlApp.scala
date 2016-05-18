@@ -53,7 +53,7 @@ object srlApp extends App {
 
   // TRAINING
   if (trainingMode.equals("joint")) {
-    argumentTypeLearner.setModelDir(modelDir)
+    //argumentTypeLearner.setModelDir(modelDir) todo where is the set model?
     val outputFile = modelDir + srlPredictionsFile
     logger.info("Join train:... ")
     for (i <- 0 until 20) {
