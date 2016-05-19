@@ -46,6 +46,10 @@ class Application extends Controller {
     Ok(views.html.graph("Graph Visualization"))
   }
 
+  def plot = Action { implicit request =>
+    Ok(views.html.plot("Plot Visualization"))
+  }
+
   def acceptDisplayModel = Action(parse.json) { implicit request =>
     execute(DisplayModel(), request)
   }

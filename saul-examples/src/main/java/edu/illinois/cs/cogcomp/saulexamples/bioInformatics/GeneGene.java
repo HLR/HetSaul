@@ -22,4 +22,9 @@ public class GeneGene {
     public int STRING_neighborhood;//     gene    gene    1       999     STRING_score
     public int STRING_textmining;
 
+    @Override public String toString() {
+        StringBuilder result = new StringBuilder();
+        result.append("GeneGene");
+        return result.toString();
+    }
 }

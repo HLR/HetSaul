@@ -17,15 +17,7 @@ public class Patient {
     
     @Override public String toString() {
         StringBuilder result = new StringBuilder();
-        String NEW_LINE = System.getProperty("line.separator");
-        
-        result.append(this.getClass().getName() + " Object {" + NEW_LINE);
-        result.append(" patient_id: " + patient_id + NEW_LINE);
-        result.append(" gender: " + gender + NEW_LINE);
-        result.append(" age: " + age + NEW_LINE);
-        result.append(" ethnicity: " + ethnicity + NEW_LINE);
-        result.append("}");
-        
+        result.append(patient_id);
         return result.toString();
     }
 }

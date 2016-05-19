@@ -12,4 +12,10 @@ public class Gene {
     public Double pfam_domain=0.0;
     public Double motif_u5_gc=0.0; //	feature	gene	0	.005,
     public ArrayList<String> KEGG = new ArrayList<String>();
+
+    @Override public String toString() {
+        StringBuilder result = new StringBuilder();
+        result.append(GeneID);
+        return result.toString();
+    }
 }

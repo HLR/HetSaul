@@ -285,6 +285,12 @@ var generatePopulatedGraphFromJson = function(jsonData) {
     }
     document.getElementById('maximize').removeEventListener("click", renderNewWindow);
     document.getElementById('maximize').addEventListener('click',renderNewWindow,true);
+
+    var newWindow = window.open('/plot','pp','toolbar=0, location=0, directories=0, status=0, scrollbars=0, resizable=1, copyhistory=0, menuBar=0', true);
+    newWindow.onload = function(){ 
+        newWindow.dataFromParent = jsonData['Statistics'];
+        newWindow.init();
+    };
 }
 
 var generateSchemaGraphFromJson = function(data){

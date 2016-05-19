@@ -11,15 +11,7 @@ public class PatientDrug {
     
     @Override public String toString() {
         StringBuilder result = new StringBuilder();
-        String NEW_LINE = System.getProperty("line.separator");
-        
-        result.append(this.getClass().getName() + " Object {" + NEW_LINE);
-        result.append(" pid: " + pid + NEW_LINE);
-        result.append(" drugId: " + drugId + NEW_LINE);
-        result.append(" response: " + response + NEW_LINE);
-        result.append(" dResponse: " + dResponse + NEW_LINE);
-        result.append("}");
-        
+        result.append(drugId);
         return result.toString();
     }
 }

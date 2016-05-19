@@ -36,7 +36,7 @@ object Statistics {
 	}
 
 	def getPropertyStatistics(nodeTuples : Iterable[(String,_)], propsObjs : Iterable[(String,_)]) = {
-		var stat = Map[String,Map[String,String]]()
+		var stat = Map[String,Map[String,JsValue]]()
 		propsObjs foreach { case (propertyType, instance) =>
 			val propertyObj = instance.asInstanceOf[NodeProperty[AnyRef]]
 			val l : List[List[String]]= nodeTuples.map{ case(_,n) if n == propertyObj.node =>
@@ -50,12 +50,12 @@ object Statistics {
 		Json.toJson(stat)
 	}
 	def getNodeStatistics(nodeTuples : Iterable[(String,_)]) = {
-		var stat = Map[String,Map[String,String]]()
+		var stat = Map[String,Map[String,JsValue]]()
 
 		nodeTuples foreach { case (nodeType, instance) =>
 
 			val valueList = instance.asInstanceOf[Node[_]].getAllInstances.map(x => x.toString).toList
-			stat = stat + (nodeType -> (getArrayStatistics(nodeType,valueList) + ("Number of " + nodeType -> valueList.length.toString)))
+			stat = stat + (nodeType -> (getArrayStatistics(nodeType,valueList) + ("Number of " + nodeType -> Json.toJson(valueList.length.toString))))
 			//TODO: add some metric for strings
 		}
 		println(stat)
@@ -63,17 +63,17 @@ object Statistics {
 	}
 
 	def getArrayStatistics(typ: String,valueList : List[String]) = {
-		var stat2 = Map[String,String]()
+		var stat2 = Map[String,JsValue]()
 		isNumberArray(valueList) match {
 			case true => {
-					stat2 = stat2 + (typ+"'s variance" -> getVariance(valueList))
-					stat2 = stat2 + (typ+"'s mean" -> getMean(valueList))
-					stat2 = stat2 + (typ+"'s max" -> getMax(valueList))
-					stat2 = stat2 + (typ+"'s min" -> getMin(valueList))
+					stat2 = stat2 + (typ+"'s variance" -> Json.toJson(getVariance(valueList)))
+					stat2 = stat2 + (typ+"'s mean" -> Json.toJson(getMean(valueList)))
+					stat2 = stat2 + (typ+"'s max" -> Json.toJson(getMax(valueList)))
+					stat2 = stat2 + (typ+"'s min" -> Json.toJson(getMin(valueList)))
 			}
 			case _ =>
 		}
-		stat2 = stat2 + (typ + "'s frequency distribution" -> getFrequency(valueList))
+		stat2 = stat2 + ("Frequency" -> getFrequency(valueList))
 		stat2
 	}
 
@@ -87,7 +87,7 @@ object Statistics {
 	}
 
 	def getFrequency(list: Iterable[String]) = {
-		Json.toJson(list.toSeq.groupBy(identity).mapValues(_.size)).toString
+		Json.toJson(list.toSeq.groupBy(identity).mapValues(_.size))
 	}
 	def getVariance(list : Iterable[String]) = {
 		val mean = getMean(list).toDouble

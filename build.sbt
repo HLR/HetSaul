@@ -60,6 +60,7 @@ lazy val saulWebapp = (project in file("saul-webapp")).
       "org.webjars.bower" % "tether-shepherd" % "1.1.3",
       "org.webjars" % "ace" % "1.2.2",
       "org.webjars" % "sigma.js" % "1.0.3",
+      "org.webjars" % "d3js" % "3.5.16",
       "org.scala-lang" % "scala-compiler" % scalaVersion.value, 
       jdbc,
       cache,
