@@ -1,4 +1,4 @@
-val cogcompNLPVersion = "3.0.18"
+val cogcompNLPVersion = "3.0.20"
 val cogcompPipelineVersion = "0.1.16"
 
 lazy val root = (project in file(".")).
@@ -41,7 +41,7 @@ lazy val saulExamples = (project in file("saul-examples")).
     name := "saul-examples",
     libraryDependencies ++= Seq(
       "edu.illinois.cs.cogcomp" % "illinois-nlp-pipeline" % cogcompPipelineVersion withSources,
-      "edu.illinois.cs.cogcomp" % "illinois-curator" % "1.0.0",
+      "edu.illinois.cs.cogcomp" % "illinois-curator" % cogcompNLPVersion,
       "edu.illinois.cs.cogcomp" % "illinois-edison" % cogcompNLPVersion,
       "edu.illinois.cs.cogcomp" % "illinois-nlp-readers" % "0.0.2-SNAPSHOT",
       "edu.illinois.cs.cogcomp" % "saul-pos-tagger-models" % "1.0",

@@ -10,33 +10,33 @@ import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityRelation.EntityRelationCon
 object EntityRelationConstrainedClassifiers {
   val erSolver = new OJalgoHook
 
-  object OrgConstrainedClassifier extends ConstrainedClassifier[ConllRawToken, ConllRelation](EntityRelationDataModel, OrganizationClassifier) {
+  object OrgConstrainedClassifier extends ConstrainedClassifier[ConllRawToken, ConllRelation](OrganizationClassifier) {
     def subjectTo = relationArgumentConstraints
     override val pathToHead = Some(-EntityRelationDataModel.pairTo2ndArg)
+    override def filter(t: ConllRawToken, h: ConllRelation): Boolean = t.wordId == h.wordId2
+    override val solver = erSolver
+  }
+
+  object PerConstrainedClassifier extends ConstrainedClassifier[ConllRawToken, ConllRelation](PersonClassifier) {
+    def subjectTo = relationArgumentConstraints
+    override val pathToHead = Some(-EntityRelationDataModel.pairTo1stArg)
     override def filter(t: ConllRawToken, h: ConllRelation): Boolean = t.wordId == h.wordId1
     override val solver = erSolver
   }
 
-  object PerConstrainedClassifier extends ConstrainedClassifier[ConllRawToken, ConllRelation](EntityRelationDataModel, PersonClassifier) {
-    def subjectTo = relationArgumentConstraints
-    override val pathToHead = Some(-EntityRelationDataModel.pairTo1stArg)
-    override def filter(t: ConllRawToken, h: ConllRelation): Boolean = t.wordId == h.wordId2
-    override val solver = erSolver
-  }
-
-  object LocConstrainedClassifier extends ConstrainedClassifier[ConllRawToken, ConllRelation](EntityRelationDataModel, LocationClassifier) {
+  object LocConstrainedClassifier extends ConstrainedClassifier[ConllRawToken, ConllRelation](LocationClassifier) {
     def subjectTo = relationArgumentConstraints
     override val pathToHead = Some(-EntityRelationDataModel.pairTo2ndArg)
     override def filter(t: ConllRawToken, h: ConllRelation): Boolean = t.wordId == h.wordId2
     override val solver = erSolver
   }
 
-  object WorksFor_PerOrg_ConstrainedClassifier extends ConstrainedClassifier[ConllRelation, ConllRelation](EntityRelationDataModel, WorksForClassifier) {
+  object WorksFor_PerOrg_ConstrainedClassifier extends ConstrainedClassifier[ConllRelation, ConllRelation](WorksForClassifier) {
     def subjectTo = relationArgumentConstraints
     override val solver = new OJalgoHook
   }
 
-  object LivesIn_PerOrg_relationConstrainedClassifier extends ConstrainedClassifier[ConllRelation, ConllRelation](EntityRelationDataModel, LivesInClassifier) {
+  object LivesIn_PerOrg_relationConstrainedClassifier extends ConstrainedClassifier[ConllRelation, ConllRelation](LivesInClassifier) {
     def subjectTo = relationArgumentConstraints
     override val solver = erSolver
   }
