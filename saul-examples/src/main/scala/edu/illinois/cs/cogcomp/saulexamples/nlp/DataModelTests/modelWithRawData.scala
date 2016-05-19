@@ -18,8 +18,8 @@ object modelWithRawData {
     /** Edges */
     val rawToAnn = edge(rawText, annotatedText)
     val textToCon = edge(annotatedText, sentences)
-    textToCon.addSensor(CommonSensors.getSentences(_))
-    rawToAnn.addSensor(CommonSensors.annotateWithCurator(_))
+    textToCon.addSensor(CommonSensors.getSentences _)
+    rawToAnn.addSensor(CommonSensors.annotateWithCurator _)
 
     /** Properties */
     val docFeatureExample = property(annotatedText, "doc") {
@@ -30,8 +30,6 @@ object modelWithRawData {
   import model._
 
   def main(args: Array[String]) {
-    import modelWithRawData._
-
     /** call the reader */
     val dat: List[Document] = new DocumentReader("./data/20newsToy/train").docs.toList.slice(1, 2)
     // val taList = dat.map(x => sensors.curator(x))
@@ -58,9 +56,6 @@ object modelWithRawData {
     val x0 = (rawText(tests.head) ~> rawToAnn ~> textToCon).instances
     val x3 = (annotatedText(taa.head) ~> textToCon).instances
     val x4 = (sentences(sen.head) ~> -textToCon).instances
-    //The old version
-    val x1 = getFromRelation[Sentence, TextAnnotation](sen.head)
-    val x2 = getFromRelation[TextAnnotation, Sentence](taa.head)
 
     // TODO: refine: This is a filter based on a specific property
     val a = annotatedText(taa.head).filter(docFeatureExample(_).equals("1"))
@@ -89,11 +84,8 @@ object modelWithRawData {
     //val d= node(x).path(node(y))
 
     println(s"x0.size = ${x0.size}")
-    println(s"x1.size = ${x1.size}")
-    println(s"x2.size = ${x2.size}")
     println(s"x3.size = ${x3.size}")
     println(s"x4.size = ${x4.size}")
     print("finished")
-
   }
 }

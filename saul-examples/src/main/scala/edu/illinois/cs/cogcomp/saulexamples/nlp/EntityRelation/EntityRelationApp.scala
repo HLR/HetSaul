@@ -12,7 +12,7 @@ object EntityRelationApp {
 
   def main(args: Array[String]): Unit = {
     /** Choose the experiment you're interested in by changing the following line */
-    val testType = ERExperimentType.LPlusI
+    val testType = ERExperimentType.JointTraining
 
     testType match {
       case ERExperimentType.IndependentClassifiers => trainIndependentClassifiers()
@@ -88,7 +88,7 @@ object EntityRelationApp {
     EntityRelationDataModel.populateWithConll()
 
     // load all independent models
-    ClassifierUtils.TestClassifiers(PersonClassifier, OrganizationClassifier, LocationClassifier,
+    ClassifierUtils.LoadClassifier(jarModelPath, PersonClassifier, OrganizationClassifier, LocationClassifier,
       WorksForClassifier, LivesInClassifier, LocatedInClassifier, OrgBasedInClassifier)
 
     // Test using constrained classifiers
@@ -101,51 +101,30 @@ object EntityRelationApp {
     */
   def runJointTraining() {
     populateWithConll()
-    val testRels = pairs.getTrainingInstances.toList
-    val testTokens = tokens.getTrainingInstances.toList
+    val testRels = pairs.getTestingInstances.toSet.toList
+    val testTokens = tokens.getTestingInstances.toSet.toList
 
     // load pre-trained independent models
-    ClassifierUtils.TestClassifiers(PersonClassifier, OrganizationClassifier, LocationClassifier,
+    ClassifierUtils.LoadClassifier(jarModelPath, PersonClassifier, OrganizationClassifier, LocationClassifier,
       WorksForClassifier, LivesInClassifier, LocatedInClassifier, OrgBasedInClassifier)
 
     // joint training
     val jointTrainIteration = 5
     println(s"Joint training $jointTrainIteration iterations. ")
     JointTrain.train[ConllRelation](
-      EntityRelationDataModel,
+      pairs,
       PerConstrainedClassifier :: OrgConstrainedClassifier :: LocConstrainedClassifier ::
         WorksFor_PerOrg_ConstrainedClassifier :: LivesIn_PerOrg_relationConstrainedClassifier :: Nil,
       jointTrainIteration
     )
 
-    println(Console.BLUE + "Peop")
-    JointTrain.testClassifiers(PersonClassifier.classifier, PersonClassifier.label.classifier, testTokens)
+    // TODO: merge the following two tests
+    ClassifierUtils.TestClassifiers((testTokens, PerConstrainedClassifier), (testTokens, OrgConstrainedClassifier),
+      (testTokens, LocConstrainedClassifier))
 
-    println(Console.RED + "Peop")
-    JointTrain.testClassifiers(PerConstrainedClassifier.classifier, (entityType is "Peop").classifier, testTokens)
-
-    println(Console.BLUE + "Org")
-    JointTrain.testClassifiers(OrganizationClassifier.classifier, (entityType is "Org").classifier, testTokens)
-
-    println(Console.RED + "Org")
-    JointTrain.testClassifiers(OrgConstrainedClassifier.classifier, (entityType is "Org").classifier, testTokens)
-
-    println(Console.BLUE + "Loc")
-    JointTrain.testClassifiers(LocationClassifier.classifier, (entityType is "Loc").classifier, testTokens)
-
-    println(Console.RED + "Loc")
-    JointTrain.testClassifiers(LocConstrainedClassifier.classifier, (entityType is "Loc").classifier, testTokens)
-
-    println(Console.BLUE + "Work_For")
-    JointTrain.testClassifiers(WorksForClassifier.classifier, (relationType is "Work_For").classifier, testRels)
-
-    println(Console.RED + "Work_For")
-    JointTrain.testClassifiers(WorksFor_PerOrg_ConstrainedClassifier.classifier, (relationType is "Work_For").classifier, testRels)
-
-    println(Console.BLUE + "Live_In")
-    JointTrain.testClassifiers(LivesInClassifier.classifier, (relationType is "Live_In").classifier, testRels)
-
-    println(Console.RED + "Live_In")
-    JointTrain.testClassifiers(LivesIn_PerOrg_relationConstrainedClassifier.classifier, (relationType is "Live_In").classifier, testRels)
+    ClassifierUtils.TestClassifiers(
+      (testRels, WorksFor_PerOrg_ConstrainedClassifier),
+      (testRels, LivesIn_PerOrg_relationConstrainedClassifier)
+    )
   }
 }

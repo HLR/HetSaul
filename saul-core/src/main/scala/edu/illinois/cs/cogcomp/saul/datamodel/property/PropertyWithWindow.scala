@@ -4,9 +4,8 @@ import java.util
 
 import edu.illinois.cs.cogcomp.lbjava.classify.Classifier
 import edu.illinois.cs.cogcomp.lbjava.classify.FeatureVector
-import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
-import edu.illinois.cs.cogcomp.saul.datamodel.property.features.{ DataSensitiveLBJFeature, ClassifierContainsInLBP }
-import edu.illinois.cs.cogcomp.saul.datamodel.property.features.discrete.DiscreteCollectionProperty
+import edu.illinois.cs.cogcomp.saul.datamodel.node.Node
+import edu.illinois.cs.cogcomp.saul.datamodel.property.features.ClassifierContainsInLBP
 import edu.illinois.cs.cogcomp.saul.datamodel.property.features.discrete.DiscreteProperty
 import edu.illinois.cs.cogcomp.saul.datamodel.property.features.discrete.DiscreteGenProperty
 import edu.illinois.cs.cogcomp.saul.datamodel.property.features.real.RealProperty
@@ -15,19 +14,17 @@ import edu.illinois.cs.cogcomp.saul.datamodel.property.features.real.RealGenProp
 import scala.reflect.ClassTag
 
 class PropertyWithWindow[T <: AnyRef](
-  var dataModel: DataModel,
+  var node: Node[T],
   val before: Int,
   val after: Int,
   val filters: Iterable[T => Any],
   val properties: List[Property[T]]
-)(implicit val tag: ClassTag[T]) extends TypedProperty[T, List[_]] with DataModelSensitiveProperty[T] {
+)(implicit val tag: ClassTag[T]) extends TypedProperty[T, List[_]] {
 
   // TODO: need to work on the mapping such that.
   override val sensor: (T) => List[_] = {
     t: T =>
-      val ent = dataModel.getNodeWithType[T]
-
-      val winds = ent.getWithWindow(t, before, after)
+      val winds = node.getWithWindow(t, before, after)
       // Now we have a windows of option items.
 
       properties.flatMap(property =>
@@ -37,16 +34,11 @@ class PropertyWithWindow[T <: AnyRef](
         })
   }
 
-  override def setDM(dm: DataModel): Unit = {
-    super.setDM(dm)
-    this.hiddenProperties = this.rebuildHiddenProperties(dataModel: DataModel)
-  }
+  var hiddenProperties: List[Property[T]] = rebuildHiddenProperties()
 
-  var hiddenProperties: List[Property[T]] = rebuildHiddenProperties(this.dataModel)
-
-  def rebuildHiddenProperties(dm: DataModel): List[Property[T]] = {
+  def rebuildHiddenProperties(): List[Property[T]] = {
     {
-      val ent = dm.getNodeWithType[T]
+      val ent = node
 
       properties.toList.flatMap {
         knowProperty: Property[T] =>
@@ -177,11 +169,9 @@ class PropertyWithWindow[T <: AnyRef](
   val o = this
 
   // TODO: use the real classifiers
-  override def makeClassifierWithName(n: String): Classifier = new DataSensitiveLBJFeature() {
+  override def makeClassifierWithName(n: String): Classifier = new ClassifierContainsInLBP() {
 
     val parent = o
-
-    def rebuidWithDM(dm: DataModel) = this.parent.rebuildHiddenProperties(dm)
 
     this.containingPackage = "LBP_Package"
     this.name = n
@@ -211,8 +201,6 @@ class PropertyWithWindow[T <: AnyRef](
       })
       result
     }
-
-    override var datamodel: DataModel = dataModel
   }
 
 }

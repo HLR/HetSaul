@@ -1,7 +1,7 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.DataModelTests
 
-import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{ Sentence, TextAnnotation }
-import edu.illinois.cs.cogcomp.saulexamples.data.{ Document, DocumentReader }
+import edu.illinois.cs.cogcomp.saulexamples.data.DocumentReader
+import edu.illinois.cs.cogcomp.saulexamples.nlp.DataModelTests.modelWithKeys._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.CommonSensors
 
 import scala.collection.JavaConversions._
@@ -15,12 +15,12 @@ object graphPopulationMsensors {
 
     modelWithSensors.document populate taList
     modelWithSensors.sentence.populate(sentenceList)
-    modelWithSensors.docTosen populateWith (CommonSensors.textAnnotationSentenceAlignment _)
+    modelWithSensors.docToSen populateWith (CommonSensors.textAnnotationSentenceAlignment _)
 
     val taa = modelWithSensors.document.getAllInstances
     val sen = modelWithSensors.sentence.getAllInstances
-    val x1 = modelWithSensors.getFromRelation[Sentence, TextAnnotation](sen.head)
-    val x2 = modelWithSensors.getFromRelation[TextAnnotation, Sentence](taa.head)
+    val x1 = sentence() ~> -docTosen
+    val x2 = document() ~> docTosen
 
     println(s"x1.size = ${x1.size}")
     println(s"x2.size = ${x2.size}")

@@ -161,14 +161,11 @@ trait DataModel {
 
   case class PropertyDefinition(ty: PropertyType, name: Symbol)
 
-  /** list of hashmaps used inside properties for caching sensor values */
-  final val propertyCacheList = new ListBuffer[collection.mutable.HashMap[_, Any]]()
-
   class PropertyApply[T <: AnyRef] private[DataModel] (val node: Node[T], name: String, cache: Boolean, ordered: Boolean) { papply =>
 
     // TODO: make the hashmaps immutable
     val propertyCacheMap = collection.mutable.HashMap[T, Any]()
-    propertyCacheList += propertyCacheMap
+    node.propertyCacheList += propertyCacheMap
 
     def getOrUpdate(input: T, f: (T) => Any): Any = { propertyCacheMap.getOrElseUpdate(input, f(input)) }
 
@@ -281,10 +278,6 @@ trait DataModel {
   def property[T <: AnyRef](node: Node[T], name: String = "prop" + PROPERTIES.size, cache: Boolean = false, ordered: Boolean = false) =
     new PropertyApply[T](node, name, cache, ordered)
 
-  def clearPropertyCache[T](): Unit = {
-    propertyCacheList.foreach(_.asInstanceOf[collection.mutable.HashMap[T, Any]].clear)
-  }
-
   /** Methods for caching Data Model */
   var hasDerivedInstances = false
 
@@ -325,17 +318,15 @@ trait DataModel {
     val in = ExceptionlessInputStream.openCompressedStream(filePath)
 
     val nodesSize = in.readInt()
-    (0 until nodesSize).foreach {
-      _ =>
-        val nodeId = in.readInt()
-        NODES(nodeId).loadDerivedInstances(in)
+    (0 until nodesSize).foreach { _ =>
+      val nodeId = in.readInt()
+      NODES(nodeId).loadDerivedInstances(in)
     }
 
     val edgesSize = in.readInt()
-    (0 until edgesSize).foreach {
-      _ =>
-        val edgeId = in.readInt()
-        EDGES(edgeId).loadIndexWithIds(in)
+    (0 until edgesSize).foreach { _ =>
+      val edgeId = in.readInt()
+      EDGES(edgeId).loadIndexWithIds(in)
     }
 
     in.close()

@@ -87,6 +87,27 @@ object ClassifierUtils {
       println(evalSeparator)
       testResults
     }
+
+    def apply[T <: AnyRef](testInstances: Iterable[T], c: ConstrainedClassifier[T, _]*)(implicit d1: DummyImplicit, d2: DummyImplicit, d3: DummyImplicit): Seq[List[(String, (Double, Double, Double))]] = {
+      val testResults = c.map { learner =>
+        println(evalSeparator)
+        println("Evaluating " + learner.getClassSimpleNameForClassifier)
+        learner.test(testInstances)
+      }
+      println(evalSeparator)
+      testResults
+    }
+
+    def apply[T <: AnyRef](instanceClassifierPairs: (Iterable[T], ConstrainedClassifier[T, _])*)(implicit d1: DummyImplicit, d2: DummyImplicit, d3: DummyImplicit, d4: DummyImplicit): Seq[List[(String, (Double, Double, Double))]] = {
+      val testResults = instanceClassifierPairs.map {
+        case (testInstances, learner) =>
+          println(evalSeparator)
+          println("Evaluating " + learner.getClassSimpleNameForClassifier)
+          learner.test(testInstances)
+      }
+      println(evalSeparator)
+      testResults
+    }
   }
 
   object ForgetAll {
