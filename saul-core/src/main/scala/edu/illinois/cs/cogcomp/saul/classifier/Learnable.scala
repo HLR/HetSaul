@@ -272,9 +272,9 @@ abstract class Learnable[T <: AnyRef](val node: Node[T], val parameters: Paramet
     */
   def test(testData: Iterable[T] = null, prediction: Property[T] = null, groundTruth: Property[T] = null, exclude: String = ""): List[(String, (Double, Double, Double))] = {
     isTraining = false
-    if (testData == null){
-       val testData = node.getTestingInstances
-     }
+    if (testData == null) {
+      val testData = node.getTestingInstances
+    }
     val testReader = new LBJIteratorParserScala[T](testData)
     testReader.reset()
     val tester = TestDiscrete.testDiscrete(classifier, classifier.getLabeler, testReader)

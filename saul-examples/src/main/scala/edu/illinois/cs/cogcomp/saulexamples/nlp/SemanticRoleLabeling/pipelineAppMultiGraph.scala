@@ -51,14 +51,14 @@ object pipelineAppMultiGraph extends App {
   print("tok" + srlGraphs.tokens().size)
 
   if (trainArgType && useGoldArgBoundaries && useGoldPredicate) {
-    argumentTypeLearner.setModelDir("models_aTr")
+    //argumentTypeLearner.setModelDir("models_aTr")
     argumentTypeLearner.learn(100, relations.getTrainingInstances)
     argumentTypeLearner.test()
     argumentTypeLearner.save()
   }
 
   if (trainArgIdentifier && useGoldPredicate) {
-    argumentXuIdentifierGivenApredicate.setModelDir("models_bTr")
+    // argumentXuIdentifierGivenApredicate.setModelDir("models_bTr")
     println("Training argument identifier")
     argumentXuIdentifierGivenApredicate.learn(100)
     print("isArgument test results:")
@@ -67,7 +67,7 @@ object pipelineAppMultiGraph extends App {
   }
 
   if (trainArgType && useGoldPredicate && !useGoldArgBoundaries) {
-    argumentTypeLearner.setModelDir("models_cTr")
+    //argumentTypeLearner.setModelDir("models_cTr")
     println("Training argument classifier")
     argumentTypeLearner.learn(100)
     argumentTypeLearner.save()
@@ -76,7 +76,7 @@ object pipelineAppMultiGraph extends App {
   }
 
   if (trainPredicates && !useGoldPredicate) {
-    predicateClassifier.setModelDir("models_dTr")
+    // predicateClassifier.setModelDir("models_dTr")
     println("Training predicate identifier")
     predicateClassifier.learn(100, predicates.getTrainingInstances)
     predicateClassifier.save()
@@ -85,7 +85,7 @@ object pipelineAppMultiGraph extends App {
   }
 
   if (trainArgIdentifier && !useGoldPredicate) {
-    argumentXuIdentifierGivenApredicate.setModelDir("models_eTr")
+    // argumentXuIdentifierGivenApredicate.setModelDir("models_eTr")
     println("Training argument identifier")
     argumentXuIdentifierGivenApredicate.learn(100)
     print("isArgument test results:")
@@ -94,7 +94,7 @@ object pipelineAppMultiGraph extends App {
   }
 
   if (trainArgType && !useGoldPredicate) {
-    argumentTypeLearner.setModelDir("models_fTr")
+    //  argumentTypeLearner.setModelDir("models_fTr")
     println("Training argument classifier")
     argumentTypeLearner.learn(100)
     print("argument classifier test results:")
