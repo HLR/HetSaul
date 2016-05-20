@@ -8,7 +8,7 @@ import edu.illinois.cs.cogcomp.saul.constraint.ConstraintTypeConversion._
 /** Created by Parisa on 6/25/15.
   */
 object Classifiers {
-  object dResponseClassifier extends Learnable[PatientDrug](KnowEngDataModel) {
+  object dResponseClassifier extends Learnable[PatientDrug](patientDrug) {
     def label = drugResponse
     override def feature = using(cP1)
     override lazy val classifier = new StochasticGradientDescent

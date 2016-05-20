@@ -34,7 +34,7 @@ object myApp {
 
     dResponseClassifier.learn(1)
 
-    dResponseClassifier.testContinuos(patient_drug_data)
+    //dResponseClassifier.testContinuos(patient_drug_data)
 
   }
 }
