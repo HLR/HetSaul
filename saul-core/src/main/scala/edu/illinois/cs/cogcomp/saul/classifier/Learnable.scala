@@ -110,12 +110,12 @@ abstract class Learnable[T <: AnyRef](val node: Node[T], val parameters: Paramet
     classifier.write(System.out)
   }
 
-  def save(): Unit = {
+  def save(suffix: String = ""): Unit = {
     removeModelFiles()
     val dummyClassifier = new SparsePerceptron()
     classifier.setExtractor(dummyClassifier)
     classifier.setLabeler(dummyClassifier)
-    classifier.write(lcFilePath().getPath, lexFilePath().getPath)
+    classifier.write(lcFilePath(suffix).getPath, lexFilePath(suffix).getPath)
 
     // after saving, get rid of the dummyClassifier in the classifier.
     setExtractor()
