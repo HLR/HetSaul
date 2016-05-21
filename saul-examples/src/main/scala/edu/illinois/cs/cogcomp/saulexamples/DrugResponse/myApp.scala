@@ -14,34 +14,44 @@ object myApp {
 
   def main(args: Array[String]): Unit = {
 
-    val patients_data = new Sample_Reader("./data/biology/individual_samples.txt").patientCollection.slice(0, 5)
-    val patient_drug_data = new drugExampleReader().pdReader("./data/biology/auc_response.txt").filter(x => x.drugId == "D_0").slice(0, 5)
-    val GCollection = new Edges("./data/biology/edgesGG.txt").geneCollection.slice(0, 10)
-    val patient_gene_data = new drugExampleReader().pgReader("./data/biology/gene2med_probe_expr.txt").filter((x => GCollection.exists(y => (y.GeneID.equals(x.Gene_ID))))).slice(0, 5)
-    val GGCollection = new Edges("./data/biology/edgesGG.txt").edgeCollection.slice(0, 20)
 
-    patients.populate(patients_data)
-    patientDrug.populate(patient_drug_data)
-    patientGene.populate(patient_gene_data)
-    genes.populate(GCollection)
-    geneGene.populate(GGCollection)
+    val patients_data = new Sample_Reader("./data/biology/individual_samples.txt").patientCollection
+    val patient_drug_data = new drugExampleReader().pdReader("./data/biology/auc_response.txt").filter(x => x.drugId == "D_0")
+    val GCollection = new Edges("./data/biology/edgesGG.txt").geneCollection
+    val patient_gene_data = new drugExampleReader().pgReader("./data/biology/gene2med_probe_expr.txt").filter((x => GCollection.exists(y => (y.GeneID.equals(x.Gene_ID)))))
+    val GGCollection = new Edges("./data/biology/edgesGG.txt").edgeCollection
 
-    val a = new DrugResponseRegressor("sdd")
+    println("Statistics about read data")
+    println("Number of patients: ", patients_data.size)
+    println("Number of patient drug records:", patient_drug_data.size)
+    println("Number of Genes:", GCollection.size)
+    println("Number of patient_gene records:", patient_gene_data.size)
+    println("Number of edges:", GGCollection.size)
 
-    val myLearners = (genes() prop gene_KEGG).flatten.toList.distinct.map(pathwayX => new DrugResponseRegressor(pathwayX) /*{
-        object t extends Learnable[PatientDrug](patientDrug) {
-          def label = drugResponse
 
-          override def feature = using(pathWayGExpression)
+    patients.populate(patients_data.slice(0,5))
+    patients.populate(patients_data.slice(6,10), train=false)
 
-          override lazy val classifier = new SparsePerceptron()
-        }
-    }*/ )
+    patientDrug.populate(patient_drug_data.slice(0,10))
+    patientDrug.populate(patient_drug_data.slice(11,20), train = false)
+
+    patientGene.populate(patient_gene_data.slice(0,10))
+    patientGene.populate(patient_gene_data.slice(0,10), train = false)
+
+    genes.populate(GCollection.slice(0,5))
+    genes.populate(GCollection.slice(0,5), train= false)
+
+    geneGene.populate(GGCollection.slice(0,10))
+    geneGene.populate(GGCollection.slice(0,10), train = false)
+
+    //first find all distinct pathways from the list of pathways that are in the list of pathways for each gene
+    //then define a new regressor per pathway
+    val myLearners = (genes() prop gene_KEGG).flatten.toList.distinct.map(pathwayX => new DrugResponseRegressor(pathwayX))
+
     ClassifierUtils.TestClassifiers(myLearners)
-    //    val a = ClassifierUtils.TestClassifiers(myLearners).sortBy{ b =>
-    //      val c = b.unzip
-    //    }
-    myLearners.map(x => x.test()) //.SortwithAccuracy()
+    myLearners.map(x=> x.testContinuous())
+
+    //myLearners.map(x => x.test()) //.SortwithAccuracy()
 
     val genesGroupedPerPathway2 = SGroupBy(genes, gene_KEGG, geneName)
     // genes SGroupBy gene_KEGG Select geneName
