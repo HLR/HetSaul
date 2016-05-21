@@ -14,7 +14,6 @@ object myApp {
 
   def main(args: Array[String]): Unit = {
 
-
     val patients_data = new Sample_Reader("./data/biology/individual_samples.txt").patientCollection
     val patient_drug_data = new drugExampleReader().pdReader("./data/biology/auc_response.txt").filter(x => x.drugId == "D_0")
     val GCollection = new Edges("./data/biology/edgesGG.txt").geneCollection
@@ -28,28 +27,27 @@ object myApp {
     println("Number of patient_gene records:", patient_gene_data.size)
     println("Number of edges:", GGCollection.size)
 
+    patients.populate(patients_data.slice(0, 5))
+    patients.populate(patients_data.slice(6, 10), train = false)
 
-    patients.populate(patients_data.slice(0,5))
-    patients.populate(patients_data.slice(6,10), train=false)
+    patientDrug.populate(patient_drug_data.slice(0, 10))
+    patientDrug.populate(patient_drug_data.slice(11, 20), train = false)
 
-    patientDrug.populate(patient_drug_data.slice(0,10))
-    patientDrug.populate(patient_drug_data.slice(11,20), train = false)
+    patientGene.populate(patient_gene_data.slice(0, 10))
+    patientGene.populate(patient_gene_data.slice(0, 10), train = false)
 
-    patientGene.populate(patient_gene_data.slice(0,10))
-    patientGene.populate(patient_gene_data.slice(0,10), train = false)
+    genes.populate(GCollection.slice(0, 5))
+    genes.populate(GCollection.slice(0, 5), train = false)
 
-    genes.populate(GCollection.slice(0,5))
-    genes.populate(GCollection.slice(0,5), train= false)
-
-    geneGene.populate(GGCollection.slice(0,10))
-    geneGene.populate(GGCollection.slice(0,10), train = false)
+    geneGene.populate(GGCollection.slice(0, 10))
+    geneGene.populate(GGCollection.slice(0, 10), train = false)
 
     //first find all distinct pathways from the list of pathways that are in the list of pathways for each gene
     //then define a new regressor per pathway
     val myLearners = (genes() prop gene_KEGG).flatten.toList.distinct.map(pathwayX => new DrugResponseRegressor(pathwayX))
 
     ClassifierUtils.TestClassifiers(myLearners)
-    myLearners.map(x=> x.testContinuous())
+    myLearners.map(x => x.testContinuous())
 
     //myLearners.map(x => x.test()) //.SortwithAccuracy()
 
