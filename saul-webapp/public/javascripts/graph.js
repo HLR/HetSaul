@@ -21,9 +21,6 @@ $(document).ready(function(){
     });
     $('#statisticsWrapper').hide();
 
-    $(document).on('click','#statCloseBtn',function(){
-        $('#statisticsWrapper').hide();
-    });
 });
 var enableColoringNeighbors = function(s){
     s.graph.nodes().forEach(function(n) {
@@ -101,6 +98,9 @@ var generatePopulatedGraphFromJson = function(jsonData) {
         var index = e.data.node.id;
         $('#statisticsWrapper').empty();
         $('#statisticsWrapper').append('<span id="statCloseBtn" class="glyphicon glyphicon-remove" aria-hidden="true"></span>');
+        $("#statCloseBtn").click(function(){
+            $('#statisticsWrapper').hide();
+        });
         for(var key in s.graph.nodes(index).stat){
             $('#statisticsWrapper').append("<h4>·"+key+": "+s.graph.nodes(index).stat[key]+"</h4>");
         };
@@ -167,7 +167,8 @@ var generatePopulatedGraphFromJson = function(jsonData) {
             var nodesArray = s.graph.nodes();
             nodesArray[nodesArray.length-1].stat = new Array();
             for(var key in jsonData['Statistics']['nodes'][nodeGroup]){
-                nodesArray[nodesArray.length-1].stat[key] = jsonData['Statistics']['nodes'][nodeGroup][key];
+                if(key == "Frequency") continue;
+                nodesArray[nodesArray.length-1].stat[key] = JSON.stringify(jsonData['Statistics']['nodes'][nodeGroup][key]);
             }
         };
     };
@@ -233,7 +234,8 @@ var generatePopulatedGraphFromJson = function(jsonData) {
             var nodesArray = s.graph.nodes();
             nodesArray[nodesArray.length-1].stat = new Array();
             for(var key in jsonData['Statistics']['properties'][pI]){
-                nodesArray[nodesArray.length-1].stat[key] = jsonData['Statistics']['properties'][pI][key];
+                if(key == "Frequency") continue;
+                nodesArray[nodesArray.length-1].stat[key] = JSON.stringify(jsonData['Statistics']['properties'][pI][key]);
             }
             var edgeColor = s.graph.nodes(nodeDict[node]).color
             if(nodeColor == '#eee') {
@@ -291,6 +293,8 @@ var generatePopulatedGraphFromJson = function(jsonData) {
         newWindow.dataFromParent = jsonData['Statistics'];
         newWindow.init();
     };
+
+    return s;
 }
 
 var generateSchemaGraphFromJson = function(data){
@@ -306,9 +310,6 @@ var generateSchemaGraphFromJson = function(data){
         labelThreshold: 0
     }});
 
-    $('#graphParent1').parent().find(".recenter").click(function(){
-        generateSchemaGraphFromJson(data);
-    });
     s.bind('overNode',function(e){
         $("#nodetext1").text(e.data.node.label);
     });
