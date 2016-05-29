@@ -392,8 +392,8 @@ abstract class Learnable[T <: AnyRef](val node: Node[T], val parameters: Paramet
     val fromTag = tTag
     val toTag = uTag
 
-    val fls = datamodel.EDGES.filter(r => r.from.tag.equals(fromTag) && r.to.tag.equals(toTag)).map(_.forward.asInstanceOf[Link[T, U]]) ++
-      datamodel.EDGES.filter(r => r.to.tag.equals(fromTag) && r.from.tag.equals(toTag)).map(_.backward.asInstanceOf[Link[T, U]])
+    val fls = datamodel.edges.filter(r => r.from.tag.equals(fromTag) && r.to.tag.equals(toTag)).map(_.forward.asInstanceOf[Link[T, U]]) ++
+      datamodel.edges.filter(r => r.to.tag.equals(fromTag) && r.from.tag.equals(toTag)).map(_.backward.asInstanceOf[Link[T, U]])
 
     getWindowWithFilters(before, after, fls.map(e => (t: T) => e.neighborsOf(t).head), properties)
   }
