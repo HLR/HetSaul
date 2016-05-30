@@ -24,11 +24,11 @@ object POSDataModel extends DataModel {
   val constituentTwoBefore = edge(tokens, tokens)
   constituentTwoBefore.addSensor(getConstituentTwoBefore _)
 
-  val POSLabel = property(tokens, "label") { x: Constituent =>
+  val POSLabel = property(tokens) { x: Constituent =>
     x.getTextAnnotation.getView(ViewNames.POS).getConstituentsCovering(x).get(0).getLabel
   }
 
-  val wordForm = property(tokens, "wordForm", cache = true) { x: Constituent =>
+  val wordForm = property(tokens, cache = true) { x: Constituent =>
     val wordFormLabel = x.toString
     if (wordFormLabel.length == 1 && "([{".indexOf(wordFormLabel) != -1)
       "-LRB-"
@@ -37,11 +37,11 @@ object POSDataModel extends DataModel {
     else wordFormLabel
   }
 
-  val baselineTarget = property(tokens, "baselineTarget", cache = true) { x: Constituent =>
+  val baselineTarget = property(tokens, cache = true) { x: Constituent =>
     BaselineClassifier.classifier.discreteValue(x)
   }
 
-  val labelOrBaseline = property(tokens, "labelOrBaseline", cache = true) { x: Constituent =>
+  val labelOrBaseline = property(tokens, cache = true) { x: Constituent =>
     if (POSTaggerKnown.isTraining)
       POSLabel(x)
     else if (BaselineClassifier.classifier.observed(wordForm(x)))
@@ -49,7 +49,7 @@ object POSDataModel extends DataModel {
     else ""
   }
 
-  val labelOrBaselineU = property(tokens, "labelOrBaselineU", cache = true) { x: Constituent =>
+  val labelOrBaselineU = property(tokens, cache = true) { x: Constituent =>
     if (POSTaggerUnknown.isTraining)
       POSLabel(x)
     else if (BaselineClassifier.classifier.observed(wordForm(x)))
@@ -57,7 +57,7 @@ object POSDataModel extends DataModel {
     else ""
   }
 
-  val labelOneBefore = property(tokens, "labelOneBefore", cache = true) { x: Constituent =>
+  val labelOneBefore = property(tokens, cache = true) { x: Constituent =>
     val cons = (tokens(x) ~> constituentBefore).head
     // make sure the spans are different. Otherwise it is not valid
     if (cons.getSpan != x.getSpan) {
@@ -68,7 +68,7 @@ object POSDataModel extends DataModel {
     } else ""
   }
 
-  val labelOneBeforeU = property(tokens, "labelOneBeforeU", cache = true) { x: Constituent =>
+  val labelOneBeforeU = property(tokens, cache = true) { x: Constituent =>
     val cons = (tokens(x) ~> constituentBefore).head
     // make sure the spans are different. Otherwise it is not valid
     if (cons.getSpan != x.getSpan) {
@@ -79,12 +79,11 @@ object POSDataModel extends DataModel {
     } else ""
   }
 
-  val labelTwoBefore = property(tokens, "labelTwoBefore", cache = true) { x: Constituent =>
+  val labelTwoBefore = property(tokens, cache = true) { x: Constituent =>
     val cons = (tokens(x) ~> constituentTwoBefore).head
     // make sure the spans are different. Otherwise it is not valid
     if (cons.getSpan != x.getSpan) {
       if (POSTaggerKnown.isTraining) {
-        //          println(s"training one before for index ${tokens(x)}")
         POSLabel(cons)
       } else {
         POSTaggerKnown.classifier.discreteValue(cons)
@@ -92,7 +91,7 @@ object POSDataModel extends DataModel {
     } else ""
   }
 
-  val labelTwoBeforeU = property(tokens, "labelTwoBeforeU", cache = true) { x: Constituent =>
+  val labelTwoBeforeU = property(tokens, cache = true) { x: Constituent =>
     val cons = (tokens(x) ~> constituentTwoBefore).head
     // make sure the spans are different. Otherwise it is not valid
     if (cons.getSpan != x.getSpan) {
@@ -104,16 +103,7 @@ object POSDataModel extends DataModel {
     } else ""
   }
 
-  val labelOneAfter = property(tokens, "labelOneAfter", cache = true) {
-    x: Constituent =>
-      val cons = (tokens(x) ~> constituentAfter).head
-      // make sure the spans are different. Otherwise it is not valid
-      if (cons.getSpan != x.getSpan) {
-        labelOrBaseline(cons)
-      } else ""
-  }
-
-  val labelOneAfterU = property(tokens, "labelOneAfterU", cache = true) { x: Constituent =>
+  val labelOneAfter = property(tokens, cache = true) { x: Constituent =>
     val cons = (tokens(x) ~> constituentAfter).head
     // make sure the spans are different. Otherwise it is not valid
     if (cons.getSpan != x.getSpan) {
@@ -121,7 +111,15 @@ object POSDataModel extends DataModel {
     } else ""
   }
 
-  val labelTwoAfter = property(tokens, "labelTwoAfter", cache = true) { x: Constituent =>
+  val labelOneAfterU = property(tokens, cache = true) { x: Constituent =>
+    val cons = (tokens(x) ~> constituentAfter).head
+    // make sure the spans are different. Otherwise it is not valid
+    if (cons.getSpan != x.getSpan) {
+      labelOrBaseline(cons)
+    } else ""
+  }
+
+  val labelTwoAfter = property(tokens, cache = true) { x: Constituent =>
     val cons = (tokens(x) ~> constituentTwoAfter).head
     // make sure the spans are different. Otherwise it is not valid
     if (cons.getSpan != x.getSpan) {
@@ -129,7 +127,7 @@ object POSDataModel extends DataModel {
     } else ""
   }
 
-  val labelTwoAfterU = property(tokens, "labelTwoAfterU", cache = true) { x: Constituent =>
+  val labelTwoAfterU = property(tokens, cache = true) { x: Constituent =>
     val cons = (tokens(x) ~> constituentTwoAfter).head
     // make sure the spans are different. Otherwise it is not valid
     if (cons.getSpan != x.getSpan) {
@@ -137,27 +135,33 @@ object POSDataModel extends DataModel {
     } else ""
   }
 
-  val L2bL1b = property(tokens, "label2beforeLabel1beforeConjunction") { x: Constituent =>
+  // label2beforeLabel1beforeConjunction
+  val L2bL1b = property(tokens) { x: Constituent =>
     labelTwoBefore(x) + "-" + labelOneBefore(x)
   }
 
-  val L2bL1bU = property(tokens, "label2beforeLabel1beforeConjunctionU") { x: Constituent =>
+  // label2beforeLabel1beforeConjunctionU
+  val L2bL1bU = property(tokens) { x: Constituent =>
     labelTwoBeforeU(x) + "-" + labelOneBeforeU(x)
   }
 
-  val L1bL1a = property(tokens, "label1beforeLabel1afterConjunction") { x: Constituent =>
+  // label1beforeLabel1afterConjunction
+  val L1bL1a = property(tokens) { x: Constituent =>
     labelOneBefore(x) + "-" + labelOneAfter(x)
   }
 
-  val L1bL1aU = property(tokens, "label1beforeLabel1afterConjunctionU") { x: Constituent =>
+  // label1beforeLabel1afterConjunctionU
+  val L1bL1aU = property(tokens) { x: Constituent =>
     labelOneBeforeU(x) + "-" + labelOneAfterU(x)
   }
 
-  val L1aL2a = property(tokens, "labelfterLabel2AfterConjunction") { x: Constituent =>
+  // labelfterLabel2AfterConjunction
+  val L1aL2a = property(tokens) { x: Constituent =>
     labelOneAfter(x) + "-" + labelTwoAfter(x)
   }
 
-  val L1aL2aU = property(tokens, "labelfterLabel2AfterConjunctionU") { x: Constituent =>
+  // labelfterLabel2AfterConjunctionU
+  val L1aL2aU = property(tokens) { x: Constituent =>
     labelOneAfterU(x) + "-" + labelTwoAfterU(x)
   }
 
@@ -165,7 +169,7 @@ object POSDataModel extends DataModel {
     * training, this classifier extracts suffixes of the word of various
     * lengths.
     */
-  val suffixFeatures = property(tokens, "suffixFeatures") { x: Constituent =>
+  val suffixFeatures = property(tokens) { x: Constituent =>
     val word = wordForm(x)
     val length = word.length
     val unknown = (POSTaggerUnknown.isTraining &&
@@ -184,7 +188,6 @@ object POSDataModel extends DataModel {
 
       (a, b, c)
     } else ("", "", "")
-
     r + "-" + s + "-" + t
   }
 }
