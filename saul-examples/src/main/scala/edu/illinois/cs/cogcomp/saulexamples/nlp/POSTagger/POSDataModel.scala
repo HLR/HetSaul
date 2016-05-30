@@ -38,14 +38,14 @@ object POSDataModel extends DataModel {
   }
 
   val baselineTarget = property(tokens, "baselineTarget", cache = true) { x: Constituent =>
-    BaselineClassifier.classifier.discreteValue(x)
+    BaselineClassifier(x)
   }
 
   val labelOrBaseline = property(tokens, "labelOrBaseline", cache = true) { x: Constituent =>
     if (POSTaggerKnown.isTraining)
       POSLabel(x)
     else if (BaselineClassifier.classifier.observed(wordForm(x)))
-      BaselineClassifier.classifier.discreteValue(x)
+      BaselineClassifier(x)
     else ""
   }
 
@@ -53,7 +53,7 @@ object POSDataModel extends DataModel {
     if (POSTaggerUnknown.isTraining)
       POSLabel(x)
     else if (BaselineClassifier.classifier.observed(wordForm(x)))
-      BaselineClassifier.classifier.discreteValue(x)
+      BaselineClassifier(x)
     else ""
   }
 
@@ -64,7 +64,7 @@ object POSDataModel extends DataModel {
       if (POSTaggerKnown.isTraining)
         POSLabel(cons)
       else
-        POSTaggerKnown.classifier.discreteValue(cons)
+        POSTaggerKnown(cons)
     } else ""
   }
 
@@ -75,7 +75,7 @@ object POSDataModel extends DataModel {
       if (POSTaggerUnknown.isTraining)
         POSLabel(cons)
       else
-        POSTaggerUnknown.classifier.discreteValue(cons)
+        POSTaggerUnknown(cons)
     } else ""
   }
 
@@ -86,7 +86,7 @@ object POSDataModel extends DataModel {
       if (POSTaggerKnown.isTraining) {
         POSLabel(cons)
       } else {
-        POSTaggerKnown.classifier.discreteValue(cons)
+        POSTaggerKnown(cons)
       }
     } else ""
   }
@@ -98,7 +98,7 @@ object POSDataModel extends DataModel {
       if (POSTaggerUnknown.isTraining) {
         POSLabel(cons)
       } else {
-        POSTaggerUnknown.classifier.discreteValue(cons)
+        POSTaggerUnknown(cons)
       }
     } else ""
   }
@@ -169,7 +169,7 @@ object POSDataModel extends DataModel {
     val length = word.length
     val unknown = (POSTaggerUnknown.isTraining &&
       BaselineClassifier.classifier.observedCount(word) <= POSLabeledUnknownWordParser.threshold) ||
-      (!POSTaggerUnknown.isTraining && BaselineClassifier.classifier.discreteValue(x).equals("UNKNOWN"))
+      (!POSTaggerUnknown.isTraining && BaselineClassifier(x).equals("UNKNOWN"))
 
     val (r, s, t) = if (unknown && length > 3 && Character.isLetter(word.charAt(length - 1))) {
       val a = word.substring(length - 1).toLowerCase()
