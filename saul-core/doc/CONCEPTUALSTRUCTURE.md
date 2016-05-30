@@ -62,13 +62,14 @@ val tokenSentenceEdge = edge(tokens, relations)
 This definition creates edges between the two `Node`s we defined previously.
 
 ### Sensors
-   #### Sensors for properties
+
+#### Sensors for properties
 
    As mentioned above in the body of property definition an arbitrary sensor can be called.
    `(t: ConllRawToken) => t.POS`
    This will return a primitive data type i.e. String, real, etc.
 
-   #### Sensors for edges
+#### Sensors for edges
 
    Defining the sensors on edges is a very important step to make the whole graph and the necessary connections.
    Conceptually there are two types of sensors:
