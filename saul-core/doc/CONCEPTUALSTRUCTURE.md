@@ -4,7 +4,7 @@ Each Saul program is a general purpose Scala program in which Saul DSL high leve
 The provided constructs are designed to enable declarative programing for the following conceptual
 components of each application that uses learning and inference.
 
-## Data Model:
+## Data Model 
 The data model in Saul conceptually is represented with a graph containing nodes, the edges between them and their properties.
 
   - `Node`: The different types of objects, for example documents, sound files, pictures, text documents, etc.
@@ -36,6 +36,20 @@ val pos = property(token) {
 In this definition `pos` is defined to be a property of nodes of type token. The definition
 inside `{ .... }` is  the definition of a sensor which given an object of type `ConllRawToken` i.e. the tye of node and
 generates an output property value (in this case, using the POS tag of an object of type `ConllRawToken`).
+
+If the content of a property is computationally intensive to compute, you can cache its value, by setting `cache` to be
+`true`: 
+```scala
+val pos = property(token, cache = true) {
+   (t: ConllRawToken) => t.POS
+}
+```
+
+The first time that a property is called with a specific value, it would you remember the corresponding output, 
+so next time it just looks up the value from the cache. 
+
+Note that when training, the property cache is remove between two training interation in order not to interrupt 
+the trainng procedure. 
 
 #### Parameterized properties 
 Suppose you want to define properties which get some parameters; this can be important when we want to programmatically 
@@ -73,6 +87,7 @@ val tokenSentenceEdge = edge(tokens, relations)
 This definition creates edges between the two `Node`s we defined previously.
 
 ### Sensors
+
 #### Sensors for properties
 
    As mentioned above in the body of property definition an arbitrary sensor can be called.
@@ -93,7 +108,7 @@ This definition creates edges between the two `Node`s we defined previously.
    `e1.addSensor(_.charAt(0) == _.charAt(0))`
 
 
-## Instantiation Data Model
+## Instantiation of Data Model
 TODO
 
 ## Graph Queries
@@ -111,13 +126,42 @@ Here are the basic types essential for using classifiers.
 A classifier can be defined in the following way:
 
 ```scala
-object orgClassifier extends Learnable[ConllRawToken](ErDataModelExample) {
+object OrgClassifier extends Learnable[ConllRawToken](ErDataModelExample) {
   override def label: Property[ConllRawToken] = entityType is "Org"
 
   override def feature = using(word, phrase, containsSubPhraseMent, containsSubPhraseIng,
     containsInPersonList, wordLen, containsInCityList)
 }
 ```
+
+### Saving and loading classifiers 
+ Simply call the `save()` method:
+```scala
+OrgClassifier.save()
+```
+
+By default the classifier will be save into two files (a `.lc` model file and a `.lex` lexicon file). In order to 
+ save the classifier in another location, you can set the location in parameter `modelDir`; for example: 
+```scala 
+OrgClassifier.modelDir = "myFancyModels/"
+OrgClassifier.save()
+```
+This will save the two model files into the directory `myFancyModels`. 
+
+To load the models you can call the `load()` method. 
+```scala 
+OrgClassifier.load()
+```
+
+If you have different versions of the same classifier (say, different features, different number of iterations, etc), 
+you can add a suffix to the model files of each variation: 
+```scala 
+OrgClassifier.modelSuffix = "20-iterations" 
+OrgClassifier.save()
+```
+
+This would add the suffix "20-iterations" to the files of the classifier at the time of saving them. Note that at 
+the time of calling `load()` method it will look for model files with suffix "20-iterations". 
 
 ## Constraints
 A "constraint" is a logical restriction over possible values that can be assigned to a number of variables;
@@ -134,6 +178,7 @@ val PersonWorkFor=ConstraintClassifier.constraintOf[ConllRelation] {
   }
 }
 ```
+
 ## Constrained Classifiers
 A constrained classifier can be defined in the following form:
 
@@ -154,7 +199,6 @@ object LocConstraintClassifier extends ConstraintClassifier[ConllRawToken, Conll
 The following is the usual construct in the application program:
 
 ```scala
-
 object exampleApp {
   def main(args: Array[String]): Unit = {
     val TrainData: List[Post] = new ExampleDataReader("PathToTrainData").VariableOfdata.toList
