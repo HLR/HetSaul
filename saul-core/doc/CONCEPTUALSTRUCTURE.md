@@ -42,7 +42,7 @@ Suppose you want to define properties which get some parameters; this can be imp
 define many properties which differ only in some parameters. Here are two example properties which differ slightly: 
 
 ```scala
-val mathchWordING = property(token) {
+val matchWordING = property(token) {
    (t: ConllRawToken) => t.rawString.contains("ing")
 }
 
