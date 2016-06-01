@@ -14,14 +14,15 @@ class contextualFeaturesTest extends FlatSpec with Matchers {
     lastNames.populate(List("Dell", "Jacobs", "Maron", "Mario"))
 
     name.populateWith(_.charAt(0) == _.charAt(0))
-
   }
+
   val graphObject = new TestGraphC()
-  "finding the nodes in a window in the neighbohood" should "find the neighbors in a window" in {
-    graphObject.getNodeWithType[String].getWithWindow(graphObject.firstNames.getAllInstances.head, 0, 1).toSet should be(Set(None, Some("Dave"), Some("John")))
-    graphObject.firstNames.getWithWindow(graphObject.firstNames.getAllInstances.head, -2, 2).toSet should be(Set(None, Some("Dave"), Some("John"), Some("Mark")))
-    graphObject.lastNames.getWithWindow(graphObject.lastNames.getAllInstances.head, -2, 2).toSet should be(Set(None, Some("Dell"), Some("Jacobs"), Some("Maron")))
-    val query2 = graphObject.lastNames() prop graphObject.prefix
+  import graphObject._
+  "finding the nodes in a window in the neighborhood" should "find the neighbors in a window" in {
+    firstNames.getWithWindow(firstNames.getAllInstances.head, 0, 1).toSet should be(Set(None, Some("Dave"), Some("John")))
+    firstNames.getWithWindow(firstNames.getAllInstances.head, -2, 2).toSet should be(Set(None, Some("Dave"), Some("John"), Some("Mark")))
+    lastNames.getWithWindow(lastNames.getAllInstances.head, -2, 2).toSet should be(Set(None, Some("Dell"), Some("Jacobs"), Some("Maron")))
+    val query2 = lastNames() prop prefix
     query2.toSet should be(Set("a", "e"))
   }
 

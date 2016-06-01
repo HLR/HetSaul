@@ -4,7 +4,6 @@ import edu.illinois.cs.cogcomp.core.datastructures.textannotation.Constituent
 import edu.illinois.cs.cogcomp.lbj.pos.POSBaselineLearner
 import edu.illinois.cs.cogcomp.lbjava.learn.{ SparseAveragedPerceptron, SparseNetworkLearner }
 import edu.illinois.cs.cogcomp.saul.classifier.Learnable
-import edu.illinois.cs.cogcomp.saul.constraint.ConstraintTypeConversion._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.POSTagger.POSDataModel._
 
 object POSClassifiers {
@@ -20,36 +19,7 @@ object POSClassifiers {
       POSTaggerUnknown.classifier.valueOf(x, MikheevClassifier.classifier.allowableTags(x)).getStringValue
   }
 
-  // Loads learned models from the "saul-pos-tagger-models" jar package
-  def loadModelsFromPackage(): Unit = {
-    val jarModelPath = "edu/illinois/cs/cogcomp/saulexamples/nlp/POSTagger/models/"
-
-    def loadModel(x: Learnable[Constituent]): Unit = {
-      val prefix = jarModelPath + x.getClassNameForClassifier
-      x.load(prefix + ".lc", prefix + ".lex")
-    }
-
-    loadModel(BaselineClassifier)
-    loadModel(MikheevClassifier)
-    loadModel(POSTaggerKnown)
-    loadModel(POSTaggerUnknown)
-  }
-
-  def loadSavedModels(): Unit = {
-    BaselineClassifier.load()
-    MikheevClassifier.load()
-    POSTaggerKnown.load()
-    POSTaggerUnknown.load()
-  }
-
-  def saveModels(): Unit = {
-    BaselineClassifier.save()
-    MikheevClassifier.save()
-    POSTaggerKnown.save()
-    POSTaggerUnknown.save()
-  }
-
-  object POSTaggerKnown extends Learnable[Constituent](POSDataModel) {
+  object POSTaggerKnown extends Learnable[Constituent](tokens) {
     def label = POSLabel
     override def feature = using(wordForm, baselineTarget, labelTwoBefore, labelOneBefore,
       labelOneAfter, labelTwoAfter, L2bL1b, L1bL1a, L1aL2a)
@@ -59,9 +29,10 @@ object POSClassifiers {
       p.thickness = 2
       baseLTU = new SparseAveragedPerceptron(p)
     }
+    override val logging = true
   }
 
-  object POSTaggerUnknown extends Learnable[Constituent](POSDataModel) {
+  object POSTaggerUnknown extends Learnable[Constituent](tokens) {
     def label = POSLabel
     override def feature = using(wordForm, baselineTarget, labelTwoBeforeU, labelOneBeforeU,
       labelOneAfterU, labelTwoAfterU, L2bL1bU, L1bL1aU, L1aL2aU, suffixFeatures)
@@ -71,17 +42,20 @@ object POSClassifiers {
       p.thickness = 4
       baseLTU = new SparseAveragedPerceptron(p)
     }
+    override val logging = true
   }
 
-  object BaselineClassifier extends Learnable[Constituent](POSDataModel) {
+  object BaselineClassifier extends Learnable[Constituent](tokens) {
     def label = POSLabel
     override def feature = using(wordForm)
     override lazy val classifier = new POSBaselineLearner()
+    override val logging = true
   }
 
-  object MikheevClassifier extends Learnable[Constituent](POSDataModel) {
+  object MikheevClassifier extends Learnable[Constituent](tokens) {
     def label = POSLabel
     override def feature = using(wordForm)
     override lazy val classifier = new MikheevLearner
+    override val logging = true
   }
 }

@@ -38,13 +38,11 @@ class srlMultiGraph(parseViewName: String = null, frameManager: SRLFrameManager 
   val sentencesToStringTree = edge(sentences, stringTree)
   val sentencesToTokens = edge(sentences, tokens)
   val sentencesToRelations = edge(sentences, relations)
-  val sentencesToPredicates = edge(sentences, predicates)
   val relationsToPredicates = edge(relations, predicates)
   val relationsToArguments = edge(relations, arguments)
 
   sentencesToRelations.addSensor(textAnnotationToRelation _)
   sentencesToRelations.addSensor(textAnnotationToRelationMatch _)
-  sentencesToPredicates.addSensor(sentenceToGoldPredicates _)
   relationsToArguments.addSensor(relToArgument _)
   relationsToPredicates.addSensor(relToPredicate _)
   sentencesToStringTree.addSensor(textAnnotationToStringTree _)
