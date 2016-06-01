@@ -51,6 +51,31 @@ so next time it just looks up the value from the cache.
 Note that when training, the property cache is remove between two training interation in order not to interrupt 
 the trainng procedure. 
 
+#### Parameterized properties 
+Suppose you want to define properties which get some parameters; this can be important when we want to programmatically 
+define many properties which differ only in some parameters. Here are two example properties which differ slightly: 
+
+```scala
+val matchWordING = property(token) {
+   (t: ConllRawToken) => t.rawString.contains("ing")
+}
+
+val matchWordTION = property(token) {
+   (t: ConllRawToken) => t.rawString.contains("tion")
+}
+```
+
+One matches for existence of "ing" and the other one checks for existence of "tion". Since they are almost the same, 
+we can combine them as a parameterized property, by adding a parameter `(param: String) =>` before the property definition: 
+
+```scala 
+val mathchWord = (param: String) => property(token) {
+   (t: ConllRawToken) => t.rawString.contains(param)
+}
+```
+
+Note that there is no limitation on the number/types of the extra parameters passed to properties. 
+
 ### Defining edges
 
 This is done via several constructs depending on the type of the relationships. Here is an example definition,
