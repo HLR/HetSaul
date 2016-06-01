@@ -46,7 +46,7 @@ val mathchWordING = property(token) {
    (t: ConllRawToken) => t.rawString.contains("ing")
 }
 
-val mathchWordTION = property(token) {
+val matchWordTION = property(token) {
    (t: ConllRawToken) => t.rawString.contains("tion")
 }
 ```
