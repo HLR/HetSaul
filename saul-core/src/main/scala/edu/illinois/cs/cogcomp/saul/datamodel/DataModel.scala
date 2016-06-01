@@ -170,7 +170,7 @@ trait DataModel {
       map
     }
 
-    def getOrUpdate(input: T, f: T => Any): Any = { propertyCacheMap.getOrElseUpdate(input, f(input)) }
+    def getOrUpdate(input: T, f: T => Any): Any = propertyCacheMap.getOrElseUpdate(input, f(input))
 
     def apply(f: T => Boolean)(implicit tag: ClassTag[T]): BooleanProperty[T] = {
       def cachedF = if (cache) { x: T => getOrUpdate(x, f).asInstanceOf[Boolean] } else f
