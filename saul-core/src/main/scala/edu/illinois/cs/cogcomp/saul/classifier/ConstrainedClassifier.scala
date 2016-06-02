@@ -96,12 +96,6 @@ abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val onClassifi
   }
 
   def buildWithConstraint(infer: InferenceCondition[T, HEAD], cls: Learner)(t: T): String = {
-    val lex = cls.getLabelLexicon
-    var flag = false
-    for (i <- 0 until lex.size()) {
-      if (lex.lookupKey(i).valueEquals(cls.getLabeler().discreteValue(t)))
-        flag = true
-    }
     findHead(t) match {
       case Some(head) =>
         val name = String.valueOf(infer.subjectTo.hashCode())
@@ -112,11 +106,7 @@ abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val onClassifi
             println("Inference is NULL " + name)
           InferenceManager.put(name, inference)
         }
-        if (!flag) {
-          print("The models have not been trained for this label!")
-          ""
-        } else
-          inference.valueOf(cls, t)
+        inference.valueOf(cls, t)
 
       case None =>
         cls.discreteValue(t)
