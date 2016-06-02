@@ -116,13 +116,13 @@ object populatemultiGraphwithSRLData {
             gr.predicates.populate(predicateTrainCandidates)
           } else
             gr.sentences.populate(Seq(a))
-            logger.debug("gold relations for this train:" +gr.relations().size)
+          logger.debug("gold relations for this train:" + gr.relations().size)
           if (!useGoldArgBoundaries) {
             val XuPalmerCandidateArgsTraining = gr.predicates.getTrainingInstances.flatMap(x => xuPalmerCandidate(x, (gr.sentences(x.getTextAnnotation) ~> gr.sentencesToStringTree).head))
             gr.sentencesToRelations.addSensor(textAnnotationToRelationMatch _)
             gr.relations.populate(XuPalmerCandidateArgsTraining)
           }
-          logger.debug("all relations for this test:" +gr.relations().size)
+          logger.debug("all relations for this test:" + gr.relations().size)
           graphs.addFromModel(gr)
           if (graphs.sentences().size % 1000 == 0) logger.info("loaded graphs in memory:" + graphs.sentences().size)
         })
@@ -152,15 +152,15 @@ object populatemultiGraphwithSRLData {
         gr.predicates.populate(predicateTestCandidates, train = false)
       } else
         gr.sentences.populate(Seq(a), train = false)
-       logger.debug("gold relations for this test:" +gr.relations().size)
+      logger.debug("gold relations for this test:" + gr.relations().size)
       if (!useGoldArgBoundaries) {
         val XuPalmerCandidateArgsTesting = gr.predicates.getTestingInstances.flatMap(x => xuPalmerCandidate(x, (gr.sentences(x.getTextAnnotation) ~> gr.sentencesToStringTree).head))
         gr.sentencesToRelations.addSensor(textAnnotationToRelationMatch _)
         gr.relations.populate(XuPalmerCandidateArgsTesting, train = false)
       }
-      logger.debug("all relations for this test:" +gr.relations().size)
+      logger.debug("all relations for this test:" + gr.relations().size)
       graphs.addFromModel(gr)
     })
-   graphs
+    graphs
   }
 }

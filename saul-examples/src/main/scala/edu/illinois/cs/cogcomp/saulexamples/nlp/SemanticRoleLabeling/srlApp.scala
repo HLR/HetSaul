@@ -7,7 +7,7 @@ import edu.illinois.cs.cogcomp.saul.classifier.JointTrainSparseNetwork
 import edu.illinois.cs.cogcomp.saulexamples.ExamplesConfigurator
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifiers._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlConstraintClassifiers.argTypeConstraintClassifier
-import org.slf4j.{Logger, LoggerFactory}
+import org.slf4j.{ Logger, LoggerFactory }
 
 object srlApp extends App {
 
@@ -55,7 +55,7 @@ object srlApp extends App {
 
   // TRAINING
   if (trainingMode.equals("joint")) {
-    argumentTypeLearner.modelDir  = modelDir
+    argumentTypeLearner.modelDir = modelDir
     val outputFile = modelDir + srlPredictionsFile
     logger.info("Join train:... ")
     for (i <- 0 until 20) {
@@ -71,7 +71,7 @@ object srlApp extends App {
     val modelLEXb = modelDir + argumentIdentifier_lex
     argumentXuIdentifierGivenApredicate.load(modelLCb, modelLEXb)
     val training = relations.getTrainingInstances.filter(x => argumentXuIdentifierGivenApredicate(x).equals("true"))
-    argumentTypeLearner.modelDir= modelDir
+    argumentTypeLearner.modelDir = modelDir
     argumentTypeLearner.learn(100, training)
     logger.info("Test without pipeline:")
     argumentTypeLearner.test(exclude = "candidate")
@@ -95,11 +95,13 @@ object srlApp extends App {
     argumentTypeLearner.load(modelLCa, modelLEXa)
 
     if (testWithConstraints)
-      argumentTypeLearner.test(prediction = typeArgumentPipeGivenGoldPredicateConstrained,
+      argumentTypeLearner.test(
+        prediction = typeArgumentPipeGivenGoldPredicateConstrained,
         groundTruth = argumentLabelGold, exclude = "candidate"
       )
     else
-      argumentTypeLearner.test(prediction = typeArgumentPipeGivenGoldPredicate,
+      argumentTypeLearner.test(
+        prediction = typeArgumentPipeGivenGoldPredicate,
         groundTruth = argumentLabelGold, exclude = "candidate"
       )
   } else {
