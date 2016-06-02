@@ -110,7 +110,7 @@ class SRLConstraintsTest extends FlatSpec with Matchers {
   sentencesToRelations.addSensor(textAnnotationToRelationMatch _)
   relations.populate(XuPalmerCandidateArgsTraining)
 
-  ClassifierUtils.LoadClassifier(ExamplesConfigurator.SRL_JAR_MODEL_PATH.value,argumentTypeLearner)
+  ClassifierUtils.LoadClassifier(ExamplesConfigurator.SRL_JAR_MODEL_PATH.value, argumentTypeLearner)
   "manually defined has codes" should "avoid duplications in edges and reverse edges" in {
     predicates().size should be((relations() ~> relationsToPredicates).size)
     (predicates() ~> -relationsToPredicates).size should be(relations().size)
