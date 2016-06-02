@@ -53,29 +53,33 @@ abstract class Learnable[T <: AnyRef](val node: Node[T], val parameters: Paramet
   /** specifications of the classifier and its model files  */
   classifier.setReadLexiconOnDemand()
 
-  val modelDir = "models" + File.separator
-  def lcFilePath(suffix: String = "") = new URL(new URL("file:"), modelDir + getClassNameForClassifier + suffix + ".lc")
-  def lexFilePath(suffix: String = "") = new URL(new URL("file:"), modelDir + getClassNameForClassifier + suffix + ".lex")
+  /** If you have multiple versions/variations of the same classifier, you can set the following variable, in order to
+    * save each variation on different files with different suffixes
+    */
+  var modelSuffix = ""
+  var modelDir = "models" + File.separator
+  def lcFilePath = new URL(new URL("file:"), modelDir + getClassNameForClassifier + modelSuffix + ".lc")
+  def lexFilePath = new URL(new URL("file:"), modelDir + getClassNameForClassifier + modelSuffix + ".lex")
   IOUtils.mkdir(modelDir)
-  classifier.setModelLocation(lcFilePath())
-  classifier.setLexiconLocation(lexFilePath())
+  classifier.setModelLocation(lcFilePath)
+  classifier.setLexiconLocation(lexFilePath)
 
   // create .lex file if it does not exist
-  if (!IOUtils.exists(lexFilePath().getPath)) {
-    val lexFile = ExceptionlessOutputStream.openCompressedStream(lexFilePath())
+  if (!IOUtils.exists(lexFilePath.getPath)) {
+    val lexFile = ExceptionlessOutputStream.openCompressedStream(lexFilePath)
     if (classifier.getCurrentLexicon == null) lexFile.writeInt(0)
     else classifier.getCurrentLexicon.write(lexFile)
     lexFile.close()
   }
 
   // create .lc file if it does not exist
-  if (!IOUtils.exists(lcFilePath().getPath)) {
-    val lcFile = ExceptionlessOutputStream.openCompressedStream(lcFilePath())
+  if (!IOUtils.exists(lcFilePath.getPath)) {
+    val lcFile = ExceptionlessOutputStream.openCompressedStream(lcFilePath)
     classifier.write(lcFile)
     lcFile.close()
   }
 
-  def setExtractor(): Unit = {
+  private def setExtractor(): Unit = {
     if (feature != null) {
       logger.info("Setting the feature extractors to be {}", lbpFeatures.getCompositeChildren)
 
@@ -85,7 +89,7 @@ abstract class Learnable[T <: AnyRef](val node: Node[T], val parameters: Paramet
     }
   }
 
-  def setLabeler(): Unit = {
+  private def setLabeler(): Unit = {
     if (label != null) {
       val oracle = Property.entitiesToLBJFeature(label)
       logger.info("Setting the labeler to be '{}", oracle)
@@ -98,9 +102,9 @@ abstract class Learnable[T <: AnyRef](val node: Node[T], val parameters: Paramet
   setExtractor()
   setLabeler()
 
-  def removeModelFiles(): Unit = {
-    IOUtils.rm(lcFilePath().getPath)
-    IOUtils.rm(lexFilePath().getPath)
+  private def removeModelFiles(): Unit = {
+    IOUtils.rm(lcFilePath.getPath)
+    IOUtils.rm(lexFilePath.getPath)
     createFiles()
   }
 
@@ -115,27 +119,27 @@ abstract class Learnable[T <: AnyRef](val node: Node[T], val parameters: Paramet
     val dummyClassifier = new SparsePerceptron()
     classifier.setExtractor(dummyClassifier)
     classifier.setLabeler(dummyClassifier)
-    classifier.write(lcFilePath().getPath, lexFilePath().getPath)
+    classifier.write(lcFilePath.getPath, lexFilePath.getPath)
 
     // after saving, get rid of the dummyClassifier in the classifier.
     setExtractor()
     setLabeler()
   }
 
-  def createFiles(): Unit = {
+  private def createFiles(): Unit = {
     // create the model directory if it does not exist
     IOUtils.mkdir(modelDir)
     // create .lex file if it does not exist
-    if (!IOUtils.exists(lexFilePath().getPath)) {
-      val lexFile = ExceptionlessOutputStream.openCompressedStream(lexFilePath())
+    if (!IOUtils.exists(lexFilePath.getPath)) {
+      val lexFile = ExceptionlessOutputStream.openCompressedStream(lexFilePath)
       if (classifier.getCurrentLexicon == null) lexFile.writeInt(0)
       else classifier.getCurrentLexicon.write(lexFile)
       lexFile.close()
     }
 
     // create .lc file if it does not exist
-    if (!IOUtils.exists(lcFilePath().getPath)) {
-      val lcFile = ExceptionlessOutputStream.openCompressedStream(lcFilePath())
+    if (!IOUtils.exists(lcFilePath.getPath)) {
+      val lcFile = ExceptionlessOutputStream.openCompressedStream(lcFilePath)
       classifier.write(lcFile)
       lcFile.close()
     }
@@ -178,7 +182,7 @@ abstract class Learnable[T <: AnyRef](val node: Node[T], val parameters: Paramet
   }
 
   def load(): Unit = {
-    load(lcFilePath().getPath, lexFilePath().getPath)
+    load(lcFilePath.getPath, lexFilePath.getPath)
   }
 
   def learn(iteration: Int): Unit = {
@@ -272,9 +276,9 @@ abstract class Learnable[T <: AnyRef](val node: Node[T], val parameters: Paramet
     */
   def test(testData: Iterable[T] = null, prediction: Property[T] = null, groundTruth: Property[T] = null, exclude: String = ""): List[(String, (Double, Double, Double))] = {
     isTraining = false
-    if (testData == null){
-       val testData = node.getTestingInstances
-     }
+    if (testData == null) {
+      val testData = node.getTestingInstances
+    }
     val testReader = new LBJIteratorParserScala[T](testData)
     testReader.reset()
     val tester = TestDiscrete.testDiscrete(classifier, classifier.getLabeler, testReader)
@@ -389,8 +393,8 @@ abstract class Learnable[T <: AnyRef](val node: Node[T], val parameters: Paramet
     val fromTag = tTag
     val toTag = uTag
 
-    val fls = datamodel.EDGES.filter(r => r.from.tag.equals(fromTag) && r.to.tag.equals(toTag)).map(_.forward.asInstanceOf[Link[T, U]]) ++
-      datamodel.EDGES.filter(r => r.to.tag.equals(fromTag) && r.from.tag.equals(toTag)).map(_.backward.asInstanceOf[Link[T, U]])
+    val fls = datamodel.edges.filter(r => r.from.tag.equals(fromTag) && r.to.tag.equals(toTag)).map(_.forward.asInstanceOf[Link[T, U]]) ++
+      datamodel.edges.filter(r => r.to.tag.equals(fromTag) && r.from.tag.equals(toTag)).map(_.backward.asInstanceOf[Link[T, U]])
 
     getWindowWithFilters(before, after, fls.map(e => (t: T) => e.neighborsOf(t).head), properties)
   }

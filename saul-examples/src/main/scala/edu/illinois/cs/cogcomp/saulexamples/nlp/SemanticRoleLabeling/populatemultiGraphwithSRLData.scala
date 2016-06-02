@@ -24,7 +24,7 @@ import scala.collection.JavaConversions._
   */
 object populatemultiGraphwithSRLData {
 
-  def apply[T <: AnyRef](testOnly: Boolean = false, useGoldPredicate: Boolean = false, useGoldArgBoundaries: Boolean = false, triplets: Boolean = false): srlMultiGraph = {
+  def apply[T <: AnyRef](testOnly: Boolean = false, useGoldPredicate: Boolean = false, useGoldArgBoundaries: Boolean = false): srlMultiGraph = {
 
     val logger: Logger = LoggerFactory.getLogger(this.getClass)
     val rm = new ExamplesConfigurator().getDefaultConfig
@@ -90,7 +90,7 @@ object populatemultiGraphwithSRLData {
     }
 
     val trainingFromSection = 2
-    val trainingToSection = 2
+    val trainingToSection = 21
     var gr: srlMultiGraph = null
     if (!testOnly) {
       logger.info("Reading training data from sections {} to {}", trainingFromSection, trainingToSection)
@@ -101,7 +101,7 @@ object populatemultiGraphwithSRLData {
       )
       trainReader.readData()
       logger.info("Annotating {} training sentences", trainReader.textAnnotations.size)
-      val filteredTa = addViewAndFilter(trainReader.textAnnotations.toList).slice(0, 20)
+      val filteredTa = addViewAndFilter(trainReader.textAnnotations.toList)
       printNumbers(trainReader, "training")
       logger.info("Populating SRLDataModel with training data.")
 
@@ -116,21 +116,16 @@ object populatemultiGraphwithSRLData {
             gr.predicates.populate(predicateTrainCandidates)
           } else
             gr.sentences.populate(Seq(a))
-          // println("gold relations for this train:" +gr.relations().size)
+          logger.debug("gold relations for this train:" + gr.relations().size)
           if (!useGoldArgBoundaries) {
             val XuPalmerCandidateArgsTraining = gr.predicates.getTrainingInstances.flatMap(x => xuPalmerCandidate(x, (gr.sentences(x.getTextAnnotation) ~> gr.sentencesToStringTree).head))
             gr.sentencesToRelations.addSensor(textAnnotationToRelationMatch _)
             gr.relations.populate(XuPalmerCandidateArgsTraining)
           }
-          // println("all relations for this test:" +gr.relations().size)
+          logger.debug("all relations for this test:" + gr.relations().size)
           graphs.addFromModel(gr)
           if (graphs.sentences().size % 1000 == 0) logger.info("loaded graphs in memory:" + graphs.sentences().size)
         })
-      //x.populate(filteredTa)
-      //      logger.info("Number of SRLDataModel sentences: {}", graphs.map(x => x.sentences().size).sum)
-      //      logger.debug("Number of SRLDataModel predicates: {}", graphs.map(x => x.predicates().size).sum)
-      //      logger.debug("Number of SRLDataModel arguments: {}", graphs.map(x => x.arguments().size).sum)
-      //      logger.debug("Number of SRLDataModel relations: {}", graphs.map(x => x.relations().size).sum)
     }
     val testSection = 23
     val testReader = new SRLDataReader(
@@ -142,7 +137,7 @@ object populatemultiGraphwithSRLData {
     testReader.readData()
 
     logger.info("Annotating {} test sentences", testReader.textAnnotations.size)
-    val filteredTest = addViewAndFilter(testReader.textAnnotations.toList).slice(0, 20)
+    val filteredTest = addViewAndFilter(testReader.textAnnotations.toList)
 
     printNumbers(testReader, "test")
 
@@ -157,21 +152,15 @@ object populatemultiGraphwithSRLData {
         gr.predicates.populate(predicateTestCandidates, train = false)
       } else
         gr.sentences.populate(Seq(a), train = false)
-      // println("gold relations for this test:" +gr.relations().size)
+      logger.debug("gold relations for this test:" + gr.relations().size)
       if (!useGoldArgBoundaries) {
         val XuPalmerCandidateArgsTesting = gr.predicates.getTestingInstances.flatMap(x => xuPalmerCandidate(x, (gr.sentences(x.getTextAnnotation) ~> gr.sentencesToStringTree).head))
         gr.sentencesToRelations.addSensor(textAnnotationToRelationMatch _)
         gr.relations.populate(XuPalmerCandidateArgsTesting, train = false)
       }
-      //  println("all relations for this test:" +gr.relations().size)
+      logger.debug("all relations for this test:" + gr.relations().size)
       graphs.addFromModel(gr)
     })
-    //x.populate(filteredTest, train = false)
-    //    logger.info("Number of SRLDataModel sentences (w/ test data): {}", graphs.map(x => x.sentences.testingSet.size).sum)
-    //    logger.debug("Number of SRLDataModel predicates (w/ test data): {}", graphs.map(x => x.predicates.testingSet.size).sum)
-    //    logger.debug("Number of SRLDataModel arguments (w/ test data): {}", graphs.map(x => x.arguments.testingSet.size).sum)
-    //    logger.debug("Number of SRLDataModel relations (w/ test data): {}", graphs.map(x => x.relations.testingSet.size).sum)
-
     graphs
   }
 }

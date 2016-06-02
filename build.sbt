@@ -7,7 +7,7 @@ lazy val root = (project in file(".")).
 lazy val commonSettings = Seq(
   organization := "edu.illinois.cs.cogcomp",
   name := "saul-project",
-  version := "0.1",
+  version := "0.3",
   scalaVersion := "2.11.7",
   resolvers ++= Seq(
     Resolver.mavenLocal,
@@ -45,7 +45,8 @@ lazy val saulExamples = (project in file("saul-examples")).
       "edu.illinois.cs.cogcomp" % "illinois-edison" % cogcompNLPVersion,
       "edu.illinois.cs.cogcomp" % "illinois-nlp-readers" % "0.0.2-SNAPSHOT",
       "edu.illinois.cs.cogcomp" % "saul-pos-tagger-models" % "1.0",
-      "edu.illinois.cs.cogcomp" % "saul-er-models" % "1.3"
+      "edu.illinois.cs.cogcomp" % "saul-er-models" % "1.3",
+      "edu.illinois.cs.cogcomp" % "saul-srl-models" % "0.1"
     )
   ).dependsOn(saulCore).aggregate(saulCore)
 
@@ -65,3 +66,18 @@ lazy val saulWebapp = (project in file("saul-webapp")).
     resolvers += "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases",
     routesGenerator := InjectedRoutesGenerator
   ).dependsOn(saulCore).aggregate(saulCore)
+
+lazy val srlModels = project
+  .in(file("models/"))
+  .settings(
+    organization              := "edu.illinois.cs.cogcomp",
+    name                      := "saul-illinois-srl",
+    version                   := "0.1",
+    crossPaths                := false,  //don't add scala version to this artifacts in repo
+    publishMavenStyle         := true,
+    autoScalaLibrary          := false,  //don't attach scala libs as dependencies
+    description               := "project for publishing dependency to maven repo",
+    packageBin in Compile     := baseDirectory.value / s"${name.value}.jar"
+    //packageDoc in Compile     := baseDirectory.value / s"${name.value}-javadoc.jar"
+  )
+ publishTo := Some(Resolver.sftp("CogcompSoftwareRepo", "bilbo.cs.illinois.edu", "/mounts/bilbo/disks/0/www/cogcomp/html/m2repo/"))

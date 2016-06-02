@@ -24,6 +24,8 @@ public class ExamplesConfigurator extends Configurator {
     // The (sub)directory to store and retrieve the trained SRL models (to be used with MODELS_DIR)
     public static final Property SRL_MODEL_DIR = new Property("srlModelDir", "srl");
 
+    public static final Property SRL_JAR_MODEL_PATH = new Property("jarModelPath","models_fTr");
+
     // This is used to determine the parse view in SRL experiments (can be ViewNames.GOLD or ViewNames.STANFORD)
     // For replicating the published experiments this needs to be GOLD
     public static final Property SRL_PARSE_VIEW = new Property("srlParseView", ViewNames.PARSE_GOLD);
@@ -47,7 +49,7 @@ public class ExamplesConfigurator extends Configurator {
     public ResourceManager getDefaultConfig() {
         Property[] properties = {TREEBANK_HOME, PROPBANK_HOME, MODELS_DIR, USE_CURATOR, TRAINING_MODE,
                 SRL_MODEL_DIR, SRL_PARSE_VIEW, SRL_OUTPUT_FILE, SRL_GOLD_PREDICATES, SRL_GOLD_ARG_BOUNDARIES,
-                SRL_TEST_PIPELINE, SRL_TEST_CONSTRAINTS};
+                SRL_TEST_PIPELINE, SRL_TEST_CONSTRAINTS,SRL_JAR_MODEL_PATH};
         return new ResourceManager(generateProperties(properties));
     }
 }
