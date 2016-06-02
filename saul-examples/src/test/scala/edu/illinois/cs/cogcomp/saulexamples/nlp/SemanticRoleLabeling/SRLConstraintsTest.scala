@@ -8,8 +8,10 @@ import edu.illinois.cs.cogcomp.lbjava.infer.{ FirstOrderConstant, FirstOrderCons
 import edu.illinois.cs.cogcomp.saul.classifier.{ ConstrainedClassifier, Learnable, SparseNetworkLBP }
 import edu.illinois.cs.cogcomp.saul.constraint.ConstraintTypeConversion._
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
+import edu.illinois.cs.cogcomp.saulexamples.ExamplesConfigurator
 import edu.illinois.cs.cogcomp.saulexamples.nlp.CommonSensors._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLSensors._
+import edu.illinois.cs.cogcomp.saul.classifier.ClassifierUtils
 import org.scalatest.{ FlatSpec, Matchers }
 
 import scala.collection.JavaConversions._
@@ -107,11 +109,8 @@ class SRLConstraintsTest extends FlatSpec with Matchers {
   val XuPalmerCandidateArgsTraining = predicates.getTrainingInstances.flatMap(x => xuPalmerCandidate(x, (sentences(x.getTextAnnotation) ~> sentencesToStringTree).head))
   sentencesToRelations.addSensor(textAnnotationToRelationMatch _)
   relations.populate(XuPalmerCandidateArgsTraining)
-  private val rootModelDir: String = "./models/models_cTr_Chris/"
-  val aTr_lc = rootModelDir + "edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifiers.argumentTypeLearner$.lc"
-  val aTr_lex = rootModelDir + "edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifiers.argumentTypeLearner$.lex"
 
-  argumentTypeLearner.load(aTr_lc, aTr_lex)
+  ClassifierUtils.LoadClassifier(ExamplesConfigurator.SRL_JAR_MODEL_PATH.value,argumentTypeLearner)
   "manually defined has codes" should "avoid duplications in edges and reverse edges" in {
     predicates().size should be((relations() ~> relationsToPredicates).size)
     (predicates() ~> -relationsToPredicates).size should be(relations().size)
