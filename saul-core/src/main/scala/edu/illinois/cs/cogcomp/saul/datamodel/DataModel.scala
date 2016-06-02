@@ -13,9 +13,9 @@ import scala.reflect.ClassTag
 trait DataModel {
   val PID = 'PID
 
-  final val NODES = new ListBuffer[Node[_]]
-  final val PROPERTIES = new ListBuffer[NodeProperty[_]]
-  final val EDGES = new ListBuffer[Edge[_, _]]
+  final val nodes = new ListBuffer[Node[_]]
+  final val properties = new ListBuffer[NodeProperty[_]]
+  final val edges = new ListBuffer[Edge[_, _]]
 
   // TODO: Implement this function.
   def select[T <: AnyRef](node: Node[T], conditions: EvaluatedProperty[T, _]*): List[T] = {
@@ -29,24 +29,24 @@ trait DataModel {
   }
 
   def clearInstances = {
-    NODES.foreach(_.clear)
-    EDGES.foreach(_.clear)
+    nodes.foreach(_.clear)
+    edges.foreach(_.clear)
   }
 
   def addFromModel[T <: DataModel](dataModel: T): Unit = {
-    assert(this.NODES.size == dataModel.NODES.size)
-    for ((n1, n2) <- NODES.zip(dataModel.NODES)) {
+    assert(this.nodes.size == dataModel.nodes.size)
+    for ((n1, n2) <- nodes.zip(dataModel.nodes)) {
       n1.populateFrom(n2)
     }
-    assert(this.EDGES.size == dataModel.EDGES.size)
-    for ((e1, e2) <- EDGES.zip(dataModel.EDGES)) {
+    assert(this.edges.size == dataModel.edges.size)
+    for ((e1, e2) <- edges.zip(dataModel.edges)) {
       e1.populateFrom(e2)
     }
   }
 
   @deprecated("Use node.properties to get the properties for a specific node")
   def getPropertiesForType[T <: AnyRef](implicit tag: ClassTag[T]): List[Property[T]] = {
-    this.PROPERTIES.filter(a => a.tag.equals(tag)).map(_.asInstanceOf[Property[T]]).toList
+    this.properties.filter(a => a.tag.equals(tag)).map(_.asInstanceOf[Property[T]]).toList
   }
 
   @deprecated("Use node.populate() instead.")
@@ -56,7 +56,7 @@ trait DataModel {
 
   @deprecated
   def getNodeWithType[T <: AnyRef](implicit tag: ClassTag[T]): Node[T] = {
-    this.NODES.filter {
+    this.nodes.filter {
       e: Node[_] => tag.equals(e.tag)
     }.head.asInstanceOf[Node[T]]
   }
@@ -67,12 +67,12 @@ trait DataModel {
     if (tag.equals(headTag)) {
       Set(t.asInstanceOf[NEED])
     } else {
-      val r = this.EDGES.filter {
+      val r = this.edges.filter {
         r => r.from.tag.toString.equals(tag.toString) && r.to.tag.toString.equals(headTag.toString)
       }
       if (r.isEmpty) {
         // reverse search
-        val r = this.EDGES.filter {
+        val r = this.edges.filter {
           r => r.to.tag.toString.equals(tag.toString) && r.from.tag.toString.equals(headTag.toString)
         }
         if (r.isEmpty) {
@@ -88,7 +88,7 @@ trait DataModel {
     if (tag.equals(headTag)) {
       List(t.asInstanceOf[HEAD])
     } else {
-      val r = this.EDGES.filter {
+      val r = this.edges.filter {
         r =>
           r.from.tag.equals(tag) && r.to.tag.equals(headTag) && r.forward.name.isDefined && name.equals(r.forward.name.get)
       }
@@ -106,8 +106,8 @@ trait DataModel {
 
   @deprecated
   def getRelatedFieldsBetween[T <: AnyRef, U <: AnyRef](implicit fromTag: ClassTag[T], toTag: ClassTag[U]): Iterable[Link[T, U]] = {
-    this.EDGES.filter(r => r.from.tag.equals(fromTag) && r.to.tag.equals(toTag)).map(_.forward.asInstanceOf[Link[T, U]]) ++
-      this.EDGES.filter(r => r.to.tag.equals(fromTag) && r.from.tag.equals(toTag)).map(_.backward.asInstanceOf[Link[T, U]])
+    this.edges.filter(r => r.from.tag.equals(fromTag) && r.to.tag.equals(toTag)).map(_.forward.asInstanceOf[Link[T, U]]) ++
+      this.edges.filter(r => r.to.tag.equals(fromTag) && r.from.tag.equals(toTag)).map(_.backward.asInstanceOf[Link[T, U]])
   }
 
   def testWith[T <: AnyRef](coll: Seq[T])(implicit tag: ClassTag[T]) = {
@@ -120,7 +120,7 @@ trait DataModel {
 
   def node[T <: AnyRef](keyFunc: T => Any)(implicit tag: ClassTag[T]): Node[T] = {
     val n = new Node[T](keyFunc, tag)
-    NODES += n
+    nodes += n
     n
   }
 
@@ -128,7 +128,7 @@ trait DataModel {
     val n = new JoinNode(a, b, matcher, tag)
     a.joinNodes += n
     b.joinNodes += n
-    NODES += n
+    nodes += n
     n
   }
 
@@ -137,7 +137,7 @@ trait DataModel {
     val e = AsymmetricEdge(new Link(a, b, Some(name)), new Link(b, a, Some(Symbol("-" + name.name))))
     a.outgoing += e
     b.incoming += e
-    EDGES += e
+    edges += e
     e
   }
 
@@ -147,7 +147,7 @@ trait DataModel {
     a.outgoing += e
     b.incoming += e
     b.outgoing += e
-    EDGES += e
+    edges += e
     e
   }
 
@@ -164,16 +164,19 @@ trait DataModel {
   class PropertyApply[T <: AnyRef] private[DataModel] (val node: Node[T], name: String, cache: Boolean, ordered: Boolean) { papply =>
 
     // TODO: make the hashmaps immutable
-    val propertyCacheMap = collection.mutable.HashMap[T, Any]()
-    node.propertyCacheList += propertyCacheMap
+    lazy val propertyCacheMap = {
+      val map = collection.mutable.HashMap[T, Any]()
+      node.propertyCacheList += map
+      map
+    }
 
-    def getOrUpdate(input: T, f: (T) => Any): Any = { propertyCacheMap.getOrElseUpdate(input, f(input)) }
+    def getOrUpdate(input: T, f: T => Any): Any = propertyCacheMap.getOrElseUpdate(input, f(input))
 
     def apply(f: T => Boolean)(implicit tag: ClassTag[T]): BooleanProperty[T] = {
       def cachedF = if (cache) { x: T => getOrUpdate(x, f).asInstanceOf[Boolean] } else f
       val a = new BooleanProperty[T](name, cachedF) with NodeProperty[T] { override def node: Node[T] = papply.node }
       papply.node.properties += a
-      PROPERTIES += a
+      properties += a
       a
     }
 
@@ -190,7 +193,7 @@ trait DataModel {
         }
       }
       papply.node.properties += a
-      PROPERTIES += a
+      properties += a
       a
     }
 
@@ -202,7 +205,7 @@ trait DataModel {
         override def node: Node[T] = papply.node
       }
       papply.node.properties += a
-      PROPERTIES += a
+      properties += a
       a
     }
 
@@ -214,7 +217,7 @@ trait DataModel {
         override def node: Node[T] = papply.node
       }
       papply.node.properties += a
-      PROPERTIES += a
+      properties += a
       a
     }
 
@@ -226,7 +229,7 @@ trait DataModel {
         override def node: Node[T] = papply.node
       }
       papply.node.properties += a
-      PROPERTIES += a
+      properties += a
       a
     }
 
@@ -238,7 +241,7 @@ trait DataModel {
         override def node: Node[T] = papply.node
       }
       papply.node.properties += a
-      PROPERTIES += a
+      properties += a
       a
     }
 
@@ -256,7 +259,7 @@ trait DataModel {
         }
       }
       papply.node.properties += a
-      PROPERTIES += a
+      properties += a
       a
     }
 
@@ -270,23 +273,23 @@ trait DataModel {
         override def node: Node[T] = papply.node
       }
       papply.node.properties += a
-      PROPERTIES += a
+      properties += a
       a
     }
   }
 
-  def property[T <: AnyRef](node: Node[T], name: String = "prop" + PROPERTIES.size, cache: Boolean = false, ordered: Boolean = false) =
+  def property[T <: AnyRef](node: Node[T], name: String = "prop" + properties.size, cache: Boolean = false, ordered: Boolean = false) =
     new PropertyApply[T](node, name, cache, ordered)
 
   /** Methods for caching Data Model */
   var hasDerivedInstances = false
 
   def deriveInstances() = {
-    NODES.foreach { node =>
-      val relatedProperties = PROPERTIES.filter(property => property.tag.equals(node.tag)).toList
+    nodes.foreach { node =>
+      val relatedProperties = properties.filter(property => property.tag.equals(node.tag)).toList
       node.deriveInstances(relatedProperties)
     }
-    EDGES.foreach { edge =>
+    edges.foreach { edge =>
       edge.deriveIndexWithIds()
     }
     hasDerivedInstances = true
@@ -297,15 +300,15 @@ trait DataModel {
   def write(filePath: String = defaultDIFilePath) = {
     val out = ExceptionlessOutputStream.openCompressedStream(filePath)
 
-    out.writeInt(NODES.size)
-    NODES.zipWithIndex.foreach {
+    out.writeInt(nodes.size)
+    nodes.zipWithIndex.foreach {
       case (node, nodeId) =>
         out.writeInt(nodeId)
         node.writeDerivedInstances(out)
     }
 
-    out.writeInt(EDGES.size)
-    EDGES.zipWithIndex.foreach {
+    out.writeInt(edges.size)
+    edges.zipWithIndex.foreach {
       case (edge, edgeId) =>
         out.writeInt(edgeId)
         edge.writeIndexWithIds(out)
@@ -320,13 +323,13 @@ trait DataModel {
     val nodesSize = in.readInt()
     (0 until nodesSize).foreach { _ =>
       val nodeId = in.readInt()
-      NODES(nodeId).loadDerivedInstances(in)
+      nodes(nodeId).loadDerivedInstances(in)
     }
 
     val edgesSize = in.readInt()
     (0 until edgesSize).foreach { _ =>
       val edgeId = in.readInt()
-      EDGES(edgeId).loadIndexWithIds(in)
+      edges(edgeId).loadIndexWithIds(in)
     }
 
     in.close()
