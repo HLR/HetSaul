@@ -7,7 +7,7 @@ import edu.illinois.cs.cogcomp.saul.classifier.JointTrainSparseNetwork
 import edu.illinois.cs.cogcomp.saulexamples.ExamplesConfigurator
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifiers._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlConstraintClassifiers.argTypeConstraintClassifier
-import org.slf4j.{ Logger, LoggerFactory }
+import org.slf4j.{Logger, LoggerFactory}
 
 object srlApp extends App {
 
@@ -38,6 +38,8 @@ object srlApp extends App {
 
   val srlGraphs = populatemultiGraphwithSRLData(testOnly = false, useGoldPredicate, useGoldBoundaries)
 
+  val modelJars = properties.getString(ExamplesConfigurator.SRL_JAR_MODEL_PATH)
+
   import srlGraphs._
 
   logger.info("all relations number after population:" + srlGraphs.relations().size)
@@ -53,7 +55,7 @@ object srlApp extends App {
 
   // TRAINING
   if (trainingMode.equals("joint")) {
-    //argumentTypeLearner.setModelDir(modelDir) todo where is the set model?
+    argumentTypeLearner.modelDir  = modelDir
     val outputFile = modelDir + srlPredictionsFile
     logger.info("Join train:... ")
     for (i <- 0 until 20) {
@@ -69,7 +71,7 @@ object srlApp extends App {
     val modelLEXb = modelDir + argumentIdentifier_lex
     argumentXuIdentifierGivenApredicate.load(modelLCb, modelLEXb)
     val training = relations.getTrainingInstances.filter(x => argumentXuIdentifierGivenApredicate(x).equals("true"))
-   // argumentTypeLearner.setModelDir(modelDir) todo where is the set model?
+    argumentTypeLearner.modelDir= modelDir
     argumentTypeLearner.learn(100, training)
     logger.info("Test without pipeline:")
     argumentTypeLearner.test(exclude = "candidate")
@@ -111,6 +113,7 @@ object srlApp extends App {
       val modelLEXa = modelDir + argumentTypeLearner_lex
       argumentTypeLearner.load(modelLCa, modelLEXa)
       argumentTypeLearner.test(exclude = "candidate")
+
       // This is to print to file for standard CoNLL evaluation -commented out for later
       //    val goldOutFile = "srl.gold"
       //    val goldWriter = new PrintWriter(new File(goldOutFile))

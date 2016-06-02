@@ -31,13 +31,14 @@ object pipelineAppMultiGraph extends App {
     "\n\tTrainIdentifier: " + trainArgIdentifier +
     "\n\tTrainType: " + trainArgType)
 
-  val expName = {
+  val expName: String = {
     if (trainArgType && useGoldArgBoundaries && useGoldPredicate) "aTr"
     else if (trainArgIdentifier && useGoldPredicate && useGoldPredicate) "bTr"
     else if (trainArgType && useGoldPredicate && !useGoldArgBoundaries) "cTr"
     else if (trainPredicates && useGoldPredicate) "dTr"
     else if (trainArgIdentifier && !useGoldPredicate) "eTr"
     else if (trainArgType && !useGoldPredicate) "fTr"
+    else ""
   }
   val startTime = System.currentTimeMillis()
   logger.info("population starts.")
@@ -50,15 +51,15 @@ object pipelineAppMultiGraph extends App {
   print("arg" + arguments().size)
   print("tok" + srlGraphs.tokens().size)
 
-  if (trainArgType && useGoldArgBoundaries && useGoldPredicate) {
-    //argumentTypeLearner.setModelDir("models_aTr")
+  if (expName.equals("aTr")) {
+    argumentTypeLearner.modelDir = expName
     argumentTypeLearner.learn(100, relations.getTrainingInstances)
     argumentTypeLearner.test()
     argumentTypeLearner.save()
   }
 
   if (trainArgIdentifier && useGoldPredicate) {
-    // argumentXuIdentifierGivenApredicate.setModelDir("models_bTr")
+    argumentXuIdentifierGivenApredicate.modelDir = "models_bTr"
     println("Training argument identifier")
     argumentXuIdentifierGivenApredicate.learn(100)
     print("isArgument test results:")
@@ -67,7 +68,7 @@ object pipelineAppMultiGraph extends App {
   }
 
   if (trainArgType && useGoldPredicate && !useGoldArgBoundaries) {
-    //argumentTypeLearner.setModelDir("models_cTr")
+    argumentTypeLearner.modelDir = "models_cTr"
     println("Training argument classifier")
     argumentTypeLearner.learn(100)
     argumentTypeLearner.save()
@@ -76,7 +77,7 @@ object pipelineAppMultiGraph extends App {
   }
 
   if (trainPredicates && !useGoldPredicate) {
-    // predicateClassifier.setModelDir("models_dTr")
+    predicateClassifier.modelDir = "models_dTr"
     println("Training predicate identifier")
     predicateClassifier.learn(100, predicates.getTrainingInstances)
     predicateClassifier.save()
@@ -85,7 +86,7 @@ object pipelineAppMultiGraph extends App {
   }
 
   if (trainArgIdentifier && !useGoldPredicate) {
-    // argumentXuIdentifierGivenApredicate.setModelDir("models_eTr")
+    argumentXuIdentifierGivenApredicate.modelDir = "models_eTr"
     println("Training argument identifier")
     argumentXuIdentifierGivenApredicate.learn(100)
     print("isArgument test results:")
@@ -94,7 +95,7 @@ object pipelineAppMultiGraph extends App {
   }
 
   if (trainArgType && !useGoldPredicate) {
-    //  argumentTypeLearner.setModelDir("models_fTr")
+    argumentTypeLearner.modelDir = "models_fTr"
     println("Training argument classifier")
     argumentTypeLearner.learn(100)
     print("argument classifier test results:")

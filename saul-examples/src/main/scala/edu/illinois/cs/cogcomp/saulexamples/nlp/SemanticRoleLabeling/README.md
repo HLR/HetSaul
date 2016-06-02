@@ -27,11 +27,24 @@ There are various machine learning models to solve this including pipelines, lea
 
 We have designed a number of configurations and the trained models which are packaged and can be tested.
 Here, we describe the configurations accompanied in this package and the results that you should get but using those models.
+P: Predicate Arg: Argument G: Gold Ca: Candidate
+
+<pre>
+ | Predicate   |      Argument        |  Model                   | Name |
+ |-------------|----------------------|--------------------------|------|
+ | Gold Pred.  |  Gold Boundaries     | Argument Type Classifier |aTr   |
+ | Gold Pred.  |  XuPalmer Candidates | Argument identifier      |bTr   |
+ | Gold Pred.  |  XuPalmer Candidates | Argument Type Classifier |cTr   |
+ | Pred. Cand. |    N A               | Predicate Classifier     |dTr   |
+ | Pred. Cand. |  XuPalmer Candidates | Argument identifier      |eTr   |
+ | Pred. Cand  |  XuPalmer Candidates | Argument Type Classifier |fTr   |
+
+</pre>
+
   #### Training independent models
   * Given gold predicates:
       - [x] **[aTr]** Train `Argument Type Classifier` given gold boundaries
-           - rerunning with new features.
-           - rerun with independent population of examples.
+
   <pre>
     Label   Precision Recall   F1   LCount PCount
    ----------------------------------------------
@@ -82,9 +95,9 @@ Here, we describe the configurations accompanied in this package and the results
    ----------------------------------------------
    Accuracy    85.351   -      -      -     14479
   </pre>
+
       - [x] **[bTr]** Train `Argument identifier` given XuPalmerCandidates
-           - rerunning with new features
-           - rerun with independent population of examples.
+
    <pre>
    false       97.342 97.935 97.637  27746  27915
   true        95.996 94.875 95.432  14479  14310
@@ -148,7 +161,7 @@ Here, we describe the configurations accompanied in this package and the results
 
   * Given predicate candidates:
       - [x] **[dTr]** Train `Predicate Classifier`
-          - rerun with independent population of examples.
+
   <pre>
   Label   Precision Recall   F1   LCount PCount
    ----------------------------------------------
@@ -159,7 +172,7 @@ Here, we describe the configurations accompanied in this package and the results
   </pre>
 
       - [x] **[eTr]** Train `Argument identifier` given XuPalmerCandidates
-            - rerun with independent population of examples.
+   
   <pre>
   Label   Precision Recall   F1   LCount PCount
    ----------------------------------------------
