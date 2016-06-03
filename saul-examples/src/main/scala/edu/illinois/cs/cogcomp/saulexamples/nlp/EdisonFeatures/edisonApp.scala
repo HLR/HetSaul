@@ -85,14 +85,14 @@ object toyDataGenerator {
   val documentStrings = List("Saul or Soul; that is the question", "when will I graduate?")
   def generateToyDocuments(numDocs: Int): IndexedSeq[Document] = {
     (1 to numDocs).map { _ =>
-      val randInt = util.Random.nextInt(2)
+      val randInt = scala.util.Random.nextInt(2)
       new Document(documentStrings(randInt).split(" ").toList, randInt.toString)
     }
   }
 
   /** Generate toy instances that have the same labels */
   def generateToyDocumentsSingleLabel(numDocs: Int): IndexedSeq[Document] = {
-    val label = util.Random.nextInt(2)
+    val label = scala.util.Random.nextInt(2)
     (1 to numDocs).map(_ => new Document(documentStrings(label).split(" ").toList, label.toString))
   }
 

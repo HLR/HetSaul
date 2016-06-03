@@ -26,13 +26,11 @@ public class DocumentReader implements Parser {
         File d = new File(directory);
         
         if (!d.exists()) {
-            System.err.println(directory + " does not exist!");
-            System.exit(-1);
+            throw new IOException(directory + " does not exist!");
         }
         
         if (!d.isDirectory()) {
-            System.err.println(directory + " is not a directory!");
-            System.exit(-1);
+            throw new IOException(directory + " is not a directory!");
         }
 
         files = new ArrayList<>();
