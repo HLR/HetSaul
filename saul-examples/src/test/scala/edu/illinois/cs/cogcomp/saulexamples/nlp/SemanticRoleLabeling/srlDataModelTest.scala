@@ -3,14 +3,20 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling
 import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.TextAnnotation
 import edu.illinois.cs.cogcomp.core.utilities.DummyTextAnnotationGenerator
+import edu.illinois.cs.cogcomp.saulexamples.ExamplesConfigurator
+import edu.illinois.cs.cogcomp.saulexamples.data.SRLFrameManager
 import org.scalatest.{ FlatSpec, Matchers }
 
 class srlDataModelTest extends FlatSpec with Matchers {
-  val SRLDataModel = new srlMultiGraph()
+  val rm = new ExamplesConfigurator().getDefaultConfig
+  val frameManager: SRLFrameManager = new SRLFrameManager(rm.getString(ExamplesConfigurator.PROPBANK_HOME.key))
+  val parseViewName = rm.getString(ExamplesConfigurator.SRL_PARSE_VIEW)
+  val SRLDataModel = new srlMultiGraph(parseViewName,frameManager)
   import SRLDataModel._
   val viewsToAdd = Array(ViewNames.LEMMA, ViewNames.POS, ViewNames.SHALLOW_PARSE, ViewNames.PARSE_GOLD, ViewNames.SRL_VERB)
   val ta: TextAnnotation = DummyTextAnnotationGenerator.generateAnnotatedTextAnnotation(viewsToAdd, false)
   sentences.populate(List(ta))
+  print(sentences().size)
 
   "graph population" should "be correct" in {
     sentences().size should be(1)
