@@ -543,3 +543,9 @@ Pred.: Predicate Cand.: Candidate
     - [ ] **[aTsJ]** Test the **cTs** of the second phase for joint models.
 
 The defaul configuration when running the sprlApp will run only the test for pretrained cTr model while it uses srl global constraints during prediction.
+You can run it from command line by:
+
+```scala
+sbt -mem 4000 "project saulExamples" "run-main edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlApp"
+
+```

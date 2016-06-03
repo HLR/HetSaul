@@ -11,6 +11,7 @@ import org.slf4j.{ Logger, LoggerFactory }
 object srlApp extends App {
 
   val logger: Logger = LoggerFactory.getLogger(this.getClass)
+  logger.isInfoEnabled
   val properties: ResourceManager = {
     // Load the default properties if the user hasn't entered a file as an argument
     if (args.length == 0) {
