@@ -24,8 +24,8 @@ Visit each link for its content
 
 
 ## Credits 
-_This project has been started by [Parisa Kordjamshidi](kordjam@illinois.edu) and the development has been done in collaboration with [Hao Wu](haowu4@illinois.edu), [Sameer Singh](sameer@cs.washington.edu), [Daniel Khashabi](khashab2@illinois.edu), [Christos Christodoulopoulos](christod@illinois.edu)._ 
-._
+_This project has been started by [Parisa Kordjamshidi](kordjam@illinois.edu) and the development has been done in collaboration with [Hao Wu](haowu4@illinois.edu), [Sameer Singh](sameer@cs.washington.edu), [Daniel Khashabi](khashab2@illinois.edu), [Christos Christodoulopoulos](christod@illinois.edu). 
+
 
 ## Licensing
 _To see the full license for this software, see the LICENSE (in `doc` directory) or visit the download page 
