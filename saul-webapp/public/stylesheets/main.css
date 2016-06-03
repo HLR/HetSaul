@@ -2,7 +2,108 @@
     float:left;
     width:49%;
 }
+body, html {
+  height: 100%;
+}
+.text{
+    height:100%;
+    width: auto;
+}
+
 #right_col {
     float:right;
     width:49%;
+}
+.editor{
+    height: 400px;
+}
+.page-header{
+    padding-bottom: 20px;
+    margin: 0px;
+}
+.panel-body{
+    height:100%;
+}
+.shepherd-step{
+    z-index: 5;
+}
+.leftBtn{
+    float:right;
+}
+.code{
+    display: none;
+}
+#statisticsWrapper{
+    min-height: 150px;
+    overflow: hidden;
+    width: 400px;
+    z-index: 1000;
+    border-radius: 5px;
+    padding: 3px;
+}
+#statCloseBtn{
+    position: absolute;
+    right: 0;
+    top:0;
+}
+.nodevalue{
+    display: absolute;
+    height: 100px;
+    overflow: scroll;
+}
+input[type="text"], textarea {
+
+  background-color : #333333;
+  color: #ffffff;
+  width: 100%;
+  height: 50px;
+}
+
+#populatedGraphContainer{
+	height: 100%;
+}
+#schemaGraphContainer{
+    height: 100%;
+}
+.bb{
+    margin-left: 3px;
+}
+/*----- Tabs -----*/
+.tabs {
+    width:50%;
+    display:inline-block;
+}
+#hoverBar{
+    width: 100%;
+    background-color: blue;
+    height: 5px;
+}
+#pbar{
+    margin-top: 20px;
+}
+
+.well2{
+    margin-left: 5px;
+    display: inline-block;
+    min-height: 20px;
+}
+
+li.active a, li.active a:hover {
+    background:#fff;
+    color:#4c4c4c;
+}
+
+/*----- Content of Tabs -----*/
+.tab-content {
+    border-radius:3px;
+    box-shadow:-1px 1px 1px rgba(0,0,0,0.15);
+    background:#fff;
+}
+
+.tab {
+    display:none;
+}
+
+.tab.active {
+    display:block;
 }

@@ -1,8 +1,9 @@
 .DS_Store
-/data
+data
+*/data
 .idea
 /RUNNING_PID
-/logs/
+*/logs/
 /project/*-shim.sbt
 /project/project/
 */target/
@@ -12,5 +13,8 @@ target/
 *.class
 annotation-cache/
 /config
+*.lc
+*.lex
+*~
 */*.swp 
 *.swp

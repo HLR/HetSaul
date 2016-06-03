@@ -337,24 +337,3 @@ trait DataModel {
     hasDerivedInstances = true
   }
 }
-
-object dataModelJsonInterface {
-  def getJson(dm: DataModel): String = {
-    val declaredFields = dm.getClass.getDeclaredFields
-
-    val nodes = declaredFields.filter(_.getType.getSimpleName == "Node")
-    val edges = declaredFields.filter(_.getType.getSimpleName == "Edge")
-    val properties = declaredFields.filter(_.getType.getSimpleName.contains("Property")).filterNot(_.getName.contains("$module"))
-
-    import play.api.libs.json._
-
-    val json: JsValue = JsObject(Seq(
-      "nodes" -> JsArray(nodes.map(node => JsString(node.getName))),
-      "edges" -> JsArray(edges.map(edge => JsString(edge.getName))),
-      "properties" -> JsArray(properties.map(prop => JsString(prop.getName)))
-    ))
-    println(json.toString())
-
-    json.toString()
-  }
-}

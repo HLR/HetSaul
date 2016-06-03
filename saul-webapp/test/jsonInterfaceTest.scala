@@ -1,8 +1,8 @@
 package edu.illinois.cs.cogcomp.saul.datamodel
 
 import edu.illinois.cs.cogcomp.saul.datamodel.toyDataModel._
-
 import org.scalatest.{ Matchers, FlatSpec }
+import util.DataModelJsonInterface
 
 class jsonInterfaceTest extends FlatSpec with Matchers {
   "jsonInterface " should " successsfully convert the information about nodes, edges and properties into a json string " in {
@@ -17,9 +17,9 @@ class jsonInterfaceTest extends FlatSpec with Matchers {
       val isPredicate = property[String](predicates, "p") { x: String => "" }
     }
 
-    val predictedOutput = "{\"nodes\":[\"predicates\",\"arguments\",\"relations\"],\"edges\":[\"sentencesToRelations\",\"sentencesToTrees\"],\"properties\":[\"isPredicate\"]}"
+    val predictedOutput = "{\"nodes\":[\"predicates\",\"arguments\",\"relations\"],\"edges\":{\"sentencesToRelations\":[\"arguments\",\"relations\"],\"sentencesToTrees\":[\"predicates\",\"relations\"]},\"properties\":{\"isPredicate\":\"predicates\"}}"
 
-    dataModelJsonInterface.getJson(toyDataModelJsonInterfaceTest) should be(predictedOutput)
+    DataModelJsonInterface.getSchemaJson(toyDataModelJsonInterfaceTest).toString should be(predictedOutput)
   }
 }
 

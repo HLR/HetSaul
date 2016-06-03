@@ -1,0 +1,75 @@
+@(title: String)(implicit req: RequestHeader)
+
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <title>@title</title>
+    <link rel="shortcut icon" type="image/png" href="@routes.Assets.versioned("images/favicon.png")">
+    <link rel="stylesheet" media="screen" href="@routes.WebJarAssets.at(WebJarAssets.locate("bootstrap.min.css"))">
+    <script src="@routes.WebJarAssets.at(WebJarAssets.locate("js/jquery.min.js"))"></script>
+    <script src="@routes.WebJarAssets.at(WebJarAssets.locate("js/bootstrap.min.js"))"></script>
+    <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/main.css")">
+    <script src="@routes.Assets.versioned("javascripts/sigma.min.js")" type="text/javascript"></script>
+    <script src="@routes.WebJarAssets.at(WebJarAssets.locate("sigma.layout.forceAtlas2.min.js"))"></script>
+    <script src="@routes.WebJarAssets.at(WebJarAssets.locate("tether.min.js"))"></script>
+    <script src="@routes.Assets.versioned("javascripts/graph.js")" type="text/javascript"></script>
+    <script src="@routes.Assets.versioned("javascripts/largeGraph.js")" type="text/javascript"></script>
+    <script src="@routes.Assets.versioned("javascripts/plugins/settings.js")" type="text/javascript" charset="utf-8"></script>
+    <script src="@routes.Assets.versioned("javascripts/plugins/sigma.canvas.edges.labels.curve.js")" type="text/javascript" charset="utf-8"></script>
+    <style>
+    #statisticsWrapper{
+        min-height: 30px;
+        overflow-x: auto;
+        overflow-y: hidden;
+        width: 300px;
+        border-radius: 5px;
+        padding: 3px;
+        position: fixed;
+        top: 120px;
+        z-index: 0;
+        word-break: break-all; word-wrap: break-word;
+    }
+    </style>
+
+
+</head>
+<body>
+<button style="display:none;" class="btn btn-default" class="leftBtn" id="maximize">Maximize</button>
+<div class="alert alert-success nodevalue" style="position: absolute; width:100%" id="nodevalue" role="showvalue"><span class="text" id="nodetext1"></span></div>
+<div style="display:none;" id="statisticsWrapper" class="bg-info"></div>
+    <button class="btn btn-default" style="right: 50px;margin-top:120px;position:fixed; z-index: 999;" class="leftBtn" id="rescale-graph">Resize</button>
+    <button class="btn btn-default" style="right: 50px;margin-top:160px;position:fixed; z-index: 999;" class="leftBtn" id="zoomin"><span class="glyphicon glyphicon-zoom-in" aria-hidden="true"></span></button>
+    <button class="btn btn-default" style="right: 50px;margin-top:195px;position:fixed; z-index: 999;" class="leftBtn" id="zoomout"><span class="glyphicon glyphicon-zoom-out" aria-hidden="true"></span></button>
+    <div id="graphParent2" style="height: 100%;width:100%;position: absolute;">
+
+    <div id="populatedGraphContainer"></div>
+
+    </div>
+    <script type="text/javascript">
+    	var dataFromParent;    
+    	function init() {
+        	var s = generatePopulatedGraphFromJson(dataFromParent);
+
+            $('#zoomout').click(function(){
+                s.camera.goTo({
+                    x: s.camera.x,
+                    y: s.camera.y,
+                    angle: 0,
+                    ratio: s.camera.ratio*2
+                });
+            });
+
+            $('#zoomin').click(function(){
+                s.camera.goTo({
+                    x: s.camera.x,
+                    y: s.camera.y,
+                    angle: 0,
+                    ratio: s.camera.ratio*0.5
+                });
+            });
+
+    	}
+    </script>
+</body>
+</html>
