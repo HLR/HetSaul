@@ -75,9 +75,9 @@ class srlDataModelTest extends FlatSpec with Matchers {
     ))
   }
 
-  "all the verb classes of pred" should "be correct" in {
-    (predicates() prop verbClass).toSet should be(Set(List("55.1", "UNKNOWN")))
-  }
+//  "all the verb classes of pred" should "be correct" in {
+//    (predicates() prop verbClass).toSet should be(Set(List("55.1", "UNKNOWN")))
+//  }
 
   "lengths of arg" should "be correct" in {
     (relations() prop constituentLength).toSet should be(Set(2, 5))
