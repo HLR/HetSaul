@@ -9,7 +9,7 @@ import org.scalatest.{ FlatSpec, Matchers }
 
 class srlDataModelTest extends FlatSpec with Matchers {
   val rm = new ExamplesConfigurator().getDefaultConfig
-  val frameManager: SRLFrameManager = new SRLFrameManager(rm.getString(ExamplesConfigurator.PROPBANK_HOME.key))
+  val frameManager: SRLFrameManager = null
   val parseViewName = rm.getString(ExamplesConfigurator.SRL_PARSE_VIEW)
   val SRLDataModel = new srlMultiGraph(parseViewName, frameManager)
   import SRLDataModel._
