@@ -12,9 +12,9 @@ import edu.illinois.cs.cogcomp.core.utilities.configuration.ResourceManager;
  * @author Christos Christodoulopoulos
  */
 public class ExamplesConfigurator extends Configurator {
-    public static final Property TREEBANK_HOME = new Property("treebankHome", "./data/treebank");
-    public static final Property PROPBANK_HOME = new Property("propbankHome","./data/propbank");
-	public static final Property MODELS_DIR = new Property("modelsDir", "./models");
+    public static final Property TREEBANK_HOME = new Property("treebankHome", "../data/treebank");
+    public static final Property PROPBANK_HOME = new Property("propbankHome","../data/propbank");
+	public static final Property MODELS_DIR = new Property("modelsDir", "../models");
     public static final Property USE_CURATOR = new Property("useCurator", Configurator.FALSE);
 
     // The training mode for the examples. Can be "pipeline", "joint", or "none" (for testing only)
