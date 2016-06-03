@@ -145,7 +145,7 @@ object srlApp extends App {
   if (runningMode) {
     (testWithPipeline, testWithConstraints) match {
 
-       case (true,true) =>
+      case (true, true) =>
         ClassifierUtils.LoadClassifier(SRLConfigurator.SRL_JAR_MODEL_PATH.value + "/models_bTr", argumentXuIdentifierGivenApredicate)
         ClassifierUtils.LoadClassifier(SRLConfigurator.SRL_JAR_MODEL_PATH.value + "/model_aTr", argumentTypeLearner)
         argumentTypeLearner.test(
@@ -153,7 +153,7 @@ object srlApp extends App {
           groundTruth = argumentLabelGold, exclude = "candidate"
         )
 
-      case (true,false) =>
+      case (true, false) =>
         ClassifierUtils.LoadClassifier(SRLConfigurator.SRL_JAR_MODEL_PATH.value + "/models_bTr", argumentXuIdentifierGivenApredicate)
         ClassifierUtils.LoadClassifier(SRLConfigurator.SRL_JAR_MODEL_PATH.value + "/model_aTr", argumentTypeLearner)
         argumentTypeLearner.test(
@@ -161,11 +161,11 @@ object srlApp extends App {
           groundTruth = argumentLabelGold, exclude = "candidate"
         )
 
-      case (false,true) =>
+      case (false, true) =>
         ClassifierUtils.LoadClassifier(SRLConfigurator.SRL_JAR_MODEL_PATH.value + "/model_cTr", argumentTypeLearner)
         argTypeConstraintClassifier.test(outputGranularity = 100, exclude = "candidate")
 
-      case(false,false) =>
+      case (false, false) =>
         ClassifierUtils.LoadClassifier(SRLConfigurator.SRL_JAR_MODEL_PATH.value + "/model_aTr", argumentTypeLearner)
         argumentTypeLearner.test(exclude = "candidate")
     }
