@@ -8,7 +8,6 @@ import edu.illinois.cs.cogcomp.lbjava.infer.{ FirstOrderConstant, FirstOrderCons
 import edu.illinois.cs.cogcomp.saul.classifier.{ ConstrainedClassifier, Learnable, SparseNetworkLBP }
 import edu.illinois.cs.cogcomp.saul.constraint.ConstraintTypeConversion._
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
-import edu.illinois.cs.cogcomp.saulexamples.ExamplesConfigurator
 import edu.illinois.cs.cogcomp.saulexamples.nlp.CommonSensors._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLSensors._
 import edu.illinois.cs.cogcomp.saul.classifier.ClassifierUtils
@@ -16,7 +15,7 @@ import org.scalatest.{ FlatSpec, Matchers }
 
 import scala.collection.JavaConversions._
 
-class SRLConstraintsTest extends FlatSpec with Matchers {
+class ConstraintsTest extends FlatSpec with Matchers {
 
   object TestTextAnnotation extends DataModel {
     val predicates = node[Constituent]((x: Constituent) => x.getTextAnnotation.getCorpusId + ":" + x.getTextAnnotation.getId + ":" + x.getSpan)
@@ -110,7 +109,7 @@ class SRLConstraintsTest extends FlatSpec with Matchers {
   sentencesToRelations.addSensor(textAnnotationToRelationMatch _)
   relations.populate(XuPalmerCandidateArgsTraining)
 
-  ClassifierUtils.LoadClassifier(ExamplesConfigurator.SRL_JAR_MODEL_PATH.value, argumentTypeLearner)
+  ClassifierUtils.LoadClassifier(SRLConfigurator.SRL_JAR_MODEL_PATH.value + "/models_fTr/", argumentTypeLearner)
   "manually defined has codes" should "avoid duplications in edges and reverse edges" in {
     predicates().size should be((relations() ~> relationsToPredicates).size)
     (predicates() ~> -relationsToPredicates).size should be(relations().size)

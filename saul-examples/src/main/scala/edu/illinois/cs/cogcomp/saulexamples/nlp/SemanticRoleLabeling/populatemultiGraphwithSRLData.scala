@@ -12,7 +12,6 @@ import edu.illinois.cs.cogcomp.edison.annotators.ClauseViewGenerator
 import edu.illinois.cs.cogcomp.nlp.common.PipelineConfigurator
 import edu.illinois.cs.cogcomp.nlp.pipeline.IllinoisPipelineFactory
 import edu.illinois.cs.cogcomp.nlp.utilities.ParseUtils
-import edu.illinois.cs.cogcomp.saulexamples.ExamplesConfigurator
 import edu.illinois.cs.cogcomp.saulexamples.data.{ SRLFrameManager, SRLDataReader }
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLSensors._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.CommonSensors._
@@ -27,11 +26,11 @@ object populatemultiGraphwithSRLData {
   def apply[T <: AnyRef](testOnly: Boolean = false, useGoldPredicate: Boolean = false, useGoldArgBoundaries: Boolean = false): srlMultiGraph = {
 
     val logger: Logger = LoggerFactory.getLogger(this.getClass)
-    val rm = new ExamplesConfigurator().getDefaultConfig
-    val frameManager: SRLFrameManager = new SRLFrameManager(rm.getString(ExamplesConfigurator.PROPBANK_HOME.key))
+    val rm = new SRLConfigurator().getDefaultConfig
+    val frameManager: SRLFrameManager = new SRLFrameManager(rm.getString(SRLConfigurator.PROPBANK_HOME.key))
 
-    val useCurator = rm.getBoolean(ExamplesConfigurator.USE_CURATOR)
-    val parseViewName = rm.getString(ExamplesConfigurator.SRL_PARSE_VIEW)
+    val useCurator = rm.getBoolean(SRLConfigurator.USE_CURATOR)
+    val parseViewName = rm.getString(SRLConfigurator.SRL_PARSE_VIEW)
     val graphs: srlMultiGraph = new srlMultiGraph(parseViewName, frameManager)
     val annotatorService = useCurator match {
       case true =>
@@ -95,8 +94,8 @@ object populatemultiGraphwithSRLData {
     if (!testOnly) {
       logger.info("Reading training data from sections {} to {}", trainingFromSection, trainingToSection)
       val trainReader = new SRLDataReader(
-        rm.getString(ExamplesConfigurator.TREEBANK_HOME.key),
-        rm.getString(ExamplesConfigurator.PROPBANK_HOME.key),
+        rm.getString(SRLConfigurator.TREEBANK_HOME.key),
+        rm.getString(SRLConfigurator.PROPBANK_HOME.key),
         trainingFromSection, trainingToSection
       )
       trainReader.readData()
@@ -129,8 +128,8 @@ object populatemultiGraphwithSRLData {
     }
     val testSection = 23
     val testReader = new SRLDataReader(
-      rm.getString(ExamplesConfigurator.TREEBANK_HOME.key),
-      rm.getString(ExamplesConfigurator.PROPBANK_HOME.key),
+      rm.getString(SRLConfigurator.TREEBANK_HOME.key),
+      rm.getString(SRLConfigurator.PROPBANK_HOME.key),
       testSection, testSection
     )
     logger.info("Reading test data from section {}", testSection)

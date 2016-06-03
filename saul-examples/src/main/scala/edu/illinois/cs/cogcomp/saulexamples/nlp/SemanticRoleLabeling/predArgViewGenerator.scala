@@ -28,3 +28,16 @@ object predArgViewGenerator {
     }
   }
 }
+// This is to print to file for standard CoNLL evaluation -commented out for later
+//    val goldOutFile = "srl.gold"
+//    val goldWriter = new PrintWriter(new File(goldOutFile))
+//    val predOutFile = "srl.predicted"
+//    val predWriter = new PrintWriter(new File(predOutFile))
+//     argumentTypeLearner.test(prediction= typeArgumentPrediction, groundTruth =  argumentLabelGold, exclude="candidate")
+//    val predictedViews = predArgViewGenerator.toPredArgList(srlGraphs, typeArgumentPrediction)
+//    val goldViews = predArgViewGenerator.toPredArgList(srlGraphs, argumentLabelGold)
+//
+//    predictedViews.foreach(pav => CoNLLFormatWriter.printPredicateArgumentView(pav, predWriter))
+//    goldViews.foreach(pav => CoNLLFormatWriter.printPredicateArgumentView(pav, goldWriter))
+//    predWriter.close()
+//    goldWriter.close()

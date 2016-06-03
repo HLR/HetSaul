@@ -27,7 +27,7 @@ There are various machine learning models to solve this including pipelines, lea
 
 We have designed a number of configurations and the trained models which are packaged and can be tested.
 Here, we describe the configurations accompanied in this package and the results that you should get but using those models.
-P: Predicate Arg: Argument G: Gold Ca: Candidate
+Pred.: Predicate Cand.: Candidate
 
 <pre>
  | Predicate   |      Argument        |  Model                   | Name |
@@ -38,7 +38,9 @@ P: Predicate Arg: Argument G: Gold Ca: Candidate
  | Pred. Cand. |    N A               | Predicate Classifier     |dTr   |
  | Pred. Cand. |  XuPalmer Candidates | Argument identifier      |eTr   |
  | Pred. Cand  |  XuPalmer Candidates | Argument Type Classifier |fTr   |
-
+ | Gold Pred.  |  Gold Boundries      | Argument Type Classifier |jTr   |
+ | Gold Pred.  | Argument Identifier  | Argument Type Classifier |pTr   |
+  ----------------------------------------------------------------------
 </pre>
 
   #### Training independent models
@@ -539,3 +541,5 @@ P: Predicate Arg: Argument G: Gold Ca: Candidate
 
   #### Fourth phase: testing joint models
     - [ ] **[aTsJ]** Test the **cTs** of the second phase for joint models.
+
+The defaul configuration when running the sprlApp will run only the test for pretrained cTr model while it uses srl global constraints during prediction.

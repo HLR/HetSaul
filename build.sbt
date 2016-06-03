@@ -46,7 +46,7 @@ lazy val saulExamples = (project in file("saul-examples")).
       "edu.illinois.cs.cogcomp" % "illinois-nlp-readers" % "0.0.2-SNAPSHOT",
       "edu.illinois.cs.cogcomp" % "saul-pos-tagger-models" % "1.0",
       "edu.illinois.cs.cogcomp" % "saul-er-models" % "1.3",
-      "edu.illinois.cs.cogcomp" % "saul-srl-models" % "0.1"
+      "edu.illinois.cs.cogcomp" % "saul-srl-models" % "1.0"
     )
   ).dependsOn(saulCore).aggregate(saulCore)
 
