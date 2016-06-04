@@ -55,19 +55,7 @@ class ConstraintsTest extends FlatSpec with Matchers {
   import TestTextAnnotation._
   object argumentTypeLearner extends Learnable[Relation](relations) {
     def label = argumentLabelGold
-    override lazy val classifier = new SparseNetworkLBP() //{
-    //      override def discreteValue(o: Object): String = argumentLabelGold(o.asInstanceOf[Relation])
-    //      override def scores(o: Object):ScoreSet = {
-    //        val result :ScoreSet= new ScoreSet()
-    //        result.put(discreteValue(o), 1);
-    //
-    //        return result;
-    //      }
-    //      override def allowableValues(): Array[String]={
-    //        val a= Array("A0", "AM-TMP","A1")
-    //        a
-    //      }
-    //    }
+    override lazy val classifier = new SparseNetworkLBP()
   }
 
   object testConstraints {
