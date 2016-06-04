@@ -11,7 +11,7 @@ sbt "project saulExamples" "run-main edu.illinois.cs.cogcomp.saulexamples.nlp.Se
 To use a custom configuration file (containing the property keys of `ExamplesConfigurator`):
  
 ```
-sbt "project saulExamples" "run-main edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlApp config/saul-srl.properties"
+ sbt "project saulExamples" "run-main edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlApp config/saul-srl.properties"
 ```
 
 ## Example
@@ -29,25 +29,26 @@ We have designed a number of configurations and the trained models which are pac
 Here, we describe the configurations accompanied in this package and the results that you should get but using those models.
 Pred.: Predicate Cand.: Candidate
 
- <pre>
- | Predicate   |      Argument        |  Model                   | Name |
- |-------------|----------------------|--------------------------|------|
- | Gold Pred.  |  Gold Boundaries     | Argument Type Classifier |aTr   |
- | Gold Pred.  |  XuPalmer Candidates | Argument identifier      |bTr   |
- | Gold Pred.  |  XuPalmer Candidates | Argument Type Classifier |cTr   |
- | Pred. Cand. |    N A               | Predicate Classifier     |dTr   |
- | Pred. Cand. |  XuPalmer Candidates | Argument identifier      |eTr   |
- | Pred. Cand  |  XuPalmer Candidates | Argument Type Classifier |fTr   |
- | Gold Pred.  |  Gold Boundries      | Argument Type Classifier |jTr   |
- | Gold Pred.  | Argument Identifier  | Argument Type Classifier |pTr   |
+<pre>
 
- </pre>
+  | Predicate   |      Argument        |  Model                   | Name |
+  |-------------|----------------------|--------------------------|------|
+  | Gold Pred.  |  Gold Boundaries     | Argument Type Classifier |aTr   |
+  | Gold Pred.  |  XuPalmer Candidates | Argument identifier      |bTr   |
+  | Gold Pred.  |  XuPalmer Candidates | Argument Type Classifier |cTr   |
+  | Pred. Cand. |    N A               | Predicate Classifier     |dTr   |
+  | Pred. Cand. |  XuPalmer Candidates | Argument identifier      |eTr   |
+  | Pred. Cand  |  XuPalmer Candidates | Argument Type Classifier |fTr   |
+  | Gold Pred.  |  Gold Boundries      | Argument Type Classifier |jTr   |
+  | Gold Pred.  | Argument Identifier  | Argument Type Classifier |pTr   |
+
+</pre>
 
 #### Training independent models
   * Given gold predicates:
-      - [x] **[aTr]** Train `Argument Type Classifier` given gold boundaries
+  - [x] **[aTr]** Train `Argument Type Classifier` given gold boundaries
 
-  <pre>
+<pre>
     Label   Precision Recall   F1   LCount PCount
    ----------------------------------------------
    A0          94.239 95.556 94.893   3578   3628
@@ -96,19 +97,25 @@ Pred.: Predicate Cand.: Candidate
    R-AM-TMP    62.500 27.778 38.462     18      8
    ----------------------------------------------
    Accuracy    85.351   -      -      -     14479
-  </pre>
+</pre>
 
-      - [x] **[bTr]** Train `Argument identifier` given XuPalmerCandidates
+  - [x] **[bTr]** Train `Argument identifier` given XuPalmerCandidates
 
-   <pre>
+<pre>
+
    false       97.342 97.935 97.637  27746  27915
-  true        95.996 94.875 95.432  14479  14310
+   true        95.996 94.875 95.432  14479  14310
    ----------------------------------------------
-  Accuracy    96.886   -      -      -     42225
-  </pre>
-      - [x] **[cTr]** Train  `Argument Type Classifier` given XuPalmerCandidates
-  <pre>
-  argument classifier test results:  Label   Precision Recall   F1   LCount PCount
+   Accuracy    96.886   -      -      -     42225
+
+</pre>
+
+  - [x] **[cTr]** Train  `Argument Type Classifier` given XuPalmerCandidates
+
+ argument classifier test results:
+
+<pre>
+  Label   Precision Recall   F1   LCount PCount
   -----------------------------------------------
   A0           91.738 89.380 90.544   3578   3486
   A1           90.736 89.128 89.925   4967   4879
@@ -159,32 +166,32 @@ Pred.: Predicate Cand.: Candidate
   -----------------------------------------------
   Overall      82.326 80.972 81.643  14479  14241
   Accuracy     92.270   -      -      -     42225
-  </pre>
+</pre>
 
   * Given predicate candidates:
       - [x] **[dTr]** Train `Predicate Classifier`
 
-  <pre>
+<pre>
   Label   Precision Recall   F1   LCount PCount
    ----------------------------------------------
    false       99.378 97.907 98.637   1959   1930
    true        99.223 99.771 99.497   5249   5278
    ----------------------------------------------
    Accuracy    99.265   -      -      -      7208
-  </pre>
+</pre>
 
-      - [x] **[eTr]** Train `Argument identifier` given XuPalmerCandidates
+   - [x] **[eTr]** Train `Argument identifier` given XuPalmerCandidates
    
-  <pre>
+<pre>
   Label   Precision Recall   F1   LCount PCount
    ----------------------------------------------
     false       97.947 98.426 98.186  40714  40913
     true        95.511 94.198 94.850  14479  14280
     ----------------------------------------------
     Accuracy    97.317   -      -      -     55193
-  </pre>
+</pre>
       - [x] **[fTr]**  Train `Argument Type Classifier` given XuPalmerCandidates
-  <pre>
+<pre>
   argument classifier test results:  Label   Precision Recall   F1   LCount PCount
   -----------------------------------------------
   A0           91.484 88.876 90.162   3578   3476
@@ -235,9 +242,9 @@ Pred.: Predicate Cand.: Candidate
   -----------------------------------------------
   Overall      82.479 80.793 81.627  14479  14183
   Accuracy     93.921   -      -      -     55193
-  </pre>
-      - [x] **[gTr]** Train `Argument Type Classifier` separately for main roles and adjuncts (if needed)
-  <pre>
+</pre>
+     - [x] **[gTr]** Train `Argument Type Classifier` separately for main roles and adjuncts (if needed)
+<pre>
   argument classifier test results:  Label   Precision Recall   F1   LCount PCount
   -----------------------------------------------
   A0           90.940 89.212 90.068   3578   3510
@@ -251,8 +258,9 @@ Pred.: Predicate Cand.: Candidate
   -----------------------------------------------
   Overall      88.638 85.934 87.265   9932   9629
   Accuracy     96.460   -      -      -     55193
-  </pre>
-  <pre>
+</pre>
+
+<pre>
   argument classifier test results:  Label   Precision Recall   F1   LCount PCount
   -----------------------------------------------
   AM-ADV       70.694 54.348 61.453    506    389
@@ -296,17 +304,18 @@ Pred.: Predicate Cand.: Candidate
   Overall      74.365 67.561 70.800   4547   4131
   Accuracy     96.583   -      -      -     55193
 
-  </pre>
+</pre>
+
   - [x] **[hTr]** Use pipeline of identification for training examples.
 
 #### Second phase: test independent models
-    - [x] **[aTs]** Test **aTr, bTr, cTr, dTr, eTr, fTr, gTr** independently.
 
-            - aTr with constraints.
+ -[x] **[aTs]** Test **aTr, bTr, cTr, dTr, eTr, fTr, gTr** independently.
+ -aTr with constraints.
 
-  <pre>
+<pre>
 
-    Label   Precision Recall    F1   LCount PCount
+  Label   Precision Recall    F1   LCount PCount
   -----------------------------------------------
   A0          95.468  96.562 96.012   3578   3619
   A1          94.723  91.786 93.231   4967   4813
@@ -356,11 +365,12 @@ Pred.: Predicate Cand.: Candidate
   -----------------------------------------------
   Overall     85.358  85.358 85.358  14479  14479
   Accuracy    85.358    -      -      -     14479
-  </pre>
+</pre>
 
   -[aTr] test with pipeline of identification without constraints.
-  <pre>
-   Label   Precision Recall   F1   LCount PCount
+
+<pre>
+  Label   Precision Recall   F1   LCount PCount
   -----------------------------------------------
   A0           90.719 89.603 90.157   3578   3534
   A1           89.630 90.135 89.882   4967   4995
@@ -411,22 +421,23 @@ Pred.: Predicate Cand.: Candidate
   -----------------------------------------------
   Overall      82.558 81.594 82.073  14479  14310
   Accuracy     92.332   -      -      -     42225
+</pre>
 
-  </pre>
   Same experiment if we use [cTr] instead of [aTr]
-  <pre>
+
+<pre>
   -----------------------------------------------
   candidate    96.948 98.331 97.635  27746  28142
   -----------------------------------------------
   Overall      82.490 80.233 81.346  14479  14083
   Accuracy     92.126   -      -      -     42225
-  </pre>
+</pre>
 
-    - [x] **[cTr]** Test with constraints
+   - [x] **[cTr]** Test with constraints
 
-  <pre>
+<pre>
 
-    Label   Precision Recall    F1   LCount PCount
+   Label   Precision Recall    F1   LCount PCount
    ------------------------------------------------
    A0           93.099  90.497 91.780   3578   3478
    A1           93.839  88.927 91.317   4967   4707
@@ -477,11 +488,11 @@ Pred.: Predicate Cand.: Candidate
    Overall      82.908  80.703 81.791  14479  14094
    Accuracy     92.384    -      -      -     42225
 
-  </pre>
+</pre>
 
-    - [x] **[fTr]** Test with constraints
-  <pre>
+   - [x] **[fTr]** Test with constraints
 
+<pre>
    Label   Precision Recall    F1   LCount PCount
    ------------------------------------------------
    A0           93.316  89.743 91.495   3578   3441
@@ -529,21 +540,21 @@ Pred.: Predicate Cand.: Candidate
    ------------------------------------------------
    Overall      83.623  80.544 82.055  14479  13946
    Accuracy     92.343    -      -      -     42225
-  </pre>
+</pre>
 
-    - [ ] **[bTs]** Test `pipe1Model` : **dTr** => **eTr** (given identified predicates) => **fTr** (given identified arguments)
+   - [ ] **[bTs]** Test `pipe1Model` : **dTr** => **eTr** (given identified predicates) => **fTr** (given identified arguments)
     - [ ] **[cTs]** Test **dTr, eTr, fTr** jointly given various number of constraints
       * Add constraints gradually and test.
 
 #### Third phase: training joint models
 
-    - [ ] **[aTrJ]** Train **dTr, eTr, fTr** jointly
+   - [ ] **[aTrJ]** Train **dTr, eTr, fTr** jointly
       * Add constraints gradually and train various models considering subsets of constraints
     - [ ] **[aTr]**
 
 #### Fourth phase: testing joint models
 
-    - [ ] **[aTsJ]** Test the **cTs** of the second phase for joint models.
+   - [ ] **[aTsJ]** Test the **cTs** of the second phase for joint models.
 
 The defaul configuration when running the sprlApp will run only the test for pretrained cTr model while it uses srl global constraints during prediction.
 You can run it from command line by:
