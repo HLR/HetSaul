@@ -10,7 +10,7 @@ import scala.collection.JavaConversions._
   *
   * @author Christos Christodoulopoulos
   */
-object predArgViewGenerator {
+object PredArgViewGenerator {
 
   def toPredArgList(graph: SRLMultiGraphDataModel, labelProp: TypedProperty[Relation, String]): Iterable[PredicateArgumentView] = {
     import graph._

@@ -58,7 +58,7 @@ class ConstraintsTest extends FlatSpec with Matchers {
     override lazy val classifier = new SparseNetworkLBP()
   }
 
-  object testConstraints {
+  object TestConstraints {
     import TestTextAnnotation._
     val noDuplicate = ConstrainedClassifier.constraint[TextAnnotation] {
       // Predicates have atmost one argument of each type i.e. there is no two arguments of the same type for each predicate
@@ -87,7 +87,7 @@ class ConstraintsTest extends FlatSpec with Matchers {
   val viewsToAdd = Array(ViewNames.LEMMA, ViewNames.POS, ViewNames.SHALLOW_PARSE, ViewNames.PARSE_GOLD, ViewNames.SRL_VERB)
   val ta: TextAnnotation = DummyTextAnnotationGenerator.generateAnnotatedTextAnnotation(viewsToAdd, true)
   import TestTextAnnotation._
-  import testConstraints._
+  import TestConstraints._
   sentencesToTokens.addSensor(textAnnotationToTokens _)
   sentences.populate(Seq(ta))
   val predicateTrainCandidates = tokens.getTrainingInstances.filter((x: Constituent) => posTag(x).startsWith("IN"))

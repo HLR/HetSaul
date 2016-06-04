@@ -60,7 +60,7 @@ object SRLApps extends App {
   logger.info("population starts.")
 
   // Here, the data is loaded into the graph
-  val srlGraphs = populatemultiGraphwithSRLData(testOnly = runningMode, useGoldPredicate, useGoldBoundaries)
+  val srlGraphs = PopulateSRLDataModel(testOnly = runningMode, useGoldPredicate, useGoldBoundaries)
   import srlGraphs._
   logger.info("all relations number after population:" + srlGraphs.relations().size)
   logger.info("all sentences number after population:" + srlGraphs.sentences().size)

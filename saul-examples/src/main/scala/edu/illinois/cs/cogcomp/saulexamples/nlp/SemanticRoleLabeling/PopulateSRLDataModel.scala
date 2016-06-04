@@ -21,7 +21,7 @@ import scala.collection.JavaConversions._
 
 /** Created by Parisa on 1/17/16.
   */
-object populatemultiGraphwithSRLData {
+object PopulateSRLDataModel {
 
   def apply[T <: AnyRef](testOnly: Boolean = false, useGoldPredicate: Boolean = false, useGoldArgBoundaries: Boolean = false): SRLMultiGraphDataModel = {
 
