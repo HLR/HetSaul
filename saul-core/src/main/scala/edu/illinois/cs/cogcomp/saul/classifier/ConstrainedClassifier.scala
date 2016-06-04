@@ -169,7 +169,6 @@ abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val onClassifi
       }
     }
     val testReader = new LBJIteratorParserScala[T](testData)
-    this.onClassifier
     testReader.reset()
     val tester: TestDiscrete = new TestDiscrete()
     TestWithStorage.test(tester, classifier, onClassifier.getLabeler, testReader, outFile, outputGranularity, exclude)

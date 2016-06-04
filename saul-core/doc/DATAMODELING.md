@@ -140,7 +140,7 @@ n(a)~>e(-2,2).p.aggregate
 
 ```
 
-finding path between two node(instances)
+finding path between two nodes
 
 ```scala
 n1(a).path(n2(b))

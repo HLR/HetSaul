@@ -12,7 +12,7 @@ import scala.collection.JavaConversions._
   */
 object predArgViewGenerator {
 
-  def toPredArgList(graph: srlMultiGraph, labelProp: TypedProperty[Relation, String]): Iterable[PredicateArgumentView] = {
+  def toPredArgList(graph: SRLMultiGraphDataModel, labelProp: TypedProperty[Relation, String]): Iterable[PredicateArgumentView] = {
     import graph._
     sentences().map { ta =>
       val predArgView: PredicateArgumentView = new PredicateArgumentView(ViewNames.SRL_VERB, ta)

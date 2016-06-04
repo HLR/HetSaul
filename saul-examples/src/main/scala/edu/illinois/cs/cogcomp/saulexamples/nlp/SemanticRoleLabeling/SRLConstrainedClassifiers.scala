@@ -2,13 +2,13 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling
 
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{ Relation, TextAnnotation }
 import edu.illinois.cs.cogcomp.saul.classifier.ConstrainedClassifier
-import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlClassifiers.{ argumentTypeLearner, argumentXuIdentifierGivenApredicate }
-import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlConstraints._
+import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLClassifiers.{ argumentTypeLearner, argumentXuIdentifierGivenApredicate }
+import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLConstraints._
 
 /** Created by Parisa on 12/27/15.
   */
-object srlConstraintClassifiers {
-  import srlApp._
+object SRLConstrainedClassifiers {
+  import SRLApps._
   object argTypeConstraintClassifier extends ConstrainedClassifier[Relation, TextAnnotation](argumentTypeLearner) {
     def subjectTo = r_and_c_args
     override val pathToHead = Some(-srlGraphs.sentencesToRelations)

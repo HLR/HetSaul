@@ -4,11 +4,11 @@ import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{ Constituent,
 import edu.illinois.cs.cogcomp.lbjava.learn.SparseAveragedPerceptron
 import edu.illinois.cs.cogcomp.saul.classifier.{ Learnable, SparseNetworkLBP }
 import edu.illinois.cs.cogcomp.saul.datamodel.property.Property
-import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlApp._
+import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLApps._
 
 /** Created by Parisa on 12/30/15.
   */
-object srlClassifiers {
+object SRLClassifiers {
   import srlGraphs._
   //TODO This needs to be overriden by the user; change it to be dynamic
   val parameters = new SparseAveragedPerceptron.Parameters()

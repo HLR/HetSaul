@@ -10,7 +10,7 @@ class DataModelTest extends FlatSpec with Matchers {
   val rm = new SRLConfigurator().getDefaultConfig
   val frameManager: SRLFrameManager = null
   val parseViewName = rm.getString(SRLConfigurator.SRL_PARSE_VIEW)
-  val SRLDataModel = new srlMultiGraph(parseViewName, frameManager)
+  val SRLDataModel = new SRLMultiGraphDataModel(parseViewName, frameManager)
   import SRLDataModel._
   val viewsToAdd = Array(ViewNames.LEMMA, ViewNames.POS, ViewNames.SHALLOW_PARSE, ViewNames.PARSE_GOLD, ViewNames.SRL_VERB)
   val ta: TextAnnotation = DummyTextAnnotationGenerator.generateAnnotatedTextAnnotation(viewsToAdd, false)

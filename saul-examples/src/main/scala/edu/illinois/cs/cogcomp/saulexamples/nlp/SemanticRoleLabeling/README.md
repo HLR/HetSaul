@@ -29,7 +29,7 @@ We have designed a number of configurations and the trained models which are pac
 Here, we describe the configurations accompanied in this package and the results that you should get but using those models.
 Pred.: Predicate Cand.: Candidate
 
-<pre>
+ <pre>
  | Predicate   |      Argument        |  Model                   | Name |
  |-------------|----------------------|--------------------------|------|
  | Gold Pred.  |  Gold Boundaries     | Argument Type Classifier |aTr   |
@@ -40,10 +40,10 @@ Pred.: Predicate Cand.: Candidate
  | Pred. Cand  |  XuPalmer Candidates | Argument Type Classifier |fTr   |
  | Gold Pred.  |  Gold Boundries      | Argument Type Classifier |jTr   |
  | Gold Pred.  | Argument Identifier  | Argument Type Classifier |pTr   |
-  ----------------------------------------------------------------------
-</pre>
 
-  #### Training independent models
+ </pre>
+
+#### Training independent models
   * Given gold predicates:
       - [x] **[aTr]** Train `Argument Type Classifier` given gold boundaries
 
@@ -298,7 +298,8 @@ Pred.: Predicate Cand.: Candidate
 
   </pre>
   - [x] **[hTr]** Use pipeline of identification for training examples.
-  #### Second phase: test independent models
+
+#### Second phase: test independent models
     - [x] **[aTs]** Test **aTr, bTr, cTr, dTr, eTr, fTr, gTr** independently.
 
             - aTr with constraints.
@@ -534,18 +535,21 @@ Pred.: Predicate Cand.: Candidate
     - [ ] **[cTs]** Test **dTr, eTr, fTr** jointly given various number of constraints
       * Add constraints gradually and test.
 
-  #### Third phase: training joint models
+#### Third phase: training joint models
+
     - [ ] **[aTrJ]** Train **dTr, eTr, fTr** jointly
       * Add constraints gradually and train various models considering subsets of constraints
     - [ ] **[aTr]**
 
-  #### Fourth phase: testing joint models
+#### Fourth phase: testing joint models
+
     - [ ] **[aTsJ]** Test the **cTs** of the second phase for joint models.
 
 The defaul configuration when running the sprlApp will run only the test for pretrained cTr model while it uses srl global constraints during prediction.
 You can run it from command line by:
 
 ```scala
-sbt -mem 4000 "project saulExamples" "run-main edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlApp"
+
+sbt -mem 4000 "project saulExamples" "run-main edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLApps"
 
 ```

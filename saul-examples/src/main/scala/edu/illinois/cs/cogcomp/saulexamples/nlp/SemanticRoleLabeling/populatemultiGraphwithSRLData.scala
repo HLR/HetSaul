@@ -23,7 +23,7 @@ import scala.collection.JavaConversions._
   */
 object populatemultiGraphwithSRLData {
 
-  def apply[T <: AnyRef](testOnly: Boolean = false, useGoldPredicate: Boolean = false, useGoldArgBoundaries: Boolean = false): srlMultiGraph = {
+  def apply[T <: AnyRef](testOnly: Boolean = false, useGoldPredicate: Boolean = false, useGoldArgBoundaries: Boolean = false): SRLMultiGraphDataModel = {
 
     val logger: Logger = LoggerFactory.getLogger(this.getClass)
     val rm = new SRLConfigurator().getDefaultConfig
@@ -31,7 +31,7 @@ object populatemultiGraphwithSRLData {
 
     val useCurator = rm.getBoolean(SRLConfigurator.USE_CURATOR)
     val parseViewName = rm.getString(SRLConfigurator.SRL_PARSE_VIEW)
-    val graphs: srlMultiGraph = new srlMultiGraph(parseViewName, frameManager)
+    val graphs: SRLMultiGraphDataModel = new SRLMultiGraphDataModel(parseViewName, frameManager)
     val annotatorService = useCurator match {
       case true =>
         val nonDefaultProps = new Properties()
@@ -90,7 +90,7 @@ object populatemultiGraphwithSRLData {
 
     val trainingFromSection = 2
     val trainingToSection = 21
-    var gr: srlMultiGraph = null
+    var gr: SRLMultiGraphDataModel = null
     if (!testOnly) {
       logger.info("Reading training data from sections {} to {}", trainingFromSection, trainingToSection)
       val trainReader = new SRLDataReader(
@@ -106,7 +106,7 @@ object populatemultiGraphwithSRLData {
 
       (filteredTa).foreach(a =>
         {
-          gr = new srlMultiGraph(parseViewName, frameManager)
+          gr = new SRLMultiGraphDataModel(parseViewName, frameManager)
           if (!useGoldPredicate) {
             gr.sentencesToTokens.addSensor(textAnnotationToTokens _)
             gr.sentences.populate(Seq(a))
@@ -142,7 +142,7 @@ object populatemultiGraphwithSRLData {
 
     logger.info("Populating SRLDataModel with test data.")
     (filteredTest).foreach(a => {
-      gr = new srlMultiGraph(parseViewName, frameManager)
+      gr = new SRLMultiGraphDataModel(parseViewName, frameManager)
       if (!useGoldPredicate) {
         gr.sentencesToTokens.addSensor(textAnnotationToTokens _)
         gr.sentences.populate(Seq(a), train = false)
