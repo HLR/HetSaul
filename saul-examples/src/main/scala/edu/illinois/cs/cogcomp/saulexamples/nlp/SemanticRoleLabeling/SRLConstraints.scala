@@ -150,7 +150,7 @@ object SRLConstraints {
   }
 
   val noDuplicate = ConstrainedClassifier.constraint[TextAnnotation] {
-    // Predicates have atmost one argument of each type i.e. there is no two arguments of the same type for each predicate
+    // Predicates have at most one argument of each type i.e. there shouldn't be any two arguments with the same type for each predicate
     val values = Array("A0", "A1", "A2", "A3", "A4", "A5", "AA")
     var a: FirstOrderConstraint = null
     x: TextAnnotation => {
