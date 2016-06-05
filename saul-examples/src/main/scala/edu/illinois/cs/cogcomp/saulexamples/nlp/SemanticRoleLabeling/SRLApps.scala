@@ -137,7 +137,7 @@ object SRLApps extends App {
         argumentTypeLearner.modelDir = modelDir + expName
         val outputFile = modelDir + srlPredictionsFile
         logger.info("Global training... ")
-        JointTrainSparseNetwork(srlGraphs, argTypeConstraintClassifier :: Nil, 100)
+        JointTrainSparseNetwork(srlGraphs.sentences, argTypeConstraintClassifier :: Nil, 100)
         argumentTypeLearner.save()
         argTypeConstraintClassifier.test(srlGraphs.relations.getTestingInstances, outputFile, 200, exclude = "candidate")
     }

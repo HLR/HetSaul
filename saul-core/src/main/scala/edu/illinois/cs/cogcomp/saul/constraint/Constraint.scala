@@ -123,7 +123,7 @@ class LHSFirstOrderEqualityWithValueLBP(cls: Learner, t: AnyRef) {
     val falseConstant = new FirstOrderDisjunction(new FirstOrderEqualityWithValue(true, lbjRepr, v(0)), new FirstOrderConstant(false))
     v.tail.foldRight(falseConstant) {
       (value, newConstraint) =>
-      new FirstOrderDisjunction(new FirstOrderEqualityWithValue(true, lbjRepr, value), newConstraint)
+        new FirstOrderDisjunction(new FirstOrderEqualityWithValue(true, lbjRepr, value), newConstraint)
     }
   }
 }
