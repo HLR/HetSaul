@@ -9,7 +9,6 @@ import edu.illinois.cs.cogcomp.saul.classifier.{ ConstrainedClassifier, Learnabl
 import edu.illinois.cs.cogcomp.saul.constraint.ConstraintTypeConversion._
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
 import edu.illinois.cs.cogcomp.saulexamples.nlp.CommonSensors._
-import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLClassifiers.argumentTypeLearner
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLSensors._
 import edu.illinois.cs.cogcomp.saul.classifier.ClassifierUtils
 import org.scalatest.{ FlatSpec, Matchers }
@@ -72,10 +71,11 @@ class ConstraintsTest extends FlatSpec with Matchers {
             {
               val argCandList = (predicates(y) ~> -relationsToPredicates).toList
               for (t1 <- 0 until argCandList.size - 1) {
+                val b = new FirstOrderConstant(values.contains(ArgumentTypeLearner.classifier.getLabeler.discreteValue(argCandList.get(t1))))
                 for (t2 <- t1 + 1 until argCandList.size) {
-                  a = a and (((argumentTypeLearner on argCandList.get(t1)) in values) ==> (((argumentTypeLearner on argCandList.get(t1)) isNot (argumentTypeLearner on argCandList.get(t2)))))
+                  a = a and new FirstOrderConstant(!ArgumentTypeLearner.classifier.getLabeler.discreteValue(argCandList.get(t1)).equals(ArgumentTypeLearner.classifier.getLabeler.discreteValue(argCandList.get(t2))))
                 }
-
+                a = (b ==> a)
               }
             }
         }
@@ -97,7 +97,7 @@ class ConstraintsTest extends FlatSpec with Matchers {
   sentencesToRelations.addSensor(textAnnotationToRelationMatch _)
   relations.populate(XuPalmerCandidateArgsTraining)
 
-  ClassifierUtils.LoadClassifier(SRLConfigurator.SRL_JAR_MODEL_PATH.value + "/models_fTr/", ArgumentTypeLearner)
+  ClassifierUtils.LoadClassifier(SRLConfigurator.SRL_JAR_MODEL_PATH.value + "models/models_fTr/", ArgumentTypeLearner)
   "manually defined has codes" should "avoid duplications in edges and reverse edges" in {
     predicates().size should be((relations() ~> relationsToPredicates).size)
     (predicates() ~> -relationsToPredicates).size should be(relations().size)
