@@ -111,14 +111,13 @@ object SRLConstraints {
   }
 
   val legal_arguments_Constraint = ConstrainedClassifier.constraint[TextAnnotation] { x: TextAnnotation =>
-    val constraints = for{
+    val constraints = for {
       y <- sentences(x) ~> sentencesToRelations ~> relationsToPredicates
       argCandList = (predicates(y) ~> -relationsToPredicates).toList
       argLegalList = legalArguments(y)
       z <- argCandList
-    }
-      yield argLegalList._exists { t: String => argumentTypeLearner on z is t } or
-        (argumentTypeLearner on z is "candidate")
+    } yield argLegalList._exists { t: String => argumentTypeLearner on z is t } or
+      (argumentTypeLearner on z is "candidate")
     constraints.toSeq._forall(a => a)
   }
 
