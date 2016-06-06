@@ -103,7 +103,6 @@ object SRLConstraints {
                           k: Relation => (argumentTypeLearner on k) is values(i).substring(2)
                         }
                 }
-
             }
           }
       }
@@ -111,42 +110,16 @@ object SRLConstraints {
     a
   }
 
-  val legal_arguments_Constraint = ConstrainedClassifier.constraint[TextAnnotation] {
-    var a: FirstOrderConstraint = null
-    x: TextAnnotation => {
-      a = new FirstOrderConstant(true)
-      (sentences(x) ~> sentencesToRelations ~> relationsToPredicates).foreach {
-        y =>
-          {
-            val argCandList = (predicates(y) ~> -relationsToPredicates).toList
-            val argLegalList = legalArguments(y)
-            argCandList.foreach {
-              z =>
-                a = ((argLegalList._exists {
-                  t: String => (argumentTypeLearner on z is t)
-                }) or (argumentTypeLearner on z is "candidate")) and a
-            }
-          }
-      }
-
+  val legal_arguments_Constraint = ConstrainedClassifier.constraint[TextAnnotation] { x: TextAnnotation =>
+    val constraints = for{
+      y <- sentences(x) ~> sentencesToRelations ~> relationsToPredicates
+      argCandList = (predicates(y) ~> -relationsToPredicates).toList
+      argLegalList = legalArguments(y)
+      z <- argCandList
     }
-
-    /*
-      x: TextAnnotation => {
-
-        val first: FirstOrderConstraint = new FirstOrderConstant(true)
-
-        (for {
-          y <-  (sentences(x) ~> sentencesToRelations ~> relationsToPredicates)
-          argCandList = (predicates(y) ~> -relationsToPredicates).toList
-          argLegalList = legalArguments(y)
-          z <- argLegalList
-        } yield argLegalList._exists((t: String)=> argumentTypeLearner on z is t)).foldLeft(first) {
-          (r: FirstOrderConstraint, c) => r &&& c
-        }
-      }
- */
-    a
+      yield argLegalList._exists { t: String => argumentTypeLearner on z is t } or
+        (argumentTypeLearner on z is "candidate")
+    constraints.toSeq._forall(a => a)
   }
 
   val noDuplicate = ConstrainedClassifier.constraint[TextAnnotation] {
