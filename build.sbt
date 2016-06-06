@@ -7,7 +7,7 @@ lazy val root = (project in file(".")).
 lazy val commonSettings = Seq(
   organization := "edu.illinois.cs.cogcomp",
   name := "saul-project",
-  version := "0.1",
+  version := "0.3",
   scalaVersion := "2.11.7",
   resolvers ++= Seq(
     Resolver.mavenLocal,
@@ -31,7 +31,7 @@ lazy val saulCore = (project in file("saul-core")).
   settings(
     name := "saul",
     libraryDependencies ++= Seq(
-      "com.typesafe.play" % "play_2.11" % "2.4.3" exclude("ch.qos.logback", "logback-classic")
+      "com.typesafe.play" % "play_2.11" % "2.4.3" //exclude("ch.qos.logback", "logback-classic")
     )
   )
 
@@ -56,12 +56,17 @@ lazy val saulWebapp = (project in file("saul-webapp")).
     name := "saul-webapp",
     libraryDependencies ++= Seq(
       "org.webjars" %% "webjars-play" % "2.4.0-1",
-      "org.webjars" % "bootstrap" % "3.1.1-2",
+      "org.webjars" % "bootstrap" % "3.3.6",
+      "org.webjars.bower" % "tether-shepherd" % "1.1.3",
+      "org.webjars" % "ace" % "1.2.2",
+      "org.webjars" % "sigma.js" % "1.0.3",
+      "org.webjars" % "d3js" % "3.5.16",
+      "org.scala-lang" % "scala-compiler" % scalaVersion.value, 
       jdbc,
       cache,
       ws,
       specs2 % Test
     ),
-    resolvers += "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases",
+    resolvers ++= Seq("scalaz-bintray" at "http://dl.bintray.com/scalaz/releases"),
     routesGenerator := InjectedRoutesGenerator
-  ).dependsOn(saulCore).aggregate(saulCore)
+  ).dependsOn(saulExamples).aggregate(saulExamples)

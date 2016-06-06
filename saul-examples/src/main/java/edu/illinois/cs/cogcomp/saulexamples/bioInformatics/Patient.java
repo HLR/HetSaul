@@ -29,3 +29,10 @@ public class Patient {
         return result.toString();
     }
 }
+    
+    @Override public String toString() {
+        StringBuilder result = new StringBuilder();
+        result.append(patient_id);
+        return result.toString();
+    }
+}

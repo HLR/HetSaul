@@ -18,6 +18,6 @@ First, run `sbt`.
 - `projects` will show the names of the existing module names. 
     - `project saulCore` will take you inside the core package. 
     -  `project saulExamples` will take you inside the examples package.
-    - `project saulWebapp` will take you inside the webapp package.
+    - `project saulWebapp` will take you inside the webapp package. Then type `run` to start the server. Type `localhost:9000` in browser address bar to see the webapp.
 - Inside each project you can `compile` it, or `run` it. 
 - To fix the formatting problems, run `format`

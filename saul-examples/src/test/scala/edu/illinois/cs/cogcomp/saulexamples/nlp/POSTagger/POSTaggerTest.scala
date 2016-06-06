@@ -11,7 +11,7 @@ import scala.collection.JavaConversions._
 
 class POSTaggerTest extends FlatSpec with Matchers {
 
-  "POSTager feature queries " should " should work. " in {
+  "POSTager feature queries " should " work. " in {
     val dummyData = DummyTextAnnotationGenerator.generateAnnotatedTextAnnotation(Array(ViewNames.POS), false)
     val cons = dummyData.getView(ViewNames.TOKENS).getConstituents
     POSDataModel.tokens populate cons
@@ -88,7 +88,7 @@ class POSTaggerTest extends FlatSpec with Matchers {
     POSDataModel.labelTwoAfter(consOf) should be("NN")
   }
 
-  "POSBaseline " should " should work. " in {
+  "POSBaseline " should " work. " in {
     val toyConstituents = DummyTextAnnotationGenerator.generateBasicTextAnnotation(1).getView(ViewNames.TOKENS).getConstituents
     POSDataModel.tokens.populate(toyConstituents, train = false)
     ClassifierUtils.LoadClassifier(
@@ -98,12 +98,12 @@ class POSTaggerTest extends FlatSpec with Matchers {
     val baselineLabelMap = Map("To" -> "TO", "or" -> "CC", "not" -> "RB", ";" -> ":",
       "that" -> "IN", "is" -> "VBZ", "question" -> "NN", "." -> ".")
     toyConstituents.forall { cons =>
-      val pred = BaselineClassifier.classifier.discreteValue(cons)
+      val pred = BaselineClassifier(cons)
       pred == baselineLabelMap.getOrElse(cons.getSurfaceForm, pred)
     } should be(true)
   }
 
-  "POSUnknown " should " should work. " in {
+  "POSUnknown " should " work. " in {
     val toyConstituents = DummyTextAnnotationGenerator.generateBasicTextAnnotation(1).getView(ViewNames.TOKENS).getConstituents
     POSDataModel.tokens.populate(toyConstituents, train = false)
     ClassifierUtils.LoadClassifier(
@@ -114,12 +114,12 @@ class POSTaggerTest extends FlatSpec with Matchers {
       "that" -> "IN", "is" -> "VBZ", "question" -> "NN")
     println("toyConstituents.size = " + toyConstituents.size)
     toyConstituents.forall { cons =>
-      val pred = POSTaggerUnknown.classifier.discreteValue(cons)
+      val pred = POSTaggerUnknown(cons)
       pred == posUnknownLabelMap.getOrElse(cons.getSurfaceForm, pred)
     } should be(true)
   }
 
-  "POS combined classifier " should " should work. " in {
+  "POS combined classifier " should "  work. " in {
     val toyConstituents = DummyTextAnnotationGenerator.generateBasicTextAnnotation(1).getView(ViewNames.TOKENS).getConstituents
     POSDataModel.tokens.populate(toyConstituents, train = false)
     ClassifierUtils.LoadClassifier(
