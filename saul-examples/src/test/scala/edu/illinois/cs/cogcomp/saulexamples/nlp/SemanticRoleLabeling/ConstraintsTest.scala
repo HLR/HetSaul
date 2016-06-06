@@ -104,7 +104,7 @@ class ConstraintsTest extends FlatSpec with Matchers {
     (predicates(predicates().head) ~> -relationsToPredicates).size should be(4)
   }
 
-  "this constraint" should "be false" in {
+  "this constraint" should "be true" in {
     noDuplicate(ta).evaluate() should be(true)
   }
 }
