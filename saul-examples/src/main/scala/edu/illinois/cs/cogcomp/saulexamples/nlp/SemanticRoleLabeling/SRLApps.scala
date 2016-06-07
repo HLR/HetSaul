@@ -69,7 +69,7 @@ object SRLApps extends App {
   logger.info("all tokens number after population:" + srlGraphs.tokens().size)
 
   // TRAINING
-  if (runningMode.equals("train")) {
+  if (!runningMode) {
     expName match {
 
       case "aTr" =>
@@ -120,7 +120,7 @@ object SRLApps extends App {
         argumentTypeLearner.save()
 
       case "pTr" =>
-        ClassifierUtils.LoadClassifier(SRLConfigurator.SRL_JAR_MODEL_PATH.value + "/models_bTr", argumentXuIdentifierGivenApredicate)
+        ClassifierUtils.LoadClassifier(SRLConfigurator.SRL_JAR_MODEL_PATH.value + "/models_bTr/", argumentXuIdentifierGivenApredicate)
         val training = relations.getTrainingInstances.filter(x => argumentXuIdentifierGivenApredicate(x).equals("true"))
         argumentTypeLearner.modelDir = modelDir
         argumentTypeLearner.learn(100, training)
@@ -147,27 +147,27 @@ object SRLApps extends App {
     (testWithPipeline, testWithConstraints) match {
 
       case (true, true) =>
-        ClassifierUtils.LoadClassifier(SRLConfigurator.SRL_JAR_MODEL_PATH.value + "/models_bTr", argumentXuIdentifierGivenApredicate)
-        ClassifierUtils.LoadClassifier(SRLConfigurator.SRL_JAR_MODEL_PATH.value + "/model_aTr", argumentTypeLearner)
+        ClassifierUtils.LoadClassifier(SRLConfigurator.SRL_JAR_MODEL_PATH.value + "/models_bTr/", argumentXuIdentifierGivenApredicate)
+        ClassifierUtils.LoadClassifier(SRLConfigurator.SRL_JAR_MODEL_PATH.value + "/models_aTr/", argumentTypeLearner)
         argumentTypeLearner.test(
           prediction = typeArgumentPipeGivenGoldPredicateConstrained,
           groundTruth = argumentLabelGold, exclude = "candidate"
         )
 
       case (true, false) =>
-        ClassifierUtils.LoadClassifier(SRLConfigurator.SRL_JAR_MODEL_PATH.value + "/models_bTr", argumentXuIdentifierGivenApredicate)
-        ClassifierUtils.LoadClassifier(SRLConfigurator.SRL_JAR_MODEL_PATH.value + "/model_aTr", argumentTypeLearner)
+        ClassifierUtils.LoadClassifier(SRLConfigurator.SRL_JAR_MODEL_PATH.value + "/models_bTr/", argumentXuIdentifierGivenApredicate)
+        ClassifierUtils.LoadClassifier(SRLConfigurator.SRL_JAR_MODEL_PATH.value + "/models_aTr/", argumentTypeLearner)
         argumentTypeLearner.test(
           prediction = typeArgumentPipeGivenGoldPredicate,
           groundTruth = argumentLabelGold, exclude = "candidate"
         )
 
       case (false, true) =>
-        ClassifierUtils.LoadClassifier(SRLConfigurator.SRL_JAR_MODEL_PATH.value + "/model_cTr", argumentTypeLearner)
+        ClassifierUtils.LoadClassifier(SRLConfigurator.SRL_JAR_MODEL_PATH.value + "/models_aTr/", argumentTypeLearner)
         argTypeConstraintClassifier.test(outputGranularity = 100, exclude = "candidate")
 
       case (false, false) =>
-        ClassifierUtils.LoadClassifier(SRLConfigurator.SRL_JAR_MODEL_PATH.value + "/model_aTr", argumentTypeLearner)
+        ClassifierUtils.LoadClassifier(SRLConfigurator.SRL_JAR_MODEL_PATH.value + "/models_aTr/", argumentTypeLearner)
         argumentTypeLearner.test(exclude = "candidate")
     }
   }

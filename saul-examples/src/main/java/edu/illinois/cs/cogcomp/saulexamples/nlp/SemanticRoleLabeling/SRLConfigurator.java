@@ -12,8 +12,12 @@ import edu.illinois.cs.cogcomp.core.utilities.configuration.ResourceManager;
  * @author Christos Christodoulopoulos
  */
 public class SRLConfigurator extends Configurator {
+
     public static final Property TREEBANK_HOME = new Property("treebankHome", "./data/treebank");
     public static final Property PROPBANK_HOME = new Property("propbankHome","./data/propbank");
+
+    public static final Property TEST_SECTION = new Property("testSection","23");
+
 	public static final Property MODELS_DIR = new Property("modelsDir", "./models");
     public static final Property USE_CURATOR = new Property("useCurator", Configurator.FALSE);
 
@@ -21,7 +25,7 @@ public class SRLConfigurator extends Configurator {
     public static final Property RUN_MODE = new Property("runMode", Configurator.TRUE);
 
     // The training mode for the examples. Can be "pipeline", "joint", or "other"
-    public static final Property TRAINING_MODE = new Property("trainingMode", "pipeline");
+    public static final Property TRAINING_MODE = new Property("trainingMode", "joint");
 
     /*********** SRL PROPERTIES ***********/
     // The (sub)directory to store and retrieve the trained SRL models (to be used with MODELS_DIR)
@@ -40,13 +44,13 @@ public class SRLConfigurator extends Configurator {
     public static final Property SRL_GOLD_PREDICATES = new Property("srlGoldPredicates", Configurator.TRUE);
 
     // Whether to use gold argument boundaries (if FALSE, argumentXuIdentifierGivenApredicate will be used instead)
-    public static final Property SRL_GOLD_ARG_BOUNDARIES = new Property("srlGoldArgBoundaries", Configurator.FALSE);
+    public static final Property SRL_GOLD_ARG_BOUNDARIES = new Property("srlGoldArgBoundaries", Configurator.TRUE);
 
     // Should we use the pipeline during testing
     public static final Property SRL_TEST_PIPELINE = new Property("srlTestPipeLine", Configurator.FALSE);
 
     // Should we use constraints during testing
-    public static final Property SRL_TEST_CONSTRAINTS = new Property("srlTestConstraints", Configurator.TRUE);
+    public static final Property SRL_TEST_CONSTRAINTS = new Property("srlTestConstraints", Configurator.FALSE);
 
     // Should we train a predicate classifier given predicate candidates
     public static final Property SRL_TRAIN_PREDICATES = new Property("srlTrainPredicates", Configurator.FALSE);
@@ -62,7 +66,7 @@ public class SRLConfigurator extends Configurator {
         Property[] properties = {TREEBANK_HOME, PROPBANK_HOME, MODELS_DIR, USE_CURATOR, TRAINING_MODE,
                 SRL_MODEL_DIR, SRL_PARSE_VIEW, SRL_OUTPUT_FILE, SRL_GOLD_PREDICATES, SRL_GOLD_ARG_BOUNDARIES,
                 SRL_TEST_PIPELINE, SRL_TEST_CONSTRAINTS,SRL_JAR_MODEL_PATH, RUN_MODE, SRL_TRAIN_PREDICATES,
-                SRL_TRAIN_ARG_IDENTIFIERS,SRL_TRAIN_ARG_TYPE};
+                SRL_TRAIN_ARG_IDENTIFIERS,SRL_TRAIN_ARG_TYPE,TEST_SECTION};
         return new ResourceManager(generateProperties(properties));
     }
 }

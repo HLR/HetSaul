@@ -23,10 +23,9 @@ import scala.collection.JavaConversions._
   */
 object PopulateSRLDataModel {
 
-  def apply[T <: AnyRef](testOnly: Boolean = false, useGoldPredicate: Boolean = false, useGoldArgBoundaries: Boolean = false): SRLMultiGraphDataModel = {
+  def apply[T <: AnyRef](testOnly: Boolean = false, useGoldPredicate: Boolean = false, useGoldArgBoundaries: Boolean = false, rm : ResourceManager= new SRLConfigurator().getDefaultConfig ): SRLMultiGraphDataModel = {
 
     val logger: Logger = LoggerFactory.getLogger(this.getClass)
-    val rm = new SRLConfigurator().getDefaultConfig
     val frameManager: SRLFrameManager = new SRLFrameManager(rm.getString(SRLConfigurator.PROPBANK_HOME.key))
 
     val useCurator = rm.getBoolean(SRLConfigurator.USE_CURATOR)
@@ -89,7 +88,7 @@ object PopulateSRLDataModel {
     }
 
     val trainingFromSection = 2
-    val trainingToSection = 21
+    val trainingToSection = 2
     var gr: SRLMultiGraphDataModel = null
     if (!testOnly) {
       logger.info("Reading training data from sections {} to {}", trainingFromSection, trainingToSection)
@@ -100,7 +99,7 @@ object PopulateSRLDataModel {
       )
       trainReader.readData()
       logger.info("Annotating {} training sentences", trainReader.textAnnotations.size)
-      val filteredTa = addViewAndFilter(trainReader.textAnnotations.toList)
+      val filteredTa = addViewAndFilter(trainReader.textAnnotations.toList).slice(0,10)
       printNumbers(trainReader, "training")
       logger.info("Populating SRLDataModel with training data.")
 
@@ -126,7 +125,7 @@ object PopulateSRLDataModel {
           if (graphs.sentences().size % 1000 == 0) logger.info("loaded graphs in memory:" + graphs.sentences().size)
         })
     }
-    val testSection = 23
+    val testSection = rm.getInt(SRLConfigurator.TEST_SECTION)
     val testReader = new SRLDataReader(
       rm.getString(SRLConfigurator.TREEBANK_HOME.key),
       rm.getString(SRLConfigurator.PROPBANK_HOME.key),
@@ -136,7 +135,7 @@ object PopulateSRLDataModel {
     testReader.readData()
 
     logger.info("Annotating {} test sentences", testReader.textAnnotations.size)
-    val filteredTest = addViewAndFilter(testReader.textAnnotations.toList)
+    val filteredTest = addViewAndFilter(testReader.textAnnotations.toList).slice(0,20)
 
     printNumbers(testReader, "test")
 
