@@ -162,12 +162,13 @@ abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val onClassifi
 
   def test(testData: Iterable[T] = null, outFile: String = null, outputGranularity: Int = 0, exclude: String = ""): List[(String, (Double, Double, Double))] = {
     println()
-      val testReader = new LBJIteratorParserScala[T]( if (testData == null)
+    val testReader = new LBJIteratorParserScala[T](if (testData == null)
       onClassifier match {
-        case clf: Learnable[T] => clf.node.getTestingInstances.asInstanceOf[Iterable[T]]
-        case _ => println("ERROR: pathToHead is not provided and the onClassifier is not a Learnable!"); Nil
+      case clf: Learnable[T] => clf.node.getTestingInstances.asInstanceOf[Iterable[T]]
+      case _ => println("ERROR: pathToHead is not provided and the onClassifier is not a Learnable!"); Nil
 
-     } else testData)
+    }
+    else testData)
     testReader.reset()
     val tester: TestDiscrete = new TestDiscrete()
     TestWithStorage.test(tester, classifier, onClassifier.getLabeler, testReader, outFile, outputGranularity, exclude)

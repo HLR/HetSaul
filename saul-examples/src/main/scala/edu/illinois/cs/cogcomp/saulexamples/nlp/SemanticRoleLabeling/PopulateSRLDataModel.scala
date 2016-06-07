@@ -23,7 +23,7 @@ import scala.collection.JavaConversions._
   */
 object PopulateSRLDataModel {
 
-  def apply[T <: AnyRef](testOnly: Boolean = false, useGoldPredicate: Boolean = false, useGoldArgBoundaries: Boolean = false, rm : ResourceManager= new SRLConfigurator().getDefaultConfig ): SRLMultiGraphDataModel = {
+  def apply[T <: AnyRef](testOnly: Boolean = false, useGoldPredicate: Boolean = false, useGoldArgBoundaries: Boolean = false, rm: ResourceManager = new SRLConfigurator().getDefaultConfig): SRLMultiGraphDataModel = {
 
     val logger: Logger = LoggerFactory.getLogger(this.getClass)
     val frameManager: SRLFrameManager = new SRLFrameManager(rm.getString(SRLConfigurator.PROPBANK_HOME.key))
@@ -99,7 +99,7 @@ object PopulateSRLDataModel {
       )
       trainReader.readData()
       logger.info("Annotating {} training sentences", trainReader.textAnnotations.size)
-      val filteredTa = addViewAndFilter(trainReader.textAnnotations.toList).slice(0,10)
+      val filteredTa = addViewAndFilter(trainReader.textAnnotations.toList).slice(0, 10)
       printNumbers(trainReader, "training")
       logger.info("Populating SRLDataModel with training data.")
 
@@ -135,7 +135,7 @@ object PopulateSRLDataModel {
     testReader.readData()
 
     logger.info("Annotating {} test sentences", testReader.textAnnotations.size)
-    val filteredTest = addViewAndFilter(testReader.textAnnotations.toList).slice(0,20)
+    val filteredTest = addViewAndFilter(testReader.textAnnotations.toList).slice(0, 20)
 
     printNumbers(testReader, "test")
 

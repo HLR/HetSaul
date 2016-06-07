@@ -1,14 +1,14 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling
 
-import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{Constituent, Relation}
+import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{ Constituent, Relation }
 import edu.illinois.cs.cogcomp.lbjava.learn.SparseAveragedPerceptron
-import edu.illinois.cs.cogcomp.saul.classifier.{Learnable, SparseNetworkLBP}
+import edu.illinois.cs.cogcomp.saul.classifier.{ Learnable, SparseNetworkLBP }
 import edu.illinois.cs.cogcomp.saul.datamodel.property.Property
 
 /** Created by Parisa on 12/30/15.
   */
 object SRLClassifiers {
- import SRLApps.srlGraphs._
+  import SRLApps.srlGraphs._
   //TODO This needs to be overriden by the user; change it to be dynamic
   val parameters = new SparseAveragedPerceptron.Parameters()
   object predicateClassifier extends Learnable[Constituent](predicates, parameters) {
