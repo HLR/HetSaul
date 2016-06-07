@@ -22,6 +22,12 @@ Output with srl labels:
  (covers, Associated-Press) [A1]
  (covers, Seattle) [AM-PNC]
 
+## Application Structure
+Similar to other applications in Saul, here also we have a datamodel in file `SRLMultiGraphDataModel`, a bunch of single classifier definitions in file `SRLClassifires`, a bunch of constraints to be used by global models during either training or test in file `SRLConstraints`, a bunch of constraied classifiers in file SRLConstrainedClassifiers and the running configurations that are all placed in one file called `SRLApp`.
+For using the reader and populating data there is a program in file `PopulateSRLDataModel`.
+In contrast to other Saul applications this data model has been defined as a class instead of as an object. The reason is the effciency of the population of the data model, we skip the details of this implementation choice.
+However, when making this choice we should be aware that the populated object by the data should be the same as the object that is imported to the Classifiers declaration file.
+   
 There are various machine learning models to solve this including pipelines, learning only models (LO), learning plus inference models (L+I)
  and Joint Learning models (IBT).
 
