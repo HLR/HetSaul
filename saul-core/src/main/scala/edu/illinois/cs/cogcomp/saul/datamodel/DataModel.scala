@@ -170,7 +170,7 @@ trait DataModel {
       map
     }
 
-    def getOrUpdate(input: T, f: (T) => Any): Any = propertyCacheMap.getOrElseUpdate(input, f(input))
+    def getOrUpdate(input: T, f: T => Any): Any = propertyCacheMap.getOrElseUpdate(input, f(input))
 
     def apply(f: T => Boolean)(implicit tag: ClassTag[T]): BooleanProperty[T] = {
       def cachedF = if (cache) { x: T => getOrUpdate(x, f).asInstanceOf[Boolean] } else f
@@ -335,27 +335,5 @@ trait DataModel {
     in.close()
 
     hasDerivedInstances = true
-  }
-}
-
-object dataModelJsonInterface {
-  def getJson(dm: DataModel): String = {
-    val declaredFields = dm.getClass.getDeclaredFields
-
-    val nodes = declaredFields.filter(_.getType.getSimpleName == "Node")
-    val edges = declaredFields.filter(_.getType.getSimpleName == "Edge")
-    val properties = declaredFields.filter(_.getType.getSimpleName.contains("Property")).filterNot(_.getName.contains("$module"))
-
-    import play.api.libs.json._
-
-    val json: JsValue = JsObject(Seq(
-      "nodes" -> JsArray(nodes.map(node => JsString(node.getName))),
-      "edges" -> JsArray(edges.map(edge => JsString(edge.getName))),
-      "properties" -> JsArray(properties.map(prop => JsString(prop.getName)))
-    ))
-
-    println(json.toString())
-
-    json.toString()
   }
 }
