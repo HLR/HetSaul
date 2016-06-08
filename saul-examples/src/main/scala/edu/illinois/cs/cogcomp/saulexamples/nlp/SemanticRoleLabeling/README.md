@@ -27,11 +27,21 @@ Similar to other applications in Saul, here also we have a datamodel in file `SR
 For using the reader and populating data there is a program in file `PopulateSRLDataModel`.
 In contrast to other Saul applications this data model has been defined as a class instead of as an object. The reason is the effciency of the population of the data model, we skip the details of this implementation choice.
 However, when making this choice we should be aware that the populated object by the data should be the same as the object that is imported to the Classifiers declaration file.
+Since the data model class has been parametrized, to avoid creating new objects when using different parameters, the data model can be rewritten in a way that the properties are parametrized rather than the data model itself, in this case the properties which use framenet frames can recieve it as a parameter individually.
+We reffer the reader to see an example of defining such parametrized properties alongwith Learnable classes rather than Learnable objects in DrugResponse example of KnowEng data model in SaulExamples package.
    
 There are various machine learning models to solve this including pipelines, learning only models (LO), learning plus inference models (L+I)
  and Joint Learning models (IBT).
+ The test units and SRLApp are runnable on a sample `srlToy` folder in `resources` due to the licencing issues of the full dataset. If you have access to propbank data, you could use the following setting in the `SRLConfigurator`.
 
+ ```scala
+   public static final Property TREEBANK_HOME = new Property("treebankHome", "./data/treebank");
+   public static final Property PROPBANK_HOME = new Property("propbankHome","./data/propbank");
+   public static final Property TEST_SECTION = new Property("testSection","23");
+```
+For the results reported in this document, the training is done on folders 2-21 of probbank data and test on the folder 23.
 We have designed a number of configurations and the trained models which are packaged and can be tested.
+
 Here, we describe the configurations accompanied in this package and the results that you should get but using those models.
 Pred.: Predicate Cand.: Candidate
 
