@@ -59,7 +59,7 @@ class TestTextAnnotationBasedEdges extends FlatSpec with Matchers {
   relations.populate(XuPalmerCandidateArgsTraining)
 
   "predicates size" should "be same as predicates connected to relations" in {
-  predicates().size should be((relations() ~> relationsToPredicates).size)
-}
+    predicates().size should be((relations() ~> relationsToPredicates).size)
+  }
 }
 
