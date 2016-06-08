@@ -37,15 +37,15 @@ class ModelsTest extends FlatSpec with Matchers {
       }
     }
   }
-  "argument identifier (bTr)" should "work." in {
+  "argument identifier (bTr)" should "perform higher than 0.95." in {
     ClassifierUtils.LoadClassifier(SRLConfigurator.SRL_JAR_MODEL_PATH.value + "/models_bTr/", argumentXuIdentifierGivenApredicate)
     val scores = argumentXuIdentifierGivenApredicate.test()
     scores.foreach {
       case (label, score) =>
-        label match { case "true" => (score._1 >= 0.99) should be(true) }
+        label match { case "true" => (score._1 >= 0.95) should be(true) }
     }
   }
-  "argument identifier (cTr) trained with XuPalmer" should "work." in {
+  "argument identifier (cTr) trained with XuPalmer" should "perform higher than 0.9." in {
     ClassifierUtils.LoadClassifier(SRLConfigurator.SRL_JAR_MODEL_PATH.value + "/models_cTr/", argumentTypeLearner)
     val scores = argumentTypeLearner.test()
     scores.foreach {
