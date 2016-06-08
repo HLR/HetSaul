@@ -10,9 +10,6 @@ class JoinTest extends FlatSpec with Matchers {
       val na = node[String]
       val nb = node[String]
       val nj = join(na, nb)(_.charAt(0) == _.charAt(0))
-      val pj = property(na, "pj") {
-        x: String => ""
-      }
     }
 
     import TestObject._

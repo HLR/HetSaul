@@ -9,14 +9,13 @@ import edu.illinois.cs.cogcomp.saul.classifier.{ ConstrainedClassifier, Learnabl
 import edu.illinois.cs.cogcomp.saul.constraint.ConstraintTypeConversion._
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
 import edu.illinois.cs.cogcomp.saulexamples.nlp.CommonSensors._
+import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLClassifiers.argumentTypeLearner
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLSensors._
-import edu.illinois.cs.cogcomp.saul.classifier.ClassifierUtils
 import org.scalatest.{ FlatSpec, Matchers }
 
 import scala.collection.JavaConversions._
 
 class ConstraintsTest extends FlatSpec with Matchers {
-
   object TestTextAnnotation extends DataModel {
     val predicates = node[Constituent]((x: Constituent) => x.getTextAnnotation.getCorpusId + ":" + x.getTextAnnotation.getId + ":" + x.getSpan)
 
@@ -52,14 +51,69 @@ class ConstraintsTest extends FlatSpec with Matchers {
       r: Relation => r.getRelationName
     }
   }
+
   import TestTextAnnotation._
+
   object ArgumentTypeLearner extends Learnable[Relation](relations) {
     def label = argumentLabelGold
+
     override lazy val classifier = new SparseNetworkLBP()
   }
 
   object TestConstraints {
-    import TestTextAnnotation._
+
+    val r_arg_Constraint = ConstrainedClassifier.constraint[TextAnnotation] {
+      var a: FirstOrderConstraint = null
+      x: TextAnnotation => {
+        a = new FirstOrderConstant(true)
+        val values = Array("R-A1", "R-A2", "R-A3", "R-A4", "R-A5", "R-AA", "R-AM-ADV", "R-AM-CAU", "R-AM-EXT", "R-AM-LOC", "R-AM-MNR", "R-AM-PNC")
+        (sentences(x) ~> sentencesToRelations ~> relationsToPredicates).foreach {
+          y =>
+            {
+              val argCandList = (predicates(y) ~> -relationsToPredicates).toList
+              argCandList.foreach {
+                t: Relation =>
+                  {
+                    for (i <- 0 until values.length)
+                      a = a and new FirstOrderConstant((argumentTypeLearner.classifier.getLabeler.discreteValue(t).equals(values(i)))) ==>
+                        argCandList.filterNot(x => x.equals(t))._exists {
+                          k: Relation => new FirstOrderConstant((argumentTypeLearner.classifier.getLabeler.discreteValue(k)).equals(values(i).substring(2)))
+                        }
+                  }
+                  a
+              }
+            }
+        }
+      }
+      a
+    } // end r-arg constraint
+
+    val c_arg_Constraint = ConstrainedClassifier.constraint[TextAnnotation] {
+      var a: FirstOrderConstraint = null
+      x: TextAnnotation => {
+        a = new FirstOrderConstant(true)
+        val values = Array("C-A1", "C-A2", "C-A3", "C-A4", "C-A5", "C-AA", "C-AM-DIR", "C-AM-LOC", "C-AM-MNR", "C-AM-NEG", "C-AM-PNC")
+        (sentences(x) ~> sentencesToRelations ~> relationsToPredicates).foreach {
+          y =>
+            {
+              val argCandList = (predicates(y) ~> -relationsToPredicates).toList
+              val sortedCandidates = argCandList.sortBy(x => x.getTarget.getStartSpan)
+              sortedCandidates.zipWithIndex.foreach {
+                case (t, ind) => {
+                  if (ind > 0)
+                    for (i <- 0 until values.length)
+                      a = a and new FirstOrderConstant((argumentTypeLearner.classifier.getLabeler.discreteValue(t).equals(values(i)))) ==>
+                        sortedCandidates.subList(0, ind)._exists {
+                          k: Relation => new FirstOrderConstant((argumentTypeLearner.classifier.getLabeler.discreteValue(k)).equals(values(i).substring(2)))
+                        }
+                }
+              }
+            }
+        }
+      }
+      a
+    }
+
     val noDuplicate = ConstrainedClassifier.constraint[TextAnnotation] {
       // Predicates have at most one argument of each type i.e. there shouldn't be any two arguments with the same type for each predicate
       val values = Array("A0", "A1", "A2", "A3", "A4", "A5", "AA")
@@ -71,11 +125,9 @@ class ConstraintsTest extends FlatSpec with Matchers {
             {
               val argCandList = (predicates(y) ~> -relationsToPredicates).toList
               for (t1 <- 0 until argCandList.size - 1) {
-                val b = new FirstOrderConstant(values.contains(ArgumentTypeLearner.classifier.getLabeler.discreteValue(argCandList.get(t1))))
                 for (t2 <- t1 + 1 until argCandList.size) {
-                  a = a and new FirstOrderConstant(!ArgumentTypeLearner.classifier.getLabeler.discreteValue(argCandList.get(t1)).equals(ArgumentTypeLearner.classifier.getLabeler.discreteValue(argCandList.get(t2))))
+                  a = a and (new FirstOrderConstant(values.contains(argumentTypeLearner.classifier.getLabeler.discreteValue(argCandList.get(t1)))) ==> new FirstOrderConstant(argumentTypeLearner.classifier.getLabeler.discreteValue(argCandList.get(t1)).ne(argumentTypeLearner.classifier.getLabeler.discreteValue(argCandList.get(t2)))))
                 }
-                a = (b ==> a)
               }
             }
         }
@@ -86,8 +138,9 @@ class ConstraintsTest extends FlatSpec with Matchers {
 
   val viewsToAdd = Array(ViewNames.LEMMA, ViewNames.POS, ViewNames.SHALLOW_PARSE, ViewNames.PARSE_GOLD, ViewNames.SRL_VERB)
   val ta: TextAnnotation = DummyTextAnnotationGenerator.generateAnnotatedTextAnnotation(viewsToAdd, true)
-  import TestTextAnnotation._
+
   import TestConstraints._
+  import TestTextAnnotation._
   sentencesToTokens.addSensor(textAnnotationToTokens _)
   sentences.populate(Seq(ta))
   val predicateTrainCandidates = tokens.getTrainingInstances.filter((x: Constituent) => posTag(x).startsWith("IN"))
@@ -97,14 +150,20 @@ class ConstraintsTest extends FlatSpec with Matchers {
   sentencesToRelations.addSensor(textAnnotationToRelationMatch _)
   relations.populate(XuPalmerCandidateArgsTraining)
 
-  ClassifierUtils.LoadClassifier(SRLConfigurator.SRL_JAR_MODEL_PATH.value + "models/models_fTr/", ArgumentTypeLearner)
   "manually defined has codes" should "avoid duplications in edges and reverse edges" in {
     predicates().size should be((relations() ~> relationsToPredicates).size)
     (predicates() ~> -relationsToPredicates).size should be(relations().size)
     (predicates(predicates().head) ~> -relationsToPredicates).size should be(4)
   }
 
-  "this constraint" should "be true" in {
+  "the no duplicate constraint" should "be true" in {
     noDuplicate(ta).evaluate() should be(true)
+  }
+  "the r-arg constraint" should "be true" in {
+    r_arg_Constraint(ta).evaluate() should be(true)
+  }
+
+  "the c-arg constraint" should "be true" in {
+    c_arg_Constraint(ta).evaluate() should be(true)
   }
 }

@@ -8,21 +8,22 @@ import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLClassifi
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLConstrainedClassifiers.argTypeConstraintClassifier
 import org.slf4j.{ Logger, LoggerFactory }
 
-object SRLApps extends App {
-
+object SRLApps {
+  import SRLConfigurator._
   val logger: Logger = LoggerFactory.getLogger(this.getClass)
   logger.isInfoEnabled
+
   val properties: ResourceManager = {
     // Load the default properties if the user hasn't entered a file as an argument
-    if (args.length == 0) {
-      logger.info("Loading default configuration parameters")
-      new SRLConfigurator().getDefaultConfig
-    } else {
-      logger.info("Loading parameters from {}", args(0))
-      new SRLConfigurator().getConfig(new ResourceManager(args(0)))
-    }
+    //if (args.length == 0) {
+    logger.info("Loading default configuration parameters")
+    new SRLConfigurator().getDefaultConfig
+    //} else {
+    // logger.info("Loading parameters from {}", args(0))
+    //new SRLConfigurator().getConfig(new ResourceManager(args(0)))
+    // }
   }
-  val modelDir = properties.getString(SRLConfigurator.MODELS_DIR) +
+  val modelDir = properties.getString(MODELS_DIR) +
     File.separator + properties.getString(SRLConfigurator.SRL_MODEL_DIR) + File.separator
   val srlPredictionsFile = properties.getString(SRLConfigurator.SRL_OUTPUT_FILE)
   val runningMode = properties.getBoolean(SRLConfigurator.RUN_MODE)
@@ -60,14 +61,20 @@ object SRLApps extends App {
   logger.info("population starts.")
 
   // Here, the data is loaded into the graph
-  val srlGraphs = PopulateSRLDataModel(testOnly = runningMode, useGoldPredicate, useGoldBoundaries)
-  import srlGraphs._
-  logger.info("all relations number after population:" + srlGraphs.relations().size)
-  logger.info("all sentences number after population:" + srlGraphs.sentences().size)
-  logger.info("all predicates number after population:" + srlGraphs.predicates().size)
-  logger.info("all arguments number after population:" + srlGraphs.arguments().size)
-  logger.info("all tokens number after population:" + srlGraphs.tokens().size)
+  val srlDataModelObject = PopulateSRLDataModel(testOnly = runningMode, useGoldPredicate, useGoldBoundaries)
 
+  import srlDataModelObject._
+
+  logger.info("all relations number after population:" + relations().size)
+  logger.info("all sentences number after population:" + sentences().size)
+  logger.info("all predicates number after population:" + predicates().size)
+  logger.info("all arguments number after population:" + arguments().size)
+  logger.info("all tokens number after population:" + tokens().size)
+
+}
+object RunningApps extends App {
+  import SRLApps._
+  import SRLApps.srlDataModelObject._
   // TRAINING
   if (!runningMode) {
     expName match {
@@ -137,9 +144,9 @@ object SRLApps extends App {
         argumentTypeLearner.modelDir = modelDir + expName
         val outputFile = modelDir + srlPredictionsFile
         logger.info("Global training... ")
-        JointTrainSparseNetwork(srlGraphs.sentences, argTypeConstraintClassifier :: Nil, 100)
+        JointTrainSparseNetwork(sentences, argTypeConstraintClassifier :: Nil, 100)
         argumentTypeLearner.save()
-        argTypeConstraintClassifier.test(srlGraphs.relations.getTestingInstances, outputFile, 200, exclude = "candidate")
+        argTypeConstraintClassifier.test(relations.getTestingInstances, outputFile, 200, exclude = "candidate")
     }
   }
   // TESTING

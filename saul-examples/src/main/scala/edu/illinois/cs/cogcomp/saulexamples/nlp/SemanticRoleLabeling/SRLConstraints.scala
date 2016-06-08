@@ -6,7 +6,7 @@ import edu.illinois.cs.cogcomp.lbjava.infer.{ FirstOrderConstant, FirstOrderCons
 import edu.illinois.cs.cogcomp.saul.classifier.ConstrainedClassifier
 import edu.illinois.cs.cogcomp.saul.constraint.ConstraintTypeConversion._
 import edu.illinois.cs.cogcomp.saulexamples.data.XuPalmerCandidateGenerator
-import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLApps.srlGraphs._
+import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLApps.srlDataModelObject._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLClassifiers.{ argumentTypeLearner, argumentXuIdentifierGivenApredicate, predicateClassifier }
 
 import scala.collection.JavaConversions._
@@ -39,7 +39,6 @@ object SRLConstraints {
   } //end of NoOverlap constraint
 
   val arg_IdentifierClassifier_Constraint = ConstrainedClassifier.constraint[Relation] {
-
     x: Relation =>
       {
         (argumentXuIdentifierGivenApredicate on x isNotTrue) ==>
@@ -56,9 +55,7 @@ object SRLConstraints {
   }
 
   val r_arg_Constraint = ConstrainedClassifier.constraint[TextAnnotation] {
-
     var a: FirstOrderConstraint = null
-
     x: TextAnnotation => {
       a = new FirstOrderConstant(true)
       val values = Array("R-A1", "R-A2", "R-A3", "R-A4", "R-A5", "R-AA", "R-AM-ADV", "R-AM-CAU", "R-AM-EXT", "R-AM-LOC", "R-AM-MNR", "R-AM-PNC")

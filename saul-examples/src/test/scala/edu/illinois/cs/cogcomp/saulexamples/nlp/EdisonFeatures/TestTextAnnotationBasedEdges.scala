@@ -50,14 +50,16 @@ class TestTextAnnotationBasedEdges extends FlatSpec with Matchers {
   val gr = new TestTextAnnotation
   import gr._
   sentencesToTokens.addSensor(textAnnotationToTokens _)
-  sentences.populate(Seq(ta))
+  sentences.addInstance(ta)
   val predicateTrainCandidates = tokens.getTrainingInstances.filter((x: Constituent) => posTag(x).startsWith("IN"))
-    .map(c => c.cloneForNewView(ViewNames.SRL_VERB))
+    .map(_.cloneForNewView(ViewNames.SRL_VERB))
   predicates.populate(predicateTrainCandidates)
   val XuPalmerCandidateArgsTraining = predicates.getTrainingInstances.flatMap(x => xuPalmerCandidate(x, (sentences(x.getTextAnnotation) ~> gr.sentencesToStringTree).head))
   sentencesToRelations.addSensor(textAnnotationToRelationMatch _)
   relations.populate(XuPalmerCandidateArgsTraining)
 
+  "predicates size" should "be same as predicates connected to relations" in {
   predicates().size should be((relations() ~> relationsToPredicates).size)
+}
 }
 
