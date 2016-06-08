@@ -36,6 +36,9 @@ object ClassifierUtils {
     }
 
     def apply(iter: Integer, c: (Learnable[_])*)(implicit d1: DummyImplicit, d2: DummyImplicit) = {
+      apply(iter, c.toSeq)
+    }
+    def apply(iter: Integer, c: Seq[Learnable[_]])(implicit d1: DummyImplicit, d2: DummyImplicit) = {
       c.foreach { learner =>
         println(evalSeparator)
         println("Training " + learner.getClassSimpleNameForClassifier)
@@ -69,16 +72,10 @@ object ClassifierUtils {
     }
 
     def apply(c: Learnable[_]*)(implicit d1: DummyImplicit, d2: DummyImplicit): Seq[List[(String, (Double, Double, Double))]] = {
-      val testResults = c.map { learner =>
-        println(evalSeparator)
-        println("Evaluating " + learner.getClassSimpleNameForClassifier)
-        learner.test()
-      }
-      println(evalSeparator)
-      testResults
+      apply(c.toSeq)
     }
 
-    def apply(c: List[Learnable[_]])(implicit d1: DummyImplicit, d2: DummyImplicit): Seq[List[(String, (Double, Double, Double))]] = {
+    def apply(c: Seq[Learnable[_]])(implicit d1: DummyImplicit, d2: DummyImplicit): Seq[List[(String, (Double, Double, Double))]] = {
       val testResults = c.map { learner =>
         println(evalSeparator)
         println("Evaluating " + learner.getClassSimpleNameForClassifier)

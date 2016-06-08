@@ -76,12 +76,11 @@ object KnowEngDataModel extends DataModel {
 
   //val genesGroupedPerPathway2 = SGroupBy(genes, gene_KEGG, geneName)
   val pathWayGExpression = (pathway: String) => property(patientDrug, ordered = true) {
-    x: PatientDrug =>
+    pd: PatientDrug =>
       val myPathwayGenes = genesGroupedPerPathway.get(pathway) // ("hsa01040")
-      var a = this.patientGene().filter(y => x.pid == y.sample_ID).filter(x => myPathwayGenes.contains(x.Gene_ID)).map(x => x.gExpression).asInstanceOf[List[Double]]
+      val a = this.patientGene().filter(y => pd.pid == y.sample_ID).filter(x => myPathwayGenes.contains(x.Gene_ID)).map(x => x.gExpression).asInstanceOf[List[Double]]
       a
   }
-
   // val pathwayNeighbors = genesGroupedPerPathway3.get("hsa01040").foreach(gen => if (((genes(gen)~> -geneGenes) prop PPIBioGrid).equals(1)) {})
   //  val pathwayNeighbors4 = genesGroupedPerPathway3.get("hsa01040").map(
   //      gen =>
