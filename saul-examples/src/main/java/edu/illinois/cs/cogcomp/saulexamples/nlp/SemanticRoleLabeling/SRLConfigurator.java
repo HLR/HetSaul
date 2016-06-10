@@ -31,7 +31,7 @@ public class SRLConfigurator extends Configurator {
     // The (sub)directory to store and retrieve the trained SRL models (to be used with MODELS_DIR)
     public static final Property SRL_MODEL_DIR = new Property("srlModelDir", "srl");
 
-    public static final Property SRL_JAR_MODEL_PATH = new Property("jarModelPath","/models");
+    public static final Property SRL_JAR_MODEL_PATH = new Property("jarModelPath","models");
 
     // This is used to determine the parse view in SRL experiments (can be ViewNames.GOLD or ViewNames.STANFORD)
     // For replicating the published experiments this needs to be GOLD
