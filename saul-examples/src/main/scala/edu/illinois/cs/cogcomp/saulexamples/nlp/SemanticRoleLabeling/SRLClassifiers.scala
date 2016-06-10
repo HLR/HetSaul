@@ -18,7 +18,7 @@ object SRLClassifiers {
     override def feature = using(posTag, subcategorization, phraseType, headword, voice, verbClass, predPOSWindow, predWordWindow)
     override lazy val classifier = new SparsePerceptron()
   }
-
+  //This classifier has not been used in our current models
   object predicateSenseClassifier extends Learnable[Constituent](predicates, parameters) {
     def label = predicateSenseGold
     override lazy val classifier = new SparseNetworkLBP
