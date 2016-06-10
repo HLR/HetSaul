@@ -25,6 +25,7 @@ class ModelsTest extends FlatSpec with Matchers {
     }
   }
   "L+I argument type classifier (aTr)" should "work." in {
+    ClassifierUtils.LoadClassifier(SRLConfigurator.SRL_JAR_MODEL_PATH.value + "/models_aTr/", argumentTypeLearner)
     val scores = argTypeConstraintClassifier.test(exclude = "candidate")
     scores.foreach {
       case (label, score) => {
