@@ -1,7 +1,7 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling
 
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{ Constituent, Relation }
-import edu.illinois.cs.cogcomp.lbjava.learn.SparseAveragedPerceptron
+import edu.illinois.cs.cogcomp.lbjava.learn.{ SparsePerceptron, SparseAveragedPerceptron }
 import edu.illinois.cs.cogcomp.saul.classifier.{ Learnable, SparseNetworkLBP }
 import edu.illinois.cs.cogcomp.saul.datamodel.property.Property
 
@@ -16,7 +16,7 @@ object SRLClassifiers {
     //TODO These are not used during Learner's initialization
     def label: Property[Constituent] = isPredicateGold
     override def feature = using(posTag, subcategorization, phraseType, headword, voice, verbClass, predPOSWindow, predWordWindow)
-    override lazy val classifier = new SparseNetworkLBP
+    override lazy val classifier = new SparsePerceptron()
   }
 
   object predicateSenseClassifier extends Learnable[Constituent](predicates, parameters) {

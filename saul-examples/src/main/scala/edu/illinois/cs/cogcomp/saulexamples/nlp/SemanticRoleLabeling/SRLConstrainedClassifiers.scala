@@ -1,6 +1,7 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling
 
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{ Relation, TextAnnotation }
+import edu.illinois.cs.cogcomp.lbjava.infer.OJalgoHook
 import edu.illinois.cs.cogcomp.saul.classifier.ConstrainedClassifier
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLClassifiers.{ argumentTypeLearner, argumentXuIdentifierGivenApredicate }
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLConstraints._
@@ -9,17 +10,17 @@ import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLConstrai
   */
 object SRLConstrainedClassifiers {
   import SRLApps.srlDataModelObject._
-  //val erSolver = new OJalgoHook
+  val erSolver = new OJalgoHook
 
   object argTypeConstraintClassifier extends ConstrainedClassifier[Relation, TextAnnotation](argumentTypeLearner) {
     def subjectTo = r_and_c_args
-    // override val solver = erSolver
+    override val solver = erSolver
     override val pathToHead = Some(-sentencesToRelations)
   }
 
   object arg_Is_TypeConstraintClassifier extends ConstrainedClassifier[Relation, Relation](argumentTypeLearner) {
     def subjectTo = arg_IdentifierClassifier_Constraint
-    //  override val solver = erSolver
+    override val solver = erSolver
   }
 
   object arg_IdentifyConstraintClassifier extends ConstrainedClassifier[Relation, Relation](argumentXuIdentifierGivenApredicate) {

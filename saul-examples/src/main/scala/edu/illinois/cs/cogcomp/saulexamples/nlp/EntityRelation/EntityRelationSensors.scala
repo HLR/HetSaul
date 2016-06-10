@@ -6,8 +6,8 @@ import edu.illinois.cs.cogcomp.saulexamples.EntityMentionRelation.reader.{ Conll
 import scala.collection.JavaConverters._
 
 object EntityRelationSensors {
-  val path = "./data/"
-  val resourcePath = "./saul-examples/src/main/resources/EntityMentionRelation/"
+  val path = "../data/"
+  val resourcePath = "../saul-examples/src/main/resources/EntityMentionRelation/"
 
   // Create single instances of Gazeteers and cache then with the object.
   lazy val cityGazetSensor = new GazeteerReader("gazeteer/known_city.lst", "Gaz:City", true, true)
