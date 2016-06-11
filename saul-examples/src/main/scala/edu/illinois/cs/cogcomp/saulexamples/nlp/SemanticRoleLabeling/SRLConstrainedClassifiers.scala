@@ -25,7 +25,7 @@ object SRLConstrainedClassifiers {
 
   object arg_IdentifyConstraintClassifier extends ConstrainedClassifier[Relation, Relation](argumentXuIdentifierGivenApredicate) {
     def subjectTo = arg_IdentifierClassifier_Constraint
-    // override val solver = erSolver
+    override val solver = erSolver
   }
 
 }
