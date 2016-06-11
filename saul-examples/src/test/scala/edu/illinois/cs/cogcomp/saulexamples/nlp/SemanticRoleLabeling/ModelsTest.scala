@@ -24,12 +24,12 @@ class ModelsTest extends FlatSpec with Matchers {
     }
   }
 
-  "predicate identifier (dTr)" should "perform higher than 0.00." in {
+  "predicate identifier (dTr)" should "perform higher than 0.98." in {
     ClassifierUtils.LoadClassifier(SRLConfigurator.SRL_JAR_MODEL_PATH.value + "/models_dTr/", predicateClassifier)
     val scores = predicateClassifier.test()
     scores.foreach {
       case (label, score) =>
-        label match { case "true" => (score._3 >= 0.00) should be(true) }
+        label match { case "true" => (score._1 >= 0.98) should be(true) }
     }
   }
 
