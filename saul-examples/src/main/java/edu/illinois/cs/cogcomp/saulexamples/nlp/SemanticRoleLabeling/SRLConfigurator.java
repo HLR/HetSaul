@@ -18,7 +18,7 @@ public class SRLConfigurator extends Configurator {
 
     public static final Property TEST_SECTION = new Property("testSection","00");
 
-	public static final Property MODELS_DIR = new Property("modelsDir", "../models");
+	public static final Property MODELS_DIR = new Property("modelsDir", "models");
     public static final Property USE_CURATOR = new Property("useCurator", Configurator.FALSE);
 
     // The running mode of the program. Can be "true" for only testing, or  "false" for training
