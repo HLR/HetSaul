@@ -24,7 +24,7 @@ Visit each link for its content
 
 
 ## Credits 
-_This project has been started by [Parisa Kordjamshidi](kordjam@illinois.edu) and the development has been done in collaboration with [Hao Wu](haowu4@illinois.edu)._
+_This project has been started by [Parisa Kordjamshidi](mailto:kordjam@illinois.edu) and the development has been done in collaboration with [Hao Wu](mailto:haowu4@illinois.edu), [Sameer Singh](mailto:sameer@cs.washington.edu), [Daniel Khashabi](mailto:khashab2@illinois.edu), [Christos Christodoulopoulos](mailto:christod@illinois.edu). 
 
 
 ## Licensing

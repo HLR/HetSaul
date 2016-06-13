@@ -2,6 +2,7 @@ package edu.illinois.cs.cogcomp.saul.classifier
 
 import edu.illinois.cs.cogcomp.lbjava.learn.{ Learner, LinearThresholdUnit }
 import edu.illinois.cs.cogcomp.saul.datamodel.node.Node
+import org.slf4j.{ Logger, LoggerFactory }
 
 import scala.reflect.ClassTag
 
@@ -9,6 +10,8 @@ import scala.reflect.ClassTag
   */
 object JointTrainSparseNetwork {
 
+  val logger: Logger = LoggerFactory.getLogger(this.getClass)
+  var difference = 0
   def apply[HEAD <: AnyRef](node: Node[HEAD], cls: List[ConstrainedClassifier[_, HEAD]])(implicit headTag: ClassTag[HEAD]) = {
     train[HEAD](node, cls, 1)
   }
@@ -20,21 +23,25 @@ object JointTrainSparseNetwork {
   @scala.annotation.tailrec
   def train[HEAD <: AnyRef](node: Node[HEAD], cls: List[ConstrainedClassifier[_, HEAD]], it: Int)(implicit headTag: ClassTag[HEAD]): Unit = {
     // forall members in collection of the head (dm.t) do
-    println("Training iteration: " + it)
-
+    logger.info("Training iteration: " + it)
     if (it == 0) {
       // Done
+      println("difference=", difference)
     } else {
       val allHeads = node.getTrainingInstances
-      allHeads foreach {
-        head =>
+      difference = 0
+      allHeads.zipWithIndex.foreach {
+        case (h, idx) =>
           {
+            if (idx % 5000 == 0)
+              logger.info(s"Training: $idx examples inferred.")
+
             cls.foreach {
               case classifier: ConstrainedClassifier[_, HEAD] =>
                 val typedClassifier = classifier.asInstanceOf[ConstrainedClassifier[_, HEAD]]
                 val oracle = typedClassifier.onClassifier.getLabeler
 
-                typedClassifier.getCandidates(head) foreach {
+                typedClassifier.getCandidates(h) foreach {
                   candidate =>
                     {
                       def trainOnce() = {

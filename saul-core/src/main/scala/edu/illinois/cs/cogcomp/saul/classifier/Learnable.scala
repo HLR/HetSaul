@@ -274,17 +274,13 @@ abstract class Learnable[T <: AnyRef](val node: Node[T], val parameters: Paramet
     * @param exclude it is the label that we want to exclude fro evaluation, this is useful for evaluating the multi-class classifiers when we need to measure overall F1 instead of accuracy and we need to exclude the negative class
     * @return List of (label, (f1, precision, recall))
     */
-  def test(testData: Iterable[T], prediction: Property[T] = null, groundTruth: Property[T] = null, exclude: String = ""): List[(String, (Double, Double, Double))] = {
+  def test(testData: Iterable[T] = null, prediction: Property[T] = null, groundTruth: Property[T] = null, exclude: String = ""): List[(String, (Double, Double, Double))] = {
     isTraining = false
-    val testReader = new LBJIteratorParserScala[T](testData)
+    val testReader = new LBJIteratorParserScala[T](if (testData == null) {
+      node.getTestingInstances
+    } else (testData))
     testReader.reset()
-    val tester = if (prediction == null && groundTruth == null)
-      TestDiscrete.testDiscrete(classifier, classifier.getLabeler, testReader)
-    else
-      TestDiscrete.testDiscrete(prediction.classifier, groundTruth.classifier, testReader)
-    if (!exclude.isEmpty) {
-      tester.addNull(exclude)
-    }
+    val tester = TestDiscrete.testDiscrete(classifier, classifier.getLabeler, testReader)
     tester.printPerformance(System.out)
     val ret = tester.getLabels.map { label => (label, (tester.getF1(label), tester.getPrecision(label), tester.getRecall(label))) }
     ret.toList

@@ -1,0 +1,81 @@
+wsj/00/wsj_0001.mrg 0 8 gold join.01 vf--a 0:2-ARG0 7:0-ARGM-MOD 8:0-rel 9:1-ARG1 11:1-ARGM-PRD 15:1-ARGM-TMP
+wsj/00/wsj_0001.mrg 1 10 gold publish.01 p---a 10:0-rel 11:0-ARG0
+wsj/00/wsj_0002.mrg 0 16 gold name.01 pp--p 16:0-rel 0:2*17:0-ARG1 18:2-ARG2
+wsj/00/wsj_0003.mrg 0 5 gold use.01 p---p 4:1-ARGM-TMP 5:0-rel 0:2*6:0-ARG1 7:2-ARG2-PNC
+wsj/00/wsj_0003.mrg 0 9 gold make.01 i---a 7:0-ARG0 9:0-rel 10:1-ARG1
+wsj/00/wsj_0003.mrg 0 14 gold cause.01 pnp3a 0:3-ARG0 14:0-rel 15:2-ARG1
+wsj/00/wsj_0003.mrg 0 26 gold expose.01 p---p 26:0-rel 28:1-ARG2-to 30:3-ARGM-TMP 22:1,24:0,25:1*27:0-ARG1
+wsj/00/wsj_0003.mrg 0 37 gold report.01 vp--a 36:1-ARG0 37:0-rel 0:4*39:0-ARG1
+wsj/00/wsj_0003.mrg 1 11 gold enter.01 vn-3a 10:1-ARG0 11:0-rel 12:1-ARG1
+wsj/00/wsj_0003.mrg 1 21 gold cause.01 p---a 16:2-ARG0 21:0-rel 22:2-ARG1
+wsj/00/wsj_0003.mrg 1 25 gold show.02 vn--a 22:1*23:1*24:0-ARG1 25:0,26:1-rel 27:2-ARGM-TMP
+wsj/00/wsj_0003.mrg 1 31 gold say.01 vp--a 30:1-ARG0 31:0-rel 0:3*33:0-ARG1
+wsj/00/wsj_0003.mrg 2 12 gold make.01 vn-3a 12:0-rel 13:1-ARG1 3:1,5:1*10:1*11:0-ARG0
+wsj/00/wsj_0003.mrg 2 16 gold stop.01 vp--a 0:2-ARG0 16:0-rel 17:0,18:1,19:1-ARG1 24:1-ARGM-TMP
+wsj/00/wsj_0003.mrg 2 17 gold use.01 g---- 0:2-ARG0 17:0-rel 18:1-ARG1 19:1-ARGM-LOC
+wsj/00/wsj_0003.mrg 3 4 gold report.01 pp--p 4:0-rel 1:1*5:0-ARG1 6:3-ARGM-TMP
+wsj/00/wsj_0003.mrg 3 15 gold appear.01 vn--a 0:1-ARGM-ADV 12:1-ARG1 15:0-rel 16:1-ARGM-LOC
+wsj/00/wsj_0003.mrg 3 30 gold bring.01 i---a 12:1*28:0-ARG0 30:0-rel 31:1-ARG1 33:1-ARG2-to
+wsj/00/wsj_0003.mrg 4 3 gold say.01 vp--a 0:1-ARG0 3:0-rel 6:2-ARG1
+wsj/00/wsj_0003.mrg 5 2 gold talk.01 pno-a 0:1-ARG0 2:0-rel 3:1-ARG1-about
+wsj/00/wsj_0003.mrg 5 8 gold hear.01 vp--a 7:1-ARG0 8:0-rel 9:1-ARG1-of
+wsj/00/wsj_0003.mrg 5 11 gold have.03 p---a 10:1-ARG0 11:0-rel 12:1-ARG1
+wsj/00/wsj_0003.mrg 7 7 gold study.01 vp--a 3:1*5:1*6:0-ARG0 7:0-rel 8:1-ARG1
+wsj/00/wsj_0003.mrg 8 2 gold have.03 vn--a 1:1-ARG0 2:0-rel 3:2-ARG1
+wsj/00/wsj_0003.mrg 8 14 gold say.01 vp--a 14:0-rel 1:2*15:0-ARG1 16:2-ARG0
+wsj/00/wsj_0003.mrg 9 2 gold lead.02 vp--a 0:1-ARG0 2:0-rel 3:2-ARG1
+wsj/00/wsj_0003.mrg 10 3 gold say.01 vp--a 0:1-ARG0 3:0-rel 4:1-ARG1
+wsj/00/wsj_0003.mrg 10 7 gold use.01 pp--p 7:0-rel 5:1*8:0-ARG1 9:1-ARGM-MNR 15:1-ARG2-in 22:1-ARGM-TMP
+wsj/00/wsj_0003.mrg 10 17 gold make.01 g---- 16:1-ARG0 17:0-rel 18:2-ARG1
+wsj/00/wsj_0003.mrg 10 27 gold replace.01 pp--p 27:0-rel 5:1*28:0-ARG1 29:1-ARG2-with 35:1-ARGM-TMP
+wsj/00/wsj_0003.mrg 11 13 gold sell.01 pp--p 13:0-rel 5:3*14:0-ARG1
+wsj/00/wsj_0003.mrg 11 18 gold say.01 vp--a 16:1-ARG0 18:0-rel 0:3*20:0-ARG1
+wsj/00/wsj_0003.mrg 12 5 gold work.01 vp--a 1:1*3:1*4:0-ARG0 5:0-rel 6:1-ARGM-MNR 7:1-ARG1-with
+wsj/00/wsj_0003.mrg 12 14 gold die.01 pnp-a 0:1-ARGM-LOC 11:2,16:2-ARG1 14:0-rel
+wsj/00/wsj_0003.mrg 12 21 gold expect.01 p---p 21:0-rel 22:0-ARG1
+wsj/00/wsj_0003.mrg 13 4 gold survive.01 p---a 4:0-rel 5:0-ARG0
+wsj/00/wsj_0003.mrg 13 6 gold have.03 vn--a 0:2-ARG0 6:0-rel 7:1-ARG1 10:1-ARGM-ADV
+wsj/00/wsj_0003.mrg 13 10 gold include.01 p---a 7:1-ARG2 10:0-rel 11:2-ARG1
+wsj/00/wsj_0003.mrg 13 14 gold diagnose.01 p---p 13:0-ARGM-TMP 14:0-rel 15:0-ARG2
+wsj/00/wsj_0003.mrg 14 18 gold expect.01 p---p 17:1-ARG0 18:0-rel 19:1-ARG1
+wsj/00/wsj_0003.mrg 14 23 gold say.01 vp--a 21:1-ARG0 23:0-rel 0:3*25:0-ARG1
+wsj/00/wsj_0003.mrg 15 14 gold study.01 vn--a 9:1*12:1*13:0-ARG0 14:0-rel 15:1-ARG1
+wsj/00/wsj_0003.mrg 15 19 gold say.01 vp--a 19:0-rel 1:2*20:0-ARG1 21:1-ARG0
+wsj/00/wsj_0003.mrg 16 18 gold appear.02 vn-3a 0:2,19:2-ARG1 18:0-rel
+wsj/00/wsj_0003.mrg 16 28 gold study.01 p---p 28:0-rel 25:1*29:0-ARG1 30:1-ARGM-LOC
+wsj/00/wsj_0003.mrg 16 32 gold industrialize.01 p---p 32:0-rel 33:0-ARG1
+wsj/00/wsj_0003.mrg 16 36 gold say.01 vp--a 35:1-ARG0 36:0-rel 0:3*38:0-ARG1
+wsj/00/wsj_0003.mrg 17 6 gold own.01 pn-3p 6:0-rel 0:1*3:1*4:0*7:0-ARG1 8:1-ARG0-by
+wsj/00/wsj_0003.mrg 17 22 gold make.01 i---a 0:2*20:0-ARG0 22:0-rel 23:1-ARG1
+wsj/00/wsj_0003.mrg 18 4 gold support.01 vf--a 0:1-ARG0 2:1-ARGM-ADV 3:0-ARGM-MOD 4:0-rel 5:2-ARG1
+wsj/00/wsj_0003.mrg 18 8 gold argue.01 vn--a 5:1*6:1*7:0-ARG0 8:0-rel 9:1-ARG1
+wsj/00/wsj_0003.mrg 18 13 gold regulate.01 ----a 10:1-ARG0 12:0-ARGM-MOD 13:0-rel 14:2-ARG1 20:2-ARGM-MNR
+wsj/00/wsj_0003.mrg 18 18 gold include.01 p---a 14:1,16:1-ARG2 18:0-rel 19:1-ARG1
+wsj/00/wsj_0003.mrg 18 31 gold find.01 p---p 31:0-rel 23:2*32:0-ARG1 33:1-ARGM-LOC
+wsj/00/wsj_0003.mrg 18 42 gold say.01 vp--a 40:1-ARG0 42:0-rel 0:2*44:0-ARG1
+wsj/00/wsj_0003.mrg 19 7 gold industrialize.01 p---p 7:0-rel 8:0-ARG1
+wsj/00/wsj_0003.mrg 19 13 gold have.03 vn-3a 5:1*9:1*10:0-ARG0 12:0-ARGM-NEG 13:0-rel 14:2-ARG1
+wsj/00/wsj_0003.mrg 19 31 gold classify.01 pn--p 31:0-rel 20:1*28:1*29:0*32:0-ARG1 33:1-ARG2-as
+wsj/00/wsj_0003.mrg 20 10 gold reject.01 pn--p 8:1-ARGM-MNR 10:0-rel 0:1*11:0-ARG1 12:1-ARG0-by
+wsj/00/wsj_0003.mrg 20 18 gold explain.01 vp--a 16:1-ARG0 18:0-rel 0:2*20:0-ARG1
+wsj/00/wsj_0003.mrg 21 7 gold impose.01 vp--a 0:1-ARGM-TMP 3:1-ARG0 7:0-rel 8:1-ARG1 11:1-ARG2-on
+wsj/00/wsj_0003.mrg 22 5 gold remain.01 p---a 5:0-rel 6:0-ARG1
+wsj/00/wsj_0003.mrg 22 12 gold outlaw.01 pf--p 0:1-ARGM-TMP 10:0-ARGM-MOD 12:0-rel 3:3*13:0-ARG1
+wsj/00/wsj_0003.mrg 23 8 gold make.01 vp--a 4:1*6:1*7:0-ARG0 8:0-rel 9:2-ARG1
+wsj/00/wsj_0003.mrg 23 15 gold expose.01 pp--p 15:0-rel 0:3*16:0-ARG1 17:1-ARG2-to 19:1-ARGM-TMP
+wsj/00/wsj_0003.mrg 24 12 gold use.01 pp--p 12:0-rel 9:1*13:0-ARG1 8:1*14:0-ARGM-LOC
+wsj/00/wsj_0003.mrg 25 1 gold dump.01 vp--a 0:1-ARG0 1:0-rel 2:2-ARG1 9:1-ARGM-DIR
+wsj/00/wsj_0003.mrg 25 7 gold import.01 p---p 7:0-rel 8:0-ARG1
+wsj/00/wsj_0003.mrg 25 14 gold pour.01 vp--a 0:1-ARG0 14:0,15:1-rel 16:1-ARG1
+wsj/00/wsj_0003.mrg 25 22 gold mix.01 vp--a 0:1-ARG0 21:1-ARGM-MNR 22:0-rel 23:1-ARG1 26:1-ARGM-LOC
+wsj/00/wsj_0003.mrg 25 29 gold use.01 p---p 29:0-rel 27:1*30:0-ARG1 31:2-ARG2-PNC
+wsj/00/wsj_0003.mrg 25 33 gold make.01 i---a 31:0-ARG0 33:0-rel 34:1-ARG1
+wsj/00/wsj_0003.mrg 26 1 gold describe.01 vp--a 0:1-ARG0 1:0-rel 2:1-ARG1
+wsj/00/wsj_0003.mrg 26 10 gold hang.01 vp--a 3:1*8:1*9:0-ARG1 10:0-rel 11:1-ARGM-LOC 17:1-ARGM-ADV
+wsj/00/wsj_0003.mrg 26 21 gold ventilate.01 vp--a 19:1-ARG0 21:0-rel 22:1-ARG1
+wsj/00/wsj_0003.mrg 27 12 gold contract.04 vp--a 6:2-ARG1 12:0-rel 13:1-ARG2
+wsj/00/wsj_0003.mrg 27 17 gold say.01 vp--a 17:0-rel 1:2*18:0-ARG1 19:2-ARG0
+wsj/00/wsj_0003.mrg 28 3 gold have.02 vn--a 1:0-ARGM-DIS 3:0-rel
+wsj/00/wsj_0003.mrg 28 6 gold recognize.01 i---a 3:0-ARGM-MOD 2:1*4:0-ARG0 6:0-rel 8:2-ARG1
+wsj/00/wsj_0003.mrg 28 10 gold take.14 vp--a 8:1-ARG1 10:0-rel 11:1-ARG2 12:2-ARGM-TMP
+wsj/00/wsj_0003.mrg 29 1 gold have.03 vn-3a 0:1-ARG0 1:0-rel 2:2-ARG1

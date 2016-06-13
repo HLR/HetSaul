@@ -120,7 +120,7 @@ trait Edge[T <: AnyRef, U <: AnyRef] {
     from: Iterable[T] = forward.from.getAllInstances,
     to: Iterable[U] = forward.to.getAllInstances
   ) =
-    for (t <- from; u <- to; if (sensor(t, u))) this += (t, u)
+    for (t <- from; u <- to; if sensor(t, u)) this += (t, u)
 
   def unary_- : Edge[U, T]
 
@@ -175,7 +175,7 @@ trait Edge[T <: AnyRef, U <: AnyRef] {
   def apply(ts: Iterable[T]) = from(ts) ~> this
 }
 
-case class AsymmetricEdge[T <: AnyRef, U <: AnyRef](val forward: Link[T, U], val backward: Link[U, T],
+case class AsymmetricEdge[T <: AnyRef, U <: AnyRef](forward: Link[T, U], backward: Link[U, T],
   ms: Seq[(T, U) => Boolean] = Seq.empty[(T, U) => Boolean])
   extends Edge[T, U] {
   val matchers = {
