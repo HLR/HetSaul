@@ -1,4 +1,4 @@
-Wiki page to document the syntax of the graph querying language. Most of these features will be unit tested in [GraphQueriesTest](https://github.com/IllinoisCogComp/saul/blob/master/saul-examples/src/test/scala/edu/illinois/cs/cogcomp/saulexamples/datamodel/GraphQueriesTest.scala).
+Here you see the syntax of the declaration of Saul graph. Most of these features are unit tested in [GraphQueriesTest](https://github.com/IllinoisCogComp/saul/blob/master/saul-examples/src/test/scala/edu/illinois/cs/cogcomp/saulexamples/datamodel/GraphQueriesTest.scala).
 
 ## Node collections
 
@@ -140,7 +140,7 @@ n(a)~>e(-2,2).p.aggregate
 
 ```
 
-finding path between to node(instances)
+finding path between two nodes
 
 ```scala
 n1(a).path(n2(b))

@@ -2,7 +2,7 @@
  * JDK 1.6 or above
  * [Scala](http://www.scala-lang.org/) 2.11.7
  * [Simple Build Tool(sbt)](http://www.scala-sbt.org/)
- * [Gurobi](http://www.gurobi.com/)
+ * [Gurobi](http://www.gurobi.com/) This is optional if you want to use Gurobi as the backend solver.
 
 
 ## How to compile the software

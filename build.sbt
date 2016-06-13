@@ -13,7 +13,7 @@ lazy val commonSettings = Seq(
     Resolver.mavenLocal,
     "CogcompSoftware" at "http://cogcomp.cs.illinois.edu/m2repo/"
   ),
-  javaOptions ++= List("-Xmx6g"),
+  javaOptions ++= List("-Xmx11g"),
   libraryDependencies ++= Seq(
     "edu.illinois.cs.cogcomp" % "LBJava" % "1.2.16" withSources,
     "edu.illinois.cs.cogcomp" % "illinois-core-utilities" % cogcompNLPVersion withSources,
@@ -45,7 +45,8 @@ lazy val saulExamples = (project in file("saul-examples")).
       "edu.illinois.cs.cogcomp" % "illinois-edison" % cogcompNLPVersion,
       "edu.illinois.cs.cogcomp" % "illinois-nlp-readers" % "0.0.2-SNAPSHOT",
       "edu.illinois.cs.cogcomp" % "saul-pos-tagger-models" % "1.0",
-      "edu.illinois.cs.cogcomp" % "saul-er-models" % "1.3"
+      "edu.illinois.cs.cogcomp" % "saul-er-models" % "1.3",
+      "edu.illinois.cs.cogcomp" % "saul-srl-models" % "1.1"
     )
   ).dependsOn(saulCore).aggregate(saulCore)
 
@@ -61,7 +62,7 @@ lazy val saulWebapp = (project in file("saul-webapp")).
       "org.webjars" % "ace" % "1.2.2",
       "org.webjars" % "sigma.js" % "1.0.3",
       "org.webjars" % "d3js" % "3.5.16",
-      "org.scala-lang" % "scala-compiler" % scalaVersion.value, 
+      "org.scala-lang" % "scala-compiler" % scalaVersion.value,
       jdbc,
       cache,
       ws,
