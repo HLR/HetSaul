@@ -88,6 +88,16 @@ object ClassifierUtils {
       testResults
     }
 
+    def apply(c: List[Learnable[_]])(implicit d1: DummyImplicit, d2: DummyImplicit, d3: DummyImplicit): Seq[Results] = {
+      val testResults = c.map { learner =>
+        println(evalSeparator)
+        println("Evaluating " + learner.getClassSimpleNameForClassifier)
+        learner.test()
+      }
+      println(evalSeparator)
+      testResults
+    }
+
     def apply(c: ConstrainedClassifier[_, _]*)(implicit d1: DummyImplicit, d2: DummyImplicit, d3: DummyImplicit): Seq[Results] = {
       val testResults = c.map { learner =>
         println(evalSeparator)
@@ -98,7 +108,6 @@ object ClassifierUtils {
       testResults
     }
 
-    //
     def apply[T <: AnyRef](testInstances: Iterable[T], c: ConstrainedClassifier[T, _]*)(implicit d1: DummyImplicit, d2: DummyImplicit, d3: DummyImplicit): Seq[Results] = {
       val testResults = c.map { learner =>
         println(evalSeparator)
