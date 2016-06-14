@@ -9,7 +9,7 @@ import org.scalatest._
 
 class EntityRelationTests extends FlatSpec with Matchers {
   val minScore = 0.3
-  "entity classifier " should " should work. " in {
+  "entity classifier " should " work. " in {
     sentences.populate(EntityRelationSensors.sentencesSmallSetTest, train = false)
     ClassifierUtils.LoadClassifier(
       EntityRelationApp.jarModelPath,
@@ -20,7 +20,7 @@ class EntityRelationTests extends FlatSpec with Matchers {
     scores.foreach { case score => (score.overall.f1 > minScore) should be(true) }
   }
 
-  "independent relation classifier " should " should work. " in {
+  "independent relation classifier " should " work. " in {
     sentences.populate(EntityRelationSensors.sentencesSmallSetTest, train = false)
     ClassifierUtils.LoadClassifier(
       EntityRelationApp.jarModelPath,
@@ -32,7 +32,7 @@ class EntityRelationTests extends FlatSpec with Matchers {
     scores.foreach { case score => (score.overall.f1 > minScore) should be(true) }
   }
 
-  "pipeline relation classifiers " should " should work. " in {
+  "pipeline relation classifiers " should " work. " in {
     sentences.populate(EntityRelationSensors.sentencesSmallSetTest, train = false)
     ClassifierUtils.LoadClassifier(
       EntityRelationApp.jarModelPath,
@@ -44,7 +44,7 @@ class EntityRelationTests extends FlatSpec with Matchers {
     scores.foreach { case score => (score.overall.f1 > minScore) should be(true) }
   }
 
-  "L+I entity-relation classifiers " should " should work. " in {
+  "L+I entity-relation classifiers " should " work. " in {
     sentences.populate(EntityRelationSensors.sentencesSmallSetTest, train = false)
     ClassifierUtils.LoadClassifier(
       EntityRelationApp.jarModelPath,
@@ -56,11 +56,11 @@ class EntityRelationTests extends FlatSpec with Matchers {
     scores.foreach { case score => (score.overall.f1 > minScore) should be(true) }
   }
 
-  "crossValidation on POSknown " should " should work. " in {
+  "crossValidation on ER " should " work. " in {
     EntityRelationDataModel.clearInstances
     sentences.populate(EntityRelationSensors.sentencesSmallSetTest)
     PersonClassifier.crossValidation(5)
-    /*val results = PersonClassifier.crossValidation(5)
-        scores.foreach { case score => (score.overall.f1 > minScore) should be(true) } */
+    val results = PersonClassifier.crossValidation(5)
+    results.foreach { case score => (score.overall.f1 > minScore) should be(true) }
   }
 }

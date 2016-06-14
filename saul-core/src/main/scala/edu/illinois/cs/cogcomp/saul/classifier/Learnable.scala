@@ -343,29 +343,22 @@ abstract class Learnable[T <: AnyRef](val node: Node[T], val parameters: Paramet
     * @param splitPolicy strategy to split the instances into k folds.
     */
   def crossValidation(k: Int, splitPolicy: SplitPolicy = SplitPolicy.random,
-    prediction: Property[T] = null, groundTruth: Property[T] = null, exclude: String = "", outputGranularity: Int = 0): Unit /*Seq[Results]*/ = {
+    prediction: Property[T] = null, groundTruth: Property[T] = null, exclude: String = "", outputGranularity: Int = 0): Seq[Results] = {
     val testReader = new IterableToLBJavaParser[T](trainingInstances)
     println("trainingInstances inside crossValidation =  " + trainingInstances.size)
     val foldParser = new FoldParser(testReader, k, splitPolicy, 0, false, trainingInstances.size)
     (0 until k).map { fold =>
+      // training
       foldParser.setPivot(fold)
       foldParser.setFromPivot(false)
-      //this.learn(10, foldParser.getParser)
-      // remove this block:
-      val trainingIterable = new LBJavaParserToIterable[T](foldParser.getParser).iterator()
-      println("training instances = ")
-      println(trainingIterable.size)
-      // until here
+      logger.info(s"Training on all folds except $k")
+      learn(10, foldParser)
 
+      // testing
       foldParser.reset()
+      logger.info(s"Testing on fold $k")
       foldParser.setFromPivot(true)
-      //this.test(foldParser.getParser, prediction, groundTruth, exclude, outputGranularity)
-      // remove this block
-      val testingIterable = new LBJavaParserToIterable[T](foldParser.getParser).iterator()
-      println("testing instances = ")
-      println(testingIterable.size)
-      println("========")
-      // until here
+      this.test(foldParser, prediction, groundTruth, exclude, outputGranularity)
     }
   }
 

@@ -149,15 +149,3 @@ object ClassifierUtils {
   }
 }
 
-/** basic data structure to keep the results */
-abstract class AbsractResult() {
-  def f1: Double
-  def precision: Double
-  def recall: Double
-}
-case class ResultPerLabel(label: String, val f1: Double, val precision: Double, val recall: Double,
-  val allClasses: Array[String], val labeledSize: Int, val predictedSize: Int, val correctSize: Int) extends AbsractResult
-case class OverallResult(val f1: Double, val precision: Double, val recall: Double) extends AbsractResult
-case class AverageResult(val f1: Double, val precision: Double, val recall: Double) extends AbsractResult
-
-case class Results(perLabel: Seq[ResultPerLabel], average: AverageResult, overall: OverallResult)
