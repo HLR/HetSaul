@@ -15,4 +15,3 @@ case class OverallResult(f1: Double, precision: Double, recall: Double) extends 
 case class AverageResult(f1: Double, precision: Double, recall: Double) extends AbsractResult
 
 case class Results(perLabel: Seq[ResultPerLabel], average: AverageResult, overall: OverallResult)
-

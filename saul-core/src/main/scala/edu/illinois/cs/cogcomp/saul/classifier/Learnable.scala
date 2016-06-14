@@ -281,11 +281,13 @@ abstract class Learnable[T <: AnyRef](val node: Node[T], val parameters: Paramet
     * @return List of [[Results]]
     */
   def test(testData: Iterable[T] = null, prediction: Property[T] = null, groundTruth: Property[T] = null,
-    exclude: String = "", outputGranularity: Int = 0): Results = {
+    exclude: String = ""): Results = {
     isTraining = false
     val testParser = new IterableToLBJavaParser[T](if (testData == null) {
       node.getTestingInstances
     } else (testData))
+    // TODO: expose the granularity parameter
+    val outputGranularity = 0
     test(testParser, prediction, groundTruth, exclude, outputGranularity)
   }
 
