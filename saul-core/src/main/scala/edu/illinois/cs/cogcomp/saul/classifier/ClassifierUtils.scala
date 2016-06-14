@@ -67,6 +67,7 @@ object ClassifierUtils {
       testResults
     }
 
+    //
     def apply[T <: AnyRef](testInstances: Iterable[T], c: Learnable[T]*): Seq[Results] = {
       val testResults = c.map { learner =>
         println(evalSeparator)
@@ -97,6 +98,7 @@ object ClassifierUtils {
       testResults
     }
 
+    //
     def apply[T <: AnyRef](testInstances: Iterable[T], c: ConstrainedClassifier[T, _]*)(implicit d1: DummyImplicit, d2: DummyImplicit, d3: DummyImplicit): Seq[Results] = {
       val testResults = c.map { learner =>
         println(evalSeparator)
