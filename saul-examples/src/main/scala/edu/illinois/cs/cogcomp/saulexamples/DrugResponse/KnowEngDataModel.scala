@@ -1,11 +1,12 @@
-package edu.illinois.cs.cogcomp.saulexamples.bioInformatics.regressionModel
+package edu.illinois.cs.cogcomp.saulexamples.DrugResponse
 
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
+import edu.illinois.cs.cogcomp.saulexamples.DrugResponse.bioSensors._
+import edu.illinois.cs.cogcomp.saulexamples.DrugResponse.Classifiers.dResponseClassifier
 import edu.illinois.cs.cogcomp.saulexamples.bioInformatics._
-import edu.illinois.cs.cogcomp.saulexamples.bioInformatics.regressionModel.Classifiers.dResponseClassifier
-import edu.illinois.cs.cogcomp.saulexamples.bioInformatics.regressionModel.BioSensors._
 
 import scala.collection.JavaConversions._
+
 /** Created by Parisa on 6/24/15.
   */
 object KnowEngDataModel extends DataModel {
@@ -29,12 +30,15 @@ object KnowEngDataModel extends DataModel {
   val age = property(patients) {
     x: Patient => x.age.toDouble
   }
+
   val gender = property(patients) {
     x: Patient => x.gender
   }
+
   val ethnicity = property(patients) {
     x: Patient => x.ethnicity
   }
+
   val geneName = property(genes) {
     x: Gene => x.GeneName
   }
@@ -44,14 +48,17 @@ object KnowEngDataModel extends DataModel {
       if (x.GO_term == null)
         List("") else (x.GO_term.toList)
   }
+
   val gene_KEGG = property(genes) {
     x: Gene =>
       if (x.KEGG == null)
         List("") else x.KEGG.toList
   }
+
   val gene_motif = property(genes) {
     x: Gene => x.motif_u5_gc.doubleValue()
   }
+
   val gene_pfam_domain = property(genes) {
     x: Gene => x.pfam_domain.doubleValue()
   }
@@ -63,8 +70,27 @@ object KnowEngDataModel extends DataModel {
   val drugResponse = property(patientDrug) {
     x: PatientDrug => x.response.doubleValue()
   }
+
+  val genesGroupedPerPathway = genes().map(x => x.KEGG.map(y => (x.GeneName, y))).flatten.groupBy(_._2).map(x => (x._1, x._2.map(t1 => t1._1)))
+  //val genesGroupedPerPathway3 = genes().map(x => x.KEGG.map(y => (x , y))).flatten.groupBy(_._2).map(x => (x._1, x._2.map(t1 => t1._1)))
+
+  //val genesGroupedPerPathway2 = SGroupBy(genes, gene_KEGG, geneName)
+  val pathWayGExpression = (pathway: String) => property(patientDrug, ordered = true) {
+    pd: PatientDrug =>
+      val myPathwayGenes = genesGroupedPerPathway.get(pathway) // ("hsa01040")
+      val a = this.patientGene().filter(y => pd.pid == y.sample_ID).filter(x => myPathwayGenes.contains(x.Gene_ID)).map(x => x.gExpression).asInstanceOf[List[Double]]
+      a
+  }
+  // val pathwayNeighbors = genesGroupedPerPathway3.get("hsa01040").foreach(gen => if (((genes(gen)~> -geneGenes) prop PPIBioGrid).equals(1)) {})
+  //  val pathwayNeighbors4 = genesGroupedPerPathway3.get("hsa01040").map(
+  //      gen =>
+  //      (genes(gen)~> -geneGenes).filter(rel=> PPIBioGrid(rel).equals(1))).flatten
+
   val similarity = property(geneGene) {
     x: GeneGene => x.similarity.doubleValue()
+  }
+  val PPIBioGrid = property(geneGene) {
+    x: GeneGene => x.PPI_BioGRID
   }
   val textSimilarity = property(geneGene) {
     x: GeneGene => x.STRING_textmining

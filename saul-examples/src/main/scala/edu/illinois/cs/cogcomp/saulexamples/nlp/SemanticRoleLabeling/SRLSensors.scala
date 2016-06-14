@@ -3,18 +3,16 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling
 import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation._
 import edu.illinois.cs.cogcomp.core.datastructures.trees.Tree
+import edu.illinois.cs.cogcomp.edison.features._
 import edu.illinois.cs.cogcomp.edison.features.factory.WordFeatureExtractorFactory
-import edu.illinois.cs.cogcomp.edison.features.{ ContextFeatureExtractor, FeatureExtractor, FeatureUtilities, WordFeatureExtractor }
 import edu.illinois.cs.cogcomp.saulexamples.data.XuPalmerCandidateGenerator
 
 import scala.collection.JavaConversions._
 
 object SRLSensors {
-
   def sentenceToGoldPredicates(ta: TextAnnotation): List[Constituent] = {
     ta.getView(ViewNames.SRL_VERB).asInstanceOf[PredicateArgumentView].getPredicates.toList
   }
-
   def relToPredicate(rel: Relation): Constituent = {
     rel.getSource
   }
@@ -38,7 +36,6 @@ object SRLSensors {
   def textAnnotationToRelation(ta: TextAnnotation): List[Relation] = {
     ta.getView(ViewNames.SRL_VERB).getRelations.toList
   }
-
   def textAnnotationToRelationMatch(ta: TextAnnotation, r: Relation): Boolean = {
     (ta.getCorpusId + ":" + ta.getId).matches(r.getSource.getTextAnnotation.getCorpusId + ":" + r.getSource.getTextAnnotation.getId)
   }
@@ -72,7 +69,8 @@ object SRLSensors {
 
   def xuPalmerCandidate(x: Constituent, y: Tree[String]): List[Relation] = {
     val p = XuPalmerCandidateGenerator.generateCandidates(x, y)
-    p.map(y => new Relation("candidate", x.cloneForNewView(x.getViewName), y.cloneForNewView(y.getViewName), 0.0)).toList
+    val z = p.map(y => new Relation("candidate", x.cloneForNewView(x.getViewName), y.cloneForNewView(y.getViewName), 0.0))
+    z.toList
   }
 
   def fexFeatureExtractor(x: Constituent, fex: FeatureExtractor): String = {

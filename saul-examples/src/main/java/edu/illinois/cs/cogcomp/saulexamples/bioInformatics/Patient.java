@@ -14,10 +14,18 @@ public class Patient {
     public String ethnicity;
     public ArrayList<Double> drag_response=new ArrayList<Double>();
     public ArrayList<Double> g_Expression=new ArrayList<Double>();
-    
+
     @Override public String toString() {
         StringBuilder result = new StringBuilder();
-        result.append(patient_id);
+        String NEW_LINE = System.getProperty("line.separator");
+
+        result.append(this.getClass().getName() + " Object {" + NEW_LINE);
+        result.append(" patient_id: " + patient_id + NEW_LINE);
+        result.append(" gender: " + gender + NEW_LINE);
+        result.append(" age: " + age + NEW_LINE);
+        result.append(" ethnicity: " + ethnicity + NEW_LINE);
+        result.append("}");
+
         return result.toString();
     }
 }

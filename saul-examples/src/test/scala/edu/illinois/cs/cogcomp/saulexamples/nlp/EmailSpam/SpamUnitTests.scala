@@ -39,4 +39,3 @@ class SpamUnitTests extends FlatSpec with Matchers {
     SpamClassifier(trainData.head) should be(trainData.head.getLabel)
   }
 }
-

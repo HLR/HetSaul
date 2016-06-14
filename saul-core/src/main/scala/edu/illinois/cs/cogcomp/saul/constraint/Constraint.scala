@@ -120,9 +120,10 @@ class LHSFirstOrderEqualityWithValueLBP(cls: Learner, t: AnyRef) {
   }
 
   def in(v: Array[String]): FirstOrderConstraint = {
-    val falseConstant = new FirstOrderDisjunction(new FirstOrderConstant(false), new FirstOrderConstant(false))
-    v.foldRight(falseConstant) { (value, newConstraint) =>
-      new FirstOrderDisjunction(new FirstOrderEqualityWithValue(true, lbjRepr, value), newConstraint)
+    val falseConstant = new FirstOrderDisjunction(new FirstOrderEqualityWithValue(true, lbjRepr, v(0)), new FirstOrderConstant(false))
+    v.tail.foldRight(falseConstant) {
+      (value, newConstraint) =>
+        new FirstOrderDisjunction(new FirstOrderEqualityWithValue(true, lbjRepr, value), newConstraint)
     }
   }
 }

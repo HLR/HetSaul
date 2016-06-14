@@ -43,6 +43,15 @@ object ClassifierUtils {
       }
       println(evalSeparator)
     }
+
+    def apply(iter: Integer, c: List[Learnable[_]])(implicit d1: DummyImplicit, d2: DummyImplicit) = {
+      c.foreach { learner =>
+        println(evalSeparator)
+        println("Training " + learner.getClassSimpleNameForClassifier)
+        learner.learn(iter)
+      }
+      println(evalSeparator)
+    }
   }
 
   // TODO: simplify the output type of test

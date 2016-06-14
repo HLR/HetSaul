@@ -1,7 +1,7 @@
 package edu.illinois.cs.cogcomp.saulexamples.datamodel
 
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
-import org.scalatest.{ Matchers, FlatSpec }
+import org.scalatest.{ FlatSpec, Matchers }
 
 class JoinTest extends FlatSpec with Matchers {
 
