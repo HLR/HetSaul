@@ -67,7 +67,6 @@ object ClassifierUtils {
       testResults
     }
 
-    //
     def apply[T <: AnyRef](testInstances: Iterable[T], c: Learnable[T]*): Seq[Results] = {
       val testResults = c.map { learner =>
         println(evalSeparator)
