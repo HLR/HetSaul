@@ -136,26 +136,26 @@ And the summary of performances for independent relation classifiers:
         Person Classifier Evaluation with training
          Label   Precision Recall   F1   LCount PCount
         ----------------------------------------------
-        false       86.667 95.866 91.034    895    990
-        true        93.110 79.114 85.543    632    537
+        false       98.761 99.703 99.230  61178  61761
+        true        87.065 61.558 72.122   1990   1407
         ----------------------------------------------
-        Accuracy    88.933   -      -      -      1527
+        Accuracy    98.501   -      -      -     63168
         ==============================================
         Organization Classifier Evaluation
          Label   Precision Recall   F1   LCount PCount
         ----------------------------------------------
-        false       96.041 89.060 92.419   1362   1263
-        true        33.482 60.000 42.980    125    224
+        false       98.681 99.615 99.146  61896  62482
+        true        65.306 35.220 45.761   1272    686
         ----------------------------------------------
-        Accuracy    86.617   -      -      -      1487
+        Accuracy    98.319   -      -      -     63168
         ==============================================
         Location Classifier Evaluation
          Label   Precision Recall   F1   LCount PCount
         ----------------------------------------------
-        false       76.564 95.725 85.079    959   1199
-        true        85.764 46.780 60.539    528    288
+        false       98.375 99.617 98.992  60760  61527
+        true        85.801 58.472 69.548   2408   1641
         ----------------------------------------------
-        Accuracy    78.346   -      -      -      1487
+        Accuracy    98.048   -      -      -     63168
         ==============================================
         WorkFor Classifier Evaluation
          Label   Precision Recall   F1   LCount PCount

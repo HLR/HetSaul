@@ -7,6 +7,7 @@ import edu.illinois.cs.cogcomp.saul.TestWithStorage
 import edu.illinois.cs.cogcomp.saul.classifier.infer.InferenceCondition
 import edu.illinois.cs.cogcomp.saul.constraint.LfsConstraint
 import edu.illinois.cs.cogcomp.saul.datamodel.edge.Edge
+import edu.illinois.cs.cogcomp.saul.datamodel.node.Node
 import edu.illinois.cs.cogcomp.saul.lbjrelated.{ LBJLearnerEquivalent, LBJClassifierEquivalent }
 import edu.illinois.cs.cogcomp.saul.parser.LBJIteratorParserScala
 
@@ -131,25 +132,32 @@ abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val onClassifi
       )(o.asInstanceOf[T])
   }
 
-  /** Test with given data, use internally
+  /** Derives Test Instances from the data model.
     *
-    * @return List of (label, (f1, precision, recall))
+    * @return Iterable of test instances for this classifier
     */
-  def test(): List[(String, (Double, Double, Double))] = {
-    val allHeads: Iterable[HEAD] = {
-      if (pathToHead.isEmpty) {
-        onClassifier match {
-          case clf: Learnable[T] => clf.node.getTestingInstances.asInstanceOf[Iterable[HEAD]]
-          case _ => println("ERROR: pathToHead is not provided and the onClassifier is not a Learnable!"); Nil
-        }
-      } else {
-        pathToHead.get.to.getTestingInstances
+  private def deriveTestInstances: Iterable[T] = {
+    val dataNode: Option[Node[T]] = {
+      pathToHead match {
+        case Some(edge) => Some(edge.from)
+        case None =>
+          //  If pathToHead is not defined, try getting the node of onClassifier
+          onClassifier match {
+            case clf: Learnable[T] => Some(clf.node)
+            case _ => println("ERROR: pathToHead is not provided and the onClassifier is not a Learnable!"); None
+          }
       }
     }
 
-    val data: List[T] = allHeads.flatMap(getCandidates).toList.distinct
+    dataNode.map(node => node.getTestingInstances).getOrElse(List.empty)
+  }
 
-    test(data)
+  /** Test Constrained Classifier with automatically derived test instances.
+    *
+    * @return List of (label, (f1,precision,recall))
+    */
+  def test(): List[(String, (Double, Double, Double))] = {
+    test(deriveTestInstances)
   }
 
   /** Test with given data, use internally
@@ -159,17 +167,12 @@ abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val onClassifi
     * @param outFile The file to write the predictions (can be `null`)
     * @return List of (label, (f1,precision,recall))
     */
-
   def test(testData: Iterable[T] = null, outFile: String = null, outputGranularity: Int = 0, exclude: String = ""): List[(String, (Double, Double, Double))] = {
     println()
-    val testReader = new LBJIteratorParserScala[T](if (testData == null)
-      onClassifier match {
-      case clf: Learnable[T] => clf.node.getTestingInstances.asInstanceOf[Iterable[T]]
-      case _ => println("ERROR: pathToHead is not provided and the onClassifier is not a Learnable!"); Nil
 
-    }
-    else testData)
+    val testReader = new LBJIteratorParserScala[T](if (testData == null) deriveTestInstances else testData)
     testReader.reset()
+
     val tester: TestDiscrete = new TestDiscrete()
     TestWithStorage.test(tester, classifier, onClassifier.getLabeler, testReader, outFile, outputGranularity, exclude)
     val ret = tester.getLabels.map({
