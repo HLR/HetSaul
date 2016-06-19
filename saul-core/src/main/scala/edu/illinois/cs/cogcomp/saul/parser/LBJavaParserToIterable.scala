@@ -1,0 +1,19 @@
+package edu.illinois.cs.cogcomp.saul.parser
+
+import edu.illinois.cs.cogcomp.lbjava.parse.{ FoldSeparator, Parser }
+
+/** a utility class to convert LBJava parser to Scala iterator */
+class LBJavaParserToIterable[T <: AnyRef](parser: Parser) extends Iterable[T] {
+  override def iterator(): Iterator[T] = new parserToIterator(parser)
+  private class parserToIterator(parser: Parser) extends Iterator[T] {
+    val nextBuffer = new collection.mutable.Stack[AnyRef]
+    override def hasNext: Boolean = {
+      val nextElement = parser.next()
+      if (nextElement == null || nextElement == FoldSeparator.separator) false else {
+        nextBuffer.push(nextElement)
+        true
+      }
+    }
+    override def next(): T = nextBuffer.pop().asInstanceOf[T]
+  }
+}

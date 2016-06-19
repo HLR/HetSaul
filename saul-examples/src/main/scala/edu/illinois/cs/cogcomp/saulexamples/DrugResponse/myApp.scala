@@ -47,7 +47,7 @@ object myApp {
     val myLearners = (genes() prop gene_KEGG).flatten.toList.distinct.map(pathwayX => new DrugResponseRegressor(pathwayX))
 
     ClassifierUtils.TestClassifiers(myLearners)
-    myLearners.map(x => x.testContinuous())
+    myLearners.foreach(_.testContinuous())
 
     //myLearners.map(x => x.test()) //.SortwithAccuracy()
 

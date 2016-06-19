@@ -116,8 +116,4 @@ object EntityRelationDataModel extends DataModel {
     sentences.populate(EntityRelationSensors.sentencesTrain)
     sentences.populate(EntityRelationSensors.sentencesTest, train = false)
   }
-
-  def populateWithConllSmallSet() = {
-    sentences.populate(EntityRelationSensors.sentencesSmallSet, train = false)
-  }
 }

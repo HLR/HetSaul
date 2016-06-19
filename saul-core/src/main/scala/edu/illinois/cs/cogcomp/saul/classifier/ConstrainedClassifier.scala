@@ -8,7 +8,7 @@ import edu.illinois.cs.cogcomp.saul.classifier.infer.InferenceCondition
 import edu.illinois.cs.cogcomp.saul.constraint.LfsConstraint
 import edu.illinois.cs.cogcomp.saul.datamodel.edge.Edge
 import edu.illinois.cs.cogcomp.saul.lbjrelated.{ LBJLearnerEquivalent, LBJClassifierEquivalent }
-import edu.illinois.cs.cogcomp.saul.parser.LBJIteratorParserScala
+import edu.illinois.cs.cogcomp.saul.parser.IterableToLBJavaParser
 
 import scala.reflect.ClassTag
 
@@ -135,7 +135,7 @@ abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val onClassifi
     *
     * @return List of (label, (f1, precision, recall))
     */
-  def test(): List[(String, (Double, Double, Double))] = {
+  def test(): Results = {
     val allHeads: Iterable[HEAD] = {
       if (pathToHead.isEmpty) {
         onClassifier match {
@@ -160,9 +160,9 @@ abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val onClassifi
     * @return List of (label, (f1,precision,recall))
     */
 
-  def test(testData: Iterable[T] = null, outFile: String = null, outputGranularity: Int = 0, exclude: String = ""): List[(String, (Double, Double, Double))] = {
+  def test(testData: Iterable[T] = null, outFile: String = null, outputGranularity: Int = 0, exclude: String = ""): Results = {
     println()
-    val testReader = new LBJIteratorParserScala[T](if (testData == null)
+    val testReader = new IterableToLBJavaParser[T](if (testData == null)
       onClassifier match {
       case clf: Learnable[T] => clf.node.getTestingInstances.asInstanceOf[Iterable[T]]
       case _ => println("ERROR: pathToHead is not provided and the onClassifier is not a Learnable!"); Nil
@@ -172,10 +172,14 @@ abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val onClassifi
     testReader.reset()
     val tester: TestDiscrete = new TestDiscrete()
     TestWithStorage.test(tester, classifier, onClassifier.getLabeler, testReader, outFile, outputGranularity, exclude)
-    val ret = tester.getLabels.map({
-      label => (label, (tester.getF1(label), tester.getPrecision(label), tester.getRecall(label)))
-    })
-    ret toList
+    val perLabelResults = tester.getLabels.map {
+      label =>
+        ResultPerLabel(label, tester.getF1(label), tester.getPrecision(label), tester.getRecall(label),
+          tester.getAllClasses, tester.getLabeled(label), tester.getPredicted(label), tester.getCorrect(label))
+    }
+    val overalResultArray = tester.getOverallStats()
+    val overalResult = OverallResult(overalResultArray(0), overalResultArray(1), overalResultArray(2))
+    Results(perLabelResults, ClassifierUtils.getAverageResults(perLabelResults), overalResult)
   }
 }
 
