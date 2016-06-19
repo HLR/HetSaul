@@ -56,7 +56,7 @@ object ClassifierUtils {
 
   // TODO: simplify the output type of test
   object TestClassifiers {
-    def apply[T <: AnyRef](c: (Learnable[T], Iterable[T])*): Seq[List[(String, (Double, Double, Double))]] = {
+    def apply[T <: AnyRef](c: (Learnable[T], Iterable[T])*): Seq[Results] = {
       val testResults = c.map {
         case (learner, testInstances) =>
           println(evalSeparator)
@@ -67,7 +67,7 @@ object ClassifierUtils {
       testResults
     }
 
-    def apply[T <: AnyRef](testInstances: Iterable[T], c: Learnable[T]*): Seq[List[(String, (Double, Double, Double))]] = {
+    def apply[T <: AnyRef](testInstances: Iterable[T], c: Learnable[T]*): Seq[Results] = {
       val testResults = c.map { learner =>
         println(evalSeparator)
         println("Evaluating " + learner.getClassSimpleNameForClassifier)
@@ -77,7 +77,7 @@ object ClassifierUtils {
       testResults
     }
 
-    def apply(c: Learnable[_]*)(implicit d1: DummyImplicit, d2: DummyImplicit): Seq[List[(String, (Double, Double, Double))]] = {
+    def apply(c: Learnable[_]*)(implicit d1: DummyImplicit, d2: DummyImplicit): Seq[Results] = {
       val testResults = c.map { learner =>
         println(evalSeparator)
         println("Evaluating " + learner.getClassSimpleNameForClassifier)
@@ -87,7 +87,7 @@ object ClassifierUtils {
       testResults
     }
 
-    def apply(c: List[Learnable[_]])(implicit d1: DummyImplicit, d2: DummyImplicit): Seq[List[(String, (Double, Double, Double))]] = {
+    def apply(c: List[Learnable[_]])(implicit d1: DummyImplicit, d2: DummyImplicit, d3: DummyImplicit): Seq[Results] = {
       val testResults = c.map { learner =>
         println(evalSeparator)
         println("Evaluating " + learner.getClassSimpleNameForClassifier)
@@ -97,7 +97,7 @@ object ClassifierUtils {
       testResults
     }
 
-    def apply(c: ConstrainedClassifier[_, _]*)(implicit d1: DummyImplicit, d2: DummyImplicit, d3: DummyImplicit): Seq[List[(String, (Double, Double, Double))]] = {
+    def apply(c: ConstrainedClassifier[_, _]*)(implicit d1: DummyImplicit, d2: DummyImplicit, d3: DummyImplicit): Seq[Results] = {
       val testResults = c.map { learner =>
         println(evalSeparator)
         println("Evaluating " + learner.getClassSimpleNameForClassifier)
@@ -107,7 +107,7 @@ object ClassifierUtils {
       testResults
     }
 
-    def apply[T <: AnyRef](testInstances: Iterable[T], c: ConstrainedClassifier[T, _]*)(implicit d1: DummyImplicit, d2: DummyImplicit, d3: DummyImplicit): Seq[List[(String, (Double, Double, Double))]] = {
+    def apply[T <: AnyRef](testInstances: Iterable[T], c: ConstrainedClassifier[T, _]*)(implicit d1: DummyImplicit, d2: DummyImplicit, d3: DummyImplicit): Seq[Results] = {
       val testResults = c.map { learner =>
         println(evalSeparator)
         println("Evaluating " + learner.getClassSimpleNameForClassifier)
@@ -117,7 +117,7 @@ object ClassifierUtils {
       testResults
     }
 
-    def apply[T <: AnyRef](instanceClassifierPairs: (Iterable[T], ConstrainedClassifier[T, _])*)(implicit d1: DummyImplicit, d2: DummyImplicit, d3: DummyImplicit, d4: DummyImplicit): Seq[List[(String, (Double, Double, Double))]] = {
+    def apply[T <: AnyRef](instanceClassifierPairs: (Iterable[T], ConstrainedClassifier[T, _])*)(implicit d1: DummyImplicit, d2: DummyImplicit, d3: DummyImplicit, d4: DummyImplicit): Seq[Results] = {
       val testResults = instanceClassifierPairs.map {
         case (testInstances, learner) =>
           println(evalSeparator)
@@ -156,4 +156,15 @@ object ClassifierUtils {
       }
     }
   }
+
+  /** some utility functions for playing arounds results of classifiers */
+  private def resultToList(someResult: AbsractResult): List[Double] = {
+    List(someResult.f1, someResult.precision, someResult.recall)
+  }
+
+  def getAverageResults(perLabelResults: Seq[ResultPerLabel]): AverageResult = {
+    val avgResultList = perLabelResults.toList.map(resultToList).transpose.map(a => a.sum / perLabelResults.length)
+    AverageResult(avgResultList(0), avgResultList(1), avgResultList(2))
+  }
 }
+

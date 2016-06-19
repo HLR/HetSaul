@@ -7,6 +7,8 @@ import edu.illinois.cs.cogcomp.core.io.IOUtils
 import edu.illinois.cs.cogcomp.lbjava.classify.{ FeatureVector, TestDiscrete }
 import edu.illinois.cs.cogcomp.lbjava.learn.Learner.Parameters
 import edu.illinois.cs.cogcomp.lbjava.learn._
+import edu.illinois.cs.cogcomp.lbjava.parse.{ Parser, FoldParser }
+import edu.illinois.cs.cogcomp.lbjava.parse.FoldParser.SplitPolicy
 import edu.illinois.cs.cogcomp.lbjava.util.ExceptionlessOutputStream
 import edu.illinois.cs.cogcomp.saul.TestContinuous
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
@@ -14,7 +16,7 @@ import edu.illinois.cs.cogcomp.saul.datamodel.edge.Link
 import edu.illinois.cs.cogcomp.saul.datamodel.node.Node
 import edu.illinois.cs.cogcomp.saul.datamodel.property.{ PropertyWithWindow, CombinedDiscreteProperty, Property }
 import edu.illinois.cs.cogcomp.saul.lbjrelated.LBJLearnerEquivalent
-import edu.illinois.cs.cogcomp.saul.parser.LBJIteratorParserScala
+import edu.illinois.cs.cogcomp.saul.parser.{ LBJavaParserToIterable, IterableToLBJavaParser }
 
 import org.slf4j.helpers.NOPLogger
 import org.slf4j.{ Logger, LoggerFactory }
@@ -30,7 +32,7 @@ abstract class Learnable[T <: AnyRef](val node: Node[T], val parameters: Paramet
 
   var isTraining = false
 
-  def fromData = node.getTrainingInstances
+  def trainingInstances = node.getTrainingInstances
 
   def getClassNameForClassifier = this.getClass.getCanonicalName
 
@@ -47,7 +49,7 @@ abstract class Learnable[T <: AnyRef](val node: Node[T], val parameters: Paramet
   /** classifier need to be defined by the user */
   val classifier: Learner
 
-  /** syntactic suger to create simple calls to the function */
+  /** syntactic sugar to create simple calls to the function */
   def apply(example: AnyRef): String = classifier.discreteValue(example: AnyRef)
 
   /** specifications of the classifier and its model files  */
@@ -196,10 +198,15 @@ abstract class Learnable[T <: AnyRef](val node: Node[T], val parameters: Paramet
       }
       learnWithDerivedInstances(iteration, node.derivedInstances.values)
     } else {
-      learn(iteration, this.fromData)
+      learn(iteration, this.trainingInstances)
       classifier.doneLearning()
     }
     isTraining = false
+  }
+
+  def learn(iteration: Int = 10, parser: Parser)(implicit dummyImplicit: DummyImplicit): Unit = {
+    val trainingIterable = new LBJavaParserToIterable[T](parser)
+    learn(iteration, trainingIterable)
   }
 
   def learn(iteration: Int, data: Iterable[T]): Unit = {
@@ -211,9 +218,8 @@ abstract class Learnable[T <: AnyRef](val node: Node[T], val parameters: Paramet
       logger.info("==> Learning using the labeler to be '{}'", oracle)
       logger.info(classifier.getExtractor.getCompositeChildren.toString)
       logger.info(classifier.getLabeler.toString)
-
-      logger.info("Learnable: Learn with data of size {}", data.size)
-      logger.info("Training: {} iterations remain.", iteration)
+      logger.info(s"Learnable: Learn with data of size ${data.size}")
+      logger.info(s"Training: $iteration iterations remain.")
     }
 
     isTraining = true
@@ -257,11 +263,11 @@ abstract class Learnable[T <: AnyRef](val node: Node[T], val parameters: Paramet
 
   def forget() = this.classifier.forget()
 
-  /** Test with given data, use internally
+  /** Test with the test data, retrieve internally
     *
-    * @return List of (label, (f1, precision, recall))
+    * @return a [[Results]] object
     */
-  def test(): List[(String, (Double, Double, Double))] = {
+  def test(): Results = {
     val testData = node.getTestingInstances
     test(testData)
   }
@@ -272,18 +278,36 @@ abstract class Learnable[T <: AnyRef](val node: Node[T], val parameters: Paramet
     * @param prediction it is the property that we want to evaluate it if it is null then the prediction of the classifier is the default
     * @param groundTruth it is the property that we want to evaluate the prediction against it, if it is null then the gold label derived from the classifier is used
     * @param exclude it is the label that we want to exclude fro evaluation, this is useful for evaluating the multi-class classifiers when we need to measure overall F1 instead of accuracy and we need to exclude the negative class
-    * @return List of (label, (f1, precision, recall))
+    * @return List of [[Results]]
     */
-  def test(testData: Iterable[T] = null, prediction: Property[T] = null, groundTruth: Property[T] = null, exclude: String = ""): List[(String, (Double, Double, Double))] = {
+  def test(testData: Iterable[T] = null, prediction: Property[T] = null, groundTruth: Property[T] = null,
+    exclude: String = ""): Results = {
     isTraining = false
-    val testReader = new LBJIteratorParserScala[T](if (testData == null) {
+    val testParser = new IterableToLBJavaParser[T](if (testData == null) {
       node.getTestingInstances
     } else (testData))
-    testReader.reset()
-    val tester = TestDiscrete.testDiscrete(classifier, classifier.getLabeler, testReader)
+    // TODO: expose the granularity parameter
+    val outputGranularity = 0
+    test(testParser, prediction, groundTruth, exclude, outputGranularity)
+  }
+
+  def test(testParser: Parser, prediction: Property[T], groundTruth: Property[T], exclude: String, outputGranularity: Int): Results = {
+    testParser.reset()
+    val tester = if (prediction == null && groundTruth == null)
+      TestDiscrete.testDiscrete(classifier, classifier.getLabeler, testParser)
+    else
+      TestDiscrete.testDiscrete(new TestDiscrete(), prediction.classifier, groundTruth.classifier, testParser, logging, outputGranularity)
+    if (!exclude.isEmpty) {
+      tester.addNull(exclude)
+    }
     tester.printPerformance(System.out)
-    val ret = tester.getLabels.map { label => (label, (tester.getF1(label), tester.getPrecision(label), tester.getRecall(label))) }
-    ret.toList
+    val perLabelResults = tester.getLabels.map { label =>
+      ResultPerLabel(label, tester.getF1(label), tester.getPrecision(label), tester.getRecall(label),
+        tester.getAllClasses, tester.getLabeled(label), tester.getPredicted(label), tester.getCorrect(label))
+    }
+    val overalResultArray = tester.getOverallStats()
+    val overalResult = OverallResult(overalResultArray(0), overalResultArray(1), overalResultArray(2))
+    Results(perLabelResults, ClassifierUtils.getAverageResults(perLabelResults), overalResult)
   }
 
   /** Test with real-valued (continuous) data. Runs Spearman's and Pearson's correlations.
@@ -292,7 +316,7 @@ abstract class Learnable[T <: AnyRef](val node: Node[T], val parameters: Paramet
     */
   def testContinuous(testData: Iterable[T] = null): Unit = {
     isTraining = false
-    val testReader = new LBJIteratorParserScala[T](if (testData == null) node.getTestingInstances else testData)
+    val testReader = new IterableToLBJavaParser[T](if (testData == null) node.getTestingInstances else testData)
     testReader.reset()
     new TestContinuous(classifier, classifier.getLabeler, testReader)
   }
@@ -314,61 +338,32 @@ abstract class Learnable[T <: AnyRef](val node: Node[T], val parameters: Paramet
     }
   }
 
-  /** Run k fold cross validation. */
-  def crossValidation(k: Int) = {
-    val allData = this.fromData
+  /** Run k fold cross validation using the training data. The strategy to split the instances can be set to
+    * [[SplitPolicy.random]], [[SplitPolicy.sequential]], [[SplitPolicy.kth]] or [[SplitPolicy.manual]]
+    * if the data splitting policy is not 'Manual', the number of folds must be greater than 1. Otherwise it's value
+    * doesn't really matter.
+    *
+    * @param k number of folds
+    * @param splitPolicy strategy to split the instances into k folds.
+    */
+  def crossValidation(k: Int, splitPolicy: SplitPolicy = SplitPolicy.random,
+    prediction: Property[T] = null, groundTruth: Property[T] = null, exclude: String = "", outputGranularity: Int = 0): Seq[Results] = {
+    val testReader = new IterableToLBJavaParser[T](trainingInstances)
+    println("trainingInstances inside crossValidation =  " + trainingInstances.size)
+    val foldParser = new FoldParser(testReader, k, splitPolicy, 0, false, trainingInstances.size)
+    (0 until k).map { fold =>
+      // training
+      foldParser.setPivot(fold)
+      foldParser.setFromPivot(false)
+      logger.info(s"Training on all folds except $k")
+      learn(10, foldParser)
 
-    logger.info("Running cross validation on {} data", allData.size)
-
-    val groupSize = Math.ceil(allData.size / k).toInt
-    val groups = allData.grouped(groupSize).toList
-
-    val loops = if (k == 1) {
-      (groups.head, Nil) :: Nil
-    } else {
-      (0 until k) map {
-        i => chunkData(groups, i, 0, (Nil, Nil))
-      }
+      // testing
+      foldParser.reset()
+      logger.info(s"Testing on fold $k")
+      foldParser.setFromPivot(true)
+      this.test(foldParser, prediction, groundTruth, exclude, outputGranularity)
     }
-
-    def printTestResult(result: (String, (Double, Double, Double))): Unit = {
-      result match {
-        case (label, (f1, precision, recall)) =>
-          println(s"  $label    $f1    $precision     $recall   ")
-      }
-    }
-
-    val results = loops.zipWithIndex map {
-      case ((trainingSet, testingSet), idx) =>
-        logger.info("Running fold {}", idx)
-        logger.info("Learn with {}", trainingSet.size)
-        logger.info("Test with {}", testingSet.size)
-
-        this.classifier.forget()
-        this.learn(10, trainingSet)
-        val testResult = this.test(testingSet)
-        testResult
-    }
-
-    def sumTuple(a: (Double, Double, Double), b: (Double, Double, Double)): (Double, Double, Double) = {
-      (a._1 + b._1, a._2 + b._2, a._3 + b._3)
-    }
-
-    def avgTuple(a: (Double, Double, Double), size: Int): (Double, Double, Double) = {
-      (a._1 / size, a._2 / size, a._3 / size)
-    }
-
-    println("  label    f1    precision     recall   ")
-
-    results.flatten.toList.groupBy({
-      tu: (String, (Double, Double, Double)) => tu._1
-    }).foreach({
-      case (label, l) =>
-        val t = l.length
-        val avg = avgTuple(l.map(_._2).reduce(sumTuple), t)
-
-        printTestResult((label, avg))
-    })
   }
 
   /** Label property for users classifier */

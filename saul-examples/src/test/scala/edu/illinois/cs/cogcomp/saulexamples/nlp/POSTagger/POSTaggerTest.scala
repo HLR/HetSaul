@@ -112,7 +112,6 @@ class POSTaggerTest extends FlatSpec with Matchers {
     )
     val posUnknownLabelMap = Map("or" -> "CC", "not" -> "RB",
       "that" -> "IN", "is" -> "VBZ", "question" -> "NN")
-    println("toyConstituents.size = " + toyConstituents.size)
     toyConstituents.forall { cons =>
       val pred = POSTaggerUnknown(cons)
       pred == posUnknownLabelMap.getOrElse(cons.getSurfaceForm, pred)
@@ -133,5 +132,4 @@ class POSTaggerTest extends FlatSpec with Matchers {
       predicted == combinedClassifierLabelMap.getOrElse(cons.getSurfaceForm, predicted)
     } should be(true)
   }
-
 }

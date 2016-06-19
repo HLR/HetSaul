@@ -6,7 +6,7 @@ import edu.illinois.cs.cogcomp.lbj.pos.POSLabeledUnknownWordParser
 import edu.illinois.cs.cogcomp.lbjava.classify.TestDiscrete
 import edu.illinois.cs.cogcomp.nlp.corpusreaders.PennTreebankPOSReader
 import edu.illinois.cs.cogcomp.saul.classifier.ClassifierUtils
-import edu.illinois.cs.cogcomp.saul.parser.LBJIteratorParserScala
+import edu.illinois.cs.cogcomp.saul.parser.IterableToLBJavaParser
 import edu.illinois.cs.cogcomp.saulexamples.nlp.POSTagger.POSClassifiers._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.POSTagger.POSDataModel._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.CommonSensors
@@ -100,7 +100,7 @@ object POSTaggerApp {
 
   def testPOSTagger(): Unit = {
     val tester = new TestDiscrete
-    val testReader = new LBJIteratorParserScala[Constituent](testData)
+    val testReader = new IterableToLBJavaParser[Constituent](testData)
     testReader.reset()
 
     testReader.data.foreach(cons => {
