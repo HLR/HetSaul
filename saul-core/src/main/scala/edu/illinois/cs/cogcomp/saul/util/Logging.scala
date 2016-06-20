@@ -1,6 +1,6 @@
 package edu.illinois.cs.cogcomp.saul.util
 
-import ch.qos.logback.classic.{ Level, Logger }
+import ch.qos.logback.classic.Level
 import ch.qos.logback.classic.encoder.PatternLayoutEncoder
 import ch.qos.logback.classic.html.HTMLLayout
 import ch.qos.logback.classic.spi.ILoggingEvent
@@ -18,7 +18,6 @@ trait Logging {
   val internalLogger = LoggerFactory.getLogger(this.getClass)
 
   object logger {
-    // scalastyle:ignore
     def trace(message: => String): Unit =
       if (internalLogger.isTraceEnabled) {
         internalLogger.trace(message)
@@ -89,6 +88,42 @@ trait Logging {
       def setLevel(level: Level): Logger = {
         logger.setLevel(level)
         this
+      }
+
+      def setLevelWarn(): Logger = {
+        logger.setLevel(Level.WARN)
+        this
+      }
+
+      def setLevelDebug(): Logger = {
+        logger.setLevel(Level.DEBUG)
+        this
+      }
+
+      def setLevelInfo(): Logger = {
+        logger.setLevel(Level.INFO)
+        this
+      }
+
+      /** Simple way to get the log level. Example:
+        * <code>
+        * loggerConfig.Logger("org.apache.spark").getLevel()
+        * </code>
+        */
+      def getLevel(): Level = {
+        logger.getLevel()
+      }
+
+      def isLevelWarn(): Boolean = {
+        logger.getLevel() == Level.WARN
+      }
+
+      def isLevelDebug(): Boolean = {
+        logger.getLevel() == Level.DEBUG
+      }
+
+      def isLevelInfo(): Boolean = {
+        logger.getLevel() == Level.INFO
       }
 
       /** Simple log appender creation. Example:

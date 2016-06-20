@@ -2,6 +2,7 @@ package edu.illinois.cs.cogcomp.saulexamples.DrugResponse
 
 import edu.illinois.cs.cogcomp.saul.classifier.ClassifierUtils
 import edu.illinois.cs.cogcomp.saul.datamodel.node.Path
+import edu.illinois.cs.cogcomp.saul.util.Logging
 import edu.illinois.cs.cogcomp.saulexamples.DrugResponse.Classifiers.DrugResponseRegressor
 import edu.illinois.cs.cogcomp.saulexamples.DrugResponse.KnowEngDataModel._
 import edu.illinois.cs.cogcomp.saulexamples.DrugResponse.Queries._
@@ -10,7 +11,7 @@ import edu.illinois.cs.cogcomp.saulexamples.bioInformatics._
 import scala.collection.JavaConversions._
 /** Created by Parisa on 6/25/15.
   */
-object myApp {
+object myApp extends Logging {
 
   def main(args: Array[String]): Unit = {
 
@@ -20,12 +21,12 @@ object myApp {
     val patient_gene_data = new drugExampleReader().pgReader("./data/biology/gene2med_probe_expr.txt").filter((x => GCollection.exists(y => (y.GeneID.equals(x.Gene_ID)))))
     val GGCollection = new Edges("./data/biology/edgesGG.txt").edgeCollection
 
-    println("Statistics about read data")
-    println("Number of patients: ", patients_data.size)
-    println("Number of patient drug records:", patient_drug_data.size)
-    println("Number of Genes:", GCollection.size)
-    println("Number of patient_gene records:", patient_gene_data.size)
-    println("Number of edges:", GGCollection.size)
+    logger.info("Statistics about read data")
+    logger.info(s"Number of patients: ${patients_data.size}")
+    logger.info(s"Number of patient drug records: ${patient_drug_data.size}")
+    logger.info(s"Number of Genes: ${GCollection.size} ")
+    logger.info(s"Number of patient_gene records: ${patient_gene_data.size} ")
+    logger.info(s"Number of edges: ${GGCollection.size}")
 
     patients.populate(patients_data.slice(0, 5))
     patients.populate(patients_data.slice(6, 10), train = false)
@@ -69,7 +70,7 @@ object myApp {
     //dResponseClassifier.testContinuos(patient_drug_data)
     //DrugResponseRegressor.learn(1)
     //DrugResponseRegressor.testContinuos(patientDrug.getTrainingInstances)
-    print("finished!")
+    logger.info("finished!")
   }
 
 }

@@ -4,30 +4,28 @@ import java.io.File
 import java.net.URL
 
 import edu.illinois.cs.cogcomp.core.io.IOUtils
-import edu.illinois.cs.cogcomp.lbjava.classify.{FeatureVector, TestDiscrete}
+import edu.illinois.cs.cogcomp.lbjava.classify.{ FeatureVector, TestDiscrete }
 import edu.illinois.cs.cogcomp.lbjava.learn.Learner.Parameters
 import edu.illinois.cs.cogcomp.lbjava.learn._
-import edu.illinois.cs.cogcomp.lbjava.parse.{FoldParser, Parser}
+import edu.illinois.cs.cogcomp.lbjava.parse.{ FoldParser, Parser }
 import edu.illinois.cs.cogcomp.lbjava.parse.FoldParser.SplitPolicy
 import edu.illinois.cs.cogcomp.lbjava.util.ExceptionlessOutputStream
 import edu.illinois.cs.cogcomp.saul.TestContinuous
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
 import edu.illinois.cs.cogcomp.saul.datamodel.edge.Link
 import edu.illinois.cs.cogcomp.saul.datamodel.node.Node
-import edu.illinois.cs.cogcomp.saul.datamodel.property.{CombinedDiscreteProperty, Property, PropertyWithWindow}
+import edu.illinois.cs.cogcomp.saul.datamodel.property.{ CombinedDiscreteProperty, Property, PropertyWithWindow }
 import edu.illinois.cs.cogcomp.saul.lbjrelated.LBJLearnerEquivalent
-import edu.illinois.cs.cogcomp.saul.parser.{IterableToLBJavaParser, LBJavaParserToIterable}
+import edu.illinois.cs.cogcomp.saul.parser.{ IterableToLBJavaParser, LBJavaParserToIterable }
 import edu.illinois.cs.cogcomp.saul.util.Logging
 import org.slf4j.helpers.NOPLogger
-import org.slf4j.{Logger, LoggerFactory}
+import org.slf4j.{ Logger, LoggerFactory }
 
 import scala.reflect.ClassTag
 
-abstract class Learnable[T <: AnyRef](val node: Node[T], val parameters: Parameters = new Learner.Parameters)(implicit tag: ClassTag[T]) extends LBJLearnerEquivalent with Logging{
+abstract class Learnable[T <: AnyRef](val node: Node[T], val parameters: Parameters = new Learner.Parameters)(implicit tag: ClassTag[T]) extends LBJLearnerEquivalent with Logging {
   /** Whether to use caching */
   val useCache = false
-
-  val logging = true
 
   var isTraining = false
 
@@ -288,6 +286,7 @@ abstract class Learnable[T <: AnyRef](val node: Node[T], val parameters: Paramet
 
   def test(testParser: Parser, prediction: Property[T], groundTruth: Property[T], exclude: String, outputGranularity: Int): Results = {
     testParser.reset()
+    val logging = if (loggerConfig.Logger("edu.illinois.cs.cogcomp.saul.classifier.Learnable").isLevelInfo()) true else false
     val tester = if (prediction == null && groundTruth == null)
       TestDiscrete.testDiscrete(classifier, classifier.getLabeler, testParser)
     else

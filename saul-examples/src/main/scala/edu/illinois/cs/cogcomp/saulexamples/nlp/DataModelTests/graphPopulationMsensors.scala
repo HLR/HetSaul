@@ -8,7 +8,6 @@ import scala.collection.JavaConversions._
 
 object graphPopulationMsensors {
   def main(args: Array[String]): Unit = {
-
     val data = new DocumentReader("./data/20newsToy/train").docs.toList.slice(0, 2)
     val taList = data.map(CommonSensors.annotateWithCurator)
     val sentenceList = taList.flatMap(_.sentences())
@@ -22,9 +21,7 @@ object graphPopulationMsensors {
     val x1 = sentence() ~> -docTosen
     val x2 = document() ~> docTosen
 
-    println(s"x1.size = ${x1.size}")
-    println(s"x2.size = ${x2.size}")
-
-    print("finished")
+    logger.debug(s"x1.size = ${x1.size}")
+    logger.debug(s"x2.size = ${x2.size}")
   }
 }
