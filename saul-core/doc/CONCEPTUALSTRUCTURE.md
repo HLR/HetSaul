@@ -239,7 +239,7 @@ For example:
 
 ```scala 
 loggerConfig.Logger("edu.illinois.cs.cogcomp.saul.classifier.Learnable").setLevel(Level.ERROR)
-``
+```
 
 To keep the default behavior less verbose, the default logging level is `info`. 
 If you want to keep track of the changes and settings in your program, 
