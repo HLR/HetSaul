@@ -1,0 +1,42 @@
+<!--
+  Projects have two appenders: One that pipes all messages to a file, and one that pipes all
+  INFO-and-higher messages to STDOUT.
+
+  The default root logging level is INFO.
+
+  The following overrides may be set as environment variables or java properties:
+    logback_rootLevel - The global root logging level.
+    logback_stdoutLevel - The filter level to apply to the STDOUT logger.
+-->
+<configuration>
+    <!-- Appender to a file named based on the application name. -->
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/${logback.appname}.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- daily rollover -->
+            <fileNamePattern>logs/${logback.appname}.%d{yyyy-MM-dd}.log</fileNamePattern>
+
+            <!-- keep 30 days' worth of history -->
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+
+        <encoder>
+            <pattern>%-5level [%date] %logger{35}: %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <!-- deny all events with a level below INFO, that is TRACE and DEBUG -->
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>${logback_stdoutLevel:-INFO}</level>
+        </filter>
+        <encoder>
+            <pattern>%-5level [%date] %logger{35}: %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <root level="${logback_rootLevel:-INFO}">
+        <appender-ref ref="FILE" />
+        <appender-ref ref="STDOUT" />
+    </root>
+</configuration>

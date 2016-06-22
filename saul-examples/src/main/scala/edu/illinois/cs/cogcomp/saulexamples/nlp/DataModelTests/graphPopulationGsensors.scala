@@ -8,9 +8,7 @@ import edu.illinois.cs.cogcomp.saulexamples.nlp.CommonSensors
 import scala.collection.JavaConversions._
 
 object graphPopulationGsensors {
-
   def main(args: Array[String]): Unit = {
-
     val data = new DocumentReader("./data/20newsToy/train").docs.toList.slice(1, 3)
     val taList = data.map(CommonSensors.annotateWithCurator)
 
@@ -27,9 +25,8 @@ object graphPopulationGsensors {
     val x1 = sentence() ~> -docToSen
     val x2 = document() ~> docToSen
 
-    println(s"x1.size = ${x1.size}")
-    println(s"x2.size = ${x2.size}")
-
-    print("finished")
+    logger.debug(s"x1.size = ${x1.size}")
+    logger.debug(s"x2.size = ${x2.size}")
+    logger.debug("finished")
   }
 }

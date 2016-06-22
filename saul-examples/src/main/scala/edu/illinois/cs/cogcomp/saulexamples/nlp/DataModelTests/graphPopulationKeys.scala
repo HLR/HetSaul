@@ -20,9 +20,7 @@ object graphPopulationKeys {
     val x1 = sentence() ~> -docTosen
     val x2 = document() ~> docTosen
 
-    println(s"x1.size = ${x1.size}")
-    println(s"x2.size = ${x2.size}")
-
-    print("finished")
+    logger.debug(s"x1.size = ${x1.size}")
+    logger.debug(s"x2.size = ${x2.size}")
   }
 }

@@ -6,11 +6,12 @@ import edu.illinois.cs.cogcomp.saul.datamodel.node.{ JoinNode, Node, NodePropert
 import edu.illinois.cs.cogcomp.saul.datamodel.property.features.discrete._
 import edu.illinois.cs.cogcomp.saul.datamodel.property.features.real._
 import edu.illinois.cs.cogcomp.saul.datamodel.property.{ EvaluatedProperty, Property }
+import edu.illinois.cs.cogcomp.saul.util.Logging
 
 import scala.collection.mutable.ListBuffer
 import scala.reflect.ClassTag
 
-trait DataModel {
+trait DataModel extends Logging {
   val PID = 'PID
 
   final val nodes = new ListBuffer[Node[_]]
@@ -111,7 +112,7 @@ trait DataModel {
   }
 
   def testWith[T <: AnyRef](coll: Seq[T])(implicit tag: ClassTag[T]) = {
-    println("Adding for type" + tag.toString)
+    logger.info("Adding for type" + tag.toString)
     //getNodeWithType[T].addToTest(coll)
   }
 

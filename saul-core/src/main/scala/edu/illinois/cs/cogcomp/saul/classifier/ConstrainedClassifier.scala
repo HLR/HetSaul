@@ -7,8 +7,9 @@ import edu.illinois.cs.cogcomp.saul.TestWithStorage
 import edu.illinois.cs.cogcomp.saul.classifier.infer.InferenceCondition
 import edu.illinois.cs.cogcomp.saul.constraint.LfsConstraint
 import edu.illinois.cs.cogcomp.saul.datamodel.edge.Edge
-import edu.illinois.cs.cogcomp.saul.lbjrelated.{ LBJLearnerEquivalent, LBJClassifierEquivalent }
+import edu.illinois.cs.cogcomp.saul.lbjrelated.{ LBJClassifierEquivalent, LBJLearnerEquivalent }
 import edu.illinois.cs.cogcomp.saul.parser.IterableToLBJavaParser
+import edu.illinois.cs.cogcomp.saul.util.Logging
 
 import scala.reflect.ClassTag
 
@@ -22,7 +23,7 @@ abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val onClassifi
   implicit
   val tType: ClassTag[T],
   implicit val headType: ClassTag[HEAD]
-) extends LBJClassifierEquivalent {
+) extends LBJClassifierEquivalent with Logging {
 
   type LEFT = T
   type RIGHT = HEAD
@@ -47,8 +48,6 @@ abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val onClassifi
     */
   def filter(t: T, head: HEAD): Boolean = true
 
-  val logger = false
-
   /** The `pathToHead` returns only one object of type HEAD, if there are many of them i.e. `Iterable[HEAD]` then it
     * simply returns the `head` of the `Iterable`
     */
@@ -64,16 +63,13 @@ abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val onClassifi
       val l = pathToHead.get.forward.neighborsOf(x).toSet.toList
 
       if (l.isEmpty) {
-        if (logger)
-          println("Warning: Failed to find head")
+        logger.error("Warning: Failed to find head")
         None
       } else if (l.size != 1) {
-        if (logger)
-          println("Find too many heads")
+        logger.warn("Find too many heads")
         Some(l.head)
       } else {
-        if (logger)
-          println(s"Found head ${l.head} for child $x")
+        logger.info(s"Found head ${l.head} for child $x")
         Some(l.head)
       }
     }
@@ -86,8 +82,7 @@ abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val onClassifi
       val l = pathToHead.get.backward.neighborsOf(head)
 
       if (l.isEmpty) {
-        if (logger)
-          println("Failed to find part")
+        logger.error("Failed to find part")
         Seq.empty[T]
       } else {
         l.filter(filter(_, head)).toSeq
@@ -102,8 +97,7 @@ abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val onClassifi
         var inference = InferenceManager.get(name, head)
         if (inference == null) {
           inference = infer(head)
-          if (logger)
-            println("Inference is NULL " + name)
+          logger.warn(s"Inference ${name} has not been cached; running inference . . . ")
           InferenceManager.put(name, inference)
         }
         inference.valueOf(cls, t)

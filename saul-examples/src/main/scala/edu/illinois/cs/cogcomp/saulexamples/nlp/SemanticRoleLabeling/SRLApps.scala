@@ -4,14 +4,13 @@ import java.io.File
 
 import edu.illinois.cs.cogcomp.core.utilities.configuration.ResourceManager
 import edu.illinois.cs.cogcomp.saul.classifier.{ ClassifierUtils, JointTrainSparseNetwork }
+import edu.illinois.cs.cogcomp.saul.util.Logging
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLClassifiers._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLConstrainedClassifiers.argTypeConstraintClassifier
 import org.slf4j.{ Logger, LoggerFactory }
 
-object SRLApps {
+object SRLApps extends Logging {
   import SRLConfigurator._
-  val logger: Logger = LoggerFactory.getLogger(this.getClass)
-  logger.isInfoEnabled
 
   val properties: ResourceManager = {
     // Load the default properties if the user hasn't entered a file as an argument
@@ -70,9 +69,9 @@ object SRLApps {
   logger.info("all predicates number after population:" + predicates().size)
   logger.info("all arguments number after population:" + arguments().size)
   logger.info("all tokens number after population:" + tokens().size)
-
 }
-object RunningApps extends App {
+
+object RunningApps extends App with Logging {
   import SRLApps._
   import SRLApps.srlDataModelObject._
   // TRAINING
@@ -149,6 +148,7 @@ object RunningApps extends App {
         argTypeConstraintClassifier.test(relations.getTestingInstances, outputFile, 200, exclude = "candidate")
     }
   }
+
   // TESTING
   if (runningMode) {
     (testWithPipeline, testWithConstraints) match {
