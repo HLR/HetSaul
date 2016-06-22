@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory
   * not constructed unless the message will be logged.
   */
 trait Logging {
-  val internalLogger = LoggerFactory.getLogger(this.getClass)
+  lazy val internalLogger = LoggerFactory.getLogger(this.getClass)
 
   object logger {
     def trace(message: => String): Unit =
