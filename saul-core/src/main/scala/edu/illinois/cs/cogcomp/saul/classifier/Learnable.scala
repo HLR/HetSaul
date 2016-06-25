@@ -7,28 +7,25 @@ import edu.illinois.cs.cogcomp.core.io.IOUtils
 import edu.illinois.cs.cogcomp.lbjava.classify.{ FeatureVector, TestDiscrete }
 import edu.illinois.cs.cogcomp.lbjava.learn.Learner.Parameters
 import edu.illinois.cs.cogcomp.lbjava.learn._
-import edu.illinois.cs.cogcomp.lbjava.parse.{ Parser, FoldParser }
+import edu.illinois.cs.cogcomp.lbjava.parse.{ FoldParser, Parser }
 import edu.illinois.cs.cogcomp.lbjava.parse.FoldParser.SplitPolicy
 import edu.illinois.cs.cogcomp.lbjava.util.ExceptionlessOutputStream
 import edu.illinois.cs.cogcomp.saul.TestContinuous
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
 import edu.illinois.cs.cogcomp.saul.datamodel.edge.Link
 import edu.illinois.cs.cogcomp.saul.datamodel.node.Node
-import edu.illinois.cs.cogcomp.saul.datamodel.property.{ PropertyWithWindow, CombinedDiscreteProperty, Property }
+import edu.illinois.cs.cogcomp.saul.datamodel.property.{ CombinedDiscreteProperty, Property, PropertyWithWindow }
 import edu.illinois.cs.cogcomp.saul.lbjrelated.LBJLearnerEquivalent
-import edu.illinois.cs.cogcomp.saul.parser.{ LBJavaParserToIterable, IterableToLBJavaParser }
-
+import edu.illinois.cs.cogcomp.saul.parser.{ IterableToLBJavaParser, LBJavaParserToIterable }
+import edu.illinois.cs.cogcomp.saul.util.Logging
 import org.slf4j.helpers.NOPLogger
 import org.slf4j.{ Logger, LoggerFactory }
 
 import scala.reflect.ClassTag
 
-abstract class Learnable[T <: AnyRef](val node: Node[T], val parameters: Parameters = new Learner.Parameters)(implicit tag: ClassTag[T]) extends LBJLearnerEquivalent {
+abstract class Learnable[T <: AnyRef](val node: Node[T], val parameters: Parameters = new Learner.Parameters)(implicit tag: ClassTag[T]) extends LBJLearnerEquivalent with Logging {
   /** Whether to use caching */
   val useCache = false
-
-  val logging = true
-  val logger: Logger = if (logging) LoggerFactory.getLogger(this.getClass) else NOPLogger.NOP_LOGGER;
 
   var isTraining = false
 
@@ -83,19 +80,17 @@ abstract class Learnable[T <: AnyRef](val node: Node[T], val parameters: Paramet
 
   private def setExtractor(): Unit = {
     if (feature != null) {
-      logger.info("Setting the feature extractors to be {}", lbpFeatures.getCompositeChildren)
-
+      logger.debug(s"Setting the feature extractors to be ${lbpFeatures.getCompositeChildren}")
       classifier.setExtractor(lbpFeatures)
     } else {
-      logger.warn("Warning: no features found!")
+      logger.error("No features found!")
     }
   }
 
   private def setLabeler(): Unit = {
     if (label != null) {
       val oracle = Property.entitiesToLBJFeature(label)
-      logger.info("Setting the labeler to be '{}", oracle)
-
+      logger.debug(s"Setting the labeler to be ${oracle}")
       classifier.setLabeler(oracle)
     }
   }
@@ -155,24 +150,24 @@ abstract class Learnable[T <: AnyRef](val node: Node[T], val parameters: Paramet
     */
   def load(lcFile: String, lexFile: String): Unit = {
     if (IOUtils.exists(lcFile)) {
-      logger.info("Reading model file {} from local path.", IOUtils.getFileName(lcFile))
+      logger.info(s"Reading model file ${IOUtils.getFileName(lcFile)} from local path.")
       classifier.readModel(lcFile)
     } else {
       val modelResourcesUrls = IOUtils.lsResources(getClass, lcFile)
       if (modelResourcesUrls.size() == 1) {
-        logger.info("Reading model file {} from classpath.", IOUtils.getFileName(lcFile))
+        logger.info(s"Reading model file ${IOUtils.getFileName(lcFile)} from classpath.")
         classifier.readModel(modelResourcesUrls.get(0))
-      } else logger.error("Cannot find model file: {}", lcFile)
+      } else logger.error(s"Cannot find model file: ${lcFile}")
     }
     if (IOUtils.exists(lcFile)) {
-      logger.info("Reading lexicon file {} from local path.", IOUtils.getFileName(lexFile))
+      logger.info(s"Reading lexicon file ${IOUtils.getFileName(lexFile)} from local path.")
       classifier.readLexicon(lexFile)
     } else {
       val lexiconResourcesUrls = IOUtils.lsResources(getClass, lexFile)
       if (lexiconResourcesUrls.size() == 1) {
-        logger.info("Reading lexicon file {} from classpath.", IOUtils.getFileName(lexFile))
+        logger.info(s"Reading lexicon file ${IOUtils.getFileName(lexFile)} from classpath.")
         classifier.readLexicon(lexiconResourcesUrls.get(0))
-      } else logger.error("Cannot find lexicon file {}", lexFile)
+      } else logger.error(s"Cannot find lexicon file ${lexFile}")
     }
 
     setExtractor()
@@ -212,21 +207,19 @@ abstract class Learnable[T <: AnyRef](val node: Node[T], val parameters: Paramet
   def learn(iteration: Int, data: Iterable[T]): Unit = {
     createFiles()
 
-    if (logger.isInfoEnabled) {
-      val oracle = Property.entitiesToLBJFeature(label)
-      logger.info("==> Learning using the feature extractors to be {}", lbpFeatures.getCompositeChildren)
-      logger.info("==> Learning using the labeler to be '{}'", oracle)
-      logger.info(classifier.getExtractor.getCompositeChildren.toString)
-      logger.info(classifier.getLabeler.toString)
-      logger.info(s"Learnable: Learn with data of size ${data.size}")
-      logger.info(s"Training: $iteration iterations remain.")
-    }
+    val oracle = Property.entitiesToLBJFeature(label)
+    logger.debug(s"==> Learning using the feature extractors to be ${lbpFeatures.getCompositeChildren}")
+    logger.debug(s"==> Learning using the labeler to be ${oracle}")
+    logger.debug(classifier.getExtractor.getCompositeChildren.toString)
+    logger.debug(classifier.getLabeler.toString)
+    logger.info(s"Learnable: Learn with data of size ${data.size}")
+    logger.info(s"Training: $iteration iterations remain.")
 
     isTraining = true
 
     (iteration to 1 by -1).foreach(remainingIteration => {
       if (remainingIteration % 10 == 0)
-        logger.info("Training: {} iterations remain.", remainingIteration)
+        logger.info(s"Training: $remainingIteration iterations remain.")
 
       node.clearPropertyCache()
       data.foreach(classifier.learn)
@@ -293,6 +286,7 @@ abstract class Learnable[T <: AnyRef](val node: Node[T], val parameters: Paramet
 
   def test(testParser: Parser, prediction: Property[T], groundTruth: Property[T], exclude: String, outputGranularity: Int): Results = {
     testParser.reset()
+    val logging = if (loggerConfig.Logger("edu.illinois.cs.cogcomp.saul.classifier.Learnable").isLevelInfo()) true else false
     val tester = if (prediction == null && groundTruth == null)
       TestDiscrete.testDiscrete(classifier, classifier.getLabeler, testParser)
     else
@@ -349,7 +343,7 @@ abstract class Learnable[T <: AnyRef](val node: Node[T], val parameters: Paramet
   def crossValidation(k: Int, splitPolicy: SplitPolicy = SplitPolicy.random,
     prediction: Property[T] = null, groundTruth: Property[T] = null, exclude: String = "", outputGranularity: Int = 0): Seq[Results] = {
     val testReader = new IterableToLBJavaParser[T](trainingInstances)
-    println("trainingInstances inside crossValidation =  " + trainingInstances.size)
+    logger.debug("size training instances inside crossValidation" + trainingInstances.size)
     val foldParser = new FoldParser(testReader, k, splitPolicy, 0, false, trainingInstances.size)
     (0 until k).map { fold =>
       // training

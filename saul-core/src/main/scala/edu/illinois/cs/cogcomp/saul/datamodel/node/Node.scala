@@ -6,8 +6,9 @@ import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
 import edu.illinois.cs.cogcomp.saul.datamodel.property.Property
 import edu.illinois.cs.cogcomp.saul.datamodel.property.features.discrete.DiscreteProperty
 import edu.illinois.cs.cogcomp.saul.datamodel.edge.Edge
+import edu.illinois.cs.cogcomp.saul.util.Logging
 
-import scala.collection.mutable.{ HashMap => MutableHashMap, Map => MutableMap, LinkedHashSet => MutableSet, ListBuffer, ArrayBuffer }
+import scala.collection.mutable.{ ArrayBuffer, ListBuffer, HashMap => MutableHashMap, LinkedHashSet => MutableSet, Map => MutableMap }
 import scala.collection.mutable
 import scala.reflect.ClassTag
 
@@ -38,7 +39,7 @@ class NodeInstance[T](
 class Node[T <: AnyRef](
   val keyFunc: T => Any = (x: T) => x,
   val tag: ClassTag[T]
-) {
+) extends Logging {
 
   type NT = NodeInstance[T]
 
@@ -287,7 +288,7 @@ class Node[T <: AnyRef](
   final val propertyCacheList = new ListBuffer[MutableHashMap[_, Any]]()
 
   def clearPropertyCache[T](): Unit = {
-    println("clean property cache: cleaning " + propertyCacheList.size + " maps")
+    logger.info("clean property cache: cleaning " + propertyCacheList.size + " maps")
     propertyCacheList.foreach(_.asInstanceOf[MutableHashMap[T, Any]].clear)
   }
 }

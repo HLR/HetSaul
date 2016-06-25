@@ -1,11 +1,12 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.EmailSpam
 
+import edu.illinois.cs.cogcomp.saul.util.Logging
 import edu.illinois.cs.cogcomp.saulexamples.data.DocumentReader
 import edu.illinois.cs.cogcomp.saulexamples.nlp.EmailSpam.SpamClassifiers._
 
 import scala.collection.JavaConversions._
 
-object SpamApp {
+object SpamApp extends Logging {
 
   val trainData = new DocumentReader("../data/EmailSpam/train").docs.toList
   val testData = new DocumentReader("../data/EmailSpam/test").docs.toList
@@ -65,12 +66,11 @@ object SpamApp {
     SpamDataModel.docs populate trainData
     SpamClassifier.learn(30)
     SpamClassifier.save()
-    println(DeserializedSpamClassifier.classifier.getPrunedLexiconSize)
     DeserializedSpamClassifier.load(SpamClassifier.lcFilePath, SpamClassifier.lexFilePath)
     val predictionsBeforeSerialization = testData.map(SpamClassifier(_))
     val predictionsAfterSerialization = testData.map(DeserializedSpamClassifier(_))
-    println(predictionsBeforeSerialization.mkString("/"))
-    println(predictionsAfterSerialization.mkString("/"))
-    println(predictionsAfterSerialization.indices.forall(it => predictionsBeforeSerialization(it) == predictionsAfterSerialization(it)))
+    logger.info(predictionsBeforeSerialization.mkString("/"))
+    logger.info(predictionsAfterSerialization.mkString("/"))
+    logger.info(predictionsAfterSerialization.indices.forall(it => predictionsBeforeSerialization(it) == predictionsAfterSerialization(it)).toString)
   }
 }

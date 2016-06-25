@@ -1,4 +1,4 @@
-val cogcompNLPVersion = "3.0.20"
+val cogcompNLPVersion = "3.0.40"
 val cogcompPipelineVersion = "0.1.16"
 
 lazy val root = (project in file(".")).
@@ -7,7 +7,7 @@ lazy val root = (project in file(".")).
 lazy val commonSettings = Seq(
   organization := "edu.illinois.cs.cogcomp",
   name := "saul-project",
-  version := "0.3",
+  version := "0.4",
   scalaVersion := "2.11.7",
   resolvers ++= Seq(
     Resolver.mavenLocal,
@@ -15,11 +15,12 @@ lazy val commonSettings = Seq(
   ),
   javaOptions ++= List("-Xmx11g"),
   libraryDependencies ++= Seq(
-    "edu.illinois.cs.cogcomp" % "LBJava" % "1.2.16" withSources,
+    "edu.illinois.cs.cogcomp" % "LBJava" % "1.2.20" withSources,
     "edu.illinois.cs.cogcomp" % "illinois-core-utilities" % cogcompNLPVersion withSources,
     "com.gurobi" % "gurobi" % "6.0",
     "org.apache.commons" % "commons-math3" % "3.0",
-    "org.scalatest" % "scalatest_2.11" % "2.2.4"
+    "org.scalatest" % "scalatest_2.11" % "2.2.4",
+    "ch.qos.logback" % "logback-classic" % "1.1.7"
   ),
   fork := true,
   publishTo := Some(Resolver.sftp("CogcompSoftwareRepo", "bilbo.cs.illinois.edu", "/mounts/bilbo/disks/0/www/cogcomp/html/m2repo/")),
@@ -31,7 +32,7 @@ lazy val saulCore = (project in file("saul-core")).
   settings(
     name := "saul",
     libraryDependencies ++= Seq(
-      "com.typesafe.play" % "play_2.11" % "2.4.3" //exclude("ch.qos.logback", "logback-classic")
+      "com.typesafe.play" % "play_2.11" % "2.4.3"
     )
   )
 

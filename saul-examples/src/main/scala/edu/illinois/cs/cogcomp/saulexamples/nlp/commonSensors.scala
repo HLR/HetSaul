@@ -5,12 +5,13 @@ import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{ Constituent, Sentence, TextAnnotation }
 import edu.illinois.cs.cogcomp.curator.CuratorFactory
 import edu.illinois.cs.cogcomp.nlp.pipeline.IllinoisPipelineFactory
+import edu.illinois.cs.cogcomp.saul.util.Logging
 import edu.illinois.cs.cogcomp.saulexamples.data.Document
 
 import scala.collection.JavaConversions._
 
 /** an object containing many popular sensors used in examples */
-object CommonSensors {
+object CommonSensors extends Logging {
 
   def textCollection(x: List[Document]) = {
     x.map(documentContent)
@@ -47,7 +48,7 @@ object CommonSensors {
   /** Annotation services */
   def processDocumentWith(annotatorService: AnnotatorService, cid: String, did: String, text: String, services: String*): TextAnnotation = {
     val ta = annotatorService.createBasicTextAnnotation(cid, did, text)
-    println(ta.getAvailableViews)
+    logger.debug("populated views " + ta.getAvailableViews)
     ta
   }
 
