@@ -1,4 +1,4 @@
-val cogcompNLPVersion = "3.0.20"
+val cogcompNLPVersion = "3.0.40"
 val cogcompPipelineVersion = "0.1.16"
 
 lazy val root = (project in file(".")).
@@ -7,7 +7,7 @@ lazy val root = (project in file(".")).
 lazy val commonSettings = Seq(
   organization := "edu.illinois.cs.cogcomp",
   name := "saul-project",
-  version := "0.3",
+  version := "0.4",
   scalaVersion := "2.11.7",
   resolvers ++= Seq(
     Resolver.mavenLocal,
@@ -15,7 +15,7 @@ lazy val commonSettings = Seq(
   ),
   javaOptions ++= List("-Xmx11g"),
   libraryDependencies ++= Seq(
-    "edu.illinois.cs.cogcomp" % "LBJava" % "1.2.16" withSources,
+    "edu.illinois.cs.cogcomp" % "LBJava" % "1.2.20" withSources,
     "edu.illinois.cs.cogcomp" % "illinois-core-utilities" % cogcompNLPVersion withSources,
     "com.gurobi" % "gurobi" % "6.0",
     "org.apache.commons" % "commons-math3" % "3.0",
