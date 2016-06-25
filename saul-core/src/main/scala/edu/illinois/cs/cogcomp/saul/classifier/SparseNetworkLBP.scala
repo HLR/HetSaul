@@ -6,20 +6,17 @@ import edu.illinois.cs.cogcomp.lbjava.learn.{ LinearThresholdUnit, SparseNetwork
   */
 class SparseNetworkLBP() extends SparseNetworkLearner {
 
-  /**
-    * Pseudo-Getter method for [[conjunctiveLabels]] field.
+  /** Pseudo-Getter method for [[conjunctiveLabels]] field.
     * @return
     */
   def iConjuctiveLables: Boolean = this.conjunctiveLabels
 
-  /**
-    * Setter method for [[conjunctiveLabels]] field.
+  /** Setter method for [[conjunctiveLabels]] field.
     * @param newVal
     */
-  def iConjuctiveLables_= (newVal: Boolean): Unit = this.conjunctiveLabels = newVal
+  def iConjuctiveLables_=(newVal: Boolean): Unit = this.conjunctiveLabels = newVal
 
-  /**
-    * Override method to return LTU of type [[LinearThresholdUnit]].
+  /** Override method to return LTU of type [[LinearThresholdUnit]].
     * @param i Position of the LTU unit in the network.
     * @return LTU unit of type [[LinearThresholdUnit]]
     */
