@@ -67,14 +67,14 @@ object JointTrainSparseNetwork {
                           val a1 = a(1).asInstanceOf[Array[Double]] // exampleValues
                           val exampleLabels = a(2).asInstanceOf[Array[Int]]
                           val label = exampleLabels(0)
-                          var N = ilearner.net.size()
+                          var N = ilearner.getNetwork.size
 
-                          if (label >= N || ilearner.net.get(label) == null) {
+                          if (label >= N || ilearner.getNetwork.get(label) == null) {
                             ilearner.iConjuctiveLables = ilearner.iConjuctiveLables | ilearner.getLabelLexicon.lookupKey(label).isConjunctive
 
-                            val ltu: LinearThresholdUnit = ilearner.getbaseLTU
-                            ltu.initialize(ilearner.getnumExamples, ilearner.getnumFeatures)
-                            ilearner.net.set(label, ltu)
+                            val ltu: LinearThresholdUnit = ilearner.getBaseLTU
+                            ltu.initialize(ilearner.getNumExamples, ilearner.getNumFeatures)
+                            ilearner.getNetwork.set(label, ltu)
                             N = label + 1
                           }
 
