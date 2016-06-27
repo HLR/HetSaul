@@ -131,19 +131,15 @@ abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val onClassifi
     * @return Iterable of test instances for this classifier
     */
   private def deriveTestInstances: Iterable[T] = {
-    val dataNode: Option[Node[T]] = {
-      pathToHead match {
-        case Some(edge) => Some(edge.from)
-        case None =>
-          //  If pathToHead is not defined, try getting the node of onClassifier
-          onClassifier match {
-            case clf: Learnable[T] => Some(clf.node)
-            case _ => println("ERROR: pathToHead is not provided and the onClassifier is not a Learnable!"); None
-          }
-      }
-    }
-
-    dataNode.map(node => node.getTestingInstances).getOrElse(List.empty)
+    pathToHead.map(edge => edge.from)
+      .orElse({
+        onClassifier match {
+          case clf: Learnable[T] => Some(clf.node)
+          case _ => logger.error("pathToHead is not provided and the onClassifier is not a Learnable!"); None
+        }
+      })
+      .map(node => node.getTestingInstances)
+      .getOrElse(Iterable.empty)
   }
 
   /** Test Constrained Classifier with automatically derived test instances.
