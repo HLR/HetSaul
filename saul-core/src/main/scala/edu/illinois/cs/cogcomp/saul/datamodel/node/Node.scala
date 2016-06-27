@@ -119,6 +119,9 @@ class Node[T <: AnyRef](
       }
       joinNodes.foreach(_.addFromChild(this, t, train, populateEdge))
     }
+    else {
+      logger.warn(s"The instance $t is duplicate and it will be ignored! This might be because you add same data to both train and test set. ")
+    }
   }
 
   def populateFrom(n: Node[_]): Unit = {
