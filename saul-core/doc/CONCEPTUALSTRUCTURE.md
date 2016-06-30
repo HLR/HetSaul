@@ -76,6 +76,8 @@ val mathchWord = (param: String) => property(token) {
 
 Note that there is no limitation on the number/types of the extra parameters passed to properties. 
 
+**Caution:** never define a property with keyword `def`, and instead define it as `val` (as shown in the examples above).  
+
 ### Defining edges
 
 This is done via several constructs depending on the type of the relationships. Here is an example definition,

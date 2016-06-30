@@ -118,6 +118,8 @@ class Node[T <: AnyRef](
         incoming.foreach(_.populateUsingTo(t, train))
       }
       joinNodes.foreach(_.addFromChild(this, t, train, populateEdge))
+    } else {
+      logger.warn(s"The instance $t is duplicate and it will be ignored! This might be because you add the same instance to both train and test set. ")
     }
   }
 

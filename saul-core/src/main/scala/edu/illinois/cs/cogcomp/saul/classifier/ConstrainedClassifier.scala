@@ -114,6 +114,7 @@ abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val onClassifi
   private def getSolverInstance = solver match {
     case _: OJalgoHook => () => new OJalgoHook()
     case _: GurobiHook => () => new GurobiHook()
+    case _: BalasHook => () => new BalasHook()
   }
 
   override val classifier = new Classifier() {
