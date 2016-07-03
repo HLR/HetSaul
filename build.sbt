@@ -1,5 +1,4 @@
-import de.heikoseeberger.sbtheader.license.Apache2_0
-import de.heikoseeberger.sbtheader.CommentStyleMapping._
+import de.heikoseeberger.sbtheader.HeaderPattern
 
 val cogcompNLPVersion = "3.0.40"
 val cogcompPipelineVersion = "0.1.16"
@@ -29,7 +28,20 @@ lazy val commonSettings = Seq(
   fork := true,
   publishTo := Some(Resolver.sftp("CogcompSoftwareRepo", "bilbo.cs.illinois.edu", "/mounts/bilbo/disks/0/www/cogcomp/html/m2repo/")),
   isSnapshot := true,
-  headers := createFrom(Apache2_0, "2015", "Heiko Seeberger")
+  headers := Map(
+    "scala" -> (
+      HeaderPattern.cStyleBlockComment,
+      """|/*
+         | * This software is released under the University of Illinois/Research and Academic Use License. See
+         | * the LICENSE file in the root folder for details. Copyright (c) 2016
+         | *
+         | * Developed by: The Cognitive Computations Group, University of Illinois at Urbana-Champaign
+         | * http://cogcomp.cs.illinois.edu/
+         | */
+         |
+         |""".stripMargin
+      )
+  )
 )
 
 lazy val saulCore = (project in file("saul-core")).
@@ -54,7 +66,8 @@ lazy val saulExamples = (project in file("saul-examples")).
       "edu.illinois.cs.cogcomp" % "saul-er-models" % "1.3",
       "edu.illinois.cs.cogcomp" % "saul-srl-models" % "1.1"
     )
-  ).dependsOn(saulCore).aggregate(saulCore)
+  ).dependsOn(saulCore).aggregate(saulCore).
+  enablePlugins(AutomateHeaderPlugin)
 
 lazy val saulWebapp = (project in file("saul-webapp")).
   enablePlugins(PlayScala).
@@ -76,4 +89,5 @@ lazy val saulWebapp = (project in file("saul-webapp")).
     ),
     resolvers ++= Seq("scalaz-bintray" at "http://dl.bintray.com/scalaz/releases"),
     routesGenerator := InjectedRoutesGenerator
-  ).dependsOn(saulExamples).aggregate(saulExamples)
+  ).dependsOn(saulExamples).aggregate(saulExamples).
+  enablePlugins(AutomateHeaderPlugin)
