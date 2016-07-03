@@ -1,8 +1,12 @@
+import de.heikoseeberger.sbtheader.license.Apache2_0
+import de.heikoseeberger.sbtheader.CommentStyleMapping._
+
 val cogcompNLPVersion = "3.0.40"
 val cogcompPipelineVersion = "0.1.16"
 
 lazy val root = (project in file(".")).
-  aggregate(saulCore, saulExamples)
+  aggregate(saulCore, saulExamples).
+  enablePlugins(AutomateHeaderPlugin)
 
 lazy val commonSettings = Seq(
   organization := "edu.illinois.cs.cogcomp",
@@ -24,7 +28,8 @@ lazy val commonSettings = Seq(
   ),
   fork := true,
   publishTo := Some(Resolver.sftp("CogcompSoftwareRepo", "bilbo.cs.illinois.edu", "/mounts/bilbo/disks/0/www/cogcomp/html/m2repo/")),
-  isSnapshot := true
+  isSnapshot := true,
+  headers := createFrom(Apache2_0, "2015", "Heiko Seeberger")
 )
 
 lazy val saulCore = (project in file("saul-core")).
