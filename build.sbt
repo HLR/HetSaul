@@ -3,6 +3,16 @@ import de.heikoseeberger.sbtheader.HeaderPattern
 val cogcompNLPVersion = "3.0.40"
 val cogcompPipelineVersion = "0.1.16"
 
+lazy val headerMsg =  """|/**
+                         | * This software is released under the University of Illinois/Research and Academic Use License. See
+                         | * the LICENSE file in the root folder for details. Copyright (c) 2016
+                         | *
+                         | * Developed by: The Cognitive Computations Group, University of Illinois at Urbana-Champaign
+                         | * http://cogcomp.cs.illinois.edu/
+                         | */
+                         |
+                         |""".stripMargin
+
 lazy val root = (project in file(".")).
   aggregate(saulCore, saulExamples).
   enablePlugins(AutomateHeaderPlugin)
@@ -29,18 +39,8 @@ lazy val commonSettings = Seq(
   publishTo := Some(Resolver.sftp("CogcompSoftwareRepo", "bilbo.cs.illinois.edu", "/mounts/bilbo/disks/0/www/cogcomp/html/m2repo/")),
   isSnapshot := true,
   headers := Map(
-    "scala" -> (
-      HeaderPattern.cStyleBlockComment,
-      """|/*
-         | * This software is released under the University of Illinois/Research and Academic Use License. See
-         | * the LICENSE file in the root folder for details. Copyright (c) 2016
-         | *
-         | * Developed by: The Cognitive Computations Group, University of Illinois at Urbana-Champaign
-         | * http://cogcomp.cs.illinois.edu/
-         | */
-         |
-         |""".stripMargin
-      )
+    "scala" -> (HeaderPattern.cStyleBlockComment, headerMsg)
+    "java" -> (HeaderPattern.cStyleBlockComment, headerMsg)
   )
 )
 
@@ -51,7 +51,7 @@ lazy val saulCore = (project in file("saul-core")).
     libraryDependencies ++= Seq(
       "com.typesafe.play" % "play_2.11" % "2.4.3"
     )
-  )
+  ).enablePlugins(AutomateHeaderPlugin)
 
 lazy val saulExamples = (project in file("saul-examples")).
   settings(commonSettings: _*).
