@@ -39,7 +39,7 @@ lazy val commonSettings = Seq(
   publishTo := Some(Resolver.sftp("CogcompSoftwareRepo", "bilbo.cs.illinois.edu", "/mounts/bilbo/disks/0/www/cogcomp/html/m2repo/")),
   isSnapshot := true,
   headers := Map(
-    "scala" -> (HeaderPattern.cStyleBlockComment, headerMsg)
+    "scala" -> (HeaderPattern.cStyleBlockComment, headerMsg),
     "java" -> (HeaderPattern.cStyleBlockComment, headerMsg)
   )
 )
