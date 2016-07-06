@@ -1,8 +1,19 @@
+import de.heikoseeberger.sbtheader.HeaderPattern
+
 val cogcompNLPVersion = "3.0.40"
 val cogcompPipelineVersion = "0.1.16"
 
+lazy val headerMsg =  """/** This software is released under the University of Illinois/Research and Academic Use License. See
+                        |  * the LICENSE file in the root folder for details. Copyright (c) 2016
+                        |  *
+                        |  * Developed by: The Cognitive Computations Group, University of Illinois at Urbana-Champaign
+                        |  * http://cogcomp.cs.illinois.edu/
+                        |  */
+                        |""".stripMargin
+
 lazy val root = (project in file(".")).
-  aggregate(saulCore, saulExamples)
+  aggregate(saulCore, saulExamples).
+  enablePlugins(AutomateHeaderPlugin)
 
 lazy val commonSettings = Seq(
   organization := "edu.illinois.cs.cogcomp",
@@ -24,7 +35,11 @@ lazy val commonSettings = Seq(
   ),
   fork := true,
   publishTo := Some(Resolver.sftp("CogcompSoftwareRepo", "bilbo.cs.illinois.edu", "/mounts/bilbo/disks/0/www/cogcomp/html/m2repo/")),
-  isSnapshot := true
+  isSnapshot := true,
+  headers := Map(
+    "scala" -> (HeaderPattern.cStyleBlockComment, headerMsg),
+    "java" -> (HeaderPattern.cStyleBlockComment, headerMsg)
+  )
 )
 
 lazy val saulCore = (project in file("saul-core")).
@@ -34,7 +49,7 @@ lazy val saulCore = (project in file("saul-core")).
     libraryDependencies ++= Seq(
       "com.typesafe.play" % "play_2.11" % "2.4.3"
     )
-  )
+  ).enablePlugins(AutomateHeaderPlugin)
 
 lazy val saulExamples = (project in file("saul-examples")).
   settings(commonSettings: _*).
@@ -49,7 +64,8 @@ lazy val saulExamples = (project in file("saul-examples")).
       "edu.illinois.cs.cogcomp" % "saul-er-models" % "1.3",
       "edu.illinois.cs.cogcomp" % "saul-srl-models" % "1.1"
     )
-  ).dependsOn(saulCore).aggregate(saulCore)
+  ).dependsOn(saulCore).aggregate(saulCore).
+  enablePlugins(AutomateHeaderPlugin)
 
 lazy val saulWebapp = (project in file("saul-webapp")).
   enablePlugins(PlayScala).
@@ -71,4 +87,5 @@ lazy val saulWebapp = (project in file("saul-webapp")).
     ),
     resolvers ++= Seq("scalaz-bintray" at "http://dl.bintray.com/scalaz/releases"),
     routesGenerator := InjectedRoutesGenerator
-  ).dependsOn(saulExamples).aggregate(saulExamples)
+  ).dependsOn(saulExamples).aggregate(saulExamples).
+  enablePlugins(AutomateHeaderPlugin)
