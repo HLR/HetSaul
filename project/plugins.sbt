@@ -1,5 +1,7 @@
+// common
 addSbtPlugin("com.github.jkinkead" % "sbt-scalariform" % "0.1.6")
 addSbtPlugin("com.gilt" % "sbt-dependency-graph-sugar" % "0.7.5-1")
+addSbtPlugin("de.heikoseeberger" % "sbt-header" % "1.6.0")
 
 // The Play plugin
 addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.4.3")

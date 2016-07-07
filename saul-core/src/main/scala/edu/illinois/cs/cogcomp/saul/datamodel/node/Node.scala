@@ -1,3 +1,9 @@
+/** This software is released under the University of Illinois/Research and Academic Use License. See
+  * the LICENSE file in the root folder for details. Copyright (c) 2016
+  *
+  * Developed by: The Cognitive Computations Group, University of Illinois at Urbana-Champaign
+  * http://cogcomp.cs.illinois.edu/
+  */
 package edu.illinois.cs.cogcomp.saul.datamodel.node
 
 import edu.illinois.cs.cogcomp.lbjava.classify.FeatureVector
@@ -118,6 +124,8 @@ class Node[T <: AnyRef](
         incoming.foreach(_.populateUsingTo(t, train))
       }
       joinNodes.foreach(_.addFromChild(this, t, train, populateEdge))
+    } else {
+      logger.warn(s"The instance $t is duplicate and it will be ignored! This might be because you add the same instance to both train and test set. ")
     }
   }
 
