@@ -6,7 +6,8 @@
   */
 package edu.illinois.cs.cogcomp.saul.classifier.infer
 
-import edu.illinois.cs.cogcomp.lbjava.infer.{ ILPSolver, ParameterizedConstraint }
+import edu.illinois.cs.cogcomp.infer.ilp.ILPSolver
+import edu.illinois.cs.cogcomp.lbjava.infer.ParameterizedConstraint
 import edu.illinois.cs.cogcomp.saul.constraint.LfsConstraint
 
 import scala.reflect.ClassTag

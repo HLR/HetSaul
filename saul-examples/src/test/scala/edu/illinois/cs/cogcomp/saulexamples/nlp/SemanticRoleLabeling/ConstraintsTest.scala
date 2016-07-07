@@ -1,3 +1,9 @@
+/** This software is released under the University of Illinois/Research and Academic Use License. See
+  * the LICENSE file in the root folder for details. Copyright (c) 2016
+  *
+  * Developed by: The Cognitive Computations Group, University of Illinois at Urbana-Champaign
+  * http://cogcomp.cs.illinois.edu/
+  */
 package edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling
 
 import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
@@ -5,14 +11,14 @@ import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{ Constituent,
 import edu.illinois.cs.cogcomp.core.datastructures.trees.Tree
 import edu.illinois.cs.cogcomp.core.utilities.DummyTextAnnotationGenerator
 import edu.illinois.cs.cogcomp.lbjava.infer.{ FirstOrderConstant, FirstOrderConstraint }
-import edu.illinois.cs.cogcomp.saul.classifier.{ ConstrainedClassifier, Learnable, SparseNetworkLBP }
+import edu.illinois.cs.cogcomp.lbjava.learn.SparseNetworkLearner
+import edu.illinois.cs.cogcomp.saul.classifier.{ ConstrainedClassifier, Learnable }
 import edu.illinois.cs.cogcomp.saul.constraint.ConstraintTypeConversion._
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
 import edu.illinois.cs.cogcomp.saulexamples.nlp.CommonSensors._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLClassifiers.argumentTypeLearner
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLSensors._
 import org.scalatest.{ FlatSpec, Matchers }
-
 import scala.collection.JavaConversions._
 
 class ConstraintsTest extends FlatSpec with Matchers {
@@ -57,7 +63,7 @@ class ConstraintsTest extends FlatSpec with Matchers {
   object ArgumentTypeLearner extends Learnable[Relation](relations) {
     def label = argumentLabelGold
 
-    override lazy val classifier = new SparseNetworkLBP()
+    override lazy val classifier = new SparseNetworkLearner()
   }
 
   object TestConstraints {

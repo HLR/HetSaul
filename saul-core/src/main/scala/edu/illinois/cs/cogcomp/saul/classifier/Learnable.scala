@@ -9,13 +9,13 @@ package edu.illinois.cs.cogcomp.saul.classifier
 import java.io.File
 import java.net.URL
 
+import edu.illinois.cs.cogcomp.core.datastructures.vectors.ExceptionlessOutputStream
 import edu.illinois.cs.cogcomp.core.io.IOUtils
 import edu.illinois.cs.cogcomp.lbjava.classify.{ FeatureVector, TestDiscrete }
 import edu.illinois.cs.cogcomp.lbjava.learn.Learner.Parameters
 import edu.illinois.cs.cogcomp.lbjava.learn._
-import edu.illinois.cs.cogcomp.lbjava.parse.{ FoldParser, Parser }
 import edu.illinois.cs.cogcomp.lbjava.parse.FoldParser.SplitPolicy
-import edu.illinois.cs.cogcomp.lbjava.util.ExceptionlessOutputStream
+import edu.illinois.cs.cogcomp.lbjava.parse.{ FoldParser, Parser }
 import edu.illinois.cs.cogcomp.saul.TestContinuous
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
 import edu.illinois.cs.cogcomp.saul.datamodel.edge.Link
@@ -24,8 +24,6 @@ import edu.illinois.cs.cogcomp.saul.datamodel.property.{ CombinedDiscretePropert
 import edu.illinois.cs.cogcomp.saul.lbjrelated.LBJLearnerEquivalent
 import edu.illinois.cs.cogcomp.saul.parser.{ IterableToLBJavaParser, LBJavaParserToIterable }
 import edu.illinois.cs.cogcomp.saul.util.Logging
-import org.slf4j.helpers.NOPLogger
-import org.slf4j.{ Logger, LoggerFactory }
 
 import scala.reflect.ClassTag
 
