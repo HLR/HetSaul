@@ -14,6 +14,8 @@
 
 package edu.illinois.cs.cogcomp.saulexamples.data.SpRL2015Data;
 
+import edu.illinois.cs.cogcomp.saulexamples.data.SpRLXmlDocument;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;

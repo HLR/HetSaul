@@ -8,7 +8,6 @@ package edu.illinois.cs.cogcomp.saulexamples.data;
 
 import  java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.util.*;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -16,8 +15,6 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import edu.illinois.cs.cogcomp.saulexamples.data.SpRL2015Data.SpRL2015Document;
-import edu.illinois.cs.cogcomp.saulexamples.data.SpRL2015Data.SpRLXmlDocument;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
@@ -46,7 +43,6 @@ public class SpRLDataReader<T extends SpRLXmlDocument> {
     }
 
     private T read2015XmlFile(File xmlFile) throws SAXException, IOException, ParserConfigurationException, JAXBException {
-        Boolean exists = xmlFile.exists();
         Document xmlDocument = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(xmlFile);
         Node root = xmlDocument.getDocumentElement();
         JAXBContext jc = JAXBContext.newInstance(jaxbClass);

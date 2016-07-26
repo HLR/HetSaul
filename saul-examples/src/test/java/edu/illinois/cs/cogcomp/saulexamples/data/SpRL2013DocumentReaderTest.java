@@ -6,6 +6,8 @@
   */
 package edu.illinois.cs.cogcomp.saulexamples.data;
 
+import edu.illinois.cs.cogcomp.saulexamples.data.SpRL2013Data.SPATIALINDICATOR;
+import edu.illinois.cs.cogcomp.saulexamples.data.SpRL2013Data.SpRL2013Document;
 import edu.illinois.cs.cogcomp.saulexamples.data.SpRL2015Data.SPATIALENTITY;
 import edu.illinois.cs.cogcomp.saulexamples.data.SpRL2015Data.SpRL2015Document;
 import org.junit.Before;
@@ -22,19 +24,21 @@ import static org.junit.Assert.assertEquals;
 /**
  * Created by taher on 7/25/16.
  */
-public class SpRLReaderTest {
+public class SpRL2013DocumentReaderTest {
     private SpRLDataReader<SpRL2015Document> sprl2015Reader;
-    private File corpusPath = null;
+    private SpRLDataReader<SpRL2013Document> sprl2013Reader;
 
     @Before
     public void setup() throws ParserConfigurationException, JAXBException, SAXException, IOException {
         sprl2015Reader = new SpRLDataReader("../saul-examples/src/main/resources/SpRL/2015", SpRL2015Document.class);
+        sprl2013Reader = new SpRLDataReader("../saul-examples/src/main/resources/SpRL/2013", SpRL2013Document.class);
+
         sprl2015Reader.readData();
-        corpusPath = new File(sprl2015Reader.corpusPath);
+        sprl2013Reader.readData();
     }
     @Test
     public void sprl2015DocumentCount() {
-        assertEquals("SpRL 2015 Document count is not correct", sprl2015Reader.documents.size(), 1);
+        assertEquals("SpRL2013Document 2015 Document count is not correct", sprl2015Reader.documents.size(), 1);
     }
     @Test
     public void sprl2015TagsCount() {
@@ -94,8 +98,54 @@ public class SpRLReaderTest {
 
     }
     @Test
-    public void setSprl2015Text(){
+    public void sprl2015Text(){
         String text = sprl2015Reader.documents.get(0).getTEXT();
+        assertEquals(text, "test document");
+    }
+
+
+    @Test
+    public void sprl2013DocumentCount() {
+        assertEquals("SpRL2013Document 2015 Document count is not correct", sprl2013Reader.documents.size(), 1);
+    }
+    @Test
+    public void sprl2013TagsCount() {
+        int count = sprl2013Reader.documents.get(0).getTAGS().getDIRECTION().size();
+        assertEquals("direction count", count, 1);
+
+        count = sprl2013Reader.documents.get(0).getTAGS().getPATH().size();
+        assertEquals("path count", count, 1);
+
+        count = sprl2013Reader.documents.get(0).getTAGS().getDISTANCE().size();
+        assertEquals("distance count", count, 0);
+
+        count = sprl2013Reader.documents.get(0).getTAGS().getLANDMARK().size();
+        assertEquals("landmark count", count, 1);
+
+        count = sprl2013Reader.documents.get(0).getTAGS().getMOTIONINDICATOR().size();
+        assertEquals("motion indicator count", count, 1);
+
+        count = sprl2013Reader.documents.get(0).getTAGS().getRELATION().size();
+        assertEquals("relation count", count, 1);
+
+        count = sprl2013Reader.documents.get(0).getTAGS().getSPATIALINDICATOR().size();
+        assertEquals("spatial indicator count", count, 1);
+
+        count = sprl2013Reader.documents.get(0).getTAGS().getTRAJECTOR().size();
+        assertEquals("trajector count", count, 2);
+
+    }
+    @Test
+    public void sprl2013SpatialIndicator() {
+        SPATIALINDICATOR sp = sprl2013Reader.documents.get(0).getTAGS().getSPATIALINDICATOR().get(0);
+        assertEquals(sp.getEnd().intValue(), 409);
+        assertEquals(sp.getText(), "in the middle of");
+        assertEquals(sp.getId(), "S0");
+        assertEquals(sp.getStart().intValue(), 393);
+    }
+    @Test
+    public void sprl2013Text(){
+        String text = sprl2013Reader.documents.get(0).getTEXT().getContent();
         assertEquals(text, "test document");
     }
 }

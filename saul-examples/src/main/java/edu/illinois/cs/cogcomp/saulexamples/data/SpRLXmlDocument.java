@@ -4,14 +4,14 @@
   * Developed by: The Cognitive Computations Group, University of Illinois at Urbana-Champaign
   * http://cogcomp.cs.illinois.edu/
   */
-package edu.illinois.cs.cogcomp.saulexamples.data.SpRL2015Data;
+package edu.illinois.cs.cogcomp.saulexamples.data;
 
 /**
  * Created by taher on 7/25/16.
  */
 
 /***
- * Dummy interface to group all SpRL document classes.
+ * Dummy interface to group all SpRL2013Document document classes.
  */
 public interface SpRLXmlDocument {
 }
