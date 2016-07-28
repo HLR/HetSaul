@@ -13,7 +13,7 @@ import scala.collection.JavaConverters._
 
 object EntityRelationSensors {
   val path = "../data/"
-  val resourcePath = "../saul-examples/src/main/resources/EntityMentionRelation/"
+  val resourcePath = "../saul-examples/src/test/resources/EntityMentionRelation/"
 
   // Create single instances of Gazeteers and cache then with the object.
   lazy val cityGazetSensor = new GazeteerReader("gazeteer/known_city.lst", "Gaz:City", true, true)
