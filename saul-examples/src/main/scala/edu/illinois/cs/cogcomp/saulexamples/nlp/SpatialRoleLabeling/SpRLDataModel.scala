@@ -1,6 +1,12 @@
+/** This software is released under the University of Illinois/Research and Academic Use License. See
+  * the LICENSE file in the root folder for details. Copyright (c) 2016
+  *
+  * Developed by: The Cognitive Computations Group, University of Illinois at Urbana-Champaign
+  * http://cogcomp.cs.illinois.edu/
+  */
 package edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling
 
-import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{Constituent, Relation, TextAnnotation}
+import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{ Constituent, Relation, TextAnnotation }
 import edu.illinois.cs.cogcomp.core.utilities.configuration.ResourceManager
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
 import edu.illinois.cs.cogcomp.saulexamples.nlp.CommonSensors._
@@ -10,10 +16,9 @@ import edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling.SpRL2015.SpR
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling.SpRLSensors._
 import org.apache.commons.lang.NotImplementedException
 
-/**
-  * Created by taher on 7/28/16.
+/** Created by taher on 7/28/16.
   */
-object SpRLDataModel extends DataModel{
+object SpRLDataModel extends DataModel {
   val sentences = node[TextAnnotation]
   val tokens = node[Constituent]
   val relations = node[Relation]
@@ -38,10 +43,9 @@ object SpRLDataModel extends DataModel{
   }
 
   // features
-  val posTag = property(tokens, "pos"){
+  val posTag = property(tokens, "pos") {
     x: Constituent => getPOS(x)
   }
   //TODO: add more features
-
 
 }
