@@ -6,18 +6,15 @@
   */
 package edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling;
 
-import  java.io.File;
+import edu.illinois.cs.cogcomp.core.utilities.XmlModel;
+
+import org.xml.sax.SAXException;
+
+import javax.xml.bind.JAXBException;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.File;
 import java.io.IOException;
 import java.util.*;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.xml.sax.SAXException;
 
 /**
  * Created by taher on 7/25/16.
@@ -38,18 +35,10 @@ public class SpRLDataReader<T extends SpRLXmlDocument> {
         Collection<File> files = getAllFiles(new File(corpusPath));
         documents = new ArrayList<>();
         for(File f : files) {
-            documents.add(read2015XmlFile(f));
+            documents.add(XmlModel.load(jaxbClass,f));
         }
     }
 
-    private T read2015XmlFile(File xmlFile) throws SAXException, IOException, ParserConfigurationException, JAXBException {
-        Document xmlDocument = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(xmlFile);
-        Node root = xmlDocument.getDocumentElement();
-        JAXBContext jc = JAXBContext.newInstance(jaxbClass);
-        Unmarshaller unmarshaller = jc.createUnmarshaller();
-        T document = (T)unmarshaller.unmarshal(root);
-        return  document;
-    }
     private static Collection<File> getAllFiles(File dir) {
         Set<File> files = new HashSet<>();
         for (File entry : dir.listFiles()) {
