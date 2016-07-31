@@ -51,6 +51,10 @@ object CommonSensors extends Logging {
     ta.getView(ViewNames.TOKENS).getConstituents.toList
   }
 
+  def sentenceToTokens(s: Sentence): List[Constituent] = {
+    s.getView(ViewNames.TOKENS).getConstituents.toList
+  }
+
   /** Annotation services */
   def processDocumentWith(annotatorService: AnnotatorService, cid: String, did: String, text: String, services: String*): TextAnnotation = {
     val ta = annotatorService.createBasicTextAnnotation(cid, did, text)

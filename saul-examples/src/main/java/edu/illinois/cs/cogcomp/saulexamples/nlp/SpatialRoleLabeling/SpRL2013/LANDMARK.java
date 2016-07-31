@@ -14,6 +14,8 @@
 
 package edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling.SpRL2013;
 
+import edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling.HasSpan;
+
 import javax.xml.bind.annotation.*;
 import java.math.BigInteger;
 
@@ -21,7 +23,7 @@ import java.math.BigInteger;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "")
 @XmlRootElement(name = "LANDMARK")
-public class LANDMARK{
+public class LANDMARK implements HasSpan {
 
     @XmlAttribute(name = "id", required = true)
     protected String id;

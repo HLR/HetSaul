@@ -32,18 +32,26 @@ public class SpRLDataReader<T extends SpRLXmlDocument> {
     }
 
     public void readData() throws ParserConfigurationException, IOException, SAXException, JAXBException {
-        Collection<File> files = getAllFiles(new File(corpusPath));
+        File dir = new File(corpusPath);
+        if(!dir.exists())
+            throw new IOException("Cannot find '" + dir.getAbsolutePath() + "' path.");
+        Collection<File> files = getAllFiles(dir);
         documents = new ArrayList<>();
         for(File f : files) {
-            documents.add(XmlModel.load(jaxbClass,f));
+            T doc = XmlModel.load(jaxbClass,f);
+            doc.setFilename(f.getName());
+            documents.add(doc);
         }
     }
 
     private static Collection<File> getAllFiles(File dir) {
         Set<File> files = new HashSet<>();
-        for (File entry : dir.listFiles()) {
-            if (entry.isFile()) files.add(entry);
-            else files.addAll(getAllFiles(entry));
+        for (File file : dir.listFiles()) {
+            if (file.isFile()) {
+                if(file.getName().toLowerCase().endsWith(".xml"))
+                    files.add(file);
+            }
+            else files.addAll(getAllFiles(file));
         }
         return files;
     }

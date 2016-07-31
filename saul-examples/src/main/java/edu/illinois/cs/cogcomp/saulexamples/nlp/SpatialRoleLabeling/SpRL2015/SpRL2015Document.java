@@ -16,11 +16,7 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling.SpRL2015;
 
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling.SpRLXmlDocument;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.*;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
@@ -35,7 +31,8 @@ public class SpRL2015Document implements SpRLXmlDocument {
     @XmlElement(name = "TAGS", required = true)
     protected TAGS tags;
 
-
+    @XmlTransient
+    protected String filename;
     /**
      * Gets the value of the text property.
      * 
@@ -84,4 +81,17 @@ public class SpRL2015Document implements SpRLXmlDocument {
         this.tags = value;
     }
 
+    /**
+     * @return the filename
+     */
+    public String getFilename() {
+        return filename;
+    }
+
+    /**
+     * @param filename the filename to set
+     */
+    public void setFilename(String filename) {
+        this.filename = filename;
+    }
 }

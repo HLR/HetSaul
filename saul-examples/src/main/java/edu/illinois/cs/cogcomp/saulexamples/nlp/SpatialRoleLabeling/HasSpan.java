@@ -6,14 +6,12 @@
   */
 package edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling;
 
-/**
- * Created by taher on 7/25/16.
- */
+import java.math.BigInteger;
 
-/***
- * Dummy interface to group all SpRL2013Document document classes.
+/**
+ * Created by taher on 7/30/16.
  */
-public interface SpRLXmlDocument {
-    String getFilename();
-    void setFilename(String filename);
+public interface HasSpan {
+    BigInteger getStart();
+    BigInteger getEnd();
 }
