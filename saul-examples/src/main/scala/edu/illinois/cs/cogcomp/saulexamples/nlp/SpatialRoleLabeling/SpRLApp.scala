@@ -35,9 +35,9 @@ object SpRLApp extends App with Logging {
   logger.info("population starts.")
 
   PopulateSpRLDataModel()
-  val trajectors = tokens().filter(x=> isTrajector(x).equals("true"))
-  val landmarks = tokens().filter(x=> isLandmark(x).equals("true"))
-  val spatialIndicators = tokens().filter(x=> isSpatialIndicator(x).equals("true"))
+  val trajectors = tokens().filter(x => isTrajector(x).equals("true"))
+  val landmarks = tokens().filter(x => isLandmark(x).equals("true"))
+  val spatialIndicators = tokens().filter(x => isSpatialIndicator(x).equals("true"))
 
   logger.info("all sentences number after population:" + sentences().size)
   logger.info("all tokens number after population:" + tokens().size)
@@ -55,8 +55,7 @@ object SpRLApp extends App with Logging {
       logger.info("training " + name + "...")
       classifier.learn(100)
       classifier.save()
-    }
-    else {
+    } else {
       classifier.load()
       logger.info("testing " + name + " ...")
       classifier.test()
