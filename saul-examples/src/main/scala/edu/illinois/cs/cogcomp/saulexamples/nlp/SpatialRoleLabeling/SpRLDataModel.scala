@@ -41,13 +41,13 @@ object SpRLDataModel extends DataModel {
   val posTag = property(tokens, "pos") {
     x: Constituent => getPOS(x)
   }
-  val lemma = property(tokens, "pLem") {
+  val lemma = property(tokens, "lemma") {
     x: Constituent => getLemma(x)
   }
-  val subcategorization = property(tokens, "subcatC") {
+  val subcategorization = property(tokens, "subcat") {
     x: Constituent => fexFeatureExtractor(x, new SubcategorizationFrame(parseView))
   }
-  val headword = property(tokens, "headC") {
+  val headword = property(tokens, "head") {
     x: Constituent => fexFeatureExtractor(x, new ParseHeadWordPOS(parseView))
   }
   //  val path = property(tokens, "pathC") {
