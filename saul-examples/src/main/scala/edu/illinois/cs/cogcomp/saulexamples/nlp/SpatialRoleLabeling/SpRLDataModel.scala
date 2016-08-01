@@ -27,27 +27,27 @@ object SpRLDataModel extends DataModel {
   sentencesToTokens.addSensor(sentenceToTokens _)
 
   // Classification labels
-  val isSpatialIndicator = property(tokens, "sp") {
+  val isSpatialIndicator = property(tokens) {
     x: Constituent => x.getTextAnnotation.getView("sprl-SpatialIndicator").getLabelsCovering(x).contains("SpatialIndicator")
   }
-  val isLandmark = property(tokens, "lm") {
+  val isLandmark = property(tokens) {
     x: Constituent => x.getTextAnnotation.getView("sprl-Landmark").getLabelsCovering(x).contains("Landmark")
   }
-  val isTrajector = property(tokens, "tr") {
+  val isTrajector = property(tokens) {
     x: Constituent => x.getTextAnnotation.getView("sprl-Trajector").getLabelsCovering(x).contains("Trajector")
   }
 
   // features
-  val posTag = property(tokens, "pos") {
+  val posTag = property(tokens) {
     x: Constituent => getPOS(x)
   }
-  val lemma = property(tokens, "lemma") {
+  val lemma = property(tokens) {
     x: Constituent => getLemma(x)
   }
-  val subcategorization = property(tokens, "subcat") {
+  val subcategorization = property(tokens) {
     x: Constituent => fexFeatureExtractor(x, new SubcategorizationFrame(parseView))
   }
-  val headword = property(tokens, "head") {
+  val headword = property(tokens) {
     x: Constituent => fexFeatureExtractor(x, new ParseHeadWordPOS(parseView))
   }
   //  val path = property(tokens, "pathC") {

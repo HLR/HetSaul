@@ -6,11 +6,9 @@
   */
 package edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling;
 
-import edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling.SpRL2013.SPATIALINDICATOR;
-import edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling.SpRL2013.SpRL2013Document;
-import edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling.SpRL2015.SPATIALENTITY;
-import edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling.SpRL2015.SpRL2015Document;
-import edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling.SpRLDataReader;
+import edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling.SpRL2013.*;
+import edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling.SpRL2015.*;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.xml.sax.SAXException;
@@ -30,15 +28,19 @@ public class SpRLDocumentReaderTest {
 
     @Before
     public void setup() throws ParserConfigurationException, JAXBException, SAXException, IOException {
-        sprl2015Reader = new SpRLDataReader("../saul-examples/src/main/resources/SpRL/2015", SpRL2015Document.class);
-        sprl2013Reader = new SpRLDataReader("../saul-examples/src/main/resources/SpRL/2013", SpRL2013Document.class);
+
+        sprl2015Reader = new SpRLDataReader(getResourcePath("SpRL/2015"), SpRL2015Document.class);
+        sprl2013Reader = new SpRLDataReader(getResourcePath("SpRL/2013"), SpRL2013Document.class);
 
         sprl2015Reader.readData();
         sprl2013Reader.readData();
     }
+    private String getResourcePath(String relativePath){
+        return getClass().getClassLoader().getResource(relativePath).getPath();
+    }
     @Test
     public void sprl2015DocumentCount() {
-        assertEquals("SpRL2013Document 2015 Document count is not correct", sprl2015Reader.documents.size(), 1);
+        assertEquals("SpRL2013Document 2015 Document count", sprl2015Reader.documents.size(), 1);
     }
     @Test
     public void sprl2015TagsCount() {
@@ -106,7 +108,7 @@ public class SpRLDocumentReaderTest {
 
     @Test
     public void sprl2013DocumentCount() {
-        assertEquals("SpRL2013Document 2015 Document count is not correct", sprl2013Reader.documents.size(), 1);
+        assertEquals("SpRL2013Document 2013 Document count", sprl2013Reader.documents.size(), 1);
     }
     @Test
     public void sprl2013TagsCount() {

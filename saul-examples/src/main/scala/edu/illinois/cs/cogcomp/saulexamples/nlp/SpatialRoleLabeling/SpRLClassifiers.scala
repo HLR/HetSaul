@@ -16,18 +16,21 @@ import edu.illinois.cs.cogcomp.saul.datamodel.property.Property
 object SpRLClassifiers {
 
   import SpRLDataModel._
+
   object spatialIndicatorClassifier extends Learnable[Constituent](tokens) {
 
     def label: Property[Constituent] = isSpatialIndicator
     override def feature = using(lemma, posTag, headword, subcategorization)
     override lazy val classifier = new SparseNetworkLBP
   }
+
   object trajectorClassifier extends Learnable[Constituent](tokens) {
 
     def label: Property[Constituent] = isTrajector
     override def feature = using(lemma, posTag, headword, subcategorization)
     override lazy val classifier = new SparseNetworkLBP
   }
+
   object landmarkClassifier extends Learnable[Constituent](tokens) {
 
     def label: Property[Constituent] = isLandmark

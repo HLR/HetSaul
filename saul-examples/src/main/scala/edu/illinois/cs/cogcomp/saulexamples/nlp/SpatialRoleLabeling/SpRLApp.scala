@@ -6,15 +6,12 @@
   */
 package edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling
 
-import java.io.File
-
-import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.Constituent
 import edu.illinois.cs.cogcomp.core.utilities.configuration.ResourceManager
-import edu.illinois.cs.cogcomp.lbjava.learn.Learner
 import edu.illinois.cs.cogcomp.saul.classifier.Learnable
 import edu.illinois.cs.cogcomp.saul.util.Logging
 
+import java.io.File
 import scala.collection.JavaConverters._
 
 /** Created by Parisa on 7/29/16.
@@ -39,17 +36,17 @@ object SpRLApp extends App with Logging {
   val landmarks = tokens().filter(x => isLandmark(x).equals("true"))
   val spatialIndicators = tokens().filter(x => isSpatialIndicator(x).equals("true"))
 
-  logger.info("all sentences number after population:" + sentences().size)
-  logger.info("all tokens number after population:" + tokens().size)
-  logger.info("all trajectors number after population:" + trajectors.size)
-  logger.info("all landmarks number after population:" + landmarks.size)
-  logger.info("all spatialIndicators number after population:" + spatialIndicators.size)
+  logger.info("Total sentences :" + sentences().size)
+  logger.info("Total tokens :" + tokens().size)
+  logger.info("Total trajectors:" + trajectors.size)
+  logger.info("Total landmarks:" + landmarks.size)
+  logger.info("total spatial indicators:" + spatialIndicators.size)
 
   runClassifier(trajectorClassifier, "trajectors")
   runClassifier(landmarkClassifier, "landmarks")
   runClassifier(spatialIndicatorClassifier, "spatialIndicators")
 
-  def runClassifier(classifier: Learnable[Constituent], name: String): Unit = {
+  def runClassifier(classifier: Learnable[Constituent], name: String) = {
     classifier.modelDir = modelDir + name + File.separator
     if (isTrain) {
       logger.info("training " + name + "...")

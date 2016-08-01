@@ -12,14 +12,14 @@ import edu.illinois.cs.cogcomp.saul.util.Logging
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling.SpRL2013.SpRL2013Document
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling.SpRL2015.SpRL2015Document
 import edu.illinois.cs.cogcomp.saulexamples.nlp.TextAnnotationFactory
-import org.apache.commons.lang.NotImplementedException
 
+import org.apache.commons.lang.NotImplementedException
 import scala.collection.JavaConverters._
 import scala.collection.mutable.ListBuffer
 
 /** Created by taher on 7/28/16.
   */
-object PopulateSpRLDataModel {
+object PopulateSpRLDataModel extends Logging {
   def apply(rm: ResourceManager = new SpRLConfigurator().getDefaultConfig) = {
 
     val isTraining = rm.getBoolean(SpRLConfigurator.IS_TRAINING)
