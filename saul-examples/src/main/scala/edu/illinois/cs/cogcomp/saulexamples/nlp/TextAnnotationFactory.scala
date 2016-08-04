@@ -26,7 +26,7 @@ object TextAnnotationFactory {
   settings.setProperty(PipelineConfigurator.USE_SRL_VERB.key, Configurator.FALSE)
   settings.setProperty(PipelineConfigurator.USE_SRL_NOM.key, Configurator.FALSE)
   settings.setProperty(PipelineConfigurator.USE_STANFORD_DEP.key, Configurator.FALSE)
-  settings.setProperty(PipelineConfigurator.USE_SHALLOW_PARSE.key, Configurator.FALSE)
+  settings.setProperty(PipelineConfigurator.USE_SHALLOW_PARSE.key, Configurator.TRUE)
   settings.setProperty(PipelineConfigurator.USE_STANFORD_PARSE.key, Configurator.TRUE)
   settings.setProperty(PipelineConfigurator.STFRD_MAX_SENTENCE_LENGTH.key, "10000")
   settings.setProperty(PipelineConfigurator.STFRD_TIME_PER_SENTENCE.key, "100000")

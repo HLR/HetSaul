@@ -6,14 +6,16 @@
   */
 package edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling
 
+import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation._
 import edu.illinois.cs.cogcomp.core.utilities.configuration.ResourceManager
+import edu.illinois.cs.cogcomp.nlp.utilities.CollinsHeadFinder
 import edu.illinois.cs.cogcomp.saul.util.Logging
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling.SpRL2013.SpRL2013Document
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling.SpRL2015.SpRL2015Document
 import edu.illinois.cs.cogcomp.saulexamples.nlp.TextAnnotationFactory
-
 import org.apache.commons.lang.NotImplementedException
+
 import scala.collection.JavaConverters._
 import scala.collection.mutable.ListBuffer
 
@@ -40,7 +42,7 @@ object PopulateSpRLDataModel extends Logging {
         reader.readData()
         val sentences = ListBuffer[Sentence]()
         reader.documents.asScala.foreach(doc => {
-          val views = List("sprl-Trajector", "sprl-Landmark", "sprl-SpatialIndicator");
+          val views = List("sprl-Trajector", "sprl-Landmark", "sprl-SpatialIndicator")
           val ta = TextAnnotationFactory.createTextAnnotation("2013", doc.getFilename, doc.getTEXT().getContent, views: _*)
           SetSpRLLabels(ta, doc.getTAGS.getTRAJECTOR.asScala.toList, "Trajector")
           SetSpRLLabels(ta, doc.getTAGS.getSPATIALINDICATOR.asScala.toList, "SpatialIndicator")
@@ -56,14 +58,27 @@ object PopulateSpRLDataModel extends Logging {
           val end = t.getEnd().intValue()
           if (start >= 0) {
             val startTokenId = ta.getTokenIdFromCharacterOffset(start)
+            var headwordId = startTokenId
+            val constituents = ta.getView(ViewNames.SHALLOW_PARSE).getConstituentsCoveringToken(startTokenId).asScala
+            if (constituents.size > 0) {
+              val phrase = constituents.head
+              headwordId = getHeadwordId(phrase)
+            }
+
+            // add label if this token is not already labeled.
             val view = ta.getView("sprl-" + label).asInstanceOf[TokenLabelView]
-            val c = view.getConstituentAtToken(startTokenId)
+            val c = view.getConstituentAtToken(headwordId)
             if (c == null)
-              view.addTokenLabel(startTokenId, label, 1.0)
+              view.addTokenLabel(headwordId, label, 1.0)
           }
         })
       }
-
+      def getHeadwordId(c: Constituent): Int = {
+        val ta: TextAnnotation = c.getTextAnnotation
+        val tree: TreeView = ta.getView(SpRLDataModel.parseView).asInstanceOf[TreeView]
+        val phrase = tree.getParsePhrase(c)
+        CollinsHeadFinder.getInstance.getHeadWordPosition(phrase)
+      }
       //TODO: generate TextAnnotations from SpRLDocuments
       def readSpRL2015(): List[Sentence] = {
         val reader = new SpRLDataReader(path, classOf[SpRL2015Document])
