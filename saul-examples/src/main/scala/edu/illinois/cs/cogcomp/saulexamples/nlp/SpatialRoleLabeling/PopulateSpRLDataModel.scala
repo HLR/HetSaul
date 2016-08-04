@@ -42,12 +42,13 @@ object PopulateSpRLDataModel extends Logging {
         reader.readData()
         val sentences = ListBuffer[Sentence]()
         reader.documents.asScala.foreach(doc => {
+          logger.info("working on " + doc.getFilename + " ...")
           val views = List("sprl-Trajector", "sprl-Landmark", "sprl-SpatialIndicator")
           val ta = TextAnnotationFactory.createTextAnnotation("2013", doc.getFilename, doc.getTEXT().getContent, views: _*)
-          SetSpRLLabels(ta, doc.getTAGS.getTRAJECTOR.asScala.toList, "Trajector")
           SetSpRLLabels(ta, doc.getTAGS.getSPATIALINDICATOR.asScala.toList, "SpatialIndicator")
           SetSpRLLabels(ta, doc.getTAGS.getLANDMARK.asScala.toList, "Landmark")
-          ta.sentences().asScala.foreach(s => sentences += s)
+          SetSpRLLabels(ta, doc.getTAGS.getTRAJECTOR.asScala.toList, "Trajector")
+          sentences ++= ta.sentences().asScala
         })
         sentences.toList
       }
@@ -58,12 +59,7 @@ object PopulateSpRLDataModel extends Logging {
           val end = t.getEnd().intValue()
           if (start >= 0) {
             val startTokenId = ta.getTokenIdFromCharacterOffset(start)
-            var headwordId = startTokenId
-            val constituents = ta.getView(ViewNames.SHALLOW_PARSE).getConstituentsCoveringToken(startTokenId).asScala
-            if (constituents.size > 0) {
-              val phrase = constituents.head
-              headwordId = getHeadwordId(phrase)
-            }
+            val headwordId = getHeadwordId(startTokenId)
 
             // add label if this token is not already labeled.
             val view = ta.getView("sprl-" + label).asInstanceOf[TokenLabelView]
@@ -72,13 +68,23 @@ object PopulateSpRLDataModel extends Logging {
               view.addTokenLabel(headwordId, label, 1.0)
           }
         })
+        def getHeadwordId(startTokenId: Int): Int = {
+          val constituents = ta.getView(ViewNames.SHALLOW_PARSE).getConstituentsCoveringToken(startTokenId).asScala
+          var headwordId = startTokenId
+          if (constituents.size > 0) {
+            val c = constituents.head
+            val tree: TreeView = ta.getView(SpRLDataModel.parseView).asInstanceOf[TreeView]
+            val phrase = tree.getParsePhrase(c)
+            headwordId = CollinsHeadFinder.getInstance.getHeadWordPosition(phrase)
+            //logger.info("headword for '" + c.toString + "' is " + ta.getToken(headwordId))
+          }
+          else{
+            logger.warn("cannot find phrase for '" + ta.getToken(startTokenId) + "'")
+          }
+          headwordId
+        }
       }
-      def getHeadwordId(c: Constituent): Int = {
-        val ta: TextAnnotation = c.getTextAnnotation
-        val tree: TreeView = ta.getView(SpRLDataModel.parseView).asInstanceOf[TreeView]
-        val phrase = tree.getParsePhrase(c)
-        CollinsHeadFinder.getInstance.getHeadWordPosition(phrase)
-      }
+
       //TODO: generate TextAnnotations from SpRLDocuments
       def readSpRL2015(): List[Sentence] = {
         val reader = new SpRLDataReader(path, classOf[SpRL2015Document])

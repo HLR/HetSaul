@@ -7,9 +7,9 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling
 
 import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
-import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{ Constituent, Relation, Sentence, TextAnnotation }
-import edu.illinois.cs.cogcomp.edison.features.{ FeatureExtractor, FeatureUtilities }
-import edu.illinois.cs.cogcomp.edison.features.factory.{ ParseHeadWordPOS, ParsePath, SubcategorizationFrame }
+import edu.illinois.cs.cogcomp.core.datastructures.textannotation._
+import edu.illinois.cs.cogcomp.edison.features.{FeatureExtractor, FeatureUtilities}
+import edu.illinois.cs.cogcomp.edison.features.factory.{ParseHeadWordPOS, ParsePath, SubcategorizationFrame}
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
 import edu.illinois.cs.cogcomp.saulexamples.nlp.CommonSensors._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling.SpRLSensors._
@@ -45,12 +45,12 @@ object SpRLDataModel extends DataModel {
     x: Constituent => getLemma(x)
   }
   val subcategorization = property(tokens) {
-    x: Constituent => fexFeatureExtractor(x, new SubcategorizationFrame(parseView))
+    x: Constituent => getFeature(x, new SubcategorizationFrame(parseView))
   }
   val headword = property(tokens) {
-    x: Constituent => fexFeatureExtractor(x, new ParseHeadWordPOS(parseView))
+    x: Constituent => getFeature(x, new ParseHeadWordPOS(parseView))
   }
-  //  val path = property(tokens, "pathC") {
-  //    x: Constituent => fexFeatureExtractor(x, new ParsePath(parseView))
-  //  }
+//  val path = property(tokens) {
+//     x: Constituent => getFeature(x, new ParsePath(parseView))
+//  }
 }

@@ -17,24 +17,26 @@ object SpRLClassifiers {
 
   import SpRLDataModel._
 
+  val commonFeatures = List(lemma, posTag, headword, subcategorization)
+
   object spatialIndicatorClassifier extends Learnable[Constituent](tokens) {
 
     def label: Property[Constituent] = isSpatialIndicator
-    override def feature = using(lemma, posTag, headword, subcategorization)
+    override def feature = using(commonFeatures)
     override lazy val classifier = new SparseNetworkLBP
   }
 
   object trajectorClassifier extends Learnable[Constituent](tokens) {
 
     def label: Property[Constituent] = isTrajector
-    override def feature = using(lemma, posTag, headword, subcategorization)
+    override def feature = using(commonFeatures)
     override lazy val classifier = new SparseNetworkLBP
   }
 
   object landmarkClassifier extends Learnable[Constituent](tokens) {
 
     def label: Property[Constituent] = isLandmark
-    override def feature = using(lemma, posTag, headword, subcategorization)
+    override def feature = using(commonFeatures)
     override lazy val classifier = new SparseNetworkLBP
   }
 }

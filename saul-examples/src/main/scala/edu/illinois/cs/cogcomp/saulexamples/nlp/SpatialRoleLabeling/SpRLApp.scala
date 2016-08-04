@@ -50,7 +50,7 @@ object SpRLApp extends App with Logging {
     classifier.modelDir = modelDir + name + File.separator
     if (isTrain) {
       logger.info("training " + name + "...")
-      classifier.learn(100)
+      classifier.learn(10)
       classifier.save()
     } else {
       classifier.load()
