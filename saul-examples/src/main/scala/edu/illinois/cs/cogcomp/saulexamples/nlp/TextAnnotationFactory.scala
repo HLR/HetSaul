@@ -38,13 +38,11 @@ object TextAnnotationFactory {
     annotatorService = IllinoisPipelineFactory.buildPipeline(config)
   }
 
-  def createTextAnnotation(corpusId: String, textId: String, text: String): TextAnnotation = {
+  def createTextAnnotation(corpusId: String, textId: String, text: String, views: String*): TextAnnotation = {
     if (annotatorService == null)
       applySettings()
     val ta = annotatorService.createAnnotatedTextAnnotation(corpusId, textId, text)
-    ta.addView("sprl-Trajector", new TokenLabelView("sprl-Trajector", "me", ta, 1.0))
-    ta.addView("sprl-Landmark", new TokenLabelView("sprl-Landmark", "me", ta, 1.0))
-    ta.addView("sprl-SpatialIndicator", new TokenLabelView("sprl-SpatialIndicator", "me", ta, 1.0))
+    views.foreach(v => ta.addView(v, new TokenLabelView(v, ta)))
     ta
   }
 

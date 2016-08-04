@@ -40,7 +40,8 @@ object PopulateSpRLDataModel extends Logging {
         reader.readData()
         val sentences = ListBuffer[Sentence]()
         reader.documents.asScala.foreach(doc => {
-          val ta = TextAnnotationFactory.createTextAnnotation("", "", doc.getTEXT().getContent)
+          val views = List("sprl-Trajector", "sprl-Landmark", "sprl-SpatialIndicator");
+          val ta = TextAnnotationFactory.createTextAnnotation("2013", doc.getFilename, doc.getTEXT().getContent, views: _*)
           SetSpRLLabels(ta, doc.getTAGS.getTRAJECTOR.asScala.toList, "Trajector")
           SetSpRLLabels(ta, doc.getTAGS.getSPATIALINDICATOR.asScala.toList, "SpatialIndicator")
           SetSpRLLabels(ta, doc.getTAGS.getLANDMARK.asScala.toList, "Landmark")
