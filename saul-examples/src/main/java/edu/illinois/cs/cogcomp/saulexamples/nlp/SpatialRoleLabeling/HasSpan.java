@@ -14,4 +14,5 @@ import java.math.BigInteger;
 public interface HasSpan {
     BigInteger getStart();
     BigInteger getEnd();
+    String getId();
 }

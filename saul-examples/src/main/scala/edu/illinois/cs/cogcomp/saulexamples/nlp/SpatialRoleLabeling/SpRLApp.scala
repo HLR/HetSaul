@@ -10,8 +10,10 @@ import edu.illinois.cs.cogcomp.core.datastructures.textannotation.Constituent
 import edu.illinois.cs.cogcomp.core.utilities.configuration.ResourceManager
 import edu.illinois.cs.cogcomp.saul.classifier.Learnable
 import edu.illinois.cs.cogcomp.saul.util.Logging
-
 import java.io.File
+
+import edu.illinois.cs.cogcomp.saulexamples.nlp.TextAnnotationFactory
+
 import scala.collection.JavaConverters._
 
 /** Created by Parisa on 7/29/16.
@@ -28,23 +30,21 @@ object SpRLApp extends App with Logging {
   val modelDir = properties.getString(MODELS_DIR) +
     File.separator + properties.getString(SpRL_MODEL_DIR) + File.separator
   val isTrain = properties.getBoolean(IS_TRAINING)
+  val version = properties.getString(VERSION)
 
   logger.info("population starts.")
 
-  PopulateSpRLDataModel()
-  val trajectors = tokens().filter(x => isTrajector(x).equals("true"))
-  val landmarks = tokens().filter(x => isLandmark(x).equals("true"))
-  val spatialIndicators = tokens().filter(x => isSpatialIndicator(x).equals("true"))
+  PopulateSpRLDataModel(getDataPath(), isTrain, version)
 
-  logger.info("Total sentences :" + sentences().size)
-  logger.info("Total tokens :" + tokens().size)
-  logger.info("Total trajectors:" + trajectors.size)
-  logger.info("Total landmarks:" + landmarks.size)
-  logger.info("total spatial indicators:" + spatialIndicators.size)
+  logger.info("Total sentences :" + sentences.count)
+  logger.info("Total tokens :" + tokens.count)
+  logger.info("Total pairs:" + pairs.count)
+  println(sentences.trainingSet.head.t.getText)
+  pairs.trainingSet.slice(0, 50).foreach(x => println(x.t))
 
-  runClassifier(trajectorClassifier, "trajectors")
-  runClassifier(landmarkClassifier, "landmarks")
-  runClassifier(spatialIndicatorClassifier, "spatialIndicators")
+  //  runClassifier(trajectorClassifier, "trajectors")
+  //  runClassifier(landmarkClassifier, "landmarks")
+  //  runClassifier(spatialIndicatorClassifier, "spatialIndicators")
 
   def runClassifier(classifier: Learnable[Constituent], name: String) = {
     classifier.modelDir = modelDir + name + File.separator
@@ -59,5 +59,20 @@ object SpRLApp extends App with Logging {
     }
     logger.info("done.")
   }
+  def getDataPath(): String = {
+    if (isTrain) properties.getString(TRAIN_DIR)
+    else properties.getString(TEST_DIR)
+  }
+}
 
+object SpRLTestApp extends App {
+  var ta = TextAnnotationFactory.createBasicTextAnnotation("", "", "This is a sample sentence.     And, this is another one.")
+  ta.sentences().asScala.foreach(s => {
+    val sc = s.getSentenceConstituent
+    val start = sc.getInclusiveStartCharOffset()
+    val end = sc.getInclusiveEndCharOffset()
+    println(start)
+    println(end)
+    println(ta.text.substring(start, end + 1))
+  });
 }

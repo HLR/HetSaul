@@ -7,13 +7,25 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling
 
 import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
-import edu.illinois.cs.cogcomp.core.datastructures.textannotation.Constituent
-import edu.illinois.cs.cogcomp.edison.features.{ FeatureExtractor, FeatureUtilities }
-import edu.illinois.cs.cogcomp.edison.features.factory.WordFeatureExtractorFactory
+import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{ Constituent, Relation, Sentence }
 
 import scala.collection.JavaConversions._
+import scala.collection.mutable.ListBuffer
 
 /** Created by taher on 7/28/16.
   */
 object SpRLSensors {
+
+  // helper methods
+  def isCandidate(token: Constituent): Boolean = {
+
+    if (Dictionaries.isPreposition(token.toString))
+      return true
+
+    val pos = SpRLDataModel.posTag(token)
+    if (pos == "IN" || pos == "TO")
+      return true
+
+    return false
+  }
 }

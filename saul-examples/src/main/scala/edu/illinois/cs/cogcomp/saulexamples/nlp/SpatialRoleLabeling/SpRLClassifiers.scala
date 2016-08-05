@@ -17,7 +17,7 @@ object SpRLClassifiers {
 
   import SpRLDataModel._
 
-  val commonFeatures = List(lemma, posTag, headword, subcategorization)
+  val commonFeatures = List(lemma, posTag, headword, subcategorization, isPivot)
 
   object spatialIndicatorClassifier extends Learnable[Constituent](tokens) {
 

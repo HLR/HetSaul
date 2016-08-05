@@ -14,6 +14,8 @@
 
 package edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling.SpRL2013;
 
+import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
+import edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling.HasSpan;
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling.SpRLXmlDocument;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -22,6 +24,10 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
@@ -44,6 +50,14 @@ public class SpRL2013Document implements SpRLXmlDocument {
     
     @XmlTransient
     protected String filename;
+    @XmlTransient
+    private HashMap<String, SPATIALINDICATOR> spatialIndicatorMap;
+    @XmlTransient
+    private HashMap<String, TRAJECTOR> trajectorHashMap;
+    @XmlTransient
+    private HashMap<String, LANDMARK> landmarkHashMap;
+    @XmlTransient
+    private HashMap<IntPair, List<RELATION>> tagRelationMap;
 
     /**
      * Gets the value of the url property.
@@ -155,4 +169,56 @@ public class SpRL2013Document implements SpRLXmlDocument {
 		this.filename = filename;
 	}
 
+    public HashMap<String, SPATIALINDICATOR> getSpatialIndicatorMap() {
+        if(spatialIndicatorMap == null) {
+            spatialIndicatorMap = new HashMap<>();
+            for (SPATIALINDICATOR sp : getTAGS().getSPATIALINDICATOR()) {
+                spatialIndicatorMap.put(sp.getId(), sp);
+            }
+        }
+        return spatialIndicatorMap;
+    }
+
+    public HashMap<String, TRAJECTOR> getTrajectorHashMap() {
+        if(trajectorHashMap == null){
+            trajectorHashMap = new HashMap<>();
+            for(TRAJECTOR t : getTAGS().getTRAJECTOR()){
+                trajectorHashMap.put(t.getId(), t);
+            }
+        }
+        return trajectorHashMap;
+    }
+
+    public HashMap<String , LANDMARK> getLandmarkHashMap() {
+        if(landmarkHashMap == null){
+            landmarkHashMap = new HashMap<>();
+            for(LANDMARK l : getTAGS().getLANDMARK()){
+                landmarkHashMap.put(l.getId(), l);
+            }
+        }
+        return landmarkHashMap;
+    }
+
+    public HashMap<IntPair, List<RELATION>> getTagRelationMap() {
+        if(tagRelationMap == null){
+            tagRelationMap = new HashMap<>();
+            for(RELATION r : getTAGS().getRELATION()){
+                addTagRelation(r, getSpatialIndicatorMap().get(r.spatialIndicatorId));
+                addTagRelation(r, getTrajectorHashMap().get(r.trajectorId));
+                addTagRelation(r, getLandmarkHashMap().get(r.landmarkId));
+            }
+        }
+        return tagRelationMap;
+    }
+
+    private void addTagRelation(RELATION r, HasSpan tag) {
+        if(tag == null || tag.getStart().intValue() == -1)
+            return;
+
+        IntPair p = new IntPair(tag.getStart().intValue(), tag.getEnd().intValue());
+        if(!tagRelationMap.containsKey(p)){
+            tagRelationMap.put(p, new ArrayList<>());
+        }
+        tagRelationMap.get(p).add(r);
+    }
 }

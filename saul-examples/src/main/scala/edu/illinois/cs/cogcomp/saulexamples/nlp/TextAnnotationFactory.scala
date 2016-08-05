@@ -45,5 +45,10 @@ object TextAnnotationFactory {
     views.foreach(v => ta.addView(v, new TokenLabelView(v, ta)))
     ta
   }
-
+  def createBasicTextAnnotation(corpusId: String, textId: String, text: String): TextAnnotation = {
+    if (annotatorService == null)
+      applySettings()
+    val ta = annotatorService.createBasicTextAnnotation(corpusId, textId, text)
+    ta
+  }
 }

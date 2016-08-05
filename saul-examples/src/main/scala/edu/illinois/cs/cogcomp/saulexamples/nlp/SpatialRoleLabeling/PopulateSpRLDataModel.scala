@@ -6,12 +6,14 @@
   */
 package edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling
 
-import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
+import java.lang.Boolean
+
+import edu.illinois.cs.cogcomp.core.datastructures.{ IntPair, ViewNames }
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation._
-import edu.illinois.cs.cogcomp.core.utilities.configuration.ResourceManager
+import edu.illinois.cs.cogcomp.core.transformers.Predicate
 import edu.illinois.cs.cogcomp.nlp.utilities.CollinsHeadFinder
 import edu.illinois.cs.cogcomp.saul.util.Logging
-import edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling.SpRL2013.SpRL2013Document
+import edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling.SpRL2013.{ RELATION, SpRL2013Document }
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling.SpRL2015.SpRL2015Document
 import edu.illinois.cs.cogcomp.saulexamples.nlp.TextAnnotationFactory
 import org.apache.commons.lang.NotImplementedException
@@ -22,71 +24,91 @@ import scala.collection.mutable.ListBuffer
 /** Created by taher on 7/28/16.
   */
 object PopulateSpRLDataModel extends Logging {
-  def apply(rm: ResourceManager = new SpRLConfigurator().getDefaultConfig) = {
+  def apply(path: String, isTraining: Boolean, version: String) = {
 
-    val isTraining = rm.getBoolean(SpRLConfigurator.IS_TRAINING)
-    SpRLDataModel.sentences.populate(readSpRLDocuments(), train = isTraining)
+    val views = List("sprl-Trajector", "sprl-Landmark", "sprl-SpatialIndicator")
 
-    def getDataPath(): String = {
-      if (isTraining) rm.getString(SpRLConfigurator.TRAIN_DIR)
-      else rm.getString(SpRLConfigurator.TEST_DIR)
-    }
+    def readSpRLDocuments(): (List[Sentence], List[(Constituent, Constituent, String)]) = {
 
-    def readSpRLDocuments(): List[Sentence] = {
+      def readSpRL2013(): (List[Sentence], List[(Constituent, Constituent, String)]) = {
 
-      val path = getDataPath()
-      val version = rm.getString(SpRLConfigurator.VERSION)
-
-      def readSpRL2013(): List[Sentence] = {
         val reader = new SpRLDataReader(path, classOf[SpRL2013Document])
         reader.readData()
+
         val sentences = ListBuffer[Sentence]()
+        val relationTuples = ListBuffer[(Constituent, Constituent, String)]()
+
         reader.documents.asScala.foreach(doc => {
+
           logger.info("working on " + doc.getFilename + " ...")
-          val views = List("sprl-Trajector", "sprl-Landmark", "sprl-SpatialIndicator")
-          val ta = TextAnnotationFactory.createTextAnnotation("2013", doc.getFilename, doc.getTEXT().getContent, views: _*)
-          SetSpRLLabels(ta, doc.getTAGS.getSPATIALINDICATOR.asScala.toList, "SpatialIndicator")
-          SetSpRLLabels(ta, doc.getTAGS.getLANDMARK.asScala.toList, "Landmark")
-          SetSpRLLabels(ta, doc.getTAGS.getTRAJECTOR.asScala.toList, "Trajector")
-          sentences ++= ta.sentences().asScala
+          val ta = TextAnnotationFactory.createTextAnnotation("2013", doc.getFilename, doc.getTEXT().getContent)
+
+          sentences ++= ta.sentences.asScala
+
+          relationTuples ++= getRelationPairs(ta, doc)
         })
-        sentences.toList
+
+        (sentences.toList, relationTuples.toList)
       }
 
-      def SetSpRLLabels(ta: TextAnnotation, tokens: List[HasSpan], label: String) = {
-        tokens.foreach(t => {
-          val start = t.getStart().intValue()
-          val end = t.getEnd().intValue()
-          if (start >= 0) {
-            val startTokenId = ta.getTokenIdFromCharacterOffset(start)
-            val headwordId = getHeadwordId(startTokenId)
+      def getRelationPairs(ta: TextAnnotation, doc: SpRL2013Document): List[(Constituent, Constituent, String)] = {
 
-            // add label if this token is not already labeled.
-            val view = ta.getView("sprl-" + label).asInstanceOf[TokenLabelView]
-            val c = view.getConstituentAtToken(headwordId)
-            if (c == null)
-              view.addTokenLabel(headwordId, label, 1.0)
-          }
+        val tuples = ListBuffer[(Constituent, Constituent, String)]()
+
+        doc.getTAGS.getRELATION.asScala.foreach(r => {
+
+          val sp = doc.getSpatialIndicatorMap.get(r.getSpatialIndicatorId)
+          val tr = doc.getTrajectorHashMap.get(r.getTrajectorId)
+          val lm = doc.getLandmarkHashMap.get(r.getLandmarkId)
+
+          addTuple(tuples, ta, sp, tr, "tr-sp")
+          addTuple(tuples, ta, sp, lm, "lm-sp")
         })
-        def getHeadwordId(startTokenId: Int): Int = {
-          val constituents = ta.getView(ViewNames.SHALLOW_PARSE).getConstituentsCoveringToken(startTokenId).asScala
-          var headwordId = startTokenId
-          if (constituents.size > 0) {
-            val c = constituents.head
-            val tree: TreeView = ta.getView(SpRLDataModel.parseView).asInstanceOf[TreeView]
-            val phrase = tree.getParsePhrase(c)
-            headwordId = CollinsHeadFinder.getInstance.getHeadWordPosition(phrase)
-            //logger.info("headword for '" + c.toString + "' is " + ta.getToken(headwordId))
-          }
-          else{
-            logger.warn("cannot find phrase for '" + ta.getToken(startTokenId) + "'")
-          }
-          headwordId
+
+        tuples.toList
+      }
+
+      def addTuple(tuples: ListBuffer[(Constituent, Constituent, String)], ta: TextAnnotation, sp: HasSpan, other: HasSpan, relationType: String) = {
+
+        if (!tagIsNullOrEmpty(sp) && !tagIsNullOrEmpty(other)) {
+          val tuple = (getHeadword(other, ta), getHeadword(sp, ta), relationType)
+          tuples += tuple
         }
       }
 
+      def tagIsNullOrEmpty(t: HasSpan): Boolean = {
+        t == null || t.getStart.intValue() < 0 || t.getEnd.intValue() < 0
+      }
+
+      def getHeadword(t: HasSpan, ta: TextAnnotation): Constituent = {
+        ta.getView(ViewNames.TOKENS).asInstanceOf[TokenLabelView].getConstituentAtToken(getHeadwordId(t, ta))
+      }
+
+      def getHeadwordId(t: HasSpan, ta: TextAnnotation): Int = {
+
+        if (tagIsNullOrEmpty(t))
+          return -1
+
+        val start = t.getStart().intValue()
+        val startTokenId = ta.getTokenIdFromCharacterOffset(start)
+        var headwordId = startTokenId
+
+        val phrases = ta.getView(ViewNames.SHALLOW_PARSE).getConstituentsCoveringToken(startTokenId)
+
+        if (phrases.size > 0) {
+          val phrase = phrases.get(0)
+          val tree: TreeView = ta.getView(SpRLDataModel.parseView).asInstanceOf[TreeView]
+          val parsePhrase = tree.getParsePhrase(phrase)
+          headwordId = CollinsHeadFinder.getInstance.getHeadWordPosition(parsePhrase)
+          //logger.info("headword for '" + c.toString + "' is " + ta.getToken(headwordId))
+        } else {
+          logger.warn("cannot find phrase for '" + ta.getToken(startTokenId) + "'")
+        }
+        headwordId
+      }
+
       //TODO: generate TextAnnotations from SpRLDocuments
-      def readSpRL2015(): List[Sentence] = {
+      def readSpRL2015(): (List[Sentence], List[(Constituent, Constituent, String)]) = {
         val reader = new SpRLDataReader(path, classOf[SpRL2015Document])
         reader.readData()
         throw new NotImplementedException
@@ -97,5 +119,8 @@ object PopulateSpRLDataModel extends Logging {
         case _ => readSpRL2015
       }
     }
+
+    val (sentences, tuples) = readSpRLDocuments()
+    SpRLDataModel.sentences.populate(sentences, train = isTraining)
   }
 }
