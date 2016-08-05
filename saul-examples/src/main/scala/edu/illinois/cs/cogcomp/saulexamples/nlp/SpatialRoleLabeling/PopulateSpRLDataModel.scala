@@ -19,7 +19,6 @@ import edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling.SpRL2013.SpR
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling.SpRL2015.SpRL2015Document
 import edu.illinois.cs.cogcomp.saulexamples.nlp.TextAnnotationFactory
 
-
 /** Created by taher on 7/28/16.
   */
 object PopulateSpRLDataModel extends Logging {
