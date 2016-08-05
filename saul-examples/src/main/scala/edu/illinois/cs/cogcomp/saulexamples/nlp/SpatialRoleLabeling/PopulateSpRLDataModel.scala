@@ -7,19 +7,18 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling
 
 import java.lang.Boolean
-
-import edu.illinois.cs.cogcomp.core.datastructures.{ IntPair, ViewNames }
-import edu.illinois.cs.cogcomp.core.datastructures.textannotation._
-import edu.illinois.cs.cogcomp.core.transformers.Predicate
-import edu.illinois.cs.cogcomp.nlp.utilities.CollinsHeadFinder
-import edu.illinois.cs.cogcomp.saul.util.Logging
-import edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling.SpRL2013.{ RELATION, SpRL2013Document }
-import edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling.SpRL2015.SpRL2015Document
-import edu.illinois.cs.cogcomp.saulexamples.nlp.TextAnnotationFactory
-import org.apache.commons.lang.NotImplementedException
-
 import scala.collection.JavaConverters._
 import scala.collection.mutable.ListBuffer
+import org.apache.commons.lang.NotImplementedException
+
+import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
+import edu.illinois.cs.cogcomp.core.datastructures.textannotation._
+import edu.illinois.cs.cogcomp.nlp.utilities.CollinsHeadFinder
+import edu.illinois.cs.cogcomp.saul.util.Logging
+import edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling.SpRL2013.SpRL2013Document
+import edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling.SpRL2015.SpRL2015Document
+import edu.illinois.cs.cogcomp.saulexamples.nlp.TextAnnotationFactory
+
 
 /** Created by taher on 7/28/16.
   */
