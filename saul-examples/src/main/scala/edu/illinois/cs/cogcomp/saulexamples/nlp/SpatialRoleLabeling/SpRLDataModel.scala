@@ -8,11 +8,11 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling
 
 import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation._
-import edu.illinois.cs.cogcomp.edison.features.{ FeatureExtractor, FeatureUtilities }
-import edu.illinois.cs.cogcomp.edison.features.factory.{ ParseHeadWordPOS, ParsePath, SubcategorizationFrame }
+import edu.illinois.cs.cogcomp.edison.features.factory.{LinearPosition, ParseHeadWordPOS, ParsePath, SubcategorizationFrame}
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
 import edu.illinois.cs.cogcomp.saulexamples.nlp.CommonSensors._
-import edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling.SpRLSensors._
+
+import scala.collection.JavaConverters._
 
 /** Created by taher on 7/28/16.
   */
@@ -22,55 +22,81 @@ object SpRLDataModel extends DataModel {
 
   val sentences = node[Sentence]
   val tokens = node[Constituent]((x: Constituent) => getConstituentId(x))
-  val pairs = join(tokens, tokens)((a, b) =>
-    getUniqueSentenceId(a) == getUniqueSentenceId(b) &&
-      posTag(a).startsWith("NN") &&
-      isCandidate(b) &&
-      getConstituentId(a) != getConstituentId(b))
+  val relations = node[Relation]
 
   val sentencesToTokens = edge(sentences, tokens)
   sentencesToTokens.addSensor(sentenceToTokens _)
 
   // Classification labels
-  //  val pairType = property(nounToCandidate) {
-  //    x: (Constituent, Constituent) => x._1.getLabel + "-" + x._2.getLabel
-  //  }
+  val relationType = property(relations) {
+    x: Relation => x.getRelationName
+  }
 
   val isSpatialIndicator = property(tokens) {
-    x: Constituent => x.getTextAnnotation.getView("sprl-SpatialIndicator").getLabelsCovering(x).contains("SpatialIndicator")
+    x: Constituent => x.getIncomingRelations().asScala.exists(x => x.getRelationName.endsWith("sp"))
   }
 
   val isLandmark = property(tokens) {
-    x: Constituent => x.getTextAnnotation.getView("sprl-Landmark").getLabelsCovering(x).contains("Landmark")
+    x: Constituent => x.getOutgoingRelations().asScala.exists(x => x.getRelationName.startsWith("lm"))
   }
 
   val isTrajector = property(tokens) {
-    x: Constituent => x.getTextAnnotation.getView("sprl-Trajector").getLabelsCovering(x).contains("Trajector")
+    x: Constituent => x.getOutgoingRelations().asScala.exists(x => x.getRelationName.startsWith("tr"))
   }
 
-  // features
+  // relation features
+  val argPosTag = property(relations) {
+    x: Relation => getPosTag(x.getSource)
+  }
+  val indicatorPosTag = property(relations) {
+    x: Relation => getPosTag(x.getTarget)
+  }
+
+  val argLemma = property(relations) {
+    x: Relation => getLemma(x.getSource)
+  }
+  val indicatorLemma = property(relations) {
+    x: Relation => getLemma(x.getTarget)
+  }
+
+  val argSubCategorization = property(relations) {
+    x: Relation => getFeature(x.getSource, new SubcategorizationFrame(parseView))
+  }
+  val indicatorSubCategorization = property(relations) {
+    x: Relation => getFeature(x.getTarget, new SubcategorizationFrame(parseView))
+  }
+
+  val argHeadword = property(relations) {
+    x: Relation => getFeature(x.getSource, new ParseHeadWordPOS(parseView))
+  }
+  val indicatorHeadword = property(relations) {
+    x: Relation => getFeature(x.getTarget, new ParseHeadWordPOS(parseView))
+  }
+
+  val indicatorPath = property(relations) {
+    x: Relation => getFeature(x.getTarget, new ParsePath(parseView))
+  }
+
+  val indicatorPosition = property(relations) {
+    x: Relation => getFeature(x.getTarget, new LinearPosition())
+  }
+
+  // tokens features
   val posTag = property(tokens) {
-    x: Constituent => getPOS(x)
+    x: Constituent => getPosTag(x)
   }
 
   val lemma = property(tokens) {
     x: Constituent => getLemma(x)
   }
 
-  val subcategorization = property(tokens) {
+  val subCategorization = property(tokens) {
     x: Constituent => getFeature(x, new SubcategorizationFrame(parseView))
   }
 
   val headword = property(tokens) {
     x: Constituent => getFeature(x, new ParseHeadWordPOS(parseView))
   }
-
-  val isPivot = property(tokens) {
-    x: Constituent => x.getAttribute("pivot") == "true"
-  }
-  //  val path = property(tokens) {
-  //     x: Constituent => getFeature(x, new ParsePath(parseView))
-  //  }
 
   def getConstituentId(x: Constituent): String =
     x.getTextAnnotation.getCorpusId + ":" + x.getTextAnnotation.getId + ":" + x.getSentenceId + ":" + x.getSpan

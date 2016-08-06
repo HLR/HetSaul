@@ -17,6 +17,8 @@ public class SpRLConfigurator extends Configurator {
 
     public static final Property TEST_DIR = new Property("testDir","data/SpRL/2013/ConfluenceProject/gold");
     public static final Property TRAIN_DIR = new Property("trainDir","data/SpRL/2013/ConfluenceProject/train");
+//    public static final Property TEST_DIR = new Property("testDir","data/SpRL/2013/IAPR TC-12/gold");
+//    public static final Property TRAIN_DIR = new Property("trainDir","data/SpRL/2013/IAPR TC-12/train");
     public static final Property MODELS_DIR = new Property("modelsDir","models");
 
     public static final Property VERSION = new Property("version","2013");

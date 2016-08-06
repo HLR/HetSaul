@@ -6,12 +6,11 @@
   */
 package edu.illinois.cs.cogcomp.saulexamples.nlp
 
-import java.util
 import java.util.Properties
 
 import edu.illinois.cs.cogcomp.annotation.AnnotatorService
-import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{ Sentence, TextAnnotation, TokenLabelView }
-import edu.illinois.cs.cogcomp.core.utilities.configuration.{ Configurator, ResourceManager }
+import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{TextAnnotation, TokenLabelView}
+import edu.illinois.cs.cogcomp.core.utilities.configuration.{Configurator, ResourceManager}
 import edu.illinois.cs.cogcomp.curator.CuratorConfigurator
 import edu.illinois.cs.cogcomp.nlp.common.PipelineConfigurator
 import edu.illinois.cs.cogcomp.nlp.pipeline.IllinoisPipelineFactory
@@ -19,6 +18,7 @@ import edu.illinois.cs.cogcomp.nlp.pipeline.IllinoisPipelineFactory
 /** Created by taher on 7/30/16.
   */
 object TextAnnotationFactory {
+
   val settings = new Properties()
   settings.setProperty(PipelineConfigurator.USE_POS.key, Configurator.TRUE)
   settings.setProperty(PipelineConfigurator.USE_NER_CONLL.key, Configurator.FALSE)

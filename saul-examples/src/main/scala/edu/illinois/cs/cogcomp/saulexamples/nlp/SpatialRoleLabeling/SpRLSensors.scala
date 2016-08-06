@@ -6,11 +6,8 @@
   */
 package edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling
 
-import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
-import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{ Constituent, Relation, Sentence }
-
-import scala.collection.JavaConversions._
-import scala.collection.mutable.ListBuffer
+import edu.illinois.cs.cogcomp.core.datastructures.textannotation.Constituent
+import edu.illinois.cs.cogcomp.saulexamples.nlp.CommonSensors
 
 /** Created by taher on 7/28/16.
   */
@@ -22,7 +19,7 @@ object SpRLSensors {
     if (Dictionaries.isPreposition(token.toString))
       return true
 
-    val pos = SpRLDataModel.posTag(token)
+    val pos = CommonSensors.getPosTag(token)
     if (pos == "IN" || pos == "TO")
       return true
 
