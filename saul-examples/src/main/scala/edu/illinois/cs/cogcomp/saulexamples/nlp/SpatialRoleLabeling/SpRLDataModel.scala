@@ -8,7 +8,7 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling
 
 import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation._
-import edu.illinois.cs.cogcomp.edison.features.factory.{LinearPosition, ParseHeadWordPOS, ParsePath, SubcategorizationFrame}
+import edu.illinois.cs.cogcomp.edison.features.factory.{ LinearPosition, ParseHeadWordPOS, ParsePath, SubcategorizationFrame }
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
 import edu.illinois.cs.cogcomp.saulexamples.nlp.CommonSensors._
 

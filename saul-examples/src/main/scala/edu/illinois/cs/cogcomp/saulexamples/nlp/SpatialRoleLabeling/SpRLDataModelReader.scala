@@ -7,12 +7,12 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling
 
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation._
-import edu.illinois.cs.cogcomp.core.datastructures.{IntPair, ViewNames}
+import edu.illinois.cs.cogcomp.core.datastructures.{ IntPair, ViewNames }
 import edu.illinois.cs.cogcomp.nlp.utilities.CollinsHeadFinder
 import edu.illinois.cs.cogcomp.saul.util.Logging
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling.SpRL2013.SpRL2013Document
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling.SpRL2015.SpRL2015Document
-import edu.illinois.cs.cogcomp.saulexamples.nlp.{CommonSensors, TextAnnotationFactory}
+import edu.illinois.cs.cogcomp.saulexamples.nlp.{ CommonSensors, TextAnnotationFactory }
 import org.apache.commons.lang.NotImplementedException
 
 import scala.collection.JavaConverters._
