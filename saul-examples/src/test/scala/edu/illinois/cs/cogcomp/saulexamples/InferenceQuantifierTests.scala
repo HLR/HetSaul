@@ -1,3 +1,9 @@
+/** This software is released under the University of Illinois/Research and Academic Use License. See
+  * the LICENSE file in the root folder for details. Copyright (c) 2016
+  *
+  * Developed by: The Cognitive Computations Group, University of Illinois at Urbana-Champaign
+  * http://cogcomp.cs.illinois.edu/
+  */
 package edu.illinois.cs.cogcomp.saulexamples
 
 import edu.illinois.cs.cogcomp.lbjava.infer.OJalgoHook
@@ -70,7 +76,7 @@ class InferenceQuantifierTests extends FlatSpec with Matchers {
     override val solver = new OJalgoHook
   }
 
-  val cityInstances = new City("../saul-examples/src/main/resources/SetCover/example.txt")
+  val cityInstances = new City("../saul-examples/src/test/resources/SetCover/example.txt")
   val neighborhoodInstances = cityInstances.getNeighborhoods.toList
 
   SomeDM.cities populate List(cityInstances)

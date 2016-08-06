@@ -1,3 +1,9 @@
+/** This software is released under the University of Illinois/Research and Academic Use License. See
+  * the LICENSE file in the root folder for details. Copyright (c) 2016
+  *
+  * Developed by: The Cognitive Computations Group, University of Illinois at Urbana-Champaign
+  * http://cogcomp.cs.illinois.edu/
+  */
 package edu.illinois.cs.cogcomp.saulexamples
 
 import edu.illinois.cs.cogcomp.saulexamples.setcover.{ City, ContainsStationConstraint, SetCoverSolverDataModel }
@@ -8,7 +14,7 @@ import scala.collection.JavaConversions._
 class SetCoverTest extends FlatSpec with Matchers {
   import SetCoverSolverDataModel._
 
-  val prefix = "../saul-examples/src/main/resources/SetCover/"
+  val prefix = "../saul-examples/src/test/resources/SetCover/"
 
   "SetCover " should " be solved correctly for example.txt " in {
     clearInstances

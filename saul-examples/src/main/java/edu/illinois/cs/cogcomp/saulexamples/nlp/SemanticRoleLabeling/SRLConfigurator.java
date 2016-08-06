@@ -19,8 +19,8 @@ import edu.illinois.cs.cogcomp.core.utilities.configuration.ResourceManager;
  */
 public class SRLConfigurator extends Configurator {
 
-    public static final Property TREEBANK_HOME = new Property("treebankHome", "../saul-examples/src/main/resources/srlToy/treebank");
-    public static final Property PROPBANK_HOME = new Property("propbankHome","../saul-examples/src/main/resources/srlToy/propbank");
+    public static final Property TREEBANK_HOME = new Property("treebankHome", "../saul-examples/src/test/resources/SRLToy/treebank");
+    public static final Property PROPBANK_HOME = new Property("propbankHome","../saul-examples/src/test/resources/SRLToy/propbank");
 
     public static final Property TEST_SECTION = new Property("testSection","00");
 
