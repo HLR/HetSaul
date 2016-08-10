@@ -38,22 +38,23 @@ object SpRLApp extends App with Logging {
 
   logger.info("Total sentences :" + sentences.count)
   logger.info("Total tokens :" + tokens.count)
-  logger.info("Total spatial indicators :" + tokens().count(x => SpRLDataModel.isSpatialIndicator(x).equals("true")))
-  logger.info("Total trajectors :" + tokens().count(x => SpRLDataModel.isTrajector(x).equals("true")))
-  logger.info("Total landmarks :" + tokens().count(x => SpRLDataModel.isLandmark(x).equals("true")))
-  logger.info("Total lm-sp relations:" + relations().count(x => x.getRelationName.equals("lm-sp")))
-  logger.info("Total tr-sp srelations:" + relations().count(x => x.getRelationName.equals("tr-sp")))
+  logger.info("Total spatial indicators :" + pairs().count(x => SpRLDataModel.isSpatialIndicator(x).equals("true")))
+  logger.info("Total trajectors :" + pairs().count(x => SpRLDataModel.isTrajector(x).equals("true")))
+  logger.info("Total landmarks :" + pairs().count(x => SpRLDataModel.isLandmark(x).equals("true")))
 
-  runClassifier(relationTypeClassifier, "relations")
-  runClassifier(trajectorClassifier, "trajectors")
-  runClassifier(landmarkClassifier, "landmarks")
   runClassifier(spatialIndicatorClassifier, "spatialIndicators")
+  runClassifier(pairTypeClassifier, "relations")
+//  runClassifier(trajectorClassifier, "trajectors")
+//  runClassifier(landmarkClassifier, "landmarks")
 
   def runClassifier[T <: AnyRef](classifier: Learnable[T], name: String) = {
     classifier.modelDir = modelDir + version + File.separator + name + File.separator
+    if(name == "relations"){
+      spatialIndicatorClassifier.load()
+    }
     if (isTrain) {
       logger.info("training " + name + "...")
-      classifier.learn(50)
+      classifier.learn(100)
       classifier.save()
     } else {
       classifier.load()

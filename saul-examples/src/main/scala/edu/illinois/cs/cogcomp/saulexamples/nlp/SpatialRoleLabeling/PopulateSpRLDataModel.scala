@@ -15,8 +15,8 @@ import edu.illinois.cs.cogcomp.saul.util.Logging
 object PopulateSpRLDataModel extends Logging {
   def apply(path: String, isTraining: Boolean, version: String) = {
 
-    val (sentences, relations) = SpRLDataModelReader.read(path, isTraining, version)
+    val (sentences, pairs) = SpRLDataModelReader.read(path, isTraining, version)
     SpRLDataModel.sentences.populate(sentences, train = isTraining)
-    SpRLDataModel.relations.populate(relations, train = isTraining)
+    SpRLDataModel.pairs.populate(pairs, train = isTraining)
   }
 }

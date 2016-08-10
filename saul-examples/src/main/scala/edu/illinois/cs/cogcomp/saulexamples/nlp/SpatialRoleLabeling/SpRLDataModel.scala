@@ -8,9 +8,10 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling
 
 import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation._
-import edu.illinois.cs.cogcomp.edison.features.factory.{ LinearPosition, ParseHeadWordPOS, ParsePath, SubcategorizationFrame }
+import edu.illinois.cs.cogcomp.edison.features.factory.{LinearPosition, ParseHeadWordPOS, ParsePath, SubcategorizationFrame}
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
 import edu.illinois.cs.cogcomp.saulexamples.nlp.CommonSensors._
+import edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling.SpRLClassifiers.spatialIndicatorClassifier
 
 import scala.collection.JavaConverters._
 
@@ -22,65 +23,71 @@ object SpRLDataModel extends DataModel {
 
   val sentences = node[Sentence]
   val tokens = node[Constituent]((x: Constituent) => getConstituentId(x))
-  val relations = node[Relation]
+  val pairs = node[Relation]
 
   val sentencesToTokens = edge(sentences, tokens)
   sentencesToTokens.addSensor(sentenceToTokens _)
 
   // Classification labels
-  val relationType = property(relations) {
+  val pairType = property(pairs) {
     x: Relation => x.getRelationName
   }
 
-  val isSpatialIndicator = property(tokens) {
-    x: Constituent => x.getIncomingRelations().asScala.exists(x => x.getRelationName.endsWith("sp"))
+  val isSpatialIndicator = property(pairs) {
+    x: Relation => !x.getRelationName.equals("none")
   }
 
-  val isLandmark = property(tokens) {
-    x: Constituent => x.getOutgoingRelations().asScala.exists(x => x.getRelationName.startsWith("lm"))
+  val isLandmark = property(pairs) {
+    x: Relation => x.getRelationName.equals("lm")
   }
 
-  val isTrajector = property(tokens) {
-    x: Constituent => x.getOutgoingRelations().asScala.exists(x => x.getRelationName.startsWith("tr"))
+  val isTrajector = property(pairs) {
+    x: Relation => x.getRelationName.equals("tr")
   }
 
   // relation features
-  val argPosTag = property(relations) {
+  val argPosTag = property(pairs) {
     x: Relation => getPosTag(x.getSource)
   }
-  val indicatorPosTag = property(relations) {
+  val pivotPosTag = property(pairs) {
     x: Relation => getPosTag(x.getTarget)
   }
 
-  val argLemma = property(relations) {
+  val argLemma = property(pairs) {
     x: Relation => getLemma(x.getSource)
   }
-  val indicatorLemma = property(relations) {
+  val pivotLemma = property(pairs) {
     x: Relation => getLemma(x.getTarget)
   }
 
-  val argSubCategorization = property(relations) {
+  val argSubCategorization = property(pairs) {
     x: Relation => getFeature(x.getSource, new SubcategorizationFrame(parseView))
   }
-  val indicatorSubCategorization = property(relations) {
+  val pivotSubCategorization = property(pairs) {
     x: Relation => getFeature(x.getTarget, new SubcategorizationFrame(parseView))
   }
 
-  val argHeadword = property(relations) {
+  val argHeadword = property(pairs) {
     x: Relation => getFeature(x.getSource, new ParseHeadWordPOS(parseView))
   }
-  val indicatorHeadword = property(relations) {
+  val pivotHeadword = property(pairs) {
     x: Relation => getFeature(x.getTarget, new ParseHeadWordPOS(parseView))
   }
 
-  val indicatorPath = property(relations) {
+  val pathToPivot = property(pairs) {
     x: Relation => getFeature(x.getTarget, new ParsePath(parseView))
   }
 
-  val indicatorPosition = property(relations) {
+  val positionRelativeToPivot = property(pairs) {
     x: Relation => getFeature(x.getTarget, new LinearPosition())
   }
 
+  val isPivot = property(pairs) {
+    x: Relation => x.getTarget.getSpan == x.getSource.getSpan
+  }
+  val pipeLineIsSp = property(pairs){
+    x: Relation => spatialIndicatorClassifier(x)
+  }
   // tokens features
   val posTag = property(tokens) {
     x: Constituent => getPosTag(x)

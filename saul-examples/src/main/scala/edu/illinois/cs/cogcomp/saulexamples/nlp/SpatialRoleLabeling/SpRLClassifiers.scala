@@ -17,36 +17,36 @@ object SpRLClassifiers {
 
   import SpRLDataModel._
 
-  val relationFeatures = List(argLemma, argPosTag, argHeadword, argSubCategorization,
-    indicatorLemma, indicatorPosTag, indicatorHeadword, indicatorSubCategorization, indicatorPath, indicatorPosition)
+  val pairFeatures = List(argLemma, argPosTag, argHeadword, argSubCategorization,
+    pivotLemma, pivotPosTag, pivotHeadword, pivotSubCategorization, isPivot)//, pathToPivot, positionRelativeToPivot)
 
   val tokenFeatures = List(lemma, posTag, headword, subCategorization)
 
-  object relationTypeClassifier extends Learnable[Relation](relations) {
-    def label: Property[Relation] = relationType
+  object pairTypeClassifier extends Learnable[Relation](pairs) {
+    def label: Property[Relation] = pairType
 
-    override def feature: List[Property[Relation]] = using(relationFeatures)
+    override def feature: List[Property[Relation]] = using(pairFeatures.union(List(pipeLineIsSp)))
 
     override lazy val classifier: Learner = new SparseNetworkLBP
   }
-  object spatialIndicatorClassifier extends Learnable[Constituent](tokens) {
+  object spatialIndicatorClassifier extends Learnable[Relation](pairs) {
 
-    def label: Property[Constituent] = isSpatialIndicator
-    override def feature = using(tokenFeatures)
+    def label: Property[Relation] = isSpatialIndicator
+    override def feature = using(pairFeatures)
     override lazy val classifier = new SparseNetworkLBP
   }
 
-  object trajectorClassifier extends Learnable[Constituent](tokens) {
+  object trajectorClassifier extends Learnable[Relation](pairs) {
 
-    def label: Property[Constituent] = isTrajector
-    override def feature = using(tokenFeatures)
+    def label: Property[Relation] = isTrajector
+    override def feature = using(pairFeatures)
     override lazy val classifier = new SparseNetworkLBP
   }
 
-  object landmarkClassifier extends Learnable[Constituent](tokens) {
+  object landmarkClassifier extends Learnable[Relation](pairs) {
 
-    def label: Property[Constituent] = isLandmark
-    override def feature = using(tokenFeatures)
+    def label: Property[Relation] = isLandmark
+    override def feature = using(pairFeatures)
     override lazy val classifier = new SparseNetworkLBP
   }
 }

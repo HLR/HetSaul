@@ -30,7 +30,7 @@ object SpRLDataModelReader extends Logging {
       reader.readData()
 
       val sentences = ListBuffer[Sentence]()
-      val relations = ListBuffer[Relation]()
+      val pairs = ListBuffer[Relation]()
 
       reader.documents.asScala.foreach(doc => {
 
@@ -42,11 +42,11 @@ object SpRLDataModelReader extends Logging {
           assert(s._1 == doc.getTEXT.getContent.substring(s._2.getFirst, s._2.getSecond))
           val ta = TextAnnotationFactory.createTextAnnotation(version, doc.getFilename + s._2, s._1)
           sentences ++= ta.sentences.asScala
-          relations ++= getRelations(ta, doc, s._2)
+          pairs ++= getRelations(ta, doc, s._2)
         })
       })
 
-      (sentences.toList, relations.toList)
+      (sentences.toList, pairs.toList)
     }
 
     def getSentenceOffset(s: Sentence): IntPair = {
@@ -82,24 +82,24 @@ object SpRLDataModelReader extends Logging {
 
       val relations = ListBuffer[Relation]()
 
-      // Gold relations
+      // Gold pivots
       doc.getTAGS.getRELATION.asScala.foreach(r => {
 
-        val sp = doc.getSpatialIndicatorMap.get(r.getSpatialIndicatorId)
+        val pivot = doc.getSpatialIndicatorMap.get(r.getSpatialIndicatorId)
         val tr = doc.getTrajectorHashMap.get(r.getTrajectorId)
         val lm = doc.getLandmarkHashMap.get(r.getLandmarkId)
 
-        addRelation(relations, ta, sp, tr, "tr-sp", offset)
-        addRelation(relations, ta, sp, lm, "lm-sp", offset)
+        addRelation(relations, ta, pivot, tr, "tr", offset)
+        addRelation(relations, ta, pivot, lm, "lm", offset)
       })
 
-      // Candidate relations
+      // Candidate pivots
       val constituents = ta.getView(ViewNames.TOKENS).getConstituents.asScala
-      val candidates = constituents.filter(x => SpRLSensors.isCandidate(x))
+      val pivots = constituents.filter(x => SpRLSensors.isCandidate(x))
       val args = constituents.filter(x => CommonSensors.getPosTag(x).startsWith("NN"))
-      for (a <- args; c <- candidates) {
-        if (canAddRelation(relations, a, c))
-          relations += new Relation("none-none", a, c, 0.1)
+      for (a <- args; p <- pivots) {
+        if (canAddRelation(relations, a, p))
+          relations += new Relation("none", a, p, 0.1)
       }
       relations.toList
     }
@@ -109,10 +109,10 @@ object SpRLDataModelReader extends Logging {
         !relations.exists(x => x.getSource.getSpan == a.getSpan && x.getTarget.getSpan == b.getSpan)
     }
 
-    def addRelation(relations: ListBuffer[Relation], ta: TextAnnotation, sp: HasSpan, other: HasSpan, relationType: String, offset: IntPair) = {
+    def addRelation(relations: ListBuffer[Relation], ta: TextAnnotation, pivot: HasSpan, other: HasSpan, relationType: String, offset: IntPair) = {
 
-      if (!tagIsNullOrOutOfSentence(sp, offset) && !tagIsNullOrOutOfSentence(other, offset)) {
-        val r = new Relation(relationType, getHeadword(other, ta, offset), getHeadword(sp, ta, offset), 1)
+      if (!tagIsNullOrOutOfSentence(pivot, offset) && !tagIsNullOrOutOfSentence(other, offset)) {
+        val r = new Relation(relationType, getHeadword(other, ta, offset), getHeadword(pivot, ta, offset), 1)
         relations += r
       }
     }
