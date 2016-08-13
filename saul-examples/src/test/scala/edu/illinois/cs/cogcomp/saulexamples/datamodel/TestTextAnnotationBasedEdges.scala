@@ -51,7 +51,7 @@ class TestTextAnnotationBasedEdges extends FlatSpec with Matchers {
   }
 
   val viewsToAdd = Array(ViewNames.LEMMA, ViewNames.POS, ViewNames.SHALLOW_PARSE, ViewNames.PARSE_GOLD, ViewNames.SRL_VERB)
-  val ta: TextAnnotation = DummyTextAnnotationGenerator.generateAnnotatedTextAnnotation(viewsToAdd, false)
+  val ta: TextAnnotation = DummyTextAnnotationGenerator.generateAnnotatedTextAnnotation(viewsToAdd, false, 1)
   import TestTextAnnotation._
   sentencesToTokens.addSensor(textAnnotationToTokens _)
   sentences.populate(Seq(ta))
