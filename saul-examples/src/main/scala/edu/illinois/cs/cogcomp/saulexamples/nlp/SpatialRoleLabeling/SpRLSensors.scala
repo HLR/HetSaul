@@ -6,7 +6,7 @@
   */
 package edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling
 
-import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{Constituent, Relation}
+import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{ Constituent, Relation }
 import edu.illinois.cs.cogcomp.edison.features.Feature
 import edu.illinois.cs.cogcomp.saulexamples.nlp.CommonSensors
 
@@ -34,7 +34,7 @@ object SpRLSensors {
     x.getTextAnnotation.getCorpusId + ":" + x.getTextAnnotation.getId + ":" + x.getSentenceId
 
   def getPairFeatures(source: Constituent, target: Constituent,
-                      func: (Constituent) => java.util.Set[Feature]): java.util.Set[Feature] = {
+    func: (Constituent) => java.util.Set[Feature]): java.util.Set[Feature] = {
 
     val r = new Relation("r", source, target, 0.1)
     val result = func(target)

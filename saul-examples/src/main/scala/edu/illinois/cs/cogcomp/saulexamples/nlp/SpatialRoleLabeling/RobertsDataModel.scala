@@ -7,8 +7,8 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling
 
 import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
-import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{Constituent, Sentence}
-import edu.illinois.cs.cogcomp.edison.features.factory.{DependencyPath, WordNetFeatureExtractor}
+import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{ Constituent, Sentence }
+import edu.illinois.cs.cogcomp.edison.features.factory.{ DependencyPath, WordNetFeatureExtractor }
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
 import edu.illinois.cs.cogcomp.saulexamples.nlp.CommonSensors._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling.SpRL2015.RobertsElementTypes
@@ -45,17 +45,18 @@ object RobertsDataModel extends DataModel {
     x: RobertsRelation => if (x.landmarkIsDefined()) getLemma(x.getLandmark.getFirstConstituent()) else undefined
   }
   val BF6 = property(relations) {
-    x: RobertsRelation => {
-      val pathToStart = getPairFeatures(x.getTrajector.getFirstConstituent, x.getSpatialIndicator.getFirstConstituent,
-        DependencyPath.STANFORD.getFeatures)
-        .asScala.head.toString
+    x: RobertsRelation =>
+      {
+        val pathToStart = getPairFeatures(x.getTrajector.getFirstConstituent, x.getSpatialIndicator.getFirstConstituent,
+          DependencyPath.STANFORD.getFeatures)
+          .asScala.head.toString
 
-      val pathToEnd = getPairFeatures(x.getTrajector.getFirstConstituent, x.getSpatialIndicator.getLastConstituent,
-        DependencyPath.STANFORD.getFeatures)
-        .asScala.head.toString
+        val pathToEnd = getPairFeatures(x.getTrajector.getFirstConstituent, x.getSpatialIndicator.getLastConstituent,
+          DependencyPath.STANFORD.getFeatures)
+          .asScala.head.toString
 
-      if (pathToStart.length >= pathToEnd.length) pathToStart else pathToEnd
-    }
+        if (pathToStart.length >= pathToEnd.length) pathToStart else pathToEnd
+      }
   }
   val BF7 = property(relations) {
     x: RobertsRelation =>
@@ -84,12 +85,13 @@ object RobertsDataModel extends DataModel {
       else false
   }
   val JF2_3 = property(relations) {
-    x: RobertsRelation => {
-      val tokens = x.getTextAnnotation.getView(ViewNames.TOKENS)
-        .getConstituentsCoveringSpan(x.getFirstArg.getSpan.getSecond, x.getLastArg.getSpan.getFirst)
-        .asScala.toList
-      tokens.filter(t => !x.isInArgs(t.getSpan)).map(x => x.toString).mkString(",")
-    }
+    x: RobertsRelation =>
+      {
+        val tokens = x.getTextAnnotation.getView(ViewNames.TOKENS)
+          .getConstituentsCoveringSpan(x.getFirstArg.getSpan.getSecond, x.getLastArg.getSpan.getFirst)
+          .asScala.toList
+        tokens.filter(t => !x.isInArgs(t.getSpan)).map(x => x.toString).mkString(",")
+      }
   }
   val JF2_4 = property(relations) {
     x: RobertsRelation => BF3(x) + "::" + BF7(x)
@@ -116,28 +118,29 @@ object RobertsDataModel extends DataModel {
       getFeature(x.getTrajector.getFirstConstituent, fex)
   }
   val JF2_10 = property(relations) {
-    x: RobertsRelation => {
-      val tokens = x.getTextAnnotation.getView(ViewNames.TOKENS)
-        .getConstituentsCoveringSpan(x.getFirstArg.getSpan.getFirst, x.getLastArg.getSpan.getSecond)
-        .asScala.toList
-      val list = ListBuffer[String]()
-      var spIncluded = false
-      tokens.foreach(t => {
-        val arg = x.getCoveringArg(t.getSpan)
-        if (arg != null) {
-          if (arg.getElementType == RobertsElementTypes.INDICATOR) {
-            if (!spIncluded) {
+    x: RobertsRelation =>
+      {
+        val tokens = x.getTextAnnotation.getView(ViewNames.TOKENS)
+          .getConstituentsCoveringSpan(x.getFirstArg.getSpan.getFirst, x.getLastArg.getSpan.getSecond)
+          .asScala.toList
+        val list = ListBuffer[String]()
+        var spIncluded = false
+        tokens.foreach(t => {
+          val arg = x.getCoveringArg(t.getSpan)
+          if (arg != null) {
+            if (arg.getElementType == RobertsElementTypes.INDICATOR) {
+              if (!spIncluded) {
+                list += arg.getText
+                spIncluded = true;
+              }
+            } else
               list += arg.getText
-              spIncluded = true;
-            }
-          } else
-            list += arg.getText
-        } else {
-          list += t.toString.toLowerCase()
-        }
-      })
-      list.mkString("_")
-    }
+          } else {
+            list += t.toString.toLowerCase()
+          }
+        })
+        list.mkString("_")
+      }
   }
   val JF2_11 = property(relations) {
     x: RobertsRelation => ""

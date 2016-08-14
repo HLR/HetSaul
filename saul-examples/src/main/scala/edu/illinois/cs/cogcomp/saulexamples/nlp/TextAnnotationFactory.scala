@@ -9,8 +9,8 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp
 import java.util.Properties
 
 import edu.illinois.cs.cogcomp.annotation.AnnotatorService
-import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{TextAnnotation, TokenLabelView}
-import edu.illinois.cs.cogcomp.core.utilities.configuration.{Configurator, ResourceManager}
+import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{ TextAnnotation, TokenLabelView }
+import edu.illinois.cs.cogcomp.core.utilities.configuration.{ Configurator, ResourceManager }
 import edu.illinois.cs.cogcomp.curator.CuratorConfigurator
 import edu.illinois.cs.cogcomp.nlp.common.PipelineConfigurator
 import edu.illinois.cs.cogcomp.nlp.pipeline.IllinoisPipelineFactory

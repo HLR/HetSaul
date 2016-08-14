@@ -23,8 +23,8 @@ import scala.collection.mutable.ListBuffer
 object SpRLDataModelReader extends Logging {
 
   def read[T](path: String, isTraining: Boolean, version: String,
-              getRelations: (Sentence, SpRL2013Document, HashSet[String], IntPair) => List[T],
-              getLexicon: (List[SpRL2013Document]) => HashSet[String]): (List[Sentence], List[T], HashSet[String]) = {
+    getRelations: (Sentence, SpRL2013Document, HashSet[String], IntPair) => List[T],
+    getLexicon: (List[SpRL2013Document]) => HashSet[String]): (List[Sentence], List[T], HashSet[String]) = {
 
     def readSpRL2013(): (List[Sentence], List[T], HashSet[String]) = {
 
