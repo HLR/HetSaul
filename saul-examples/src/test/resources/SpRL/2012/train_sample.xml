@@ -2,16 +2,15 @@
 <SpRL>
     <TEXT>About 20 kids in traditional clothing and hats waiting on stairs .
 
-        a house and a green wall with gate in the background .
+a house and a green wall with gate in the background .
 
-        a sign saying that plants can't be picked up on the right .
+a sign saying that plants can't be picked up on the right .
 
-        a rock hole in the ground surrounded by sand .
+a rock hole in the ground surrounded by sand .
 
-        one man in a white tee-shirt , grey pants and a white cap is holding a shovel , the other one is wearing black
-        pants , a white jumper and a traditional hat , is walking towards him .
+one man in a white tee-shirt , grey pants and a white cap is holding a shovel , the other one is wearing black pants , a white jumper and a traditional hat , is walking towards him .
 
-    </TEXT>
+</TEXT>
     <TAGS>
         <TRAJECTOR text="About 20 kids " end="14" start="0" id="T1"/>
         <TRAJECTOR text="a house" end="75" start="68" id="T2"/>
