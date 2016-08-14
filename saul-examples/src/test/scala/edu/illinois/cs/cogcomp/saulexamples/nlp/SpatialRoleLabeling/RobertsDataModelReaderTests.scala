@@ -1,6 +1,6 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling
 
-import org.scalatest.{ FlatSpec, Matchers }
+import org.scalatest.{FlatSpec, Matchers}
 
 /** Created by taher on 8/14/16.
   */
@@ -28,8 +28,17 @@ class RobertsDataModelReaderTests extends FlatSpec with Matchers {
 
     relationList.count(x => x.getSentence == sentenceList(1)) should be(16)
 
-    relationList.filter(x => x.getSentence == sentenceList(1)).foreach(println)
     relationList.count(x => x.getSentence == sentenceList(1) &&
+      x.getLabel == RobertsRelation.RobertsRelationLabels.GOLD) should be(2)
+
+    relationList.count(x => x.getSentence == sentenceList(2)) should be(18)
+
+    relationList.count(x => x.getSentence == sentenceList(2) &&
+      x.getLabel == RobertsRelation.RobertsRelationLabels.GOLD) should be(1)
+
+    relationList.count(x => x.getSentence == sentenceList(3)) should be(32)
+
+    relationList.count(x => x.getSentence == sentenceList(3) &&
       x.getLabel == RobertsRelation.RobertsRelationLabels.GOLD) should be(2)
   }
 

@@ -9,16 +9,17 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling
 import java.lang.Boolean
 
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation._
-import edu.illinois.cs.cogcomp.core.datastructures.{ IntPair, ViewNames }
+import edu.illinois.cs.cogcomp.core.datastructures.{IntPair, ViewNames}
 import edu.illinois.cs.cogcomp.nlp.utilities.CollinsHeadFinder
 import edu.illinois.cs.cogcomp.saul.util.Logging
 import edu.illinois.cs.cogcomp.saulexamples.nlp.CommonSensors
-import edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling.SpRL2013.{ RELATION, SpRL2013Document }
+import edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling.SpRL2013.{RELATION, SpRL2013Document}
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling.SpRLSensors._
 
 import scala.collection.JavaConverters._
 import scala.collection.immutable.HashSet
 import scala.collection.mutable.ListBuffer
+import scala.util.matching.Regex
 
 /** Created by taher on 7/28/16.
   */
@@ -55,7 +56,7 @@ object PopulateSpRLDataModel extends Logging {
 
         var label = RobertsRelation.RobertsRelationLabels.CANDIDATE
 
-        if (rels.exists(r => isGoldTrajector(r, tr) && r.getLandmarkId == "-1"))
+        if (rels.exists(r => isGoldTrajector(r, tr) && tagIsNullOrOutOfSentence(doc.getLandmarkHashMap.get(r.getLandmarkId), offset)))
           label = RobertsRelation.RobertsRelationLabels.GOLD
 
         relations += new RobertsRelation(sentence, tr.getSpan, i.getSpan, null, label)
@@ -126,18 +127,27 @@ object PopulateSpRLDataModel extends Logging {
   }
 
   def getIndicatorCandidates(sentence: Sentence, constituents: List[Constituent], lexicon: HashSet[String]): ListBuffer[Constituent] = {
-    val phrases = sentence.getView(ViewNames.SHALLOW_PARSE).asScala
-    val singleWordIndicators = constituents.filter(x => lexicon.contains(x.toString.toLowerCase))
-    val indicatorPhrases = phrases.filter(x => lexicon.contains(x.toString.toLowerCase))
     val indicators = ListBuffer[Constituent]()
-    indicators ++= indicatorPhrases
-    for (p <- singleWordIndicators) {
-      if (!indicators.exists(x => x.getStartSpan <= p.getStartSpan && p.getEndSpan <= x.getEndSpan))
-        indicators += p
+    val matched = lexicon.filter(x=> contains(sentence.getText, x)).toList
+    for (m <- matched) {
+      val pattern = new Regex("([^a-zA-Z\\d-]|^)" + m + "[^a-zA-Z\\d-]")
+      val occurances = pattern.findAllMatchIn(sentence.getText.toLowerCase).toList
+      for(i <- occurances){
+        if (!indicators.exists(x => x.getStartCharOffset == i.start && i.end == x.getEndCharOffset)){
+          val covering = sentence.getView(ViewNames.TOKENS).asScala
+            .filter(x=> i.start<= x.getStartCharOffset && x.getEndCharOffset <= i.end)
+          val c = new Constituent("", "", sentence.getSentenceConstituent.getTextAnnotation,
+            covering.head.getStartSpan, covering.last.getEndSpan)
+          indicators += c
+        }
+      }
     }
     indicators
   }
-
+  def contains(sentence: String, phrase: String):Boolean = {
+    val pattern = new Regex("([^a-zA-Z\\d-]|^)" + phrase + "[^a-zA-Z\\d-]")
+    pattern.findFirstIn(sentence.toLowerCase).isDefined
+  }
   def getRelations(sentence: Sentence, doc: SpRL2013Document, lexicon: HashSet[String], offset: IntPair): List[Relation] = {
 
     val relations = ListBuffer[Relation]()

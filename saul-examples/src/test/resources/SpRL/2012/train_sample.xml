@@ -18,7 +18,6 @@ one man in a white tee-shirt , grey pants and a white cap is holding a shovel , 
         <TRAJECTOR text="a sign" end="130" start="124" id="T4"/>
         <TRAJECTOR text="a rock hole" end="196" start="185" id="T5"/>
         <TRAJECTOR text="the other one" end="326" start="313" id="T6"/>
-        <TRAJECTOR text="a yellow building" end="434" start="417" id="T7"/>
         <LANDMARK text="stairs" end="64" start="58" id="L1"/>
         <LANDMARK text="the background" end="120" start="106" id="L2"/>
         <LANDMARK end="-1" start="-1" id="L3"/>
