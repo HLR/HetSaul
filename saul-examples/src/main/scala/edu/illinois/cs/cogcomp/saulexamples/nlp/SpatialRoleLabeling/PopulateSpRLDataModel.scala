@@ -9,11 +9,11 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling
 import java.lang.Boolean
 
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation._
-import edu.illinois.cs.cogcomp.core.datastructures.{IntPair, ViewNames}
+import edu.illinois.cs.cogcomp.core.datastructures.{ IntPair, ViewNames }
 import edu.illinois.cs.cogcomp.nlp.utilities.CollinsHeadFinder
 import edu.illinois.cs.cogcomp.saul.util.Logging
 import edu.illinois.cs.cogcomp.saulexamples.nlp.CommonSensors
-import edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling.SpRL2013.{RELATION, SpRL2013Document}
+import edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling.SpRL2013.{ RELATION, SpRL2013Document }
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling.SpRLSensors._
 
 import scala.collection.JavaConverters._
@@ -128,14 +128,14 @@ object PopulateSpRLDataModel extends Logging {
 
   def getIndicatorCandidates(sentence: Sentence, constituents: List[Constituent], lexicon: HashSet[String]): ListBuffer[Constituent] = {
     val indicators = ListBuffer[Constituent]()
-    val matched = lexicon.filter(x=> contains(sentence.getText, x)).toList
+    val matched = lexicon.filter(x => contains(sentence.getText, x)).toList
     for (m <- matched) {
       val pattern = new Regex("([^a-zA-Z\\d-]|^)" + m + "[^a-zA-Z\\d-]")
       val occurances = pattern.findAllMatchIn(sentence.getText.toLowerCase).toList
-      for(i <- occurances){
-        if (!indicators.exists(x => x.getStartCharOffset == i.start && i.end == x.getEndCharOffset)){
+      for (i <- occurances) {
+        if (!indicators.exists(x => x.getStartCharOffset == i.start && i.end == x.getEndCharOffset)) {
           val covering = sentence.getView(ViewNames.TOKENS).asScala
-            .filter(x=> i.start<= x.getStartCharOffset && x.getEndCharOffset <= i.end)
+            .filter(x => i.start <= x.getStartCharOffset && x.getEndCharOffset <= i.end)
           val c = new Constituent("", "", sentence.getSentenceConstituent.getTextAnnotation,
             covering.head.getStartSpan, covering.last.getEndSpan)
           indicators += c
@@ -144,7 +144,7 @@ object PopulateSpRLDataModel extends Logging {
     }
     indicators
   }
-  def contains(sentence: String, phrase: String):Boolean = {
+  def contains(sentence: String, phrase: String): Boolean = {
     val pattern = new Regex("([^a-zA-Z\\d-]|^)" + phrase + "[^a-zA-Z\\d-]")
     pattern.findFirstIn(sentence.toLowerCase).isDefined
   }
