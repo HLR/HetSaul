@@ -10,9 +10,9 @@ import java.io._
 import java.nio.file._
 
 import edu.illinois.cs.cogcomp.nlp.tokenizer.IllinoisTokenizer
-import edu.illinois.cs.cogcomp.nlp.utility.CcgTextAnnotationBuilder
+import edu.illinois.cs.cogcomp.nlp.utility.TokenizerTextAnnotationBuilder
 import edu.illinois.cs.cogcomp.reader.ace2005.annotationStructure.{ ACEDocument, ACEDocumentAnnotation }
-import edu.illinois.cs.cogcomp.reader.ace2005.documentReader.{ AceFileProcessor, ReadACEDocuments, ReadACEAnnotation }
+import edu.illinois.cs.cogcomp.reader.ace2005.documentReader.{ AceFileProcessor, ReadACEAnnotation }
 import edu.illinois.cs.cogcomp.reader.commondatastructure.XMLException
 import edu.illinois.cs.cogcomp.saulexamples.nlp.ace.Types._
 
@@ -69,27 +69,27 @@ object AnnotateACE extends App {
     val var20 = new File(inputFolderStr)
     val subFolderList = var20.listFiles().filter(f => f.getName == "nw")
 
-    for (folderIndex <- 0 until subFolderList.length) {
+    for (folderIndex <- subFolderList.indices) {
       val filter = new FilenameFilter() {
         def accept(directory: File, fileName: String) = fileName.endsWith(".apf.xml")
       };
       val subFolderEntry = subFolderList(folderIndex)
-      val labelFolder = new File(subFolderEntry.getAbsolutePath() + "/adj");
-      val fileList = labelFolder.listFiles(filter);
+      val labelFolder = new File(subFolderEntry.getAbsolutePath() + "/adj")
+      val fileList = labelFolder.listFiles(filter)
       Files.copy(Paths.get(dtdFile.getAbsolutePath), Paths.get(labelFolder.getAbsolutePath + "/" + dtdFile.getName), StandardCopyOption.REPLACE_EXISTING)
 
       for (fileID <- 0 until fileList.length) {
-        val annotationFile = fileList(fileID).getAbsolutePath();
+        val annotationFile = fileList(fileID).getAbsolutePath()
         System.err.println("reading ace annotation from \'" + annotationFile + "\'...");
         var annotationACE: ACEDocumentAnnotation = null;
 
         try {
-          annotationACE = ReadACEAnnotation.readDocument(annotationFile);
+          annotationACE = ReadACEAnnotation.readDocument(annotationFile)
         } catch {
           case var19: XMLException => var19.printStackTrace(); System.exit(1)
         }
 
-        val outputFile = new File(outputFolderStr + annotationACE.id + ".ta");
+        val outputFile = new File(outputFolderStr + annotationACE.id + ".ta")
         if (!outputFile.exists()) {
           if (annotationFile.contains("rec.games.chess.politics_20041216.1047")) {
             System.out.println("[DEBUG]");
@@ -109,7 +109,6 @@ object AnnotateACE extends App {
         }
       }
     }
-
   }
 
   val baseDir = "/Users/sameer/Work/data/ace/ace-2005/data/"
@@ -117,7 +116,7 @@ object AnnotateACE extends App {
   val docDirInput = baseDir + "English/"
   val docDirOuput = baseDir + "cache/"
   new File(docDirOuput).mkdirs
-  val taBuilder = new CcgTextAnnotationBuilder(new IllinoisTokenizer())
+  val taBuilder = new TokenizerTextAnnotationBuilder(new IllinoisTokenizer())
   val functor = new AceFileProcessor(taBuilder)
   annotateAllDocument(functor, docDirInput, docDirOuput, new File(dtdFile))
 }

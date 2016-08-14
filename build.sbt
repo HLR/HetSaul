@@ -1,7 +1,7 @@
 import de.heikoseeberger.sbtheader.HeaderPattern
 
 val cogcompNLPVersion = "3.0.60"
-val cogcompPipelineVersion = "0.1.16"
+val cogcompPipelineVersion = "0.1.23-SNAPSHOT"
 
 lazy val headerMsg =  """/** This software is released under the University of Illinois/Research and Academic Use License. See
                         |  * the LICENSE file in the root folder for details. Copyright (c) 2016
@@ -59,6 +59,7 @@ lazy val saulExamples = (project in file("saul-examples")).
       "edu.illinois.cs.cogcomp" % "illinois-nlp-pipeline" % cogcompPipelineVersion withSources,
       "edu.illinois.cs.cogcomp" % "illinois-curator" % cogcompNLPVersion,
       "edu.illinois.cs.cogcomp" % "illinois-edison" % cogcompNLPVersion,
+      "edu.illinois.cs.cogcomp" % "illinois-corpusreaders" % cogcompNLPVersion,
       "edu.illinois.cs.cogcomp" % "illinois-nlp-readers" % "0.0.2-SNAPSHOT",
       "edu.illinois.cs.cogcomp" % "saul-pos-tagger-models" % "1.0",
       "edu.illinois.cs.cogcomp" % "saul-er-models" % "1.3",
