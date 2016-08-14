@@ -8,6 +8,7 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling
 
 import java.io.File
 
+import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
 import edu.illinois.cs.cogcomp.core.utilities.configuration.ResourceManager
 import edu.illinois.cs.cogcomp.saul.classifier.Learnable
 import edu.illinois.cs.cogcomp.saul.util.Logging
@@ -43,13 +44,14 @@ object SpRLApp extends App with Logging {
   logger.info("Total landmarks :" + pairs().count(x => SpRLDataModel.isLandmark(x).equals("true")))
 
   runClassifier(spatialIndicatorClassifier, "spatialIndicators")
-  runClassifier(pairTypeClassifier, "relations")
-//  runClassifier(trajectorClassifier, "trajectors")
-//  runClassifier(landmarkClassifier, "landmarks")
+
+  //  runClassifier(pairTypeClassifier, "relations")
+  //  runClassifier(trajectorClassifier, "trajectors")
+  //  runClassifier(landmarkClassifier, "landmarks")
 
   def runClassifier[T <: AnyRef](classifier: Learnable[T], name: String) = {
     classifier.modelDir = modelDir + version + File.separator + name + File.separator
-    if(name == "relations"){
+    if (name == "relations") {
       spatialIndicatorClassifier.load()
     }
     if (isTrain) {
@@ -71,14 +73,9 @@ object SpRLApp extends App with Logging {
 }
 
 object SpRLTestApp extends App {
-  val text = "About 20 kids in traditional clothing and hats waiting on stairs .\n\na house and a green wall with gate in the background .\n\n"
-  var ta = TextAnnotationFactory.createBasicTextAnnotation("", "", text)
-  ta.sentences().asScala.foreach(s => {
-    val sc = s.getSentenceConstituent
-    val start = sc.getInclusiveStartCharOffset()
-    val end = sc.getInclusiveEndCharOffset()
-    println(start)
-    println(end)
-    println(ta.text.substring(start, end + 1))
+  val text = "About 20 kids in traditional clothing and hats waiting on stairs .\n\nA house and a green wall with gate in the background .\n\n"
+  var ta = TextAnnotationFactory.createTextAnnotation("", "", text)
+  ta.getView(ViewNames.DEPENDENCY_STANFORD).asScala.foreach(s => {
+    println(s.toString + ": " + s.getLabel)
   });
 }

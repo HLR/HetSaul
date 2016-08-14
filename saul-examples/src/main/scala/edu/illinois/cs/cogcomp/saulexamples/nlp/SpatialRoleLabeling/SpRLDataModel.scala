@@ -13,8 +13,6 @@ import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
 import edu.illinois.cs.cogcomp.saulexamples.nlp.CommonSensors._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling.SpRLClassifiers.spatialIndicatorClassifier
 
-import scala.collection.JavaConverters._
-
 /** Created by taher on 7/28/16.
   */
 object SpRLDataModel extends DataModel {
@@ -22,7 +20,7 @@ object SpRLDataModel extends DataModel {
   val parseView = ViewNames.PARSE_STANFORD
 
   val sentences = node[Sentence]
-  val tokens = node[Constituent]((x: Constituent) => getConstituentId(x))
+  val tokens = node[Constituent]((x: Constituent) => SpRLSensors.getConstituentId(x))
   val pairs = node[Relation]
 
   val sentencesToTokens = edge(sentences, tokens)
@@ -85,7 +83,7 @@ object SpRLDataModel extends DataModel {
   val isPivot = property(pairs) {
     x: Relation => x.getTarget.getSpan == x.getSource.getSpan
   }
-  val pipeLineIsSp = property(pairs){
+  val pipeLineIsSp = property(pairs) {
     x: Relation => spatialIndicatorClassifier(x)
   }
   // tokens features
@@ -104,11 +102,5 @@ object SpRLDataModel extends DataModel {
   val headword = property(tokens) {
     x: Constituent => getFeature(x, new ParseHeadWordPOS(parseView))
   }
-
-  def getConstituentId(x: Constituent): String =
-    x.getTextAnnotation.getCorpusId + ":" + x.getTextAnnotation.getId + ":" + x.getSentenceId + ":" + x.getSpan
-
-  def getUniqueSentenceId(x: Constituent): String =
-    x.getTextAnnotation.getCorpusId + ":" + x.getTextAnnotation.getId + ":" + x.getSentenceId
 
 }
