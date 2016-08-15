@@ -50,7 +50,7 @@ object RobertsDataModel extends DataModel {
         val t = x.getTrajector.getFirstConstituent.getStartSpan
         val spStart = x.getSpatialIndicator.getFirstConstituent.getStartSpan
         val spEnd = x.getSpatialIndicator.getLastConstituent.getStartSpan
-        if(t < spStart)
+        if (t < spStart)
           getDependencyPath(x.getTextAnnotation, t, spStart)
         else
           getDependencyPath(x.getTextAnnotation, t, spEnd)
@@ -65,7 +65,7 @@ object RobertsDataModel extends DataModel {
         val spStart = x.getSpatialIndicator.getFirstConstituent.getStartSpan
         val spEnd = x.getSpatialIndicator.getLastConstituent.getStartSpan
 
-        if(l < spStart)
+        if (l < spStart)
           getDependencyPath(x.getTextAnnotation, spStart, l)
         else
           getDependencyPath(x.getTextAnnotation, spEnd, l)

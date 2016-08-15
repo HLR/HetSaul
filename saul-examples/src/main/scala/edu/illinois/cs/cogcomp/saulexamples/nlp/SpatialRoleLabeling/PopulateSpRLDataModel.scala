@@ -26,7 +26,7 @@ import scala.util.matching.Regex
 object PopulateSpRLDataModel extends Logging {
   def apply(path: String, isTraining: Boolean, dataVersion: String, modelName: String) = {
 
-    modelName match{
+    modelName match {
       case "Roberts" =>
         val (sentences, relations, lex) = SpRLDataModelReader.read(path, isTraining, dataVersion, getRobertsRelations, getLexicon)
         RobertsDataModel.spLexicon = lex
@@ -54,7 +54,6 @@ object PopulateSpRLDataModel extends Logging {
         val pattern = new Regex(beforeSp + phrase + afterSp)
         pattern.findFirstIn(sentence.toLowerCase).isDefined
       }
-
 
       val indicators = ListBuffer[Constituent]()
       val matched = lexicon.filter(x => contains(sentence.getText, x)).toList
@@ -88,7 +87,6 @@ object PopulateSpRLDataModel extends Logging {
         doc.getSpatialIndicatorMap.get(x.getSpatialIndicatorId).getStart.intValue() == sp.getStartCharOffset + offset.getFirst &&
           doc.getSpatialIndicatorMap.get(x.getSpatialIndicatorId).getEnd.intValue() == sp.getEndCharOffset + offset.getFirst).toList
     }
-
 
     val relations = ListBuffer[RobertsRelation]()
     val constituents = sentence.getView(ViewNames.TOKENS).asScala.toList

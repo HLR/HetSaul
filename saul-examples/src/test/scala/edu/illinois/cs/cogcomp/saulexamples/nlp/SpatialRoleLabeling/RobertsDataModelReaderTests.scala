@@ -17,7 +17,7 @@ class RobertsDataModelReaderTests extends FlatSpec with Matchers {
   "Roberts Data Model Reader" should "Read data correctly." in {
 
     val sentenceList = sentences()
-      .filterNot(x=>x.getSentenceConstituent.getTextAnnotation.getId.startsWith("example.xml")).toList
+      .filterNot(x => x.getSentenceConstituent.getTextAnnotation.getId.startsWith("example.xml")).toList
     val relationList = relations().toList
 
     sentenceList.size should be(5)
@@ -45,18 +45,17 @@ class RobertsDataModelReaderTests extends FlatSpec with Matchers {
 
   "Roberts Data Model Features" should "be correct for examples of the paper." in {
     val examples = sentences()
-      .filter(x=>x.getSentenceConstituent.getTextAnnotation.getId.contains("example.xml")).toList
+      .filter(x => x.getSentenceConstituent.getTextAnnotation.getId.contains("example.xml")).toList
     val e1 = examples(0)
-    val rels1 = relations().filter(x=>x.getSentence == e1).toList
-    val golds1 = rels1.filter(x=>x.getLabel == RobertsRelation.RobertsRelationLabels.GOLD).toList
+    val rels1 = relations().filter(x => x.getSentence == e1).toList
+    val golds1 = rels1.filter(x => x.getLabel == RobertsRelation.RobertsRelationLabels.GOLD).toList
     val rel11 = golds1.head
 
     val e2 = examples(1)
-    val rels2 = relations().filter(x=>x.getSentence == e2).toList
-    val golds2 = rels2.filter(x=>x.getLabel == RobertsRelation.RobertsRelationLabels.GOLD).toList
-    val rel21 = golds2.filter(x=>x.getTrajector.getText == "bushes").head
-    val rel22 = golds2.filter(x=>x.getTrajector.getText == "trees").head
-
+    val rels2 = relations().filter(x => x.getSentence == e2).toList
+    val golds2 = rels2.filter(x => x.getLabel == RobertsRelation.RobertsRelationLabels.GOLD).toList
+    val rel21 = golds2.filter(x => x.getTrajector.getText == "bushes").head
+    val rel22 = golds2.filter(x => x.getTrajector.getText == "trees").head
 
     rels1.size should be(18)
     rels2.size should be(9)

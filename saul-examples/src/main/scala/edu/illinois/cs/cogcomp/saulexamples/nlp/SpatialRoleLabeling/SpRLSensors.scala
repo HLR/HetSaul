@@ -30,12 +30,12 @@ object SpRLSensors {
 
     return false
   }
-  def getDependencyPath(ta:TextAnnotation, t1: Int, t2: Int): String = {
+  def getDependencyPath(ta: TextAnnotation, t1: Int, t2: Int): String = {
 
-    def getRelationName(relations: List[Relation],c1: Constituent, c2: Constituent, dir: String):String = {
-      val r = relations.find(x=> (x.getSource == c1 && x.getTarget == c2) || (x.getSource == c2 && x.getTarget == c1))
-      r match{
-        case Some(r)=> dir + r.getRelationName
+    def getRelationName(relations: List[Relation], c1: Constituent, c2: Constituent, dir: String): String = {
+      val r = relations.find(x => (x.getSource == c1 && x.getTarget == c2) || (x.getSource == c2 && x.getTarget == c1))
+      r match {
+        case Some(r) => dir + r.getRelationName
         case None => ""
       }
     }
@@ -53,12 +53,12 @@ object SpRLSensors {
 
     val path: StringBuilder = new StringBuilder
     var i = 0;
-    while (i < up.size - 1){
-      path.append(getRelationName(relations, up(i), up(i+1), "↑"))
+    while (i < up.size - 1) {
+      path.append(getRelationName(relations, up(i), up(i + 1), "↑"))
       i += 1
     }
     i = down.size - 1
-    while (i > 0){
+    while (i > 0) {
       path.append(getRelationName(relations, down(i), down(i - 1), "↓"))
       i -= 1
     }
