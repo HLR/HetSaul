@@ -78,7 +78,7 @@ object RobertsDataModel extends DataModel {
   // Supervised1 features
   val JF2_2 = property(relations) {
     x: RobertsRelation =>
-      if (x.landmarkIsDefined()) spLexicon.contains(x.getLandmark.getText)
+      if (x.landmarkIsDefined()) spLexicon.exists(s => s.contains(x.getLandmark.getText))
       else false
   }
   val JF2_3 = property(relations) {
@@ -121,17 +121,15 @@ object RobertsDataModel extends DataModel {
           .getConstituentsCoveringSpan(x.getFirstArg.getSpan.getFirst, x.getLastArg.getSpan.getSecond)
           .asScala.toList
         val list = ListBuffer[String]()
-        var spIncluded = false
         tokens.foreach(t => {
           val arg = x.getCoveringArg(t.getSpan)
           if (arg != null) {
             if (arg.getElementType == RobertsElementTypes.INDICATOR) {
-              if (!spIncluded) {
-                list += arg.getText
-                spIncluded = true;
+              if (!list.contains(RobertsElementTypes.INDICATOR.toString)) {
+                list += arg.getElementType.toString
               }
             } else
-              list += arg.getText
+              list += arg.getElementType.toString
           } else {
             list += t.toString.toLowerCase()
           }

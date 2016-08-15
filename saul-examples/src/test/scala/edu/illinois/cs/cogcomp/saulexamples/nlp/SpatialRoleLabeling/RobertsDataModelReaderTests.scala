@@ -91,6 +91,70 @@ class RobertsDataModelReaderTests extends FlatSpec with Matchers {
     BF7(rel21) should be("↓POBJ")
     BF7(rel22) should be("↓POBJ")
 
+    JF2_1(rel11) should be("cars::in_front_of::house")
+    JF2_1(rel21) should be("bushes::on::hill")
+    JF2_1(rel22) should be("trees::on::hill")
+
+    JF2_2(rel11) should be("false")
+    JF2_2(rel21) should be("false")
+    JF2_2(rel22) should be("false")
+
+    JF2_3(rel11) should be("parked,the")
+    JF2_3(rel21) should be("and,small,trees,the")
+    JF2_3(rel22) should be("the")
+
+    JF2_4(rel11) should be("in_front_of::↓POBJ")
+    JF2_4(rel21) should be("on::↓POBJ")
+    JF2_4(rel22) should be("on::↓POBJ")
+
+    JF2_5(rel11) should be("cars")
+    JF2_5(rel21) should be("bushes")
+    JF2_5(rel22) should be("trees")
+
+    JF2_6(rel11) should be("↓POBJ")
+    JF2_6(rel21) should be("↓POBJ")
+    JF2_6(rel22) should be("↓POBJ")
+
+    JF2_7(rel11) should be("↑NSUBJ↓PREP::in_front_of")
+    JF2_7(rel21) should be("↓PREP::on")
+    JF2_7(rel22) should be("↑CONJ↓PREP::on")
+
+    JF2_8(rel11) should startWith("hyp:dwelling,hyp:home,hyp:domicile,hyp:abode")
+    JF2_8(rel21) should startWith("hyp:natural_elevation,hyp:elevation,hyp:structure")
+    JF2_8(rel22) should startWith("hyp:natural_elevation,hyp:elevation,hyp:structure")
+
+    JF2_9(rel11) should startWith("hyp:motor_vehicle,hyp:automotive_vehicle,hyp:wheeled_vehicle,hyp:compartment")
+    JF2_9(rel21) should startWith("hyp:woody_plant,hyp:ligneous_plant,hyp:wilderness,hyp:wild,hyp:vegetation")
+    JF2_9(rel22) should startWith("hyp:woody_plant,hyp:ligneous_plant,hyp:plane_figure,hyp:two-dimensional_figure")
+
+    JF2_10(rel11) should be("TRAJECTOR_parked_INDICATOR_the_LANDMARK")
+    JF2_10(rel21) should be("TRAJECTOR_and_small_trees_INDICATOR_the_LANDMARK")
+    JF2_10(rel22) should be("TRAJECTOR_INDICATOR_the_LANDMARK")
+
+    //    JF2_11(rel11) should be("")
+    //    JF2_11(rel21) should be("")
+    //    JF2_11(rel22) should be("")
+
+    //    JF2_12(rel11) should be("")
+    //    JF2_12(rel21) should be("")
+    //    JF2_12(rel22) should be("")
+
+    //    JF2_13(rel11) should be("")
+    //    JF2_13(rel21) should be("")
+    //    JF2_13(rel22) should be("")
+
+    JF2_14(rel11) should be("car::in_front_of::house")
+    JF2_14(rel21) should be("bush::on::hill")
+    JF2_14(rel22) should be("tree::on::hill")
+
+    //    JF2_15(rel11) should be("")
+    //    JF2_15(rel21) should be("")
+    //    JF2_15(rel22) should be("")
+
+    BH1(rel11) should be("TRAJECTOR_INDICATOR_LANDMARK")
+    BH1(rel21) should be("TRAJECTOR_INDICATOR_LANDMARK")
+    BH1(rel22) should be("TRAJECTOR_INDICATOR_LANDMARK")
+
   }
 
 }

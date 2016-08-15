@@ -144,7 +144,6 @@ object PopulateSpRLDataModel extends Logging {
 
     val start = t.getStart().intValue() - offset.getFirst
     val startTokenId = ta.getTokenIdFromCharacterOffset(start)
-    var headwordId = startTokenId
 
     val phrases = ta.getView(ViewNames.SHALLOW_PARSE).getConstituentsCoveringToken(startTokenId)
 
@@ -152,12 +151,11 @@ object PopulateSpRLDataModel extends Logging {
       val phrase = phrases.get(0)
       val tree: TreeView = ta.getView(SpRLDataModel.parseView).asInstanceOf[TreeView]
       val parsePhrase = tree.getParsePhrase(phrase)
-      headwordId = CollinsHeadFinder.getInstance.getHeadWordPosition(parsePhrase)
-      //logger.info("headword for '" + c.toString + "' is " + ta.getText(headwordId))
+      return CollinsHeadFinder.getInstance.getHeadWordPosition(parsePhrase)
     } else {
       logger.warn("cannot find phrase for '" + ta.getToken(startTokenId) + "'")
     }
-    headwordId
+    startTokenId
   }
 
   def getRelations(sentence: Sentence, doc: SpRL2013Document, lexicon: HashSet[String], offset: IntPair): List[Relation] = {
