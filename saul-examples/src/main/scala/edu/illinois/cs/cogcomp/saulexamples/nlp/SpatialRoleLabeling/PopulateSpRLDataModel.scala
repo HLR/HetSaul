@@ -9,11 +9,11 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling
 import java.lang.Boolean
 
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation._
-import edu.illinois.cs.cogcomp.core.datastructures.{ IntPair, ViewNames }
+import edu.illinois.cs.cogcomp.core.datastructures.{IntPair, ViewNames}
 import edu.illinois.cs.cogcomp.nlp.utilities.CollinsHeadFinder
 import edu.illinois.cs.cogcomp.saul.util.Logging
 import edu.illinois.cs.cogcomp.saulexamples.nlp.CommonSensors
-import edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling.SpRL2013.{ RELATION, SpRL2013Document }
+import edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling.SpRL2013.{RELATION, SpRL2013Document}
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling.SpRLSensors._
 
 import scala.collection.JavaConverters._
@@ -24,12 +24,19 @@ import scala.util.matching.Regex
 /** Created by taher on 7/28/16.
   */
 object PopulateSpRLDataModel extends Logging {
-  def apply(path: String, isTraining: Boolean, version: String) = {
+  def apply(path: String, isTraining: Boolean, dataVersion: String, modelName: String) = {
 
-    val (sentences, rels, lex) = SpRLDataModelReader.read(path, isTraining, version, getRobertsRelations, getLexicon)
-    RobertsDataModel.spLexicon = lex
-    RobertsDataModel.sentences.populate(sentences, train = isTraining)
-    RobertsDataModel.relations.populate(rels, train = isTraining)
+    modelName match{
+      case "Roberts" =>
+        val (sentences, relations, lex) = SpRLDataModelReader.read(path, isTraining, dataVersion, getRobertsRelations, getLexicon)
+        RobertsDataModel.spLexicon = lex
+        RobertsDataModel.sentences.populate(sentences, train = isTraining)
+        RobertsDataModel.relations.populate(relations, train = isTraining)
+      case _ =>
+        val (sentences, pairs, lex) = SpRLDataModelReader.read(path, isTraining, dataVersion, getRelations, null)
+        SpRLDataModel.sentences.populate(sentences, train = isTraining)
+        SpRLDataModel.pairs.populate(pairs, train = isTraining)
+    }
   }
 
   def getLexicon(docs: List[SpRL2013Document]): HashSet[String] = {
@@ -39,8 +46,51 @@ object PopulateSpRLDataModel extends Logging {
 
   def getRobertsRelations(sentence: Sentence, doc: SpRL2013Document, lexicon: HashSet[String], offset: IntPair): List[RobertsRelation] = {
 
+    def getIndicatorCandidates(sentence: Sentence, constituents: List[Constituent], lexicon: HashSet[String]): ListBuffer[Constituent] = {
+
+      val beforeSp = "([^a-zA-Z\\d-]|^)"
+      val afterSp = "[^a-zA-Z\\d-]"
+      def contains(sentence: String, phrase: String): Boolean = {
+        val pattern = new Regex(beforeSp + phrase + afterSp)
+        pattern.findFirstIn(sentence.toLowerCase).isDefined
+      }
+
+
+      val indicators = ListBuffer[Constituent]()
+      val matched = lexicon.filter(x => contains(sentence.getText, x)).toList
+      for (m <- matched) {
+        val pattern = new Regex(beforeSp + m + afterSp)
+        val occurances = pattern.findAllMatchIn(sentence.getText.toLowerCase).toList
+        for (i <- occurances) {
+          if (!indicators.exists(x => x.getStartCharOffset == i.start && i.end == x.getEndCharOffset)) {
+            val covering = sentence.getView(ViewNames.TOKENS).asScala
+              .filter(x => i.start <= x.getStartCharOffset && x.getEndCharOffset <= i.end)
+            val c = new Constituent("", "", sentence.getSentenceConstituent.getTextAnnotation,
+              covering.head.getStartSpan, covering.last.getEndSpan)
+            indicators += c
+          }
+        }
+      }
+
+      indicators
+    }
+
+    def isGoldTrajector(r: RELATION, tr: Constituent): Boolean = {
+      tr == getHeadword(doc.getTrajectorHashMap.get(r.getTrajectorId), tr.getTextAnnotation, offset)
+    }
+
+    def isGoldLandmark(r: RELATION, lm: Constituent): Boolean = {
+      lm == getHeadword(doc.getLandmarkHashMap.get(r.getLandmarkId), lm.getTextAnnotation, offset)
+    }
+
+    def getGoldRelations(goldRelations: List[RELATION], sp: Constituent): List[RELATION] = {
+      goldRelations.filter(x =>
+        doc.getSpatialIndicatorMap.get(x.getSpatialIndicatorId).getStart.intValue() == sp.getStartCharOffset + offset.getFirst &&
+          doc.getSpatialIndicatorMap.get(x.getSpatialIndicatorId).getEnd.intValue() == sp.getEndCharOffset + offset.getFirst).toList
+    }
+
+
     val relations = ListBuffer[RobertsRelation]()
-    val ta = sentence.getSentenceConstituent.getTextAnnotation
     val constituents = sentence.getView(ViewNames.TOKENS).asScala.toList
     val args = constituents.filter(x => CommonSensors.getPosTag(x).startsWith("NN"))
     val indicators: ListBuffer[Constituent] = getIndicatorCandidates(sentence, constituents, lexicon)
@@ -75,20 +125,6 @@ object PopulateSpRLDataModel extends Logging {
         }
 
       }
-    }
-
-    def isGoldTrajector(r: RELATION, tr: Constituent): Boolean = {
-      tr == getHeadword(doc.getTrajectorHashMap.get(r.getTrajectorId), ta, offset)
-    }
-
-    def isGoldLandmark(r: RELATION, lm: Constituent): Boolean = {
-      lm == getHeadword(doc.getLandmarkHashMap.get(r.getLandmarkId), ta, offset)
-    }
-
-    def getGoldRelations(goldRelations: List[RELATION], sp: Constituent): List[RELATION] = {
-      goldRelations.filter(x =>
-        doc.getSpatialIndicatorMap.get(x.getSpatialIndicatorId).getStart.intValue() == sp.getStartCharOffset + offset.getFirst &&
-          doc.getSpatialIndicatorMap.get(x.getSpatialIndicatorId).getEnd.intValue() == sp.getEndCharOffset + offset.getFirst).toList
     }
 
     relations.toList
@@ -126,29 +162,20 @@ object PopulateSpRLDataModel extends Logging {
     headwordId
   }
 
-  def getIndicatorCandidates(sentence: Sentence, constituents: List[Constituent], lexicon: HashSet[String]): ListBuffer[Constituent] = {
-    val indicators = ListBuffer[Constituent]()
-    val matched = lexicon.filter(x => contains(sentence.getText, x)).toList
-    for (m <- matched) {
-      val pattern = new Regex("([^a-zA-Z\\d-]|^)" + m + "[^a-zA-Z\\d-]")
-      val occurances = pattern.findAllMatchIn(sentence.getText.toLowerCase).toList
-      for (i <- occurances) {
-        if (!indicators.exists(x => x.getStartCharOffset == i.start && i.end == x.getEndCharOffset)) {
-          val covering = sentence.getView(ViewNames.TOKENS).asScala
-            .filter(x => i.start <= x.getStartCharOffset && x.getEndCharOffset <= i.end)
-          val c = new Constituent("", "", sentence.getSentenceConstituent.getTextAnnotation,
-            covering.head.getStartSpan, covering.last.getEndSpan)
-          indicators += c
-        }
+  def getRelations(sentence: Sentence, doc: SpRL2013Document, lexicon: HashSet[String], offset: IntPair): List[Relation] = {
+
+    def canAddRelation(relations: Iterable[Relation], a: Constituent, b: Constituent): Boolean = {
+      getUniqueSentenceId(a) == getUniqueSentenceId(b) &&
+        !relations.exists(x => x.getSource.getSpan == a.getSpan && x.getTarget.getSpan == b.getSpan)
+    }
+
+    def addRelation(relations: ListBuffer[Relation], ta: TextAnnotation, pivot: HasSpan, other: HasSpan, relationType: String, offset: IntPair) = {
+
+      if (!tagIsNullOrOutOfSentence(pivot, offset) && !tagIsNullOrOutOfSentence(other, offset)) {
+        val r = new Relation(relationType, getHeadword(other, ta, offset), getHeadword(pivot, ta, offset), 1)
+        relations += r
       }
     }
-    indicators
-  }
-  def contains(sentence: String, phrase: String): Boolean = {
-    val pattern = new Regex("([^a-zA-Z\\d-]|^)" + phrase + "[^a-zA-Z\\d-]")
-    pattern.findFirstIn(sentence.toLowerCase).isDefined
-  }
-  def getRelations(sentence: Sentence, doc: SpRL2013Document, lexicon: HashSet[String], offset: IntPair): List[Relation] = {
 
     val relations = ListBuffer[Relation]()
 
@@ -174,16 +201,4 @@ object PopulateSpRLDataModel extends Logging {
     relations.toList
   }
 
-  def canAddRelation(relations: Iterable[Relation], a: Constituent, b: Constituent): Boolean = {
-    getUniqueSentenceId(a) == getUniqueSentenceId(b) &&
-      !relations.exists(x => x.getSource.getSpan == a.getSpan && x.getTarget.getSpan == b.getSpan)
-  }
-
-  def addRelation(relations: ListBuffer[Relation], ta: TextAnnotation, pivot: HasSpan, other: HasSpan, relationType: String, offset: IntPair) = {
-
-    if (!tagIsNullOrOutOfSentence(pivot, offset) && !tagIsNullOrOutOfSentence(other, offset)) {
-      val r = new Relation(relationType, getHeadword(other, ta, offset), getHeadword(pivot, ta, offset), 1)
-      relations += r
-    }
-  }
 }

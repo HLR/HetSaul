@@ -8,13 +8,10 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling
 
 import java.io.File
 
-import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
 import edu.illinois.cs.cogcomp.core.utilities.configuration.ResourceManager
 import edu.illinois.cs.cogcomp.saul.classifier.Learnable
 import edu.illinois.cs.cogcomp.saul.util.Logging
 import edu.illinois.cs.cogcomp.saulexamples.nlp.TextAnnotationFactory
-
-import scala.collection.JavaConverters._
 
 /** Created by Parisa on 7/29/16.
   */
@@ -35,7 +32,7 @@ object SpRLApp extends App with Logging {
 
   logger.info("population starts.")
 
-  PopulateSpRLDataModel(getDataPath(), isTrain, version)
+  PopulateSpRLDataModel(getDataPath(), isTrain, version, "")
 
   logger.info("Total sentences :" + sentences.count)
   logger.info("Total tokens :" + tokens.count)
@@ -73,9 +70,11 @@ object SpRLApp extends App with Logging {
 }
 
 object SpRLTestApp extends App {
-  val text = "About 20 kids in traditional clothing and hats waiting on stairs .\n\nA house and a green wall with gate in the background .\n\n"
+  val text = "Cars parked in front of the house ."
   var ta = TextAnnotationFactory.createTextAnnotation("", "", text)
-  ta.getView(ViewNames.DEPENDENCY_STANFORD).asScala.foreach(s => {
-    println(s.toString + ": " + s.getLabel)
-  });
+  var f = SpRLSensors.getDependencyPath(ta, 0, 2)
+  print(f)
+
 }
+
+

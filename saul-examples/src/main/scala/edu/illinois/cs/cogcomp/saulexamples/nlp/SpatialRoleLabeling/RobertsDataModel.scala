@@ -7,8 +7,8 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling
 
 import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
-import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{ Constituent, Sentence }
-import edu.illinois.cs.cogcomp.edison.features.factory.{ DependencyPath, WordNetFeatureExtractor }
+import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{Constituent, Sentence}
+import edu.illinois.cs.cogcomp.edison.features.factory.WordNetFeatureExtractor
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
 import edu.illinois.cs.cogcomp.saulexamples.nlp.CommonSensors._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling.SpRL2015.RobertsElementTypes
@@ -47,15 +47,13 @@ object RobertsDataModel extends DataModel {
   val BF6 = property(relations) {
     x: RobertsRelation =>
       {
-        val pathToStart = getPairFeatures(x.getTrajector.getFirstConstituent, x.getSpatialIndicator.getFirstConstituent,
-          DependencyPath.STANFORD.getFeatures)
-          .asScala.head.toString
-
-        val pathToEnd = getPairFeatures(x.getTrajector.getFirstConstituent, x.getSpatialIndicator.getLastConstituent,
-          DependencyPath.STANFORD.getFeatures)
-          .asScala.head.toString
-
-        if (pathToStart.length >= pathToEnd.length) pathToStart else pathToEnd
+        val t = x.getTrajector.getFirstConstituent.getStartSpan
+        val spStart = x.getSpatialIndicator.getFirstConstituent.getStartSpan
+        val spEnd = x.getSpatialIndicator.getLastConstituent.getStartSpan
+        if(t < spStart)
+          getDependencyPath(x.getTextAnnotation, t, spStart)
+        else
+          getDependencyPath(x.getTextAnnotation, t, spEnd)
       }
   }
   val BF7 = property(relations) {
@@ -63,15 +61,14 @@ object RobertsDataModel extends DataModel {
       if (!x.landmarkIsDefined()) undefined
       else {
 
-        val pathFromStart = getPairFeatures(x.getSpatialIndicator.getFirstConstituent, x.getLandmark.getFirstConstituent,
-          DependencyPath.STANFORD.getFeatures)
-          .asScala.head.toString
+        val l = x.getLandmark.getFirstConstituent.getStartSpan
+        val spStart = x.getSpatialIndicator.getFirstConstituent.getStartSpan
+        val spEnd = x.getSpatialIndicator.getLastConstituent.getStartSpan
 
-        val pathFromEnd = getPairFeatures(x.getSpatialIndicator.getLastConstituent, x.getLandmark.getFirstConstituent,
-          DependencyPath.STANFORD.getFeatures)
-          .asScala.head.toString
-
-        if (pathFromStart.length >= pathFromEnd.length) pathFromStart else pathFromEnd
+        if(l < spStart)
+          getDependencyPath(x.getTextAnnotation, spStart, l)
+        else
+          getDependencyPath(x.getTextAnnotation, spEnd, l)
       }
   }
   val JF2_1 = property(relations) {
