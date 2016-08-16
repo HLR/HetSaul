@@ -56,10 +56,10 @@ lazy val saulExamples = (project in file("saul-examples")).
   settings(
     name := "saul-examples",
     libraryDependencies ++= Seq(
-      "edu.illinois.cs.cogcomp" % "illinois-nlp-pipeline" % cogcompPipelineVersion withSources,
-      "edu.illinois.cs.cogcomp" % "illinois-curator" % cogcompNLPVersion,
-      "edu.illinois.cs.cogcomp" % "illinois-edison" % cogcompNLPVersion,
-      "edu.illinois.cs.cogcomp" % "illinois-corpusreaders" % cogcompNLPVersion,
+      "edu.illinois.cs.cogcomp" % "illinois-nlp-pipeline" % cogcompPipelineVersion exclude("org.slf4j", "slf4j-log4j12") withSourcesxc,
+      "edu.illinois.cs.cogcomp" % "illinois-curator" % cogcompNLPVersion exclude("org.slf4j", "slf4j-log4j12"),
+      "edu.illinois.cs.cogcomp" % "illinois-edison" % cogcompNLPVersion exclude("org.slf4j", "slf4j-log4j12"),
+      "edu.illinois.cs.cogcomp" % "illinois-corpusreaders" % cogcompNLPVersion exclude("org.slf4j", "slf4j-log4j12"),
       "edu.illinois.cs.cogcomp" % "saul-pos-tagger-models" % "1.1",
       "edu.illinois.cs.cogcomp" % "saul-er-models" % "1.3",
       "edu.illinois.cs.cogcomp" % "saul-srl-models" % "1.1"
