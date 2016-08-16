@@ -24,11 +24,15 @@ import scala.util.matching.Regex
 /** Created by taher on 7/28/16.
   */
 object PopulateSpRLDataModel extends Logging {
-  def apply(path: String, isTraining: Boolean, dataVersion: String, modelName: String) = {
+  def apply(path: String, isTraining: Boolean, dataVersion: String, modelName: String, savedLexicon: HashSet[String]) = {
 
     modelName match {
       case "Roberts" =>
-        val (sentences, relations, lex) = SpRLDataModelReader.read(path, isTraining, dataVersion, getRobertsRelations, getLexicon)
+        val getLex: (List[SpRL2013Document]) => HashSet[String] = if (isTraining) getLexicon else (x) => savedLexicon
+
+        val (sentences, relations, lex) =
+          SpRLDataModelReader.read(path, isTraining, dataVersion, getRobertsRelations, getLex)
+
         RobertsDataModel.spLexicon = lex
         RobertsDataModel.sentences.populate(sentences, train = isTraining)
         RobertsDataModel.relations.populate(relations, train = isTraining)
@@ -59,8 +63,8 @@ object PopulateSpRLDataModel extends Logging {
       val matched = lexicon.filter(x => contains(sentence.getText, x)).toList
       for (m <- matched) {
         val pattern = new Regex(beforeSp + m + afterSp)
-        val occurances = pattern.findAllMatchIn(sentence.getText.toLowerCase).toList
-        for (i <- occurances) {
+        val occurrences = pattern.findAllMatchIn(sentence.getText.toLowerCase).toList
+        for (i <- occurrences) {
           if (!indicators.exists(x => x.getStartCharOffset == i.start && i.end == x.getEndCharOffset)) {
             val covering = sentence.getView(ViewNames.TOKENS).asScala
               .filter(x => i.start <= x.getStartCharOffset && x.getEndCharOffset <= i.end)

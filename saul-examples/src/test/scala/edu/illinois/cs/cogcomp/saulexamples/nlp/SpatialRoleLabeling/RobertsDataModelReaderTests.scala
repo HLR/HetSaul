@@ -1,6 +1,6 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling
 
-import org.scalatest.{ FlatSpec, Matchers }
+import org.scalatest.{FlatSpec, Matchers}
 
 /** Created by taher on 8/14/16.
   */
@@ -12,7 +12,7 @@ class RobertsDataModelReaderTests extends FlatSpec with Matchers {
 
   import RobertsDataModel._
 
-  PopulateSpRLDataModel(path, true, "2012", "Roberts")
+  PopulateSpRLDataModel(path, true, "2012", "Roberts", null)
 
   "Roberts Data Model Reader" should "Read data correctly." in {
 
@@ -57,23 +57,43 @@ class RobertsDataModelReaderTests extends FlatSpec with Matchers {
     val rel21 = golds2.filter(x => x.getTrajector.getText == "bushes").head
     val rel22 = golds2.filter(x => x.getTrajector.getText == "trees").head
 
+    val e3 = examples(2)
+    val rels3 = relations().filter(x => x.getSentence == e3).toList
+    val golds3 = rels3.filter(x => x.getLabel == RobertsRelation.RobertsRelationLabels.GOLD).toList
+    val rel31 = golds3.head
+
+    val e4 = examples(3)
+    val rels4 = relations().filter(x => x.getSentence == e4).toList
+    val golds4 = rels4.filter(x => x.getLabel == RobertsRelation.RobertsRelationLabels.GOLD).toList
+    val rel41 = golds4.head
+
     rels1.size should be(18)
     rels2.size should be(9)
+    rels3.size should be(18)
+    rels4.size should be(8)
 
     golds1.size should be(1)
     golds2.size should be(2)
+    golds3.size should be(1)
+    golds4.size should be(1)
 
     BF1(rel11) should be("cars")
     BF1(rel21) should be("bushes")
     BF1(rel22) should be("trees")
+    BF1(rel31) should be("football")
+    BF1(rel41) should be("trees")
 
     BF2(rel11) should be("house")
     BF2(rel21) should be("hill")
     BF2(rel22) should be("hill")
+    BF2(rel31) should be("column")
+    BF2(rel41) should be(undefined)
 
     BF3(rel11) should be("in_front_of")
     BF3(rel21) should be("on")
     BF3(rel22) should be("on")
+    BF3(rel31) should be("on_top")
+    BF3(rel41) should be("on_the_right")
 
     BF4(rel11) should be("car")
     BF4(rel21) should be("bush")
@@ -131,29 +151,35 @@ class RobertsDataModelReaderTests extends FlatSpec with Matchers {
     JF2_10(rel21) should be("TRAJECTOR_and_small_trees_INDICATOR_the_LANDMARK")
     JF2_10(rel22) should be("TRAJECTOR_INDICATOR_the_LANDMARK")
 
-    //    JF2_11(rel11) should be("")
-    //    JF2_11(rel21) should be("")
-    //    JF2_11(rel22) should be("")
+    JF2_11(rel11) should be("")
+    JF2_11(rel21) should be("")
+    JF2_11(rel22) should be("")
+    JF2_11(rels1(3)) should be("of") // cars parked in[INDICATOR] front[TRAJECTOR] of the house: front---prep--->of
 
     //    JF2_12(rel11) should be("")
     //    JF2_12(rel21) should be("")
     //    JF2_12(rel22) should be("")
 
-    //    JF2_13(rel11) should be("")
-    //    JF2_13(rel21) should be("")
-    //    JF2_13(rel22) should be("")
+    JF2_13(rel11) should be("false")
+    JF2_13(rel21) should be("false")
+    JF2_13(rel22) should be("false")
+    JF2_13(rel41) should be("true")
 
     JF2_14(rel11) should be("car::in_front_of::house")
     JF2_14(rel21) should be("bush::on::hill")
     JF2_14(rel22) should be("tree::on::hill")
 
-    //    JF2_15(rel11) should be("")
-    //    JF2_15(rel21) should be("")
-    //    JF2_15(rel22) should be("")
+    JF2_15(rel11) should be("false")
+    JF2_15(rel21) should be("false")
+    JF2_15(rel22) should be("false")
+    JF2_15(rel31) should be("true") // a huge column[LANDMARK] with a football[TRAJECTOR] on top[INDICATOR]:
+    // with---POBJ--->football
 
     BH1(rel11) should be("TRAJECTOR_INDICATOR_LANDMARK")
     BH1(rel21) should be("TRAJECTOR_INDICATOR_LANDMARK")
     BH1(rel22) should be("TRAJECTOR_INDICATOR_LANDMARK")
+    BH1(rel31) should be("LANDMARK_TRAJECTOR_INDICATOR")
+    BH1(rel41) should be("TRAJECTOR_INDICATOR")
 
   }
 

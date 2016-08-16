@@ -69,6 +69,10 @@ public class RobertsElement implements Comparable<RobertsElement> {
         return span;
     }
 
+    public boolean isCovering(IntPair s){
+        return s!= null && span.getFirst() <= s.getFirst() && s.getSecond() <= span.getSecond();
+    }
+
     public RobertsElementTypes getElementType() {
         return elementType;
     }

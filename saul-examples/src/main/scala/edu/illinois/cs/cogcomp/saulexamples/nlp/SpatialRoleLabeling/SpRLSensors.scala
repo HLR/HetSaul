@@ -7,7 +7,7 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling
 
 import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
-import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{ Constituent, Relation, TextAnnotation, TreeView }
+import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{Constituent, Relation, TextAnnotation, TreeView}
 import edu.illinois.cs.cogcomp.edison.features.Feature
 import edu.illinois.cs.cogcomp.edison.features.helpers.PathFeatureHelper
 import edu.illinois.cs.cogcomp.saulexamples.nlp.CommonSensors
@@ -17,6 +17,7 @@ import scala.collection.JavaConverters._
 /** Created by taher on 7/28/16.
   */
 object SpRLSensors {
+  val dependencyView = ViewNames.DEPENDENCY_STANFORD
 
   // helper methods
   def isCandidate(token: Constituent): Boolean = {
@@ -40,10 +41,10 @@ object SpRLSensors {
       }
     }
 
-    val c1 = ta.getView(ViewNames.DEPENDENCY_STANFORD).getConstituentsCoveringToken(t1).get(0)
-    val c2 = ta.getView(ViewNames.DEPENDENCY_STANFORD).getConstituentsCoveringToken(t2).get(0)
+    val c1 = ta.getView(dependencyView).getConstituentsCoveringToken(t1).get(0)
+    val c2 = ta.getView(dependencyView).getConstituentsCoveringToken(t2).get(0)
 
-    val parse: TreeView = c1.getTextAnnotation.getView(ViewNames.DEPENDENCY_STANFORD).asInstanceOf[TreeView]
+    val parse: TreeView = ta.getView(dependencyView).asInstanceOf[TreeView]
 
     val relations = parse.getRelations.asScala.toList
     val paths = PathFeatureHelper.getPathsToCommonAncestor(c1, c2, 400)
@@ -64,6 +65,18 @@ object SpRLSensors {
     }
 
     path.toString.toUpperCase
+  }
+
+  def getDependencyRelationsWith(c: Constituent, relationName: String): List[Relation] = {
+    getDependencyRelations(c.getTextAnnotation)
+      .filter(y => y.getRelationName.equalsIgnoreCase(relationName.toLowerCase) &&
+        (y.getSource.getSpan == c.getSpan || y.getTarget.getSpan == c.getSpan))
+  }
+
+  def getDependencyRelations(ta: TextAnnotation): List[Relation] = {
+    val parse: TreeView = ta.getView(dependencyView).asInstanceOf[TreeView]
+
+    parse.getRelations.asScala.toList
   }
 
   def getConstituentId(x: Constituent): String =

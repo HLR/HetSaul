@@ -6,12 +6,16 @@
   */
 package edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling
 
-import java.io.File
+import java.io._
 
+import ch.qos.logback.classic.Level
 import edu.illinois.cs.cogcomp.core.utilities.configuration.ResourceManager
 import edu.illinois.cs.cogcomp.saul.classifier.Learnable
 import edu.illinois.cs.cogcomp.saul.util.Logging
 import edu.illinois.cs.cogcomp.saulexamples.nlp.TextAnnotationFactory
+
+import scala.collection.immutable.HashSet
+import scala.reflect.io.File
 
 /** Created by Parisa on 7/29/16.
   */
@@ -29,22 +33,27 @@ object SpRLApp extends App with Logging {
     File.separator + properties.getString(SpRL_MODEL_DIR) + File.separator
   val isTrain = properties.getBoolean(IS_TRAINING)
   val version = properties.getString(VERSION)
+  var modelName = properties.getString(MODEL_NAME)
 
   logger.info("population starts.")
 
-  PopulateSpRLDataModel(getDataPath(), isTrain, version, "")
-
-  logger.info("Total sentences :" + sentences.count)
-  logger.info("Total tokens :" + tokens.count)
-  logger.info("Total spatial indicators :" + pairs().count(x => SpRLDataModel.isSpatialIndicator(x).equals("true")))
-  logger.info("Total trajectors :" + pairs().count(x => SpRLDataModel.isTrajector(x).equals("true")))
-  logger.info("Total landmarks :" + pairs().count(x => SpRLDataModel.isLandmark(x).equals("true")))
-
-  runClassifier(spatialIndicatorClassifier, "spatialIndicators")
-
-  //  runClassifier(pairTypeClassifier, "relations")
-  //  runClassifier(trajectorClassifier, "trajectors")
-  //  runClassifier(landmarkClassifier, "landmarks")
+  modelName match {
+    case "Roberts" =>
+      val name = "robertsSupervised2"
+      val lexPath = modelDir + version + File.separator + name + File.separator + "lexicon.lex"
+      val lex = if (isTrain) null else loadRobertsLexicon(lexPath)
+      PopulateSpRLDataModel(getDataPath(), isTrain, version, modelName, lex)
+      if (isTrain) {
+        saveRobertsLexicon(lexPath)
+      }
+      runClassifier(RobertsClassifiers.robertsSupervised2Classifier, name)
+    case "SimpleRoles" =>
+      PopulateSpRLDataModel(getDataPath(), isTrain, version, modelName, null)
+      runClassifier(spatialIndicatorClassifier, "spatialIndicators")
+    //  runClassifier(trajectorClassifier, "trajectors")
+    //  runClassifier(landmarkClassifier, "landmarks")  }
+    //  runClassifier(pairTypeClassifier, "relations")
+  }
 
   def runClassifier[T <: AnyRef](classifier: Learnable[T], name: String) = {
     classifier.modelDir = modelDir + version + File.separator + name + File.separator
@@ -61,6 +70,21 @@ object SpRLApp extends App with Logging {
       classifier.test()
     }
     logger.info("done.")
+  }
+
+  def loadRobertsLexicon(filePath: String): HashSet[String] = {
+    if (File(filePath).exists) {
+      val stream = new ObjectInputStream(new FileInputStream(filePath))
+      val lex = stream.readObject().asInstanceOf[HashSet[String]]
+      stream.close()
+      return lex
+    }
+    return null
+  }
+  def saveRobertsLexicon(filePath: String): Unit = {
+    val stream = new ObjectOutputStream(new FileOutputStream(filePath))
+    stream.writeObject(RobertsDataModel.spLexicon)
+    stream.close()
   }
 
   def getDataPath(): String = {
