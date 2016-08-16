@@ -22,7 +22,7 @@ public class SpRLConfigurator extends Configurator {
     public static final Property MODELS_DIR = new Property("modelsDir","models");
 
     public static final Property VERSION = new Property("version","2012");
-    public static final Property IS_TRAINING = new Property("isTraining", Configurator.FALSE);
+    public static final Property IS_TRAINING = new Property("isTraining", Configurator.TRUE);
 
     /*********** SpRL PROPERTIES ***********/
     // The (sub)directory to store and retrieve the trained SpRL models (to be used with MODELS_DIR)
