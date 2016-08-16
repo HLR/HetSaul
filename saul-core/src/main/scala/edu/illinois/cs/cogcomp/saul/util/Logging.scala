@@ -77,8 +77,8 @@ trait Logging {
     */
   object loggerConfig {
     case class Logger(loggerName: String = org.slf4j.Logger.ROOT_LOGGER_NAME) {
-      private val logger: ch.qos.logback.classic.Logger =
-        LoggerFactory.getLogger(loggerName).asInstanceOf[ch.qos.logback.classic.Logger]
+      private val loggerInterface: org.slf4j.Logger = LoggerFactory.getLogger(loggerName)
+      private val logger: ch.qos.logback.classic.Logger = loggerInterface.asInstanceOf[ch.qos.logback.classic.Logger]
 
       /** Resets the logger. */
       def reset(): Logger = {
