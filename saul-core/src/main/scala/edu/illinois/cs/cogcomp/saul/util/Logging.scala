@@ -12,6 +12,7 @@ import ch.qos.logback.classic.html.HTMLLayout
 import ch.qos.logback.classic.spi.ILoggingEvent
 import ch.qos.logback.core._
 import ch.qos.logback.core.encoder.{ Encoder, LayoutWrappingEncoder }
+import org.slf4j.impl.StaticLoggerBinder
 import org.slf4j.LoggerFactory
 
 /** This trait is meant to be mixed into a class to provide logging and logging configuration.
@@ -76,13 +77,41 @@ trait Logging {
     * format: ON
     */
   object loggerConfig {
+
     case class Logger(loggerName: String = org.slf4j.Logger.ROOT_LOGGER_NAME) {
-      private val logger: ch.qos.logback.classic.Logger =
-        LoggerFactory.getLogger(loggerName).asInstanceOf[ch.qos.logback.classic.Logger]
+      private val logger: ch.qos.logback.classic.Logger = getLogger()
+
+      private def getLogger(): ch.qos.logback.classic.Logger = {
+        LoggerFactory.getLogger(loggerName) match {
+          case (b: ch.qos.logback.classic.Logger) => b
+          case _ => null
+        }
+      }
+
+      private def reportBindingError(action: String): Unit = {
+        val factory = StaticLoggerBinder.getSingleton().getLoggerFactory();
+        val msg = String.format(
+          "LoggerFactory is not a Logback LoggerContext because " +
+            "another Logger implementation(%s) in the classpath " +
+            "is used as default Logger.\n" +
+            "So, cannot perform '%s'.",
+          factory.getClass(), action);
+        LoggerFactory.getLogger(loggerName).error(msg)
+      }
+
+      private def doAction[T](name: String, action: () => T): T = {
+        if (logger == null) {
+          reportBindingError(name)
+          val default: T = null.asInstanceOf[T]
+          default
+        }
+        else
+          action()
+      }
 
       /** Resets the logger. */
       def reset(): Logger = {
-        logger.getLoggerContext.reset()
+        doAction("reset", () => logger.getLoggerContext.reset())
         this
       }
 
@@ -92,22 +121,22 @@ trait Logging {
         * </code>
         */
       def setLevel(level: Level): Logger = {
-        logger.setLevel(level)
+        doAction("setLevel", () => logger.setLevel(level))
         this
       }
 
       def setLevelWarn(): Logger = {
-        logger.setLevel(Level.WARN)
+        setLevel(Level.WARN)
         this
       }
 
       def setLevelDebug(): Logger = {
-        logger.setLevel(Level.DEBUG)
+        setLevel(Level.DEBUG)
         this
       }
 
       def setLevelInfo(): Logger = {
-        logger.setLevel(Level.INFO)
+        setLevel(Level.INFO)
         this
       }
 
@@ -117,28 +146,28 @@ trait Logging {
         * </code>
         */
       def getLevel(): Level = {
-        logger.getLevel()
+        doAction("getLevel", () => logger.getLevel())
       }
 
       def isLevelWarn(): Boolean = {
-        logger.getLevel() == Level.WARN
+        doAction("isLevelWarn", () => logger.getLevel() == Level.WARN)
       }
 
       def isLevelDebug(): Boolean = {
-        logger.getLevel() == Level.DEBUG
+        doAction("isLevelDebug", () => logger.getLevel() == Level.DEBUG)
       }
 
       def isLevelInfo(): Boolean = {
-        logger.getLevel() == Level.INFO
+        doAction("isLevelDebug", () => logger.getLevel() == Level.INFO)
       }
 
       /** Simple log appender creation. Example:
         * <code>
         * loggerConfig.Logger()
-        *   .addAppender(
+        * .addAppender(
         *     loggerConfig.newPatternLayoutEncoder("%-5level [%thread]: %message%n"),
         *     loggerConfig.newConsoleAppender)
-        *   .addAppender(
+        * .addAppender(
         *     loggerConfig.newHtmlLayoutEncoder("%relative%thread%level%logger%msg"),
         *     loggerConfig.newFileAppender("./log.html"))
         * </code>
@@ -147,13 +176,16 @@ trait Logging {
                        encoder: Encoder[ILoggingEvent],
                        appender: OutputStreamAppender[ILoggingEvent]
                      ): Logger = {
-        val loggerContext = logger.getLoggerContext
-        encoder.setContext(loggerContext)
-        encoder.start()
-        appender.setContext(loggerContext)
-        appender.setEncoder(encoder)
-        appender.start()
-        logger.addAppender(appender)
+        doAction("addAppender", () => {
+          val loggerContext = logger.getLoggerContext
+
+          encoder.setContext(loggerContext)
+          encoder.start()
+          appender.setContext(loggerContext)
+          appender.setEncoder(encoder)
+          appender.start()
+          logger.addAppender(appender)
+        })
         this
       }
     }
@@ -197,4 +229,5 @@ trait Logging {
       appender
     }
   }
+
 }
