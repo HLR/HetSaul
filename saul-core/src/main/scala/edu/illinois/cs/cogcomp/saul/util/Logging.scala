@@ -82,9 +82,10 @@ trait Logging {
       private val logger: ch.qos.logback.classic.Logger = getLogger()
 
       private def getLogger(): ch.qos.logback.classic.Logger = {
-        if (LoggerFactory.getLogger(loggerName).isInstanceOf[ch.qos.logback.classic.Logger])
-          LoggerFactory.getLogger(loggerName).asInstanceOf[ch.qos.logback.classic.Logger]
-        else null
+        LoggerFactory.getLogger(loggerName) match {
+          case (b: ch.qos.logback.classic.Logger) => b
+          case _ => null
+        }
       }
 
       private def reportBindingError(action: String): Unit = {
