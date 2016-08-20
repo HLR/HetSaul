@@ -17,6 +17,9 @@ import edu.illinois.cs.cogcomp.saul.util.Logging
 import scala.collection.mutable.ListBuffer
 import scala.reflect.ClassTag
 
+/** Represents the data model that stores the data object graph. Extend this trait to define nodes and edges for
+  * representing data for a learning problem.
+  */
 trait DataModel extends Logging {
   val PID = 'PID
 
@@ -36,7 +39,7 @@ trait DataModel extends Logging {
   }
 
   def clearInstances = {
-    nodes.foreach(_.clear)
+    nodes.foreach(_.clear())
     edges.foreach(_.clear)
   }
 
@@ -153,7 +156,8 @@ trait DataModel extends Logging {
     e
   }
 
-  class PropertyApply[T <: AnyRef] private[DataModel] (val node: Node[T], name: String, cache: Boolean, ordered: Boolean) { papply =>
+  class PropertyApply[T <: AnyRef] private[DataModel] (val node: Node[T], name: String, cache: Boolean, ordered: Boolean) {
+    papply =>
 
     // TODO(danielk): make the hashmaps immutable
     lazy val propertyCacheMap = {

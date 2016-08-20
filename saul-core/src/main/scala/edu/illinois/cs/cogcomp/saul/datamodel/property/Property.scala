@@ -11,6 +11,11 @@ import edu.illinois.cs.cogcomp.saul.lbjrelated.LBJClassifierEquivalent
 
 import scala.reflect.ClassTag
 
+/** Base trait for representing attributes that can be defined on a
+  * [[edu.illinois.cs.cogcomp.saul.datamodel.node.Node]] instance.
+  *
+  * @tparam T Type of the attribute
+  */
 trait Property[T] extends LBJClassifierEquivalent {
 
   val name: String
@@ -31,7 +36,6 @@ trait Property[T] extends LBJClassifierEquivalent {
   def addToFeatureVector(instance: T, featureVector: FeatureVector, nameOfClassifier: String): FeatureVector
 
   def makeClassifierWithName(n: String): FeatureGenerator
-
 }
 
 object Property {

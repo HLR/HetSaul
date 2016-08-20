@@ -14,13 +14,9 @@ import edu.illinois.cs.cogcomp.saul.datamodel.property.features.ClassifierContai
 
 import scala.reflect.ClassTag
 
-case class DiscreteArrayProperty[T <: AnyRef](
-  name: String,
-  sensor: T => List[String]
-)(implicit val tag: ClassTag[T]) extends TypedProperty[T, List[String]] {
+case class DiscreteArrayProperty[T <: AnyRef](name: String, sensor: T => List[String])(implicit val tag: ClassTag[T]) extends TypedProperty[T, List[String]] {
 
   override def makeClassifierWithName(n: String): Classifier = new ClassifierContainsInLBP() {
-
     this.containingPackage = "LBP_Package"
     this.name = n
 

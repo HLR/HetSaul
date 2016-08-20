@@ -8,7 +8,6 @@ package edu.illinois.cs.cogcomp.saul.datamodel.node
 
 import edu.illinois.cs.cogcomp.lbjava.classify.FeatureVector
 import edu.illinois.cs.cogcomp.lbjava.util.{ ExceptionlessInputStream, ExceptionlessOutputStream }
-import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
 import edu.illinois.cs.cogcomp.saul.datamodel.property.Property
 import edu.illinois.cs.cogcomp.saul.datamodel.property.features.discrete.DiscreteProperty
 import edu.illinois.cs.cogcomp.saul.datamodel.edge.Edge
@@ -27,10 +26,7 @@ trait NodeProperty[T <: AnyRef] extends Property[T] {
   * @param keyFunc key function used to extract the key
   * @tparam T base type of the instances
   */
-class NodeInstance[T](
-  val t: T,
-  val keyFunc: T => Any
-) {
+class NodeInstance[T](val t: T, val keyFunc: T => Any) {
   val key: Any = keyFunc(t)
   def apply = t
 
@@ -41,11 +37,13 @@ class NodeInstance[T](
   }
 }
 
-/** A Node E is an instances of base types T */
-class Node[T <: AnyRef](
-  val keyFunc: T => Any = (x: T) => x,
-  val tag: ClassTag[T]
-) extends Logging {
+/** Represents an node in the data model graph.
+  *
+  * @param keyFunc Key function to distinguish between different objects in the collection.
+  * @param tag ClassTag
+  * @tparam T Type of the data represented in the node.
+  */
+class Node[T <: AnyRef](val keyFunc: T => Any = (x: T) => x, val tag: ClassTag[T]) extends Logging {
 
   type NT = NodeInstance[T]
 
@@ -80,22 +78,22 @@ class Node[T <: AnyRef](
   }
 
   def clear() = {
-    collection.clear()
-    trainingSet.clear()
-    testingSet.clear()
+    collection.clear
+    trainingSet.clear
+    testingSet.clear
     for (e <- incoming) e.clear
     for (e <- outgoing) e.clear
   }
 
-  var count = 0
+  private var count = 0
 
-  def incrementCount(): Int = this.synchronized {
+  private def incrementCount(): Int = this.synchronized {
     val ret = count
     count = count + 1
     ret
   }
 
-  def decreaseCount(): Int = this.synchronized {
+  private def decreaseCount(): Int = this.synchronized {
     val ret = count
     count = count - 1
     ret
@@ -106,10 +104,6 @@ class Node[T <: AnyRef](
   def toNT(t: T): NT = new NT(t, keyFunc)
 
   private def containsNT(nt: NT): Boolean = collection.contains(nt)
-
-  def containsUntyped(t: Any): Boolean = if (t.isInstanceOf[T]) {
-    contains(t.asInstanceOf[T])
-  } else false
 
   def addInstance(t: T, train: Boolean = true, populateEdge: Boolean = true) = {
     val nt = toNT(t)
@@ -301,37 +295,3 @@ class Node[T <: AnyRef](
   }
 }
 
-class JoinNode[A <: AnyRef, B <: AnyRef](val na: Node[A], val nb: Node[B], matcher: (A, B) => Boolean, tag: ClassTag[(A, B)]) extends Node[(A, B)](p => na.keyFunc(p._1) -> nb.keyFunc(p._2), tag) {
-
-  def addFromChild[T <: AnyRef](node: Node[T], t: T, train: Boolean = true, populateEdge: Boolean = true) = {
-    node match {
-      case this.na => matchAndAddChildrenA(t.asInstanceOf[A], train, populateEdge)
-      case this.nb => matchAndAddChildrenB(t.asInstanceOf[B], train, populateEdge)
-    }
-  }
-
-  private def matchAndAddChildrenA(a: A, train: Boolean = true, populateEdge: Boolean = true): Unit = {
-    val instances = if (train) nb.getTrainingInstances else nb.getTestingInstances
-    for ((a, b) <- instances.filter(matcher(a, _)).map(a -> _)) {
-      if (!contains(a -> b))
-        this addInstance (a -> b, train, populateEdge)
-    }
-  }
-
-  private def matchAndAddChildrenB(b: B, train: Boolean = true, populateEdge: Boolean = true): Unit = {
-    val instances = if (train) na.getTrainingInstances else na.getTestingInstances
-    for ((a, b) <- instances.filter(matcher(_, b)).map(_ -> b)) {
-      if (!contains(a -> b))
-        this addInstance (a -> b, train, populateEdge)
-    }
-  }
-
-  override def addInstance(t: (A, B), train: Boolean, populateEdge: Boolean = true): Unit = {
-    assert(matcher(t._1, t._2))
-    if (!contains(t)) {
-      super.addInstance(t, train, populateEdge)
-      na.addInstance(t._1, train, populateEdge)
-      nb.addInstance(t._2, train, populateEdge)
-    }
-  }
-}
