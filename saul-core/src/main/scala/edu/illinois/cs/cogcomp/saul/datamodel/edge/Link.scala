@@ -14,11 +14,11 @@ import scala.collection.mutable.{ LinkedHashSet => MutableSet, LinkedHashMap => 
 
 /** Represents a link between two nodes in the data model graph.
   *
-  * @param from
-  * @param to
-  * @param name
-  * @tparam A
-  * @tparam B
+  * @param from Source [[Node]] instance of the link.
+  * @param to Target [[Node]] instance of the link.
+  * @param name Name of the Link
+  * @tparam A Type of the source node.
+  * @tparam B Type of the target node.
   */
 class Link[A <: AnyRef, B <: AnyRef](val from: Node[A], val to: Node[B], val name: Option[Symbol]) {
   val index = MutableMap[from.NT, MutableSet[to.NT]]()

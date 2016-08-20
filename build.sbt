@@ -12,7 +12,7 @@ lazy val headerMsg =  """/** This software is released under the University of I
                         |""".stripMargin
 
 lazy val root = (project in file(".")).
-  aggregate(saulCore, saulExamples).
+  aggregate(saulCore, saulExamples, saulWebapp).
   enablePlugins(AutomateHeaderPlugin)
 
 lazy val commonSettings = Seq(
