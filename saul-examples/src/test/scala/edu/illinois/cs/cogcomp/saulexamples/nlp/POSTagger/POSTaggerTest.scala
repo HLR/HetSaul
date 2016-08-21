@@ -101,8 +101,8 @@ class POSTaggerTest extends FlatSpec with Matchers {
   val toyConstituents = {
     val cons = dummyData.getView(ViewNames.TOKENS).getConstituents
 
-    // population in the datamodel amd loading the models are included here,
-    // to make sure the will run before making predictions on any of the constituents
+    // population in the datamodel and loading the models are included here,
+    // to make sure they will run before making predictions on any of the constituents
     POSDataModel.tokens.populate(cons, train = false)
     ClassifierUtils.LoadClassifier(
       POSConfigurator.jarModelPath,

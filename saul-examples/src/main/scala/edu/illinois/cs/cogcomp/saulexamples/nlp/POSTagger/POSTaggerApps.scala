@@ -26,7 +26,7 @@ object POSConfigurator extends Configurator {
   val trainAndDevData = new Property("trainAndDevData", prefix + "00-21.br")
   val testData = new Property("testData", prefix + "22-24.br")
   // models from the "saul-pos-tagger-models" jar package
-  val jarModelPath = "edu/illinois/cs/cogcomp/saulexamples/nlp/POSTagger/models/"
+  val jarModelPath = "models/edu/illinois/cs/cogcomp/saulexamples/nlp/POSTagger/models/"
   override def getDefaultConfig: ResourceManager = {
     val props = Array(trainData, trainDataSmall, trainAndDevData, testData)
     new ResourceManager(generateProperties(props))
@@ -40,7 +40,7 @@ object POSTaggerApp {
 
   def main(args: Array[String]): Unit = {
     /** Choose the experiment you're interested in by changing the following line */
-    val testType = POSExperimentType.TestFromModel
+    val testType = POSExperimentType.TrainAndTest
 
     testType match {
       case POSExperimentType.TrainAndTest => trainAndTest()
@@ -80,15 +80,15 @@ object POSTaggerApp {
 
     /** pre-process the baseline systems */
     BaselineClassifier.learn(1)
-    MikheevClassifier.learn(1)
+    //    MikheevClassifier.learn(1)
 
     /** train the learning models */
-    val unknownTrainData = trainData.filter(x => BaselineClassifier.classifier.observedCount(wordForm(x)) <= POSLabeledUnknownWordParser.threshold)
-    POSTaggerKnown.learn(50)
-    POSTaggerUnknown.learn(50, unknownTrainData)
-
-    /** test the resulting model */
-    testPOSTagger()
+    //    val unknownTrainData = trainData.filter(x => BaselineClassifier.classifier.observedCount(wordForm(x)) <= POSLabeledUnknownWordParser.threshold)
+    //    POSTaggerKnown.learn(50)
+    //    POSTaggerUnknown.learn(50, unknownTrainData)
+    //
+    //    /** test the resulting model */
+    //    testPOSTagger()
 
     // saving all the models
     ClassifierUtils.SaveClassifiers(BaselineClassifier, MikheevClassifier, POSTaggerKnown, POSTaggerUnknown)
