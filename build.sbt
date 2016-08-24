@@ -1,7 +1,7 @@
 import de.heikoseeberger.sbtheader.HeaderPattern
 
 val cogcompNLPVersion = "3.0.61"
-val cogcompPipelineVersion = "0.1.24"
+val cogcompPipelineVersion = "0.1.25"
 
 lazy val headerMsg =  """/** This software is released under the University of Illinois/Research and Academic Use License. See
                         |  * the LICENSE file in the root folder for details. Copyright (c) 2016
