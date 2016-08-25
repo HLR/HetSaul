@@ -1,6 +1,6 @@
 # Saul Project 
 
-[![Build Status](https://semaphoreci.com/api/v1/projects/3a8f460c-fd44-42e2-bedb-70611d83a15c/791347/badge.svg)](https://semaphoreci.com/christos-c/saul) 
+[![Build Status](https://semaphoreci.com/api/v1/cogcomp/saul/branches/master/badge.svg)](https://semaphoreci.com/cogcomp/saul)
  
 The project contains three modules. See the readme files for each module:
 
