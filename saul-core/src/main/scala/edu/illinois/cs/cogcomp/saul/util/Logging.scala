@@ -77,7 +77,6 @@ trait Logging {
     * format: ON
     */
   object loggerConfig {
-
     case class Logger(loggerName: String = org.slf4j.Logger.ROOT_LOGGER_NAME) {
       private val logger: ch.qos.logback.classic.Logger = getLogger()
 
@@ -229,5 +228,4 @@ trait Logging {
       appender
     }
   }
-
 }

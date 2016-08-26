@@ -6,7 +6,7 @@
   */
 package edu.illinois.cs.cogcomp.saulexamples.EntityMentionRelation.reader;
 
-import edu.illinois.cs.cogcomp.LbjNer.IO.ResourceUtilities;
+import edu.illinois.cs.cogcomp.ner.IO.ResourceUtilities;
 import edu.illinois.cs.cogcomp.saulexamples.EntityMentionRelation.datastruct.ConllRawToken;
 import org.ojalgo.netio.BufferedInputStreamReader;
 

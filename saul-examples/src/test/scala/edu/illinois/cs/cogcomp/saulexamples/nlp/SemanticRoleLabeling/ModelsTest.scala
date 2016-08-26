@@ -10,9 +10,6 @@ import edu.illinois.cs.cogcomp.saul.classifier.ClassifierUtils
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLClassifiers._
 import org.scalatest.{ FlatSpec, Matchers }
 
-/** Created by Parisa on 6/6/16.
-  */
-
 class ModelsTest extends FlatSpec with Matchers {
 
   "argument type classifier (aTr)" should "work." in {
