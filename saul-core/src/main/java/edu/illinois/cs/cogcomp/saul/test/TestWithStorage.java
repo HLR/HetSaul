@@ -58,5 +58,4 @@ public class TestWithStorage {
         System.out.println("Average evaluation time: " + (totalTime / (1000.0 * processed)) + " seconds\n");
         tester.printPerformance(System.out);
     }
-
 }

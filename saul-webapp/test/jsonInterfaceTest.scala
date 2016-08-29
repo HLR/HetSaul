@@ -4,10 +4,8 @@
   * Developed by: The Cognitive Computations Group, University of Illinois at Urbana-Champaign
   * http://cogcomp.cs.illinois.edu/
   */
-package edu.illinois.cs.cogcomp.saul.datamodel
-
-import edu.illinois.cs.cogcomp.saul.datamodel.toyDataModel._
-import org.scalatest.{ Matchers, FlatSpec }
+import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
+import org.scalatest.{ FlatSpec, Matchers }
 import util.DataModelJsonInterface
 
 class jsonInterfaceTest extends FlatSpec with Matchers {

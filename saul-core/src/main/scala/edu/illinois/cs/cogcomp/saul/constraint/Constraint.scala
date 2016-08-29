@@ -10,13 +10,13 @@ import edu.illinois.cs.cogcomp.lbjava.infer._
 import edu.illinois.cs.cogcomp.lbjava.learn.Learner
 import edu.illinois.cs.cogcomp.saul.lbjrelated.LBJLearnerEquivalent
 
+import scala.language.implicitConversions
+
 /** We need to define the language of constraints here to work with the first order constraints that are programmed in
   * our main LBP script. The wrapper just gives us a java [[FirstOrderConstraint]] object in the shell of an scala
   * object in this way our language works on scala objects.
   */
 object ConstraintTypeConversion {
-  import scala.language.implicitConversions
-
   implicit def learnerToLFS(l: Learner): LBJLearnerEquivalent = {
     new LBJLearnerEquivalent {
       override val classifier = l

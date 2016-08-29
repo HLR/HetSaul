@@ -32,7 +32,7 @@ trait Edge[T <: AnyRef, U <: AnyRef] {
     }
   }
 
-  def clear: Unit = {
+  def clear(): Unit = {
     forward.clear
     backward.clear
   }

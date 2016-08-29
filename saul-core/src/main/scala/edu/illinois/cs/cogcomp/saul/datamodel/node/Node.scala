@@ -26,7 +26,7 @@ trait NodeProperty[T <: AnyRef] extends Property[T] {
   * @param keyFunc key function used to extract the key
   * @tparam T base type of the instances
   */
-class NodeInstance[T](val t: T, val keyFunc: T => Any) {
+class NodeInstance[T](t: T, keyFunc: T => Any) {
   val key: Any = keyFunc(t)
   def apply = t
 
@@ -77,7 +77,7 @@ class Node[T <: AnyRef](val keyFunc: T => Any = (x: T) => x, val tag: ClassTag[T
     node
   }
 
-  def clear() = {
+  def clear(): Unit = {
     collection.clear
     trainingSet.clear
     testingSet.clear
@@ -289,9 +289,11 @@ class Node[T <: AnyRef](val keyFunc: T => Any = (x: T) => x, val tag: ClassTag[T
   /** list of hashmaps used inside properties for caching sensor values */
   final val propertyCacheList = new ListBuffer[MutableHashMap[_, Any]]()
 
-  def clearPropertyCache[T](): Unit = {
-    logger.info("clean property cache: cleaning " + propertyCacheList.size + " maps")
-    propertyCacheList.foreach(_.asInstanceOf[MutableHashMap[T, Any]].clear)
+  def clearPropertyCache(): Unit = {
+    if (propertyCacheList nonEmpty) {
+      logger.info("clean property cache: cleaning " + propertyCacheList.size + " maps")
+      propertyCacheList.foreach(_.clear)
+    }
   }
 }
 

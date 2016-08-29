@@ -12,14 +12,15 @@ import edu.illinois.cs.cogcomp.saul.datamodel.property.features.ClassifierContai
 
 import scala.reflect.ClassTag
 
-/** Represents Real Valued Array attributes.
+/** Represents real valued array attributes.
   *
   * @param name Name of the property
   * @param sensor Sensor function used to generate attributes from nodes.
   * @param tag ClassTag for the type of data stored by the attribute node
-  * @tparam T
+  * @tparam T Type of the node that this property is associated with.
   */
-case class RealArrayProperty[T <: AnyRef](name: String, sensor: T => List[Double])(implicit val tag: ClassTag[T]) extends RealPropertyCollection[T] with TypedProperty[T, List[Double]] {
+case class RealArrayProperty[T <: AnyRef](name: String, sensor: T => List[Double])(implicit val tag: ClassTag[T])
+  extends RealPropertyCollection[T] with TypedProperty[T, List[Double]] {
 
   // TODO: shouldn't this be this.name?
   val ra = this

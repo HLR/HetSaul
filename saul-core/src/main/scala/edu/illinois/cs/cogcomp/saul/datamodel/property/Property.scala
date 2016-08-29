@@ -7,12 +7,13 @@
 package edu.illinois.cs.cogcomp.saul.datamodel.property
 
 import edu.illinois.cs.cogcomp.lbjava.classify.{ FeatureVector, Classifier => FeatureGenerator }
+import edu.illinois.cs.cogcomp.saul.datamodel.node.Node
 import edu.illinois.cs.cogcomp.saul.lbjrelated.LBJClassifierEquivalent
 
 import scala.reflect.ClassTag
 
 /** Base trait for representing attributes that can be defined on a
-  * [[edu.illinois.cs.cogcomp.saul.datamodel.node.Node]] instance.
+  * [[Node]] instance.
   *
   * @tparam T Type of the attribute
   */

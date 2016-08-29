@@ -38,9 +38,9 @@ trait DataModel extends Logging {
     }).toList
   }
 
-  def clearInstances = {
+  def clearInstances(): Unit = {
     nodes.foreach(_.clear())
-    edges.foreach(_.clear)
+    edges.foreach(_.clear())
   }
 
   def addFromModel[T <: DataModel](dataModel: T): Unit = {

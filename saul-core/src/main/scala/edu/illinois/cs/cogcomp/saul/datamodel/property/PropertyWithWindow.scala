@@ -19,7 +19,13 @@ import edu.illinois.cs.cogcomp.saul.datamodel.property.features.real.RealGenProp
 
 import scala.reflect.ClassTag
 
-class PropertyWithWindow[T <: AnyRef](var node: Node[T], val before: Int, val after: Int, val filters: Iterable[T => Any], val properties: List[Property[T]])(implicit val tag: ClassTag[T]) extends TypedProperty[T, List[_]] {
+class PropertyWithWindow[T <: AnyRef](
+  var node: Node[T],
+  val before: Int,
+  val after: Int,
+  val filters: Iterable[T => Any],
+  val properties: List[Property[T]]
+)(implicit val tag: ClassTag[T]) extends TypedProperty[T, List[_]] {
 
   // TODO: need to work on the mapping such that.
   override val sensor: (T) => List[_] = {

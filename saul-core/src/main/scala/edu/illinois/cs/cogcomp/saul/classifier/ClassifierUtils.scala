@@ -166,7 +166,7 @@ object ClassifierUtils extends Logging {
   }
 
   /** some utility functions for playing arounds results of classifiers */
-  private def resultToList(someResult: AbsractResult): List[Double] = {
+  private def resultToList(someResult: AbstractResult): List[Double] = {
     List(someResult.f1, someResult.precision, someResult.recall)
   }
 

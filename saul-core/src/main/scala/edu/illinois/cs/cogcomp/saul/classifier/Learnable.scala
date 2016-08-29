@@ -22,7 +22,7 @@ import edu.illinois.cs.cogcomp.saul.datamodel.node.Node
 import edu.illinois.cs.cogcomp.saul.datamodel.property.{ CombinedDiscreteProperty, Property, PropertyWithWindow }
 import edu.illinois.cs.cogcomp.saul.lbjrelated.LBJLearnerEquivalent
 import edu.illinois.cs.cogcomp.saul.parser.{ IterableToLBJavaParser, LBJavaParserToIterable }
-import edu.illinois.cs.cogcomp.saul.test.TestContinuous
+import edu.illinois.cs.cogcomp.saul.test.TestReal
 import edu.illinois.cs.cogcomp.saul.util.Logging
 
 import scala.reflect.ClassTag
@@ -30,7 +30,7 @@ import scala.reflect.ClassTag
 /** Represents an instance of a learnable model. Each [[Learnable]] instance is associated with a node instance in the
   * data model graph.
   *
-  * @param node Node in the data model that
+  * @param node [[Node]] instance associated with the learnable model.
   * @param parameters Parameters for the Learner used
   * @param tag ClassTag of the type of data stored in [[node]]
   * @tparam T Type of the data stored in [[node]]
@@ -325,7 +325,7 @@ abstract class Learnable[T <: AnyRef](val node: Node[T], val parameters: Paramet
     isTraining = false
     val testReader = new IterableToLBJavaParser[T](if (testData == null) node.getTestingInstances else testData)
     testReader.reset()
-    new TestContinuous(classifier, classifier.getLabeler, testReader)
+    new TestReal(classifier, classifier.getLabeler, testReader)
   }
 
   @scala.annotation.tailrec
