@@ -1,25 +1,34 @@
+/** This software is released under the University of Illinois/Research and Academic Use License. See
+  * the LICENSE file in the root folder for details. Copyright (c) 2016
+  *
+  * Developed by: The Cognitive Computations Group, University of Illinois at Urbana-Champaign
+  * http://cogcomp.cs.illinois.edu/
+  */
 package edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling
 
 import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
-import edu.illinois.cs.cogcomp.core.datastructures.textannotation.TextAnnotation
 import edu.illinois.cs.cogcomp.core.utilities.DummyTextAnnotationGenerator
-import edu.illinois.cs.cogcomp.saulexamples.data.SRLFrameManager
 import org.scalatest.{ FlatSpec, Matchers }
 
 class DataModelTest extends FlatSpec with Matchers {
   val rm = new SRLConfigurator().getDefaultConfig
-  val frameManager: SRLFrameManager = null
   val parseViewName = rm.getString(SRLConfigurator.SRL_PARSE_VIEW)
-  val SRLDataModel = new SRLMultiGraphDataModel(parseViewName, frameManager)
+  val SRLDataModel = new SRLMultiGraphDataModel(parseViewName)
   import SRLDataModel._
-  val viewsToAdd = Array(ViewNames.LEMMA, ViewNames.POS, ViewNames.SHALLOW_PARSE, ViewNames.PARSE_GOLD, ViewNames.SRL_VERB)
-  val ta: TextAnnotation = DummyTextAnnotationGenerator.generateAnnotatedTextAnnotation(viewsToAdd, false)
-  sentences.populate(List(ta))
-  print(sentences().size)
+  val viewsToAdd = Array(
+    ViewNames.LEMMA, ViewNames.POS, ViewNames.SHALLOW_PARSE,
+    ViewNames.PARSE_GOLD, ViewNames.SRL_VERB
+  )
+  val ta = {
+    val taTmp = DummyTextAnnotationGenerator.generateAnnotatedTextAnnotation(viewsToAdd, false, 1)
+    // included here, in order to make sure population is done before making any queries
+    sentences.populate(List(taTmp))
+    taTmp
+  }
 
   "graph population" should "be correct" in {
     sentences().size should be(1)
-    sentences().head.getText.trim should be("The construction of the library finished on time .")
+    sentences().head.getText.trim should be("The construction of the John Smith library finished on time .")
     predicates().size should be(1)
     relations().size should be(2)
   }
@@ -79,7 +88,7 @@ class DataModelTest extends FlatSpec with Matchers {
   //  }
 
   "lengths of arg" should "be correct" in {
-    (relations() prop constituentLength).toSet should be(Set(2, 5))
+    (relations() prop constituentLength).toSet should be(Set(2, 7))
     (relations() prop chunkLength).toSet should be(Set(2, 3))
   }
 

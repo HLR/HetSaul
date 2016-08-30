@@ -33,7 +33,6 @@ object PopulateSRLDataModel extends Logging {
   def apply[T <: AnyRef](testOnly: Boolean = false, useGoldPredicate: Boolean = false, useGoldArgBoundaries: Boolean = false, rm: ResourceManager = new SRLConfigurator().getDefaultConfig): SRLMultiGraphDataModel = {
 
     val frameManager: SRLFrameManager = new SRLFrameManager(rm.getString(SRLConfigurator.PROPBANK_HOME.key))
-
     val useCurator = rm.getBoolean(SRLConfigurator.USE_CURATOR)
     val parseViewName = rm.getString(SRLConfigurator.SRL_PARSE_VIEW)
     val graphs: SRLMultiGraphDataModel = new SRLMultiGraphDataModel(parseViewName, frameManager)
@@ -41,7 +40,9 @@ object PopulateSRLDataModel extends Logging {
       case true =>
         val nonDefaultProps = new Properties()
         nonDefaultProps.setProperty(CuratorConfigurator.RESPECT_TOKENIZATION.key, Configurator.TRUE)
-        CuratorFactory.buildCuratorClient(new CuratorConfigurator().getConfig(new ResourceManager(nonDefaultProps)))
+        CuratorFactory.buildCuratorClient(
+          new CuratorConfigurator().getConfig(new ResourceManager(nonDefaultProps))
+        )
       case false =>
         val nonDefaultProps = new Properties()
         if (parseViewName.equals(ViewNames.PARSE_GOLD))
@@ -53,7 +54,9 @@ object PopulateSRLDataModel extends Logging {
         nonDefaultProps.setProperty(PipelineConfigurator.USE_STANFORD_DEP.key, Configurator.FALSE)
         if (parseViewName.equals(ViewNames.PARSE_GOLD))
           nonDefaultProps.setProperty(PipelineConfigurator.USE_STANFORD_PARSE.key, Configurator.FALSE)
-        IllinoisPipelineFactory.buildPipeline(new CuratorConfigurator().getConfig(new ResourceManager(nonDefaultProps)))
+        IllinoisPipelineFactory.buildPipeline(
+          new CuratorConfigurator().getConfig(new ResourceManager(nonDefaultProps))
+        )
     }
     val clauseViewGenerator = parseViewName match {
       case ViewNames.PARSE_GOLD => new ClauseViewGenerator(parseViewName, "CLAUSES_GOLD")
