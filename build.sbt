@@ -16,13 +16,14 @@ lazy val headerMsg =  """/** This software is released under the University of I
 
 lazy val root = (project in file(".")).
   aggregate(saulCore, saulExamples)
-  .settings(Release.settings(saulCore, saulExamples))
+  .settings(Release.settings(saulCore, saulExamples),
+    version  := "0.4"
+  )
   .enablePlugins(AutomateHeaderPlugin)
 
 lazy val commonSettings = Seq(
   organization := "edu.illinois.cs.cogcomp",
   name := "saul-project",
-  version := "0.4",
   resolvers ++= Seq(
     Resolver.mavenLocal,
     "CogcompSoftware" at "http://cogcomp.cs.illinois.edu/m2repo/"
