@@ -60,6 +60,8 @@ object Release {
 
       releaseIgnoreUntrackedFiles := true,
 
+      releaseUseGlobalVersion := false,
+
       releaseProcess := allSteps
     )
   }
