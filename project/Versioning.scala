@@ -9,7 +9,7 @@ object Versioning {
 
   lazy val settings = Seq(
     git.useGitDescribe := true,
-    git.baseVersion := "0.0.4",
+    git.baseVersion := "0.0.1",
     git.gitDescribedVersion := consoleGitDescribe
       orElse gitReader.value.withGit(_.describedVersion)
       map(_.drop(1))

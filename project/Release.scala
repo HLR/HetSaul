@@ -29,14 +29,15 @@ object Release {
   val showReleaseVersion = settingKey[String]("the version once releaseVersion has been applied to it")
 
   def settings(toPublish: Project*) = {
+
     val publishSteps = toPublish.map(p => ReleaseStep(releaseStepTask(publish in p)))
 
     val prepareSteps: Seq[ReleaseStep] = Seq(
       checkSnapshotDependencies,
       releaseStepCommand(ExtraReleaseCommands.initialVcsChecksCommand),
       inquireVersions,
-      setReleaseVersion//,
-      //tagRelease
+      setReleaseVersion,
+      tagRelease
     )
 
     // Disabled for now, this is done by team city directly
