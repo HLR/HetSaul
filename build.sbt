@@ -16,9 +16,7 @@ lazy val headerMsg =  """/** This software is released under the University of I
 
 lazy val root = (project in file(".")).
   aggregate(saulCore, saulExamples)
-  .settings(Release.settings(saulCore, saulExamples),
-    version  := "0.4"
-  )
+  .settings(Release.settings(saulCore, saulExamples))
   .enablePlugins(AutomateHeaderPlugin)
 
 lazy val commonSettings = Seq(
@@ -54,7 +52,7 @@ lazy val saulCore = (project in file("saul-core")).
     libraryDependencies ++= Seq(
       "com.typesafe.play" % "play_2.11" % "2.4.3"
     )
-  ).enablePlugins(AutomateHeaderPlugin)
+  ).enablePlugins(AutomateHeaderPlugin, Versioning.Plugin)
 
 lazy val saulExamples = (project in file("saul-examples")).
   settings(commonSettings: _*).
@@ -70,6 +68,7 @@ lazy val saulExamples = (project in file("saul-examples")).
       "edu.illinois.cs.cogcomp" % "saul-srl-models" % "1.1"
     )
   ).dependsOn(saulCore)
+  .settings(Versioning.settings)
   .aggregate(saulCore)
   .enablePlugins(AutomateHeaderPlugin)
 
