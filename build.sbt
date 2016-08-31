@@ -42,8 +42,7 @@ lazy val commonSettings = Seq(
   headers := Map(
     "scala" -> (HeaderPattern.cStyleBlockComment, headerMsg),
     "java" -> (HeaderPattern.cStyleBlockComment, headerMsg)
-  ),
-  releaseVersionBump := sbtrelease.Version.Bump.Next
+  )
 )
 
 lazy val saulCore = (project in file("saul-core")).
@@ -52,8 +51,7 @@ lazy val saulCore = (project in file("saul-core")).
     name := "saul",
     libraryDependencies ++= Seq(
       "com.typesafe.play" % "play_2.11" % "2.4.3"
-    ),
-    releaseVersionBump := sbtrelease.Version.Bump.Next
+    )
   ).enablePlugins(AutomateHeaderPlugin)
 
 lazy val saulExamples = (project in file("saul-examples")).
