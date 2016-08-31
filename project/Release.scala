@@ -1,23 +1,15 @@
-import com.typesafe.sbt.packager.NativePackagerKeys
-import sbt.Keys._
-import sbt._
-import sbtrelease.ReleasePlugin.autoImport.ReleaseStep
-import sbtrelease.ReleasePlugin.autoImport._
-import com.typesafe.sbt.packager.universal.UniversalKeys
-import com.typesafe.sbt.packager.universal.UniversalPlugin.autoImport.Universal
+object Release {
 
-//scalastyle: off
-object Release extends UniversalKeys with NativePackagerKeys {
+  import sbt.Keys._
+  import sbt._
 
-  object Library {
-    def setupRelease(project: sbt.Project): sbt.Project = project
-  }
-
-  import sbtrelease._
   // we hide the existing definition for setReleaseVersion to replace it with our own
-  import sbtrelease.ReleaseStateTransformations.{ setReleaseVersion => _, _ }
 
-  private def setVersionOnly(selectVersion: Versions => String): ReleaseStep = { st: State =>
+  import sbtrelease.ReleaseStateTransformations.{setReleaseVersion => _, _}
+  import sbtrelease.ReleasePlugin.autoImport._
+  import sbtrelease._
+
+  def setVersionOnly(selectVersion: Versions => String): ReleaseStep = { st: State =>
     val vs = st.get(ReleaseKeys.versions).getOrElse(sys.error("No versions are set! Was this release part executed before inquireVersions?"))
     val selected = selectVersion(vs)
 
@@ -27,32 +19,48 @@ object Release extends UniversalKeys with NativePackagerKeys {
 
     reapply(Seq(
       if (useGlobal) version in ThisBuild := selected
-      else version := selected), st)
+      else version := selected
+    ), st)
   }
 
-  lazy val setReleaseVersionOnly: ReleaseStep = setVersionOnly(_._1)
-
-  releaseVersion <<= (releaseVersionBump)( bumper=>{
-    ver => Version(ver)
-      .map(_.withoutQualifier)
-      .map(_.bump(bumper).string).getOrElse(versionFormatError)
-  })
+  lazy val setReleaseVersion: ReleaseStep = setVersionOnly(_._1)
 
   val showNextVersion = settingKey[String]("the future version once releaseNextVersion has been applied to it")
-  val showReleaseVersion = settingKey[String]("the future version once releaseNextVersion has been applied to it")
-  showReleaseVersion <<= (version, releaseVersion)((v,f)=>f(v))
-  showNextVersion <<= (version, releaseNextVersion)((v,f)=>f(v))
+  val showReleaseVersion = settingKey[String]("the version once releaseVersion has been applied to it")
 
-  releaseIgnoreUntrackedFiles := true
+  def settings(toPublish: Project*) = {
+    val publishSteps = toPublish.map(p => ReleaseStep(releaseStepTask(publish in p)))
 
-  releaseProcess := Seq(
-    checkSnapshotDependencies,
-    inquireVersions,
-    setReleaseVersionOnly//,
-    //runTest,
-    //tagRelease,
-    // publishArtifacts,
-    //ReleaseStep(releaseStepTask(publish in Universal)),
-    //pushChanges
-  )
+    val prepareSteps: Seq[ReleaseStep] = Seq(
+      checkSnapshotDependencies,
+      releaseStepCommand(ExtraReleaseCommands.initialVcsChecksCommand),
+      inquireVersions,
+      setReleaseVersion//,
+      //tagRelease
+    )
+
+    // Disabled for now, this is done by team city directly
+//    val dockerPublishSteps: Seq[ReleaseStep] = Seq(
+//      releaseStepCommand("core/docker:publish"),
+//      releaseStepCommand("resolver/docker:publish"),
+//      releaseStepCommand("webserver/docker:publish")
+//    )
+
+    val allSteps = prepareSteps //++ publishSteps :+ pushChanges
+
+    Seq(
+      showReleaseVersion <<= (version, releaseVersion)((v,f)=>f(v)),
+      showNextVersion <<= (version, releaseNextVersion)((v,f)=>f(v)),
+
+      releaseVersion <<= releaseVersionBump (bumper=>{
+        ver => Version(ver)
+          .map(_.withoutQualifier)
+          .map(_.bump(bumper).string).getOrElse(versionFormatError)
+      }),
+
+      releaseIgnoreUntrackedFiles := true,
+
+      releaseProcess := allSteps
+    )
+  }
 }
