@@ -22,6 +22,7 @@ lazy val root = (project in file(".")).
 lazy val commonSettings = Seq(
   organization := "edu.illinois.cs.cogcomp",
   name := "saul-project",
+  version := "0.4",
   resolvers ++= Seq(
     Resolver.mavenLocal,
     "CogcompSoftware" at "http://cogcomp.cs.illinois.edu/m2repo/"
