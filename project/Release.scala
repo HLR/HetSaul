@@ -43,6 +43,8 @@ object Release extends UniversalKeys with NativePackagerKeys {
   showReleaseVersion <<= (version, releaseVersion)((v,f)=>f(v))
   showNextVersion <<= (version, releaseNextVersion)((v,f)=>f(v))
 
+  releaseIgnoreUntrackedFiles := true
+
   releaseProcess := Seq(
     checkSnapshotDependencies,
     inquireVersions,
