@@ -42,7 +42,8 @@ lazy val commonSettings = Seq(
     "scala" -> (HeaderPattern.cStyleBlockComment, headerMsg),
     "java" -> (HeaderPattern.cStyleBlockComment, headerMsg)
   ),
-  releaseVersionBump := sbtrelease.Version.Bump.Next
+  releaseVersionBump := sbtrelease.Version.Bump.Next,
+  releaseIgnoreUntrackedFiles := true
 )
 
 lazy val saulCore = (project in file("saul-core")).
