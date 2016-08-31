@@ -7,9 +7,7 @@
 package edu.illinois.cs.cogcomp.saul.datamodel.node
 
 import edu.illinois.cs.cogcomp.saul.datamodel.edge.Edge
-import org.scalautils.Or
 
-import scala.collection.immutable.Queue
 import scala.collection.mutable
 
 /** @author sameer
@@ -42,7 +40,7 @@ object Path {
   def findPath[S <: AnyRef](s: S, snode: Node[S], t: AnyRef, maxLength: Int = 10): Seq[Path[AnyRef, AnyRef]] = {
     val queue = new mutable.Queue[State[_ <: AnyRef]]
     queue += State(s, snode, t, maxLength)
-    while (!queue.isEmpty) {
+    while (queue.nonEmpty) {
       val s = queue.dequeue()
       val r = findPath(s, queue)
       if (r.isDefined) return r.get

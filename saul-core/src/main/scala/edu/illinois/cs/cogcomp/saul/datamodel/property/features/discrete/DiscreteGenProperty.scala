@@ -13,10 +13,7 @@ import edu.illinois.cs.cogcomp.saul.datamodel.property.features.ClassifierContai
 
 import scala.reflect.ClassTag
 
-class DiscreteGenProperty[T <: AnyRef](
-  val name: String,
-  val sensor: T => List[String]
-)(implicit val tag: ClassTag[T]) extends TypedProperty[T, List[String]] {
+class DiscreteGenProperty[T <: AnyRef](val name: String, val sensor: T => List[String])(implicit val tag: ClassTag[T]) extends TypedProperty[T, List[String]] {
 
   override def makeClassifierWithName(n: String): Classifier = new ClassifierContainsInLBP() {
 

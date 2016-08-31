@@ -1,5 +1,7 @@
 import de.heikoseeberger.sbtheader.HeaderPattern
 
+scalaVersion in ThisBuild := "2.11.7"
+
 val cogcompNLPVersion = "3.0.64"
 val cogcompPipelineVersion = "0.1.25"
 
@@ -12,14 +14,13 @@ lazy val headerMsg =  """/** This software is released under the University of I
                         |""".stripMargin
 
 lazy val root = (project in file(".")).
-  aggregate(saulCore, saulExamples).
-  enablePlugins(AutomateHeaderPlugin)
+  aggregate(saulCore, saulExamples)
+  .enablePlugins(AutomateHeaderPlugin)
 
 lazy val commonSettings = Seq(
   organization := "edu.illinois.cs.cogcomp",
   name := "saul-project",
   version := "0.4",
-  scalaVersion := "2.11.7",
   resolvers ++= Seq(
     Resolver.mavenLocal,
     "CogcompSoftware" at "http://cogcomp.cs.illinois.edu/m2repo/"
@@ -64,8 +65,9 @@ lazy val saulExamples = (project in file("saul-examples")).
       "edu.illinois.cs.cogcomp" % "saul-er-models" % "1.3",
       "edu.illinois.cs.cogcomp" % "saul-srl-models" % "1.1"
     )
-  ).dependsOn(saulCore).aggregate(saulCore).
-  enablePlugins(AutomateHeaderPlugin)
+  ).dependsOn(saulCore)
+  .aggregate(saulCore)
+  .enablePlugins(AutomateHeaderPlugin)
 
 lazy val saulWebapp = (project in file("saul-webapp")).
   enablePlugins(PlayScala).
@@ -87,5 +89,5 @@ lazy val saulWebapp = (project in file("saul-webapp")).
     ),
     resolvers ++= Seq("scalaz-bintray" at "http://dl.bintray.com/scalaz/releases"),
     routesGenerator := InjectedRoutesGenerator
-  ).dependsOn(saulExamples).aggregate(saulExamples).
-  enablePlugins(AutomateHeaderPlugin)
+  ).dependsOn(saulExamples).aggregate(saulExamples)
+  .enablePlugins(AutomateHeaderPlugin)

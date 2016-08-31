@@ -1,7 +1,11 @@
-package edu.illinois.cs.cogcomp.saul.datamodel
-
-import edu.illinois.cs.cogcomp.saul.datamodel.toyDataModel._
-import org.scalatest.{ Matchers, FlatSpec }
+/** This software is released under the University of Illinois/Research and Academic Use License. See
+  * the LICENSE file in the root folder for details. Copyright (c) 2016
+  *
+  * Developed by: The Cognitive Computations Group, University of Illinois at Urbana-Champaign
+  * http://cogcomp.cs.illinois.edu/
+  */
+import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
+import org.scalatest.{ FlatSpec, Matchers }
 import util.DataModelJsonInterface
 
 class jsonInterfaceTest extends FlatSpec with Matchers {

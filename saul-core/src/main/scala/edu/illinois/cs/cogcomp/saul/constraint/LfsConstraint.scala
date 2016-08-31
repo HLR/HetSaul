@@ -11,7 +11,7 @@ import edu.illinois.cs.cogcomp.saul.classifier.infer.InferenceCondition
 
 import scala.reflect.ClassTag
 
-abstract class LfsConstraint[T <: AnyRef](implicit val tag: ClassTag[T]) {
+abstract class LfsConstraint[T <: AnyRef] {
 
   def makeConstrainDef(x: T): FirstOrderConstraint
 
@@ -39,7 +39,7 @@ abstract class LfsConstraint[T <: AnyRef](implicit val tag: ClassTag[T]) {
 
   val lc = this
 
-  def createInferenceCondition[C <: AnyRef](solver: ILPSolver)(implicit cTag: ClassTag[C]): InferenceCondition[C, T] = {
+  def createInferenceCondition[C <: AnyRef](solver: ILPSolver): InferenceCondition[C, T] = {
     new InferenceCondition[C, T](solver) {
       override def subjectTo: LfsConstraint[T] = lc
     }

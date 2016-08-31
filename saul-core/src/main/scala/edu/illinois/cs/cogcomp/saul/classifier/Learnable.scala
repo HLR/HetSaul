@@ -16,20 +16,27 @@ import edu.illinois.cs.cogcomp.lbjava.learn._
 import edu.illinois.cs.cogcomp.lbjava.parse.{ FoldParser, Parser }
 import edu.illinois.cs.cogcomp.lbjava.parse.FoldParser.SplitPolicy
 import edu.illinois.cs.cogcomp.lbjava.util.ExceptionlessOutputStream
-import edu.illinois.cs.cogcomp.saul.TestContinuous
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
 import edu.illinois.cs.cogcomp.saul.datamodel.edge.Link
 import edu.illinois.cs.cogcomp.saul.datamodel.node.Node
 import edu.illinois.cs.cogcomp.saul.datamodel.property.{ CombinedDiscreteProperty, Property, PropertyWithWindow }
 import edu.illinois.cs.cogcomp.saul.lbjrelated.LBJLearnerEquivalent
 import edu.illinois.cs.cogcomp.saul.parser.{ IterableToLBJavaParser, LBJavaParserToIterable }
+import edu.illinois.cs.cogcomp.saul.test.TestReal
 import edu.illinois.cs.cogcomp.saul.util.Logging
-import org.slf4j.helpers.NOPLogger
-import org.slf4j.{ Logger, LoggerFactory }
 
 import scala.reflect.ClassTag
 
+/** Represents an instance of a learnable model. Each [[Learnable]] instance is associated with a node instance in the
+  * data model graph.
+  *
+  * @param node [[Node]] instance associated with the learnable model.
+  * @param parameters Parameters for the Learner used
+  * @param tag ClassTag of the type of data stored in [[node]]
+  * @tparam T Type of the data stored in [[node]]
+  */
 abstract class Learnable[T <: AnyRef](val node: Node[T], val parameters: Parameters = new Learner.Parameters)(implicit tag: ClassTag[T]) extends LBJLearnerEquivalent with Logging {
+
   /** Whether to use caching */
   val useCache = false
 
@@ -318,7 +325,7 @@ abstract class Learnable[T <: AnyRef](val node: Node[T], val parameters: Paramet
     isTraining = false
     val testReader = new IterableToLBJavaParser[T](if (testData == null) node.getTestingInstances else testData)
     testReader.reset()
-    new TestContinuous(classifier, classifier.getLabeler, testReader)
+    new TestReal(classifier, classifier.getLabeler, testReader)
   }
 
   @scala.annotation.tailrec
