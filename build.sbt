@@ -1,4 +1,5 @@
 import de.heikoseeberger.sbtheader.HeaderPattern
+import sbtrelease.ReleaseStateTransformations.{setReleaseVersion=>_,_}
 
 scalaVersion in ThisBuild := "2.11.7"
 
@@ -20,7 +21,6 @@ lazy val root = (project in file(".")).
 lazy val commonSettings = Seq(
   organization := "edu.illinois.cs.cogcomp",
   name := "saul-project",
-  version := "0.4",
   resolvers ++= Seq(
     Resolver.mavenLocal,
     "CogcompSoftware" at "http://cogcomp.cs.illinois.edu/m2repo/"
@@ -36,11 +36,13 @@ lazy val commonSettings = Seq(
   ),
   fork := true,
   publishTo := Some(Resolver.sftp("CogcompSoftwareRepo", "bilbo.cs.illinois.edu", "/mounts/bilbo/disks/0/www/cogcomp/html/m2repo/")),
+  publishArtifact in Test := false,
   isSnapshot := true,
   headers := Map(
     "scala" -> (HeaderPattern.cStyleBlockComment, headerMsg),
     "java" -> (HeaderPattern.cStyleBlockComment, headerMsg)
-  )
+  ),
+  releaseVersionBump := sbtrelease.Version.Bump.Next
 )
 
 lazy val saulCore = (project in file("saul-core")).
@@ -49,7 +51,8 @@ lazy val saulCore = (project in file("saul-core")).
     name := "saul",
     libraryDependencies ++= Seq(
       "com.typesafe.play" % "play_2.11" % "2.4.3"
-    )
+    ),
+    releaseVersionBump := sbtrelease.Version.Bump.Next
   ).enablePlugins(AutomateHeaderPlugin)
 
 lazy val saulExamples = (project in file("saul-examples")).
@@ -70,7 +73,7 @@ lazy val saulExamples = (project in file("saul-examples")).
   .enablePlugins(AutomateHeaderPlugin)
 
 lazy val saulWebapp = (project in file("saul-webapp")).
-  enablePlugins(PlayScala).
+  enablePlugins(PlayScala, AutomateHeaderPlugin).
   settings(commonSettings: _*).
   settings(
     name := "saul-webapp",
@@ -90,4 +93,4 @@ lazy val saulWebapp = (project in file("saul-webapp")).
     resolvers ++= Seq("scalaz-bintray" at "http://dl.bintray.com/scalaz/releases"),
     routesGenerator := InjectedRoutesGenerator
   ).dependsOn(saulExamples).aggregate(saulExamples)
-  .enablePlugins(AutomateHeaderPlugin)
+
