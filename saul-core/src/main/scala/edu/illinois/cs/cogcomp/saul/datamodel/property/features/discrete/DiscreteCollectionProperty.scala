@@ -12,11 +12,7 @@ import edu.illinois.cs.cogcomp.saul.datamodel.property.features.ClassifierContai
 
 import scala.reflect.ClassTag
 
-case class DiscreteCollectionProperty[T <: AnyRef](
-  name: String,
-  sensor: T => List[String],
-  ordered: Boolean
-)(implicit val tag: ClassTag[T]) extends TypedProperty[T, List[String]] {
+case class DiscreteCollectionProperty[T <: AnyRef](name: String, sensor: T => List[String], ordered: Boolean)(implicit val tag: ClassTag[T]) extends TypedProperty[T, List[String]] {
 
   override def makeClassifierWithName(__name: String): Classifier = {
     new ClassifierContainsInLBP() {
@@ -27,7 +23,7 @@ case class DiscreteCollectionProperty[T <: AnyRef](
         val d: T = instance.asInstanceOf[T]
         val values = sensor(d)
 
-        var featureVector = new FeatureVector
+        val featureVector = new FeatureVector
 
         if (ordered) {
           values.zipWithIndex.foreach {

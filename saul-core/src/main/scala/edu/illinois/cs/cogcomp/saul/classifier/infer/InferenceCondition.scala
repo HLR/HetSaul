@@ -11,11 +11,7 @@ import edu.illinois.cs.cogcomp.saul.constraint.LfsConstraint
 
 import scala.reflect.ClassTag
 
-abstract class InferenceCondition[INPUT <: AnyRef, HEAD <: AnyRef](solver: ILPSolver)(
-  implicit
-  val inputTag: ClassTag[INPUT],
-  val headTag: ClassTag[HEAD]
-) {
+abstract class InferenceCondition[INPUT <: AnyRef, HEAD <: AnyRef](solver: ILPSolver) {
   def subjectTo: LfsConstraint[HEAD]
 
   def transfer(t: HEAD): JointTemplate[HEAD] = {
@@ -33,5 +29,5 @@ abstract class InferenceCondition[INPUT <: AnyRef, HEAD <: AnyRef](solver: ILPSo
   }
 
   val outer = this
-  def convertToType[T <: AnyRef](implicit tag: ClassTag[T]): InferenceCondition[T, HEAD] = this.asInstanceOf[InferenceCondition[T, HEAD]]
+  def convertToType[T <: AnyRef]: InferenceCondition[T, HEAD] = this.asInstanceOf[InferenceCondition[T, HEAD]]
 }

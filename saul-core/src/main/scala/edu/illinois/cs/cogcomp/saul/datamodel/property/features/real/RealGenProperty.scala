@@ -14,10 +14,7 @@ import scala.reflect.ClassTag
 
 trait RealPropertyCollection[T <: AnyRef] extends Property[T]
 
-case class RealGenProperty[T <: AnyRef](
-  name: String,
-  sensor: T => List[Double]
-)(implicit val tag: ClassTag[T]) extends RealPropertyCollection[T] with TypedProperty[T, List[Double]] {
+case class RealGenProperty[T <: AnyRef](name: String, sensor: T => List[Double])(implicit val tag: ClassTag[T]) extends RealPropertyCollection[T] with TypedProperty[T, List[Double]] {
 
   val ra = this.name
 
@@ -31,7 +28,7 @@ case class RealGenProperty[T <: AnyRef](
       val d: T = example.asInstanceOf[T]
       val values = sensor(d)
 
-      var featureVector = new FeatureVector
+      val featureVector = new FeatureVector
 
       values.zipWithIndex.foreach {
         case (value, idx) => featureVector.addFeature(new RealPrimitiveStringFeature(this.containingPackage, this.name, idx + "", value))

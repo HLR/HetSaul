@@ -9,10 +9,7 @@ package edu.illinois.cs.cogcomp.saul.datamodel.property
 import edu.illinois.cs.cogcomp.lbjava.classify.{ DiscretePrimitiveStringFeature, Feature, FeatureVector }
 import edu.illinois.cs.cogcomp.saul.datamodel.property.features.ClassifierContainsInLBP
 
-class NamedDiscreteProperty[T <: AnyRef](
-  val attName: String,
-  val function: T => String
-) {
+class NamedDiscreteProperty[T <: AnyRef](attName: String, function: T => String) {
   def apply() = {}
 
   def applyRange(range: List[String]) = {
