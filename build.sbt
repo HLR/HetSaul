@@ -20,7 +20,7 @@ lazy val root = (project in file(".")).
 lazy val commonSettings = Seq(
   organization := "edu.illinois.cs.cogcomp",
   name := "saul-project",
-  version := "0.4",
+  version := "0.5",
   resolvers ++= Seq(
     Resolver.mavenLocal,
     "CogcompSoftware" at "http://cogcomp.cs.illinois.edu/m2repo/"
@@ -36,6 +36,7 @@ lazy val commonSettings = Seq(
   ),
   fork := true,
   publishTo := Some(Resolver.sftp("CogcompSoftwareRepo", "bilbo.cs.illinois.edu", "/mounts/bilbo/disks/0/www/cogcomp/html/m2repo/")),
+  credentials += Credentials(Path.userHome / ".sbt" / ".cogcompCredentials"),
   isSnapshot := true,
   headers := Map(
     "scala" -> (HeaderPattern.cStyleBlockComment, headerMsg),
