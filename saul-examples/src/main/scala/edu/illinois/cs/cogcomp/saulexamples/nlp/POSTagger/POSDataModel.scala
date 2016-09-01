@@ -8,7 +8,7 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp.POSTagger
 
 import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.Constituent
-import edu.illinois.cs.cogcomp.lbj.pos.POSLabeledUnknownWordParser
+import edu.illinois.cs.cogcomp.pos.POSLabeledUnknownWordParser
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
 import edu.illinois.cs.cogcomp.saulexamples.nlp.POSTagger.POSClassifiers.{ POSTaggerUnknown, POSTaggerKnown, BaselineClassifier }
 

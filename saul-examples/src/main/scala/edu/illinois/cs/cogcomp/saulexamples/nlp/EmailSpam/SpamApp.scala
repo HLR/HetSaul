@@ -38,7 +38,6 @@ object SpamApp extends Logging {
     /** Defining the data and specifying it's location  */
     SpamDataModel.docs populate trainData
     SpamClassifier.learn(30)
-    SpamDataModel.testWith(testData)
     SpamClassifier.test(testData)
   }
 
@@ -50,7 +49,6 @@ object SpamApp extends Logging {
     SpamDataModel.deriveInstances()
     SpamDataModel.write(graphCacheFile)
     SpamClassifierWithCache.learn(30)
-    SpamDataModel.testWith(testData)
     SpamClassifierWithCache.test(testData)
   }
 
@@ -60,7 +58,6 @@ object SpamApp extends Logging {
   def SpamClassifierFromCache() {
     SpamDataModel.load(graphCacheFile)
     SpamClassifierWithCache.learn(30)
-    SpamDataModel.testWith(testData)
     SpamClassifierWithCache.test(testData)
   }
 

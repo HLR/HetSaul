@@ -10,12 +10,12 @@ import edu.illinois.cs.cogcomp.lbjava.classify.{ Classifier, FeatureVector, Test
 import edu.illinois.cs.cogcomp.infer.ilp.{ GurobiHook, ILPSolver, OJalgoHook }
 import edu.illinois.cs.cogcomp.lbjava.infer.{ BalasHook, FirstOrderConstraint, InferenceManager }
 import edu.illinois.cs.cogcomp.lbjava.learn.Learner
-import edu.illinois.cs.cogcomp.saul.TestWithStorage
 import edu.illinois.cs.cogcomp.saul.classifier.infer.InferenceCondition
 import edu.illinois.cs.cogcomp.saul.constraint.LfsConstraint
 import edu.illinois.cs.cogcomp.saul.datamodel.edge.Edge
 import edu.illinois.cs.cogcomp.saul.lbjrelated.{ LBJClassifierEquivalent, LBJLearnerEquivalent }
 import edu.illinois.cs.cogcomp.saul.parser.IterableToLBJavaParser
+import edu.illinois.cs.cogcomp.saul.test.TestWithStorage
 import edu.illinois.cs.cogcomp.saul.util.Logging
 import scala.reflect.ClassTag
 

@@ -17,6 +17,9 @@ import edu.illinois.cs.cogcomp.saul.util.Logging
 import scala.collection.mutable.ListBuffer
 import scala.reflect.ClassTag
 
+/** Represents the data model that stores the data object graph. Extend this trait to define nodes and edges for
+  * representing data for a learning problem.
+  */
 trait DataModel extends Logging {
   val PID = 'PID
 
@@ -35,9 +38,9 @@ trait DataModel extends Logging {
     }).toList
   }
 
-  def clearInstances = {
-    nodes.foreach(_.clear)
-    edges.foreach(_.clear)
+  def clearInstances(): Unit = {
+    nodes.foreach(_.clear())
+    edges.foreach(_.clear())
   }
 
   def addFromModel[T <: DataModel](dataModel: T): Unit = {
@@ -117,11 +120,6 @@ trait DataModel extends Logging {
       this.edges.filter(r => r.to.tag.equals(fromTag) && r.from.tag.equals(toTag)).map(_.backward.asInstanceOf[Link[T, U]])
   }
 
-  def testWith[T <: AnyRef](coll: Seq[T])(implicit tag: ClassTag[T]) = {
-    logger.info("Adding for type" + tag.toString)
-    //getNodeWithType[T].addToTest(coll)
-  }
-
   /** node definitions */
   def node[T <: AnyRef](implicit tag: ClassTag[T]): Node[T] = node((x: T) => x)
 
@@ -158,19 +156,10 @@ trait DataModel extends Logging {
     e
   }
 
-  /** property definitions */
-  object PropertyType extends Enumeration {
-    val Real, Discrete = Value
-    type PropertyType = Value
-  }
+  class PropertyApply[T <: AnyRef] private[DataModel] (val node: Node[T], name: String, cache: Boolean, ordered: Boolean) {
+    papply =>
 
-  import PropertyType._
-
-  case class PropertyDefinition(ty: PropertyType, name: Symbol)
-
-  class PropertyApply[T <: AnyRef] private[DataModel] (val node: Node[T], name: String, cache: Boolean, ordered: Boolean) { papply =>
-
-    // TODO: make the hashmaps immutable
+    // TODO(danielk): make the hashmaps immutable
     lazy val propertyCacheMap = {
       val map = collection.mutable.HashMap[T, Any]()
       node.propertyCacheList += map

@@ -76,7 +76,7 @@ class InferenceQuantifierTests extends FlatSpec with Matchers {
     override val solver = new OJalgoHook
   }
 
-  val cityInstances = new City("../saul-examples/src/main/resources/SetCover/example.txt")
+  val cityInstances = new City("../saul-examples/src/test/resources/SetCover/example.txt")
   val neighborhoodInstances = cityInstances.getNeighborhoods.toList
 
   SomeDM.cities populate List(cityInstances)

@@ -12,12 +12,9 @@ import edu.illinois.cs.cogcomp.saul.datamodel.property.features.ClassifierContai
 
 import scala.reflect.ClassTag
 
-case class RealProperty[T <: AnyRef](
-  name: String,
-  sensor: T => Double
-)(implicit val tag: ClassTag[T]) extends TypedProperty[T, Double] {
-  override def makeClassifierWithName(__name: String): Classifier =
+case class RealProperty[T <: AnyRef](name: String, sensor: T => Double)(implicit val tag: ClassTag[T]) extends TypedProperty[T, Double] {
 
+  override def makeClassifierWithName(__name: String): Classifier =
     {
       new ClassifierContainsInLBP() {
 

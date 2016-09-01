@@ -8,6 +8,10 @@ package edu.illinois.cs.cogcomp.saul.parser
 
 import edu.illinois.cs.cogcomp.lbjava.parse.Parser
 
+/** Converts an instance of [[Iterable]] to LBJava's [[Parser]] class
+  * @param data Input Iterable data
+  * @tparam T Type for the data processed
+  */
 class IterableToLBJavaParser[T <: AnyRef](val data: Iterable[T]) extends Parser {
   private var it: Option[Iterator[T]] = None
 

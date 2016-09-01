@@ -11,10 +11,7 @@ import edu.illinois.cs.cogcomp.saul.datamodel.property.features.discrete.{ Boole
 
 import scala.reflect.ClassTag
 
-class EvaluatedProperty[T <: AnyRef, U](
-  val property: TypedProperty[T, U],
-  val value: U
-)(implicit val tag: ClassTag[T]) extends TypedProperty[T, String] {
+class EvaluatedProperty[T <: AnyRef, U](val property: TypedProperty[T, U], val value: U)(implicit val tag: ClassTag[T]) extends TypedProperty[T, String] {
 
   val name = property.name + "_is_" + value
 

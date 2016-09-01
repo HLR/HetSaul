@@ -12,6 +12,14 @@ import edu.illinois.cs.cogcomp.saul.datamodel.node.Node
 import scala.collection.mutable
 import scala.collection.mutable.{ LinkedHashSet => MutableSet, LinkedHashMap => MutableMap, ArrayBuffer }
 
+/** Represents a link between two nodes in the data model graph.
+  *
+  * @param from Source [[Node]] instance of the link.
+  * @param to Target [[Node]] instance of the link.
+  * @param name Name of the Link
+  * @tparam A Type of the source node.
+  * @tparam B Type of the target node.
+  */
 class Link[A <: AnyRef, B <: AnyRef](val from: Node[A], val to: Node[B], val name: Option[Symbol]) {
   val index = MutableMap[from.NT, MutableSet[to.NT]]()
   val indexWithId = MutableMap[Int, MutableSet[Int]]()
@@ -78,133 +86,4 @@ class Link[A <: AnyRef, B <: AnyRef](val from: Node[A], val to: Node[B], val nam
         indexWithId.put(fromId, toIds)
     }
   }
-}
-
-trait Edge[T <: AnyRef, U <: AnyRef] {
-  def forward: Link[T, U]
-  def backward: Link[U, T]
-  def matchers: ArrayBuffer[(T, U) => Boolean]
-
-  def from = forward.from
-  def to = forward.to
-  def +=(t: T, u: U) = {
-    forward += (t, u)
-    backward += (u, t)
-  }
-
-  def populateFrom(e: Edge[_, _]): Unit = {
-    e.links.foreach {
-      case (a, b) => {
-        this += (a.asInstanceOf[T], b.asInstanceOf[U])
-      }
-    }
-  }
-
-  def clear: Unit = {
-    forward.clear
-    backward.clear
-  }
-
-  @deprecated
-  def populateWith(sensor: (T) => U)(implicit d: DummyImplicit): Unit = populateWith((t: T) => Seq(sensor(t)))
-
-  @deprecated
-  def populateWith(sensor: (T) => Option[U])(implicit d1: DummyImplicit, d2: DummyImplicit): Unit = populateWith((t: T) => sensor(t).toSeq)
-
-  @deprecated
-  def populateWith(sensor: (T) => Iterable[U]) = {
-    forward.from.getAllInstances foreach (t => {
-      val us = sensor(t)
-      forward.to.populate(us)
-      forward ++= (t, us)
-      for (u <- us) backward += (u, t)
-    })
-  }
-
-  def populateWith(
-    sensor: (T, U) => Boolean,
-    from: Iterable[T] = forward.from.getAllInstances,
-    to: Iterable[U] = forward.to.getAllInstances
-  ) =
-    for (t <- from; u <- to; if sensor(t, u)) this += (t, u)
-
-  def unary_- : Edge[U, T]
-
-  def links = forward.pairs.toSeq
-
-  def addSensor(f: (T, U) => Boolean) = matchers += f
-
-  def addSensor(sensor: (T) => Iterable[U]) = forward.addSensor(sensor)
-
-  def addSensor(sensor: (T) => U)(implicit d: DummyImplicit) = forward.addSensor(a => Seq(sensor(a)))
-
-  def addReverseSensor(sensor: (T) => Iterable[U]) = forward.addSensor(sensor)
-
-  def addReverseSensor(sensor: (T) => U)(implicit d: DummyImplicit) = forward.addSensor(a => Seq(sensor(a)))
-
-  def populateUsingFrom(t: T, train: Boolean = true): Unit = {
-    forward.sensors foreach (f => {
-      for (u <- f(t)) {
-        this += (t, u)
-        to.addInstance(u, train)
-      }
-    })
-    matchers.foreach(f => populateWith(f, Seq(t)))
-  }
-
-  def populateUsingTo(u: U, train: Boolean = true): Unit = {
-    backward.sensors foreach (f => {
-      for (t <- f(u)) {
-        this += (t, u)
-        from.addInstance(t, train)
-      }
-    })
-    matchers.foreach(f => populateWith(f, to = Seq(u)))
-  }
-
-  def deriveIndexWithIds() = {
-    forward.deriveIndexWithId()
-    backward.deriveIndexWithId()
-  }
-
-  def writeIndexWithIds(out: ExceptionlessOutputStream) = {
-    forward.writeIndexWithId(out)
-    backward.writeIndexWithId(out)
-  }
-
-  def loadIndexWithIds(in: ExceptionlessInputStream) = {
-    forward.loadIndexWithId(in)
-    backward.loadIndexWithId(in)
-  }
-
-  def apply(t: T) = from(t) ~> this
-  def apply(ts: Iterable[T]) = from(ts) ~> this
-}
-
-case class AsymmetricEdge[T <: AnyRef, U <: AnyRef](forward: Link[T, U], backward: Link[U, T],
-  ms: Seq[(T, U) => Boolean] = Seq.empty[(T, U) => Boolean])
-  extends Edge[T, U] {
-  val matchers = {
-    val m = ArrayBuffer.empty[(T, U) => Boolean]
-    m ++= ms
-    m
-  }
-
-  override def unary_- : Edge[U, T] = AsymmetricEdge(backward, forward, matchers.map(f => (u: U, t: T) => f(t, u)))
-}
-
-case class SymmetricEdge[T <: AnyRef](
-  link: Link[T, T],
-  ms: Seq[(T, T) => Boolean] = Seq.empty[(T, T) => Boolean]
-)
-  extends Edge[T, T] {
-  def forward = link
-  def backward = link
-  val matchers = {
-    val m = ArrayBuffer.empty[(T, T) => Boolean]
-    m ++= ms
-    m
-  }
-
-  override def unary_- = this
 }

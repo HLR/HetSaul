@@ -8,15 +8,12 @@ package edu.illinois.cs.cogcomp.saul.datamodel.property
 
 import java.util
 
-import edu.illinois.cs.cogcomp.lbjava.classify.{ DiscretePrimitiveStringFeature, FeatureVector, Classifier }
-import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
+import edu.illinois.cs.cogcomp.lbjava.classify.{ Classifier, FeatureVector }
 import edu.illinois.cs.cogcomp.saul.datamodel.property.features.ClassifierContainsInLBP
 
 import scala.reflect.ClassTag
 
-case class CombinedDiscreteProperty[T <: AnyRef](
-  atts: List[Property[T]]
-)(implicit val tag: ClassTag[T]) extends TypedProperty[T, List[_]] {
+case class CombinedDiscreteProperty[T <: AnyRef](atts: List[Property[T]])(implicit val tag: ClassTag[T]) extends TypedProperty[T, List[_]] {
 
   override val sensor: (T) => List[_] = {
     t: T => atts.map(att => att.sensor(t))

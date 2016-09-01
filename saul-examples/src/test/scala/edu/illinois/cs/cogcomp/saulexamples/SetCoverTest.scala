@@ -14,7 +14,7 @@ import scala.collection.JavaConversions._
 class SetCoverTest extends FlatSpec with Matchers {
   import SetCoverSolverDataModel._
 
-  val prefix = "../saul-examples/src/main/resources/SetCover/"
+  val prefix = "../saul-examples/src/test/resources/SetCover/"
 
   "SetCover " should " be solved correctly for example.txt " in {
     clearInstances
