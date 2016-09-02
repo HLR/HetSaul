@@ -4,8 +4,8 @@ scalaVersion in ThisBuild := "2.11.7"
 
 val cogcompNLPVersion = "3.0.64"
 val cogcompPipelineVersion = "0.1.25"
-
-lazy val headerMsg =  """/** This software is released under the University of Illinois/Research and Academic Use License. See
+val ccgGroupId = "edu.illinois.cs.cogcomp"
+val headerMsg =  """/** This software is released under the University of Illinois/Research and Academic Use License. See
                         |  * the LICENSE file in the root folder for details. Copyright (c) 2016
                         |  *
                         |  * Developed by: The Cognitive Computations Group, University of Illinois at Urbana-Champaign
@@ -18,7 +18,7 @@ lazy val root = (project in file(".")).
   .enablePlugins(AutomateHeaderPlugin)
 
 lazy val commonSettings = Seq(
-  organization := "edu.illinois.cs.cogcomp",
+  organization := ccgGroupId,
   name := "saul-project",
   version := "0.5",
   resolvers ++= Seq(
@@ -27,16 +27,20 @@ lazy val commonSettings = Seq(
   ),
   javaOptions ++= List("-Xmx11g"),
   libraryDependencies ++= Seq(
-    "edu.illinois.cs.cogcomp" % "LBJava" % "1.2.20" withSources,
-    "edu.illinois.cs.cogcomp" % "illinois-core-utilities" % cogcompNLPVersion withSources,
+    ccgGroupId % "LBJava" % "1.2.20" withSources,
+    ccgGroupId % "illinois-core-utilities" % cogcompNLPVersion withSources,
     "com.gurobi" % "gurobi" % "6.0",
     "org.apache.commons" % "commons-math3" % "3.0",
     "org.scalatest" % "scalatest_2.11" % "2.2.4",
     "ch.qos.logback" % "logback-classic" % "1.1.7"
   ),
   fork := true,
-  publishTo := Some(Resolver.sftp("CogcompSoftwareRepo", "bilbo.cs.illinois.edu", "/mounts/bilbo/disks/0/www/cogcomp/html/m2repo/")),
-  credentials += Credentials(Path.userHome / ".sbt" / ".cogcompCredentials"),
+  publishTo := Some(
+    Resolver.ssh(
+      "CogcompSoftwareRepo", "bilbo.cs.illinois.edu",
+      "/mounts/bilbo/disks/0/www/cogcomp/html/m2repo/").
+      as ("khashab2", new java.io.File(Path.userHome.absolutePath + "/.ssh/key"))
+  ),
   isSnapshot := true,
   headers := Map(
     "scala" -> (HeaderPattern.cStyleBlockComment, headerMsg),
@@ -58,13 +62,13 @@ lazy val saulExamples = (project in file("saul-examples")).
   settings(
     name := "saul-examples",
     libraryDependencies ++= Seq(
-      "edu.illinois.cs.cogcomp" % "illinois-nlp-pipeline" % cogcompPipelineVersion withSources,
-      "edu.illinois.cs.cogcomp" % "illinois-curator" % cogcompNLPVersion,
-      "edu.illinois.cs.cogcomp" % "illinois-edison" % cogcompNLPVersion,
-      "edu.illinois.cs.cogcomp" % "illinois-corpusreaders" % cogcompNLPVersion,
-      "edu.illinois.cs.cogcomp" % "saul-pos-tagger-models" % "1.3",
-      "edu.illinois.cs.cogcomp" % "saul-er-models" % "1.3",
-      "edu.illinois.cs.cogcomp" % "saul-srl-models" % "1.1"
+      ccgGroupId % "illinois-nlp-pipeline" % cogcompPipelineVersion withSources,
+      ccgGroupId % "illinois-curator" % cogcompNLPVersion,
+      ccgGroupId % "illinois-edison" % cogcompNLPVersion,
+      ccgGroupId % "illinois-corpusreaders" % cogcompNLPVersion,
+      ccgGroupId % "saul-pos-tagger-models" % "1.3",
+      ccgGroupId % "saul-er-models" % "1.3",
+      ccgGroupId % "saul-srl-models" % "1.1"
     )
   ).dependsOn(saulCore)
   .aggregate(saulCore)
