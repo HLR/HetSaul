@@ -4,12 +4,10 @@
   * Developed by: The Cognitive Computations Group, University of Illinois at Urbana-Champaign
   * http://cogcomp.cs.illinois.edu/
   */
-package edu.illinois.cs.cogcomp.saul.lbjrelated
+package edu.illinois.cs.cogcomp.saulexamples.nlp.POSTagger
 
-import edu.illinois.cs.cogcomp.lbjava.classify.Classifier
+import edu.illinois.cs.cogcomp.pos.POSBaselineLearner
 
-/** Encapsulates an instance of LBJava's [[Classifier]] class.
-  */
-trait LBJClassifierEquivalent {
-  val classifier: Classifier
+class POSCountBaseline extends POSBaselineLearner {
+  // nothing
 }

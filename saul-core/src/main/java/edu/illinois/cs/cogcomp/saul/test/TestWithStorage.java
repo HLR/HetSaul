@@ -4,7 +4,7 @@
   * Developed by: The Cognitive Computations Group, University of Illinois at Urbana-Champaign
   * http://cogcomp.cs.illinois.edu/
   */
-package edu.illinois.cs.cogcomp.saul;
+package edu.illinois.cs.cogcomp.saul.test;
 
 import edu.illinois.cs.cogcomp.core.io.LineIO;
 import edu.illinois.cs.cogcomp.lbjava.classify.Classifier;
@@ -58,5 +58,4 @@ public class TestWithStorage {
         System.out.println("Average evaluation time: " + (totalTime / (1000.0 * processed)) + " seconds\n");
         tester.printPerformance(System.out);
     }
-
 }

@@ -12,11 +12,7 @@ import edu.illinois.cs.cogcomp.saul.datamodel.property.features.ClassifierContai
 
 import scala.reflect.ClassTag
 
-case class RealCollectionProperty[T <: AnyRef](
-  name: String,
-  sensor: T => List[Double],
-  ordered: Boolean
-)(implicit val tag: ClassTag[T]) extends RealPropertyCollection[T] with TypedProperty[T, List[Double]] {
+case class RealCollectionProperty[T <: AnyRef](name: String, sensor: T => List[Double], ordered: Boolean)(implicit val tag: ClassTag[T]) extends RealPropertyCollection[T] with TypedProperty[T, List[Double]] {
 
   val ra = this.name
 

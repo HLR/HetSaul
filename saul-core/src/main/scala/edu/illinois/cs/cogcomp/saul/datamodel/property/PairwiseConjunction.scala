@@ -15,8 +15,8 @@ object PairwiseConjunction {
   def concat[T](a: Property[T], b: List[Property[T]], y: T): List[String] =
     {
       if (b.isEmpty)
-        return List()
+        List.empty
       else
-        return b.map(x => a.name + "_" + a(y) + "_" + x.name + "_" + x(y)) ::: concat(b.head, b.drop(1), y)
+        b.map(x => a.name + "_" + a(y) + "_" + x.name + "_" + x(y)) ::: concat(b.head, b.drop(1), y)
     }
 }
