@@ -1,6 +1,6 @@
 # Conceptual Structure
 
-Each Saul program is a general purpose Scala program in which Saul DSL high level constructs are used to design application programs.
+Each Saul program is a general purpose Scala program in which the Saul DSL high level constructs are used to design intelligent applications.
 The provided constructs are designed to enable declarative programing for the following conceptual
 components of each application that uses learning and inference.
 
