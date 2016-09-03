@@ -6,6 +6,7 @@
   */
 package edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling
 
+import java.io.{ File, PrintWriter }
 import java.lang.Boolean
 
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation._
@@ -33,6 +34,30 @@ object PopulateSpRLDataModel extends Logging {
         val (sentences, relations, lex) =
           SpRLDataModelReader.read(path, isTraining, dataVersion, getRobertsRelations, getLex)
 
+        if (!isTraining) {
+          val reader = new SpRLDataReader(path, classOf[SpRL2013Document])
+          reader.readData()
+          val doc = reader.documents.get(0)
+          val originalRelations = doc.getTAGS.getRELATION.asScala.toList
+          val missed = originalRelations.filter(x => !relations.exists(r => r.getRelationId == x.getId))
+          val writer = new PrintWriter(new File("missed-relations.txt"))
+          for (r <- missed) {
+            val sp = doc.getSpatialIndicatorMap.get(r.getSpatialIndicatorId)
+            val tr = doc.getTrajectorHashMap.get(r.getTrajectorId)
+            val lm = doc.getLandmarkHashMap.get(r.getLandmarkId)
+            writer.println("relationId: " + r.getId)
+            if (tr != null)
+              writer.println("tr: " + tr.getText + "(" + tr.getId + ")")
+            if (sp != null)
+              writer.println("sp: " + sp.getText + "(" + sp.getId + ") , contains in lex: " + lex.contains(sp.getText.toLowerCase()))
+            if (lm != null)
+              writer.println("lm: " + lm.getText + "(" + lm.getId + ")")
+            writer.println()
+            writer.println()
+          }
+          writer.close()
+        }
+
         RobertsDataModel.spLexicon = lex
         RobertsDataModel.sentences.populate(sentences, train = isTraining)
         RobertsDataModel.relations.populate(relations, train = isTraining)
@@ -44,11 +69,11 @@ object PopulateSpRLDataModel extends Logging {
   }
 
   def getLexicon(docs: List[SpRL2013Document]): HashSet[String] = {
-    val dic : Seq[String] = Dictionaries.prepositions.toSeq
-    val indicators : Seq[String] = docs.map(d => d.getTAGS.getSPATIALINDICATOR.
+    val dic: Seq[String] = Dictionaries.prepositions.toSeq
+    val indicators: Seq[String] = docs.map(d => d.getTAGS.getSPATIALINDICATOR.
       asScala.map(s => s.getText.toLowerCase.trim)).flatten
 
-    HashSet[String]( dic ++ indicators : _*)
+    HashSet[String](dic ++ indicators: _*)
   }
 
   def getRobertsRelations(sentence: Sentence, doc: SpRL2013Document, lexicon: HashSet[String], offset: IntPair): List[RobertsRelation] = {
@@ -97,8 +122,8 @@ object PopulateSpRLDataModel extends Logging {
 
     val relations = ListBuffer[RobertsRelation]()
     val constituents = sentence.getView(ViewNames.TOKENS).asScala.toList
-    val args = constituents.filter(x => CommonSensors.getPosTag(x).startsWith("NN") ||
-      CommonSensors.getPosTag(x).startsWith("PRP"))
+
+    val args = constituents.filter(x => isArgCandidate(x))
     val indicators: ListBuffer[Constituent] = getIndicatorCandidates(sentence, constituents, lexicon)
 
     val goldRelations = doc.getTAGS.getRELATION.asScala
@@ -112,21 +137,25 @@ object PopulateSpRLDataModel extends Logging {
 
         var label = RobertsRelation.RobertsRelationLabels.CANDIDATE
 
-        if (rels.exists(r => isGoldTrajector(r, tr) && tagIsNullOrOutOfSentence(doc.getLandmarkHashMap.get(r.getLandmarkId), offset)))
+        val g = rels.find(r => isGoldTrajector(r, tr) && tagIsNullOrOutOfSentence(doc.getLandmarkHashMap.get(r.getLandmarkId), offset))
+        if (g.isDefined) {
           label = RobertsRelation.RobertsRelationLabels.GOLD
-
-        relations += new RobertsRelation(sentence, tr.getSpan, i.getSpan, null, label)
+          relations += new RobertsRelation(sentence, tr.getSpan, i.getSpan, null, label, g.get.getId)
+        } else {
+          relations += new RobertsRelation(sentence, tr.getSpan, i.getSpan, null, label, "")
+        }
 
         for (lm <- args) {
           if (lm.getSpan != tr.getSpan) {
 
-            if (rels.exists(r => isGoldTrajector(r, tr) && isGoldLandmark(r, lm))) {
+            val g = rels.find(r => isGoldTrajector(r, tr) && isGoldLandmark(r, lm))
+            if (g.isDefined) {
               label = RobertsRelation.RobertsRelationLabels.GOLD
-            } else
+              relations += new RobertsRelation(sentence, tr.getSpan, i.getSpan, lm.getSpan, label, g.get.getId)
+            } else {
               label = RobertsRelation.RobertsRelationLabels.CANDIDATE
-
-            relations += new RobertsRelation(sentence, tr.getSpan, i.getSpan, lm.getSpan, label)
-
+              relations += new RobertsRelation(sentence, tr.getSpan, i.getSpan, lm.getSpan, label, "")
+            }
           }
         }
 
@@ -140,6 +169,12 @@ object PopulateSpRLDataModel extends Logging {
     t == null || t.getStart.intValue() < 0 || t.getEnd.intValue() < 0 ||
       !(offset.getFirst <= t.getStart.intValue() && t.getEnd.intValue() <= offset.getSecond)
   }
+  def isArgCandidate(x: Constituent): Boolean = {
+    CommonSensors.getPosTag(x).startsWith("NN") ||
+      CommonSensors.getPosTag(x).startsWith("JJ") ||
+      CommonSensors.getPosTag(x).startsWith("CD") ||
+      CommonSensors.getPosTag(x).startsWith("PRP")
+  }
 
   def getHeadword(t: HasSpan, ta: TextAnnotation, offset: IntPair): Constituent = {
     ta.getView(ViewNames.TOKENS).asInstanceOf[TokenLabelView].getConstituentAtToken(getHeadwordId(t, ta, offset))
@@ -151,7 +186,14 @@ object PopulateSpRLDataModel extends Logging {
       return -1
 
     val start = t.getStart().intValue() - offset.getFirst
+    val end = t.getEnd().intValue() - offset.getFirst
     val startTokenId = ta.getTokenIdFromCharacterOffset(start)
+
+    if (ta.getToken(startTokenId).equalsIgnoreCase(t.getText)) // single word
+      return startTokenId
+
+    val constituents = ta.getView(ViewNames.TOKENS).getConstituents.asScala.
+      filter(x => x.getStartCharOffset >= start && x.getEndCharOffset <= end)
 
     val phrases = ta.getView(ViewNames.SHALLOW_PARSE).getConstituentsCoveringToken(startTokenId)
 
@@ -159,7 +201,19 @@ object PopulateSpRLDataModel extends Logging {
       val phrase = phrases.get(0)
       val tree: TreeView = ta.getView(SpRLDataModel.parseView).asInstanceOf[TreeView]
       val parsePhrase = tree.getParsePhrase(phrase)
-      return CollinsHeadFinder.getInstance.getHeadWordPosition(parsePhrase)
+      val headId = CollinsHeadFinder.getInstance.getHeadWordPosition(parsePhrase)
+      val head = ta.getView(ViewNames.TOKENS).asInstanceOf[TokenLabelView].getConstituentAtToken(headId)
+      if (constituents.exists(x => x.getSpan == head.getSpan) && isArgCandidate(head))
+        return headId
+
+      val candiates = constituents.filter(c => isArgCandidate(c))
+      if (candiates.size > 0) {
+        val lastId = candiates.last.getStartSpan
+        return lastId
+      } else {
+        return constituents.last.getStartSpan
+      }
+
     } else {
       logger.warn("cannot find phrase for '" + ta.getToken(startTokenId) + "'")
     }

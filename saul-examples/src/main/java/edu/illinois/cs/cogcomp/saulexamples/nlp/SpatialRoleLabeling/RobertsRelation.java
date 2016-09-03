@@ -25,10 +25,11 @@ public class RobertsRelation {
     private final RobertsRelationLabels label;
     private final Sentence sentence;
     private final List<RobertsElement> orderedArgs;
+    private final String relationId;
 
 
     public RobertsRelation(Sentence sentence, IntPair trajectorSpan, IntPair spatialIndicatorSpan,
-                           IntPair landmarkSpan, RobertsRelationLabels label) {
+                           IntPair landmarkSpan, RobertsRelationLabels label, String relationId) {
 
         this.trajector = new RobertsElement(trajectorSpan, RobertsElementTypes.TRAJECTOR, sentence);
         this.spatialIndicator = new RobertsElement(spatialIndicatorSpan, RobertsElementTypes.INDICATOR, sentence);
@@ -42,6 +43,8 @@ public class RobertsRelation {
         getOrderedArgs().add(this.getSpatialIndicator());
         if (landmarkIsDefined())
             getOrderedArgs().add(this.getLandmark());
+
+        this.relationId = relationId;
 
         getOrderedArgs().sort(null);
     }
@@ -117,6 +120,10 @@ public class RobertsRelation {
         for (RobertsElement a : orderedArgs)
             texts.add(a.getText() + "[" + a.getElementType().toString() + "]");
         return String.join(" ", texts) + ": " + getLabel();
+    }
+
+    public String getRelationId() {
+        return relationId;
     }
 
     public enum RobertsRelationLabels {

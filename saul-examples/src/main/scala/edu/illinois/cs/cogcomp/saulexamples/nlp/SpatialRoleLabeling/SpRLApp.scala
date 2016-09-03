@@ -9,12 +9,14 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling
 import java.io._
 
 import ch.qos.logback.classic.Level
+import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
 import edu.illinois.cs.cogcomp.core.utilities.configuration.ResourceManager
 import edu.illinois.cs.cogcomp.saul.classifier.Learnable
 import edu.illinois.cs.cogcomp.saul.util.Logging
 import edu.illinois.cs.cogcomp.saulexamples.nlp.TextAnnotationFactory
 
 import scala.collection.immutable.HashSet
+import scala.collection.JavaConverters._
 import scala.reflect.io.File
 
 /** Created by Parisa on 7/29/16.
@@ -94,10 +96,10 @@ object SpRLApp extends App with Logging {
 }
 
 object SpRLTestApp extends App {
-  val text = "Cars parked in front of the house ."
+  val text = "interior view of a room containing a double bed with a blue and white chequered bedcover and a single bed with a brownish green bedcover , with a wooden night table and a bedside lamp in between ."
   var ta = TextAnnotationFactory.createTextAnnotation("", "", text)
-  var f = SpRLSensors.getDependencyPath(ta, 0, 2)
-  print(f)
+  var phrases = ta.getView(ViewNames.SHALLOW_PARSE).getConstituents.asScala
+  phrases.foreach(x => println(x.toString))
 
 }
 

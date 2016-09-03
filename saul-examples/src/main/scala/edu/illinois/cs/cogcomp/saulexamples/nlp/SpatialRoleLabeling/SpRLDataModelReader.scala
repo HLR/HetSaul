@@ -32,7 +32,7 @@ object SpRLDataModelReader extends Logging {
       reader.readData()
 
       val sentences = ListBuffer[Sentence]()
-      val pairs = ListBuffer[T]()
+      val rels = ListBuffer[T]()
 
       var lexicon = HashSet[String]()
       if (getLexicon != null) {
@@ -50,11 +50,11 @@ object SpRLDataModelReader extends Logging {
           val ta = TextAnnotationFactory.createTextAnnotation(version, doc.getFilename + s._2, s._1)
           sentences += ta.sentences.get(0)
           assert(ta.sentences.size() == 1)
-          pairs ++= getRelations(ta.sentences.get(0), doc, lexicon, s._2)
+          rels ++= getRelations(ta.sentences.get(0), doc, lexicon, s._2)
         })
       })
 
-      (sentences.toList, pairs.toList, lexicon)
+      (sentences.toList, rels.toList, lexicon)
     }
 
     def getSentenceOffset(s: Sentence): IntPair = {
