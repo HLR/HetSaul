@@ -17,6 +17,12 @@ lazy val root = (project in file(".")).
   aggregate(saulCore, saulExamples)
   .enablePlugins(AutomateHeaderPlugin)
 
+lazy val docSettings = Seq(
+  autoAPIMappings := true,
+  apiURL := Some(url("http://cogcomp.cs.illinois.edu/software/doc/saul/")),
+  scalacOptions in Test ++= Seq("-Yrangepos")
+)
+
 lazy val commonSettings = Seq(
   organization := ccgGroupId,
   name := "saul-project",
@@ -50,6 +56,7 @@ lazy val commonSettings = Seq(
 
 lazy val saulCore = (project in file("saul-core")).
   settings(commonSettings: _*).
+  settings(docSettings: _*).
   settings(
     name := "saul",
     libraryDependencies ++= Seq(
