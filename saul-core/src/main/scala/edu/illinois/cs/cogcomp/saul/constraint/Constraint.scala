@@ -1,12 +1,20 @@
+/** This software is released under the University of Illinois/Research and Academic Use License. See
+  * the LICENSE file in the root folder for details. Copyright (c) 2016
+  *
+  * Developed by: The Cognitive Computations Group, University of Illinois at Urbana-Champaign
+  * http://cogcomp.cs.illinois.edu/
+  */
 package edu.illinois.cs.cogcomp.saul.constraint
 
 import edu.illinois.cs.cogcomp.lbjava.infer._
 import edu.illinois.cs.cogcomp.lbjava.learn.Learner
 import edu.illinois.cs.cogcomp.saul.lbjrelated.LBJLearnerEquivalent
 
-/** We need to define the langauge of constraints here to work with the first order constraints that are programmed in
-  * our main LBP script. The wrapper just gives us a java firstorderconstraint object in the shell of an scala object.
-  * in this way our language works on scala objects.
+import scala.language.implicitConversions
+
+/** We need to define the language of constraints here to work with the first order constraints that are programmed in
+  * our main LBP script. The wrapper just gives us a java [[FirstOrderConstraint]] object in the shell of an scala
+  * object in this way our language works on scala objects.
   */
 object ConstraintTypeConversion {
   implicit def learnerToLFS(l: Learner): LBJLearnerEquivalent = {

@@ -1,6 +1,13 @@
-package edu.illinois.cs.cogcomp.saul;
+/** This software is released under the University of Illinois/Research and Academic Use License. See
+  * the LICENSE file in the root folder for details. Copyright (c) 2016
+  *
+  * Developed by: The Cognitive Computations Group, University of Illinois at Urbana-Champaign
+  * http://cogcomp.cs.illinois.edu/
+  */
+package edu.illinois.cs.cogcomp.saul.test;
 
 import edu.illinois.cs.cogcomp.lbjava.classify.Classifier;
+import edu.illinois.cs.cogcomp.lbjava.classify.TestDiscrete;
 import edu.illinois.cs.cogcomp.lbjava.learn.Learner;
 import edu.illinois.cs.cogcomp.lbjava.parse.Parser;
 import org.apache.commons.math3.stat.correlation.SpearmansCorrelation;
@@ -8,21 +15,23 @@ import org.apache.commons.math3.stat.correlation.SpearmansCorrelation;
 import java.util.Arrays;
 
 /**
+ * Similar to {@link TestDiscrete} that works with real/continuous valued
+ * outputs.
+ *
  * @author Parisa
  * @since 6/28/15.
  */
-public class TestContinuous {
-    double[] predictions = {};
-    double[] actuals = {};
+public class TestReal {
 
-    public TestContinuous(Learner classifier, Classifier oracle, Parser parser) {
+    public TestReal(Learner classifier, Classifier oracle, Parser parser) {
         int examples = 0;
+        double totalDifference = 0;
+        double[] actuals = {};
+        double[] predictions = {};
 
         classifier.write(System.out);
-        double totalDifference = 0;
-        for (Object example = parser.next(); example != null;
 
-             example = parser.next()) {
+        for (Object example = parser.next(); example != null; example = parser.next()) {
             double prediction = classifier.realValue(example);
 
             predictions = Arrays.copyOf(predictions, predictions.length + 1);
@@ -78,6 +87,5 @@ public class TestContinuous {
         result = cov_x_y / (pop_sd_x * pop_sd_y);
 
         return result;
-
     }
 }

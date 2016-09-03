@@ -1,7 +1,14 @@
+/** This software is released under the University of Illinois/Research and Academic Use License. See
+  * the LICENSE file in the root folder for details. Copyright (c) 2016
+  *
+  * Developed by: The Cognitive Computations Group, University of Illinois at Urbana-Champaign
+  * http://cogcomp.cs.illinois.edu/
+  */
 package edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling;
 
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.*;
 import edu.illinois.cs.cogcomp.nlp.corpusreaders.CoNLLColumnFormatReader;
+import edu.illinois.cs.cogcomp.nlp.corpusreaders.AbstractSRLAnnotationReader;
 
 import java.io.PrintWriter;
 import java.util.*;
@@ -45,8 +52,8 @@ public class CoNLLFormatWriter {
         Map<Integer, String> lemmaMap = new HashMap<>();
 
         for (Constituent c : predicates) {
-            senseMap.put(c.getStartSpan(), c.getAttribute(CoNLLColumnFormatReader.SenseIdentifer));
-            lemmaMap.put(c.getStartSpan(), c.getAttribute(CoNLLColumnFormatReader.LemmaIdentifier));
+            senseMap.put(c.getStartSpan(), c.getAttribute(AbstractSRLAnnotationReader.SenseIdentifier));
+            lemmaMap.put(c.getStartSpan(), c.getAttribute(AbstractSRLAnnotationReader.LemmaIdentifier));
         }
 
         String[] sense = new String[size];

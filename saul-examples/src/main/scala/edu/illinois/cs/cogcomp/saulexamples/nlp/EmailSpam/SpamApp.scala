@@ -1,3 +1,9 @@
+/** This software is released under the University of Illinois/Research and Academic Use License. See
+  * the LICENSE file in the root folder for details. Copyright (c) 2016
+  *
+  * Developed by: The Cognitive Computations Group, University of Illinois at Urbana-Champaign
+  * http://cogcomp.cs.illinois.edu/
+  */
 package edu.illinois.cs.cogcomp.saulexamples.nlp.EmailSpam
 
 import edu.illinois.cs.cogcomp.saul.util.Logging
@@ -32,7 +38,6 @@ object SpamApp extends Logging {
     /** Defining the data and specifying it's location  */
     SpamDataModel.docs populate trainData
     SpamClassifier.learn(30)
-    SpamDataModel.testWith(testData)
     SpamClassifier.test(testData)
   }
 
@@ -44,7 +49,6 @@ object SpamApp extends Logging {
     SpamDataModel.deriveInstances()
     SpamDataModel.write(graphCacheFile)
     SpamClassifierWithCache.learn(30)
-    SpamDataModel.testWith(testData)
     SpamClassifierWithCache.test(testData)
   }
 
@@ -54,7 +58,6 @@ object SpamApp extends Logging {
   def SpamClassifierFromCache() {
     SpamDataModel.load(graphCacheFile)
     SpamClassifierWithCache.learn(30)
-    SpamDataModel.testWith(testData)
     SpamClassifierWithCache.test(testData)
   }
 

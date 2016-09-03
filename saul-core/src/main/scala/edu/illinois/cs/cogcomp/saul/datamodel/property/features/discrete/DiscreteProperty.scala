@@ -1,3 +1,9 @@
+/** This software is released under the University of Illinois/Research and Academic Use License. See
+  * the LICENSE file in the root folder for details. Copyright (c) 2016
+  *
+  * Developed by: The Cognitive Computations Group, University of Illinois at Urbana-Champaign
+  * http://cogcomp.cs.illinois.edu/
+  */
 package edu.illinois.cs.cogcomp.saul.datamodel.property.features.discrete
 
 import edu.illinois.cs.cogcomp.lbjava.classify.{ DiscretePrimitiveStringFeature, Feature, FeatureVector, Classifier }
@@ -6,11 +12,9 @@ import edu.illinois.cs.cogcomp.saul.datamodel.property.features.ClassifierContai
 
 import scala.reflect.ClassTag
 
-case class DiscreteProperty[T <: AnyRef](
-  name: String,
-  sensor: T => String,
-  range: Option[List[String]]
-)(implicit val tag: ClassTag[T]) extends TypedProperty[T, String] {
+case class DiscreteProperty[T <: AnyRef](name: String, sensor: T => String, range: Option[List[String]])(implicit val tag: ClassTag[T])
+  extends TypedProperty[T, String] {
+
   override def makeClassifierWithName(__name: String): Classifier = range match {
     case Some(r) =>
       new ClassifierContainsInLBP() {

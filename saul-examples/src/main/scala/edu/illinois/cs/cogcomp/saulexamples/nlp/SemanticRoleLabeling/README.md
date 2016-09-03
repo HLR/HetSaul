@@ -32,12 +32,13 @@ We reffer the reader to see an example of defining such parametrized properties 
    
 There are various machine learning models to solve this including pipelines, learning only models (LO), learning plus inference models (L+I)
  and Joint Learning models (IBT).
- The test units and SRLApp are runnable on a sample `srlToy` folder in `resources` due to the licencing issues of the full dataset. If you have access to propbank data, you could use the following setting in the `SRLConfigurator`.
+ The test units and SRLApp are runnable on a sample `SRLToy` folder in `resources` due to the licencing issues of the full dataset. 
+ If you have access to propbank data, you could use the following setting in the `SRLConfigurator`.
 
- ```scala
-   public static final Property TREEBANK_HOME = new Property("treebankHome", "./data/treebank");
-   public static final Property PROPBANK_HOME = new Property("propbankHome","./data/propbank");
-   public static final Property TEST_SECTION = new Property("testSection","23");
+```scala
+public static final Property TREEBANK_HOME = new Property("treebankHome", "./data/treebank");
+public static final Property PROPBANK_HOME = new Property("propbankHome","./data/propbank");
+public static final Property TEST_SECTION = new Property("testSection","23");
 ```
 For the results reported in this document, the training is done on folders 2-21 of probbank data and test on the folder 23.
 We have designed a number of configurations and the trained models which are packaged and can be tested.

@@ -1,10 +1,16 @@
+/** This software is released under the University of Illinois/Research and Academic Use License. See
+  * the LICENSE file in the root folder for details. Copyright (c) 2016
+  *
+  * Developed by: The Cognitive Computations Group, University of Illinois at Urbana-Champaign
+  * http://cogcomp.cs.illinois.edu/
+  */
 package edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling
 
 import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{ Constituent, Relation, TextAnnotation }
 import edu.illinois.cs.cogcomp.core.datastructures.trees.Tree
 import edu.illinois.cs.cogcomp.edison.features.factory._
-import edu.illinois.cs.cogcomp.nlp.corpusreaders.CoNLLColumnFormatReader
+import edu.illinois.cs.cogcomp.nlp.corpusreaders.AbstractSRLAnnotationReader
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
 import edu.illinois.cs.cogcomp.saul.datamodel.property.PairwiseConjunction
 import edu.illinois.cs.cogcomp.saulexamples.data.SRLFrameManager
@@ -57,7 +63,7 @@ class SRLMultiGraphDataModel(parseViewName: String = null, frameManager: SRLFram
     x: Constituent => x.getLabel.equals("Predicate")
   }
   val predicateSenseGold = property(predicates, "s") {
-    x: Constituent => x.getAttribute(CoNLLColumnFormatReader.SenseIdentifer)
+    x: Constituent => x.getAttribute(AbstractSRLAnnotationReader.SenseIdentifier)
   }
 
   val isArgumentXuGold = property(relations, "aX") {

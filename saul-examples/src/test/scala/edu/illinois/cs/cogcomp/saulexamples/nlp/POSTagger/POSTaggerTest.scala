@@ -1,3 +1,9 @@
+/** This software is released under the University of Illinois/Research and Academic Use License. See
+  * the LICENSE file in the root folder for details. Copyright (c) 2016
+  *
+  * Developed by: The Cognitive Computations Group, University of Illinois at Urbana-Champaign
+  * http://cogcomp.cs.illinois.edu/
+  */
 package edu.illinois.cs.cogcomp.saulexamples.nlp.POSTagger
 
 import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
@@ -12,7 +18,7 @@ import scala.collection.JavaConversions._
 class POSTaggerTest extends FlatSpec with Matchers {
 
   "POSTager feature queries " should " work. " in {
-    val dummyData = DummyTextAnnotationGenerator.generateAnnotatedTextAnnotation(Array(ViewNames.POS), false)
+    val dummyData = DummyTextAnnotationGenerator.generateAnnotatedTextAnnotation(Array(ViewNames.POS), false, 1)
     val cons = dummyData.getView(ViewNames.TOKENS).getConstituents
     POSDataModel.tokens populate cons
 
@@ -61,7 +67,7 @@ class POSTaggerTest extends FlatSpec with Matchers {
     POSTaggerKnown.isTraining = false
     POSDataModel.labelTwoAfter(consThe) should be("IN")
     POSDataModel.labelTwoAfter(consConstruction) should be("DT")
-    POSDataModel.labelTwoAfter(consOf) should be("NN")
+    POSDataModel.labelTwoAfter(consOf) should be("NNP")
 
     // labelOneAfter
     // gold labels
@@ -80,56 +86,52 @@ class POSTaggerTest extends FlatSpec with Matchers {
     POSTaggerKnown.isTraining = true
     POSDataModel.labelTwoAfter(consThe) should be("IN")
     POSDataModel.labelTwoAfter(consConstruction) should be("DT")
-    POSDataModel.labelTwoAfter(consOf) should be("NN")
+    POSDataModel.labelTwoAfter(consOf) should be("NNP")
     // prediction labels
     POSTaggerKnown.isTraining = false
     POSDataModel.labelTwoAfter(consThe) should be("IN")
     POSDataModel.labelTwoAfter(consConstruction) should be("DT")
-    POSDataModel.labelTwoAfter(consOf) should be("NN")
+    POSDataModel.labelTwoAfter(consOf) should be("NNP")
+  }
+
+  val labelMap = Map("The" -> "DT", "construction" -> "NN", "of" -> "IN", "the" -> "DT",
+    "John" -> "NNP", "Smith" -> "NNP", "library" -> "NN", "finished" -> "VBD", "on" -> "IN",
+    "time" -> "NN", "." -> ".")
+  val dummyData = DummyTextAnnotationGenerator.generateAnnotatedTextAnnotation(Array(ViewNames.POS), false, 1)
+  val toyConstituents = {
+    val cons = dummyData.getView(ViewNames.TOKENS).getConstituents
+
+    // population in the datamodel and loading the models are included here,
+    // to make sure they will run before making predictions on any of the constituents
+    POSDataModel.tokens.populate(cons, train = false)
+    ClassifierUtils.LoadClassifier(
+      POSConfigurator.jarModelPath,
+      BaselineClassifier, MikheevClassifier, POSTaggerKnown, POSTaggerUnknown
+    )
+    cons
   }
 
   "POSBaseline " should " work. " in {
-    val toyConstituents = DummyTextAnnotationGenerator.generateBasicTextAnnotation(1).getView(ViewNames.TOKENS).getConstituents
-    POSDataModel.tokens.populate(toyConstituents, train = false)
-    ClassifierUtils.LoadClassifier(
-      POSConfigurator.jarModelPath,
-      BaselineClassifier, MikheevClassifier, POSTaggerKnown, POSTaggerUnknown
-    )
-    val baselineLabelMap = Map("To" -> "TO", "or" -> "CC", "not" -> "RB", ";" -> ":",
-      "that" -> "IN", "is" -> "VBZ", "question" -> "NN", "." -> ".")
-    toyConstituents.forall { cons =>
+    val score = toyConstituents.map { cons =>
       val pred = BaselineClassifier(cons)
-      pred == baselineLabelMap.getOrElse(cons.getSurfaceForm, pred)
-    } should be(true)
+      if (pred == labelMap.getOrElse(cons.getSurfaceForm, pred)) 1.0 else 0.0
+    }.sum / toyConstituents.length
+    score should be(0.95 +- 0.05)
   }
 
   "POSUnknown " should " work. " in {
-    val toyConstituents = DummyTextAnnotationGenerator.generateBasicTextAnnotation(1).getView(ViewNames.TOKENS).getConstituents
-    POSDataModel.tokens.populate(toyConstituents, train = false)
-    ClassifierUtils.LoadClassifier(
-      POSConfigurator.jarModelPath,
-      BaselineClassifier, MikheevClassifier, POSTaggerKnown, POSTaggerUnknown
-    )
-    val posUnknownLabelMap = Map("or" -> "CC", "not" -> "RB",
-      "that" -> "IN", "is" -> "VBZ", "question" -> "NN")
-    toyConstituents.forall { cons =>
+    val score = toyConstituents.map { cons =>
       val pred = POSTaggerUnknown(cons)
-      pred == posUnknownLabelMap.getOrElse(cons.getSurfaceForm, pred)
-    } should be(true)
+      if (pred == labelMap.getOrElse(cons.getSurfaceForm, pred)) 1.0 else 0.0
+    }.sum / toyConstituents.length
+    score should be(0.95 +- 0.05)
   }
 
   "POS combined classifier " should "  work. " in {
-    val toyConstituents = DummyTextAnnotationGenerator.generateBasicTextAnnotation(1).getView(ViewNames.TOKENS).getConstituents
-    POSDataModel.tokens.populate(toyConstituents, train = false)
-    ClassifierUtils.LoadClassifier(
-      POSConfigurator.jarModelPath,
-      BaselineClassifier, MikheevClassifier, POSTaggerKnown, POSTaggerUnknown
-    )
-    val combinedClassifierLabelMap = Map("To" -> "TO", "or" -> "CC", "not" -> "RB", ";" -> ":",
-      "is" -> "VBZ", "the" -> "DT", "question" -> "NN", "." -> ".")
-    toyConstituents.forall { cons =>
-      val predicted = POSClassifiers.POSClassifier(cons)
-      predicted == combinedClassifierLabelMap.getOrElse(cons.getSurfaceForm, predicted)
-    } should be(true)
+    val score = toyConstituents.map { cons =>
+      val pred = POSClassifiers.POSClassifier(cons)
+      if (pred == labelMap.getOrElse(cons.getSurfaceForm, pred)) 1.0 else 0.0
+    }.sum / toyConstituents.length
+    score should be(0.95 +- 0.05)
   }
 }

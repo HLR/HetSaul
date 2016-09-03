@@ -1,14 +1,26 @@
-val cogcompNLPVersion = "3.0.40"
-val cogcompPipelineVersion = "0.1.16"
+import de.heikoseeberger.sbtheader.HeaderPattern
+
+scalaVersion in ThisBuild := "2.11.7"
+
+val cogcompNLPVersion = "3.0.64"
+val cogcompPipelineVersion = "0.1.25"
+
+lazy val headerMsg =  """/** This software is released under the University of Illinois/Research and Academic Use License. See
+                        |  * the LICENSE file in the root folder for details. Copyright (c) 2016
+                        |  *
+                        |  * Developed by: The Cognitive Computations Group, University of Illinois at Urbana-Champaign
+                        |  * http://cogcomp.cs.illinois.edu/
+                        |  */
+                        |""".stripMargin
 
 lazy val root = (project in file(".")).
   aggregate(saulCore, saulExamples)
+  .enablePlugins(AutomateHeaderPlugin)
 
 lazy val commonSettings = Seq(
   organization := "edu.illinois.cs.cogcomp",
   name := "saul-project",
   version := "0.4",
-  scalaVersion := "2.11.7",
   resolvers ++= Seq(
     Resolver.mavenLocal,
     "CogcompSoftware" at "http://cogcomp.cs.illinois.edu/m2repo/"
@@ -24,7 +36,11 @@ lazy val commonSettings = Seq(
   ),
   fork := true,
   publishTo := Some(Resolver.sftp("CogcompSoftwareRepo", "bilbo.cs.illinois.edu", "/mounts/bilbo/disks/0/www/cogcomp/html/m2repo/")),
-  isSnapshot := true
+  isSnapshot := true,
+  headers := Map(
+    "scala" -> (HeaderPattern.cStyleBlockComment, headerMsg),
+    "java" -> (HeaderPattern.cStyleBlockComment, headerMsg)
+  )
 )
 
 lazy val saulCore = (project in file("saul-core")).
@@ -34,7 +50,7 @@ lazy val saulCore = (project in file("saul-core")).
     libraryDependencies ++= Seq(
       "com.typesafe.play" % "play_2.11" % "2.4.3"
     )
-  )
+  ).enablePlugins(AutomateHeaderPlugin)
 
 lazy val saulExamples = (project in file("saul-examples")).
   settings(commonSettings: _*).
@@ -44,12 +60,14 @@ lazy val saulExamples = (project in file("saul-examples")).
       "edu.illinois.cs.cogcomp" % "illinois-nlp-pipeline" % cogcompPipelineVersion withSources,
       "edu.illinois.cs.cogcomp" % "illinois-curator" % cogcompNLPVersion,
       "edu.illinois.cs.cogcomp" % "illinois-edison" % cogcompNLPVersion,
-      "edu.illinois.cs.cogcomp" % "illinois-nlp-readers" % "0.0.2-SNAPSHOT",
-      "edu.illinois.cs.cogcomp" % "saul-pos-tagger-models" % "1.0",
+      "edu.illinois.cs.cogcomp" % "illinois-corpusreaders" % cogcompNLPVersion,
+      "edu.illinois.cs.cogcomp" % "saul-pos-tagger-models" % "1.3",
       "edu.illinois.cs.cogcomp" % "saul-er-models" % "1.3",
       "edu.illinois.cs.cogcomp" % "saul-srl-models" % "1.1"
     )
-  ).dependsOn(saulCore).aggregate(saulCore)
+  ).dependsOn(saulCore)
+  .aggregate(saulCore)
+  .enablePlugins(AutomateHeaderPlugin)
 
 lazy val saulWebapp = (project in file("saul-webapp")).
   enablePlugins(PlayScala).
@@ -72,3 +90,4 @@ lazy val saulWebapp = (project in file("saul-webapp")).
     resolvers ++= Seq("scalaz-bintray" at "http://dl.bintray.com/scalaz/releases"),
     routesGenerator := InjectedRoutesGenerator
   ).dependsOn(saulExamples).aggregate(saulExamples)
+  .enablePlugins(AutomateHeaderPlugin)

@@ -1,3 +1,9 @@
+/** This software is released under the University of Illinois/Research and Academic Use License. See
+  * the LICENSE file in the root folder for details. Copyright (c) 2016
+  *
+  * Developed by: The Cognitive Computations Group, University of Illinois at Urbana-Champaign
+  * http://cogcomp.cs.illinois.edu/
+  */
 package edu.illinois.cs.cogcomp.saulexamples.nlp.EntityRelation
 
 import edu.illinois.cs.cogcomp.saulexamples.EntityMentionRelation.datastruct.{ ConllRawToken, ConllRelation, ConllRawSentence }
@@ -7,7 +13,7 @@ import scala.collection.JavaConverters._
 
 object EntityRelationSensors {
   val path = "../data/"
-  val resourcePath = "../saul-examples/src/main/resources/EntityMentionRelation/"
+  val resourcePath = "../saul-examples/src/test/resources/EntityMentionRelation/"
 
   // Create single instances of Gazeteers and cache then with the object.
   lazy val cityGazetSensor = new GazeteerReader("gazeteer/known_city.lst", "Gaz:City", true, true)

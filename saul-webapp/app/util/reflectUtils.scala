@@ -1,3 +1,9 @@
+/** This software is released under the University of Illinois/Research and Academic Use License. See
+  * the LICENSE file in the root folder for details. Copyright (c) 2016
+  *
+  * Developed by: The Cognitive Computations Group, University of Illinois at Urbana-Champaign
+  * http://cogcomp.cs.illinois.edu/
+  */
 package util
 
 object ReflectUtils {
@@ -15,7 +21,7 @@ object ReflectUtils {
   def classPathOfClass(className: String) = {
     val resource = className.split('.').mkString("/", "/", ".class")
     var path = ""
-    try{
+    try {
       path = getClass.getResource(resource).getPath
     } catch {
       case e: Exception => play.api.Logger.info(resource + " not found.\n")

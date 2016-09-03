@@ -1,4 +1,10 @@
-package edu.illinois.cs.cogcomp.saul;
+/** This software is released under the University of Illinois/Research and Academic Use License. See
+  * the LICENSE file in the root folder for details. Copyright (c) 2016
+  *
+  * Developed by: The Cognitive Computations Group, University of Illinois at Urbana-Champaign
+  * http://cogcomp.cs.illinois.edu/
+  */
+package edu.illinois.cs.cogcomp.saul.test;
 
 import edu.illinois.cs.cogcomp.core.io.LineIO;
 import edu.illinois.cs.cogcomp.lbjava.classify.Classifier;
@@ -52,5 +58,4 @@ public class TestWithStorage {
         System.out.println("Average evaluation time: " + (totalTime / (1000.0 * processed)) + " seconds\n");
         tester.printPerformance(System.out);
     }
-
 }
