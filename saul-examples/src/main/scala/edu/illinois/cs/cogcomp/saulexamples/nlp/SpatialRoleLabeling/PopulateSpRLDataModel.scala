@@ -44,8 +44,11 @@ object PopulateSpRLDataModel extends Logging {
   }
 
   def getLexicon(docs: List[SpRL2013Document]): HashSet[String] = {
-    HashSet[String](docs.map(d => d.getTAGS.getSPATIALINDICATOR.
-      asScala.map(s => s.getText.toLowerCase.trim)).flatten: _*)
+    val dic : Seq[String] = Dictionaries.prepositions.toSeq
+    val indicators : Seq[String] = docs.map(d => d.getTAGS.getSPATIALINDICATOR.
+      asScala.map(s => s.getText.toLowerCase.trim)).flatten
+
+    HashSet[String]( dic ++ indicators : _*)
   }
 
   def getRobertsRelations(sentence: Sentence, doc: SpRL2013Document, lexicon: HashSet[String], offset: IntPair): List[RobertsRelation] = {
@@ -94,7 +97,8 @@ object PopulateSpRLDataModel extends Logging {
 
     val relations = ListBuffer[RobertsRelation]()
     val constituents = sentence.getView(ViewNames.TOKENS).asScala.toList
-    val args = constituents.filter(x => CommonSensors.getPosTag(x).startsWith("NN"))
+    val args = constituents.filter(x => CommonSensors.getPosTag(x).startsWith("NN") ||
+      CommonSensors.getPosTag(x).startsWith("PRP"))
     val indicators: ListBuffer[Constituent] = getIndicatorCandidates(sentence, constituents, lexicon)
 
     val goldRelations = doc.getTAGS.getRELATION.asScala
@@ -193,7 +197,8 @@ object PopulateSpRLDataModel extends Logging {
     // CANDIDATE pivots
     val constituents = sentence.getView(ViewNames.TOKENS).asScala
     val pivots = constituents.filter(x => SpRLSensors.isCandidate(x))
-    val args = constituents.filter(x => CommonSensors.getPosTag(x).startsWith("NN"))
+    val args = constituents.filter(x => CommonSensors.getPosTag(x).startsWith("NN") ||
+      CommonSensors.getPosTag(x).startsWith("PRP"))
     for (a <- args; p <- pivots) {
       if (canAddRelation(relations, a, p))
         relations += new Relation("none", a, p, 0.1)
