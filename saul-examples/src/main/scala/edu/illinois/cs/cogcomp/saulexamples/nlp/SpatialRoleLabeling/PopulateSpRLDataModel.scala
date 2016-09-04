@@ -70,8 +70,8 @@ object PopulateSpRLDataModel extends Logging {
 
   def getLexicon(docs: List[SpRL2013Document]): HashSet[String] = {
     val dic: Seq[String] = Dictionaries.prepositions.toSeq
-    val indicators: Seq[String] = docs.map(d => d.getTAGS.getSPATIALINDICATOR.
-      asScala.map(s => s.getText.toLowerCase.trim)).flatten
+    val indicators: Seq[String] = docs.flatMap(d => d.getTAGS.getSPATIALINDICATOR.
+      asScala.map(s => s.getText.toLowerCase.trim))
 
     HashSet[String](dic ++ indicators: _*)
   }
@@ -117,7 +117,7 @@ object PopulateSpRLDataModel extends Logging {
     def getGoldRelations(goldRelations: List[RELATION], sp: Constituent): List[RELATION] = {
       goldRelations.filter(x =>
         doc.getSpatialIndicatorMap.get(x.getSpatialIndicatorId).getStart.intValue() == sp.getStartCharOffset + offset.getFirst &&
-          doc.getSpatialIndicatorMap.get(x.getSpatialIndicatorId).getEnd.intValue() == sp.getEndCharOffset + offset.getFirst).toList
+          doc.getSpatialIndicatorMap.get(x.getSpatialIndicatorId).getText.trim.equalsIgnoreCase(sp.toString))
     }
 
     val relations = ListBuffer[RobertsRelation]()
@@ -169,10 +169,11 @@ object PopulateSpRLDataModel extends Logging {
     t == null || t.getStart.intValue() < 0 || t.getEnd.intValue() < 0 ||
       !(offset.getFirst <= t.getStart.intValue() && t.getEnd.intValue() <= offset.getSecond)
   }
+
   def isArgCandidate(x: Constituent): Boolean = {
     CommonSensors.getPosTag(x).startsWith("NN") ||
 //      CommonSensors.getPosTag(x).startsWith("JJ") ||
-//      CommonSensors.getPosTag(x).startsWith("CD") ||
+      CommonSensors.getPosTag(x).startsWith("CD") ||
       CommonSensors.getPosTag(x).startsWith("PRP")
   }
 
@@ -206,9 +207,9 @@ object PopulateSpRLDataModel extends Logging {
       if (constituents.exists(x => x.getSpan == head.getSpan) && isArgCandidate(head))
         return headId
 
-      val candiates = constituents.filter(c => isArgCandidate(c))
-      if (candiates.size > 0) {
-        val lastId = candiates.last.getStartSpan
+      val candidates = constituents.filter(c => isArgCandidate(c))
+      if (candidates.size > 0) {
+        val lastId = candidates.last.getStartSpan
         return lastId
       } else {
         return constituents.last.getStartSpan

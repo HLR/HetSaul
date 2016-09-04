@@ -64,7 +64,7 @@ object SpRLApp extends App with Logging {
     }
     if (isTrain) {
       logger.info("training " + name + "...")
-      classifier.learn(40)
+      classifier.learn(100)
       classifier.save()
     } else {
       classifier.load()
