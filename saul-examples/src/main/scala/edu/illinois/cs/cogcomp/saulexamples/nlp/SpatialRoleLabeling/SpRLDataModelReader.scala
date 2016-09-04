@@ -45,7 +45,6 @@ object SpRLDataModelReader extends Logging {
         val sentenceOffsetList = getDocumentSentences(doc)
 
         sentenceOffsetList.foreach(s => {
-          //logger.info("sentence: '" + s._1 + "'")
           assert(s._1 == doc.getTEXT.getContent.substring(s._2.getFirst, s._2.getSecond))
           val ta = TextAnnotationFactory.createTextAnnotation(version, doc.getFilename + s._2, s._1)
           sentences += ta.sentences.get(0)

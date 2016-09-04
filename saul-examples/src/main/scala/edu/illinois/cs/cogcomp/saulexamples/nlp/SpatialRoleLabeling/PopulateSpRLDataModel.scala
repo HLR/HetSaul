@@ -15,7 +15,6 @@ import edu.illinois.cs.cogcomp.nlp.utilities.CollinsHeadFinder
 import edu.illinois.cs.cogcomp.saul.util.Logging
 import edu.illinois.cs.cogcomp.saulexamples.nlp.CommonSensors
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling.SpRL2013.{ RELATION, SpRL2013Document }
-import edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling.SpRLSensors._
 
 import scala.collection.JavaConverters._
 import scala.collection.immutable.HashSet
@@ -61,10 +60,6 @@ object PopulateSpRLDataModel extends Logging {
         RobertsDataModel.spLexicon = lex
         RobertsDataModel.sentences.populate(sentences, train = isTraining)
         RobertsDataModel.relations.populate(relations, train = isTraining)
-      case _ =>
-        val (sentences, pairs, lex) = SpRLDataModelReader.read(path, isTraining, dataVersion, getRelations, null)
-        SpRLDataModel.sentences.populate(sentences, train = isTraining)
-        SpRLDataModel.pairs.populate(pairs, train = isTraining)
     }
   }
 
@@ -172,7 +167,6 @@ object PopulateSpRLDataModel extends Logging {
 
   def isArgCandidate(x: Constituent): Boolean = {
     CommonSensors.getPosTag(x).startsWith("NN") ||
-//      CommonSensors.getPosTag(x).startsWith("JJ") ||
       CommonSensors.getPosTag(x).startsWith("CD") ||
       CommonSensors.getPosTag(x).startsWith("PRP")
   }
@@ -200,7 +194,7 @@ object PopulateSpRLDataModel extends Logging {
 
     if (phrases.size > 0) {
       val phrase = phrases.get(0)
-      val tree: TreeView = ta.getView(SpRLDataModel.parseView).asInstanceOf[TreeView]
+      val tree: TreeView = ta.getView(RobertsDataModel.parseView).asInstanceOf[TreeView]
       val parsePhrase = tree.getParsePhrase(phrase)
       val headId = CollinsHeadFinder.getInstance.getHeadWordPosition(parsePhrase)
       val head = ta.getView(ViewNames.TOKENS).asInstanceOf[TokenLabelView].getConstituentAtToken(headId)
@@ -219,46 +213,6 @@ object PopulateSpRLDataModel extends Logging {
       logger.warn("cannot find phrase for '" + ta.getToken(startTokenId) + "'")
     }
     startTokenId
-  }
-
-  def getRelations(sentence: Sentence, doc: SpRL2013Document, lexicon: HashSet[String], offset: IntPair): List[Relation] = {
-
-    def canAddRelation(relations: Iterable[Relation], a: Constituent, b: Constituent): Boolean = {
-      getUniqueSentenceId(a) == getUniqueSentenceId(b) &&
-        !relations.exists(x => x.getSource.getSpan == a.getSpan && x.getTarget.getSpan == b.getSpan)
-    }
-
-    def addRelation(relations: ListBuffer[Relation], ta: TextAnnotation, pivot: HasSpan, other: HasSpan, relationType: String, offset: IntPair) = {
-
-      if (!tagIsNullOrOutOfSentence(pivot, offset) && !tagIsNullOrOutOfSentence(other, offset)) {
-        val r = new Relation(relationType, getHeadword(other, ta, offset), getHeadword(pivot, ta, offset), 1)
-        relations += r
-      }
-    }
-
-    val relations = ListBuffer[Relation]()
-
-    // GOLD pivots
-    doc.getTAGS.getRELATION.asScala.foreach(r => {
-
-      val pivot = doc.getSpatialIndicatorMap.get(r.getSpatialIndicatorId)
-      val tr = doc.getTrajectorHashMap.get(r.getTrajectorId)
-      val lm = doc.getLandmarkHashMap.get(r.getLandmarkId)
-
-      addRelation(relations, sentence.getSentenceConstituent.getTextAnnotation, pivot, tr, "tr", offset)
-      addRelation(relations, sentence.getSentenceConstituent.getTextAnnotation, pivot, lm, "lm", offset)
-    })
-
-    // CANDIDATE pivots
-    val constituents = sentence.getView(ViewNames.TOKENS).asScala
-    val pivots = constituents.filter(x => SpRLSensors.isCandidate(x))
-    val args = constituents.filter(x => CommonSensors.getPosTag(x).startsWith("NN") ||
-      CommonSensors.getPosTag(x).startsWith("PRP"))
-    for (a <- args; p <- pivots) {
-      if (canAddRelation(relations, a, p))
-        relations += new Relation("none", a, p, 0.1)
-    }
-    relations.toList
   }
 
 }

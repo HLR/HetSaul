@@ -20,17 +20,6 @@ object SpRLSensors {
   val dependencyView = ViewNames.DEPENDENCY_STANFORD
 
   // helper methods
-  def isCandidate(token: Constituent): Boolean = {
-
-    if (Dictionaries.isPreposition(token.toString))
-      return true
-
-    val pos = CommonSensors.getPosTag(token)
-    if (pos == "IN" || pos == "TO")
-      return true
-
-    return false
-  }
   def getDependencyPath(ta: TextAnnotation, t1: Int, t2: Int): String = {
 
     def getRelationName(relations: List[Relation], c1: Constituent, c2: Constituent, dir: String): String = {

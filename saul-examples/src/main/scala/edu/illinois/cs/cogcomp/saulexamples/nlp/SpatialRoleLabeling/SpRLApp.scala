@@ -23,9 +23,7 @@ import scala.reflect.io.File
   */
 object SpRLApp extends App with Logging {
 
-  import SpRLClassifiers._
   import SpRLConfigurator._
-  import SpRLDataModel._
 
   val properties: ResourceManager = {
     logger.info("Loading default configuration parameters")
@@ -49,19 +47,10 @@ object SpRLApp extends App with Logging {
         saveRobertsLexicon(lexPath)
       }
       runClassifier(RobertsClassifiers.robertsSupervised2Classifier, name)
-    case "SimpleRoles" =>
-      PopulateSpRLDataModel(getDataPath(), isTrain, version, modelName, null)
-      runClassifier(spatialIndicatorClassifier, "spatialIndicators")
-    //  runClassifier(trajectorClassifier, "trajectors")
-    //  runClassifier(landmarkClassifier, "landmarks")  }
-    //  runClassifier(pairTypeClassifier, "relations")
   }
 
   def runClassifier[T <: AnyRef](classifier: Learnable[T], name: String) = {
     classifier.modelDir = modelDir + version + File.separator + name + File.separator
-    if (name == "relations") {
-      spatialIndicatorClassifier.load()
-    }
     if (isTrain) {
       logger.info("training " + name + "...")
       classifier.learn(100)

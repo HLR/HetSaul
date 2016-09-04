@@ -28,7 +28,7 @@ public class SpRLConfigurator extends Configurator {
     // The (sub)directory to store and retrieve the trained SpRL models (to be used with MODELS_DIR)
     public static final Property SpRL_MODEL_DIR = new Property("sprlModelDir", "sprl");
 
-    // can take (Roberts, SimpleRoles)
+    // can take (Roberts)
     public static final Property MODEL_NAME = new Property("modelName", "Roberts");
 
     @Override
