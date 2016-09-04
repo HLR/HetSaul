@@ -171,8 +171,8 @@ object PopulateSpRLDataModel extends Logging {
   }
   def isArgCandidate(x: Constituent): Boolean = {
     CommonSensors.getPosTag(x).startsWith("NN") ||
-      CommonSensors.getPosTag(x).startsWith("JJ") ||
-      CommonSensors.getPosTag(x).startsWith("CD") ||
+//      CommonSensors.getPosTag(x).startsWith("JJ") ||
+//      CommonSensors.getPosTag(x).startsWith("CD") ||
       CommonSensors.getPosTag(x).startsWith("PRP")
   }
 
