@@ -44,12 +44,16 @@ object SpRLDataModelReader extends Logging {
         logger.info("working on " + doc.getFilename + " ...")
         val sentenceOffsetList = getDocumentSentences(doc)
 
-        sentenceOffsetList.foreach(s => {
-          assert(s._1 == doc.getTEXT.getContent.substring(s._2.getFirst, s._2.getSecond))
-          val ta = TextAnnotationFactory.createTextAnnotation(version, doc.getFilename + s._2, s._1)
-          sentences += ta.sentences.get(0)
-          assert(ta.sentences.size() == 1)
-          rels ++= getRelations(ta.sentences.get(0), doc, lexicon, s._2)
+        sentenceOffsetList.foreach(f = s => {
+          try {
+            assert(s._1 == doc.getTEXT.getContent.substring(s._2.getFirst, s._2.getSecond))
+            val ta = TextAnnotationFactory.createTextAnnotation(version, doc.getFilename + s._2, s._1)
+            sentences += ta.sentences.get(0)
+            assert(ta.sentences.size() == 1)
+            rels ++= getRelations(ta.sentences.get(0), doc, lexicon, s._2)
+          } catch {
+            case e : Exception => logger.info("error :" + s)
+          }
         })
       })
 

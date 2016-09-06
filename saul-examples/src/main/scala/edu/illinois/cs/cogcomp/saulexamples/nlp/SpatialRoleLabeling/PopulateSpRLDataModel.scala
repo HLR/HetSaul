@@ -190,10 +190,10 @@ object PopulateSpRLDataModel extends Logging {
     val constituents = ta.getView(ViewNames.TOKENS).getConstituents.asScala.
       filter(x => x.getStartCharOffset >= start && x.getEndCharOffset <= end)
 
-    val phrases = ta.getView(ViewNames.SHALLOW_PARSE).getConstituentsCoveringToken(startTokenId)
+    val phrases = ta.getView(ViewNames.SHALLOW_PARSE).getConstituentsCoveringToken(startTokenId).asScala
 
-    if (phrases.size > 0) {
-      val phrase = phrases.get(0)
+    if (phrases.nonEmpty) {
+      val phrase = phrases.head
       val tree: TreeView = ta.getView(RobertsDataModel.parseView).asInstanceOf[TreeView]
       val parsePhrase = tree.getParsePhrase(phrase)
       val headId = CollinsHeadFinder.getInstance.getHeadWordPosition(parsePhrase)
@@ -202,7 +202,7 @@ object PopulateSpRLDataModel extends Logging {
         return headId
 
       val candidates = constituents.filter(c => isArgCandidate(c))
-      if (candidates.size > 0) {
+      if (candidates.nonEmpty) {
         val lastId = candidates.last.getStartSpan
         return lastId
       } else {

@@ -22,22 +22,14 @@ class RobertsDataModelReaderTests extends FlatSpec with Matchers {
 
     sentenceList.size should be(5)
 
-    relationList.count(x => x.getSentence == sentenceList(0)) should be(32)
-
     relationList.count(x => x.getSentence == sentenceList(0) &&
       x.getLabel == RobertsRelation.RobertsRelationLabels.GOLD) should be(1)
-
-    relationList.count(x => x.getSentence == sentenceList(1)) should be(16)
 
     relationList.count(x => x.getSentence == sentenceList(1) &&
       x.getLabel == RobertsRelation.RobertsRelationLabels.GOLD) should be(2)
 
-    relationList.count(x => x.getSentence == sentenceList(2)) should be(18)
-
     relationList.count(x => x.getSentence == sentenceList(2) &&
       x.getLabel == RobertsRelation.RobertsRelationLabels.GOLD) should be(1)
-
-    relationList.count(x => x.getSentence == sentenceList(3)) should be(32)
 
     relationList.count(x => x.getSentence == sentenceList(3) &&
       x.getLabel == RobertsRelation.RobertsRelationLabels.GOLD) should be(2)
@@ -66,11 +58,6 @@ class RobertsDataModelReaderTests extends FlatSpec with Matchers {
     val rels4 = relations().filter(x => x.getSentence == e4).toList
     val golds4 = rels4.filter(x => x.getLabel == RobertsRelation.RobertsRelationLabels.GOLD).toList
     val rel41 = golds4.head
-
-    rels1.size should be(18)
-    rels2.size should be(9)
-    rels3.size should be(18)
-    rels4.size should be(8)
 
     golds1.size should be(1)
     golds2.size should be(2)
@@ -156,9 +143,9 @@ class RobertsDataModelReaderTests extends FlatSpec with Matchers {
     JF2_11(rel22) should be("")
     JF2_11(rels1(3)) should be("of") // cars parked in[INDICATOR] front[TRAJECTOR] of the house: front---prep--->of
 
-    //    JF2_12(rel11) should be("")
-    //    JF2_12(rel21) should be("")
-    //    JF2_12(rel22) should be("")
+    JF2_12(rel11) should be("TRAJECTOR=A1;INDICATOR=A2;LANDMARK=A2")
+    JF2_12(rel21) should be("TRAJECTOR=;INDICATOR=;LANDMARK=")
+    JF2_12(rel22) should be("TRAJECTOR=;INDICATOR=;LANDMARK=")
 
     JF2_13(rel11) should be("false")
     JF2_13(rel21) should be("false")

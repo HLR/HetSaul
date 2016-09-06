@@ -85,10 +85,14 @@ object SpRLApp extends App with Logging {
 }
 
 object SpRLTestApp extends App {
-  val text = "interior view of a room containing a double bed with a blue and white chequered bedcover and a single bed with a brownish green bedcover , with a wooden night table and a bedside lamp in between ."
-  var ta = TextAnnotationFactory.createTextAnnotation("", "", text)
-  var phrases = ta.getView(ViewNames.SHALLOW_PARSE).getConstituents.asScala
-  phrases.foreach(x => println(x.toString))
+  val text = "cars parked in front of the house ."
+  val ta = TextAnnotationFactory.createTextAnnotation("", "", text)
+  val tokens = ta.getView(ViewNames.TOKENS).getConstituents.asScala
+  val view = ta.getView(ViewNames.SRL_VERB)
+  val const = view.getConstituents.asScala
+  println(ta.getAvailableViews)
 
+  tokens.foreach(x =>
+    println(x.toString + " : " + view.getLabelsCovering(x)))
 }
 

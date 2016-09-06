@@ -58,7 +58,7 @@ object RobertsDataModel extends DataModel {
   }
 
   val BF5 = property(relations) {
-    x: RobertsRelation => if (x.landmarkIsDefined()) getLemma(x.getLandmark.getFirstConstituent()) else undefined
+    x: RobertsRelation => if (x.landmarkIsDefined()) getLemma(x.getLandmark.getFirstConstituent) else undefined
   }
 
   val BF6 = property(relations) {
@@ -139,6 +139,7 @@ object RobertsDataModel extends DataModel {
 
   val JF2_9 = property(relations) {
     x: RobertsRelation =>
+
       val fex = new WordNetFeatureExtractor
       fex.addFeatureType(WordNetFeatureExtractor.WordNetFeatureClass.hypernymsAllSenses)
       getFeature(x.getTrajector.getFirstConstituent, fex)
@@ -184,10 +185,21 @@ object RobertsDataModel extends DataModel {
   }
 
   val JF2_12 = property(relations) {
-    //TODO: Get probank role types of the arguments
-    x: RobertsRelation => ""
-    //      "TRAJECTOR=" + x.getTrajector.getText + ";INDICATOR=" +
-    //        x.getSpatialIndicator.getText + ";LANDMARK=" + x.getLandmark.getText
+    x: RobertsRelation =>
+      val view = x.getTextAnnotation.getView(ViewNames.SRL_VERB)
+      view match {
+        case null =>
+          "TRAJECTOR=;INDICATOR=;LANDMARK="
+        case _ =>
+          val tr = view.getLabelsCovering(x.getTrajector.getFirstConstituent).asScala.mkString
+          val lm =
+            if (x.landmarkIsDefined())
+              view.getLabelsCovering(x.getLandmark.getFirstConstituent).asScala.mkString
+            else undefined
+          val sp = view.getLabelsCovering(x.getSpatialIndicator.getFirstConstituent).asScala.mkString
+
+          "TRAJECTOR=" + tr + ";INDICATOR=" + sp + ";LANDMARK=" + lm
+      }
   }
 
   val JF2_13 = property(relations) {
