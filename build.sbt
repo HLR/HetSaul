@@ -45,7 +45,7 @@ lazy val commonSettings = Seq(
     Resolver.ssh(
       "CogcompSoftwareRepo", "bilbo.cs.illinois.edu",
       "/mounts/bilbo/disks/0/www/cogcomp/html/m2repo/").
-      as ("khashab2", new java.io.File(Path.userHome.absolutePath + "/.ssh/key"))
+      as (System.getenv("SAUL_USER"), new java.io.File(Path.userHome.absolutePath + "/.ssh/id_rsa"))
   ),
   isSnapshot := true,
   headers := Map(
