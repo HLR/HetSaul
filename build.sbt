@@ -23,6 +23,10 @@ lazy val docSettings = Seq(
   scalacOptions in Test ++= Seq("-Yrangepos")
 )
 
+lazy val saulUser = System.getenv("SAUL_USER")
+lazy val user = if(saulUser == null) System.getProperty("user.name") else saulUser
+lazy val keyFile = new java.io.File(Path.userHome.absolutePath + "/.ssh/id_rsa")
+
 lazy val commonSettings = Seq(
   organization := ccgGroupId,
   name := "saul-project",
@@ -44,8 +48,7 @@ lazy val commonSettings = Seq(
   publishTo := Some(
     Resolver.ssh(
       "CogcompSoftwareRepo", "bilbo.cs.illinois.edu",
-      "/mounts/bilbo/disks/0/www/cogcomp/html/m2repo/").
-      as (System.getenv("SAUL_USER"), new java.io.File(Path.userHome.absolutePath + "/.ssh/id_rsa"))
+      "/mounts/bilbo/disks/0/www/cogcomp/html/m2repo/") as (user, keyFile)
   ),
   isSnapshot := true,
   headers := Map(
