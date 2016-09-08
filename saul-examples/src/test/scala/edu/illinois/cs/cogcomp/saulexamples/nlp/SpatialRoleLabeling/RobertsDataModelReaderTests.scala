@@ -17,7 +17,9 @@ class RobertsDataModelReaderTests extends FlatSpec with Matchers {
   "Roberts Data Model Reader" should "Read data correctly." in {
 
     val sentenceList = sentences()
-      .filterNot(x => x.getSentenceConstituent.getTextAnnotation.getId.startsWith("example.xml")).toList
+      .filterNot(x => x.getSentence.getSentenceConstituent.getTextAnnotation.getId.startsWith("example.xml"))
+      .map(x=> x.getSentence).toList
+
     val relationList = relations().toList
 
     sentenceList.size should be(5)
@@ -37,7 +39,9 @@ class RobertsDataModelReaderTests extends FlatSpec with Matchers {
 
   "Roberts Data Model Features" should "be correct for examples of the paper." in {
     val examples = sentences()
-      .filter(x => x.getSentenceConstituent.getTextAnnotation.getId.contains("example.xml")).toList
+      .filter(x => x.getSentence.getSentenceConstituent.getTextAnnotation.getId.contains("example.xml"))
+      .map(x=> x.getSentence).toList
+
     val e1 = examples(0)
     val rels1 = relations().filter(x => x.getSentence == e1).toList
     val golds1 = rels1.filter(x => x.getLabel == RobertsRelation.RobertsRelationLabels.GOLD).toList
@@ -143,7 +147,7 @@ class RobertsDataModelReaderTests extends FlatSpec with Matchers {
     JF2_11(rel22) should be("")
     JF2_11(rels1(3)) should be("of") // cars parked in[INDICATOR] front[TRAJECTOR] of the house: front---prep--->of
 
-    JF2_12(rel11) should be("TRAJECTOR=A1;INDICATOR=A2;LANDMARK=A2")
+    JF2_12(rel11) should be("TRAJECTOR=A1;INDICATOR=AM-LOC;LANDMARK=AM-LOC")
     JF2_12(rel21) should be("TRAJECTOR=;INDICATOR=;LANDMARK=")
     JF2_12(rel22) should be("TRAJECTOR=;INDICATOR=;LANDMARK=")
 

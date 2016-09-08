@@ -11,7 +11,7 @@ import java.math.BigInteger;
 /**
  * Created by taher on 7/30/16.
  */
-public interface HasSpan {
+public interface SpRLAnnotation {
     BigInteger getStart();
     BigInteger getEnd();
     String getText();

@@ -14,7 +14,7 @@
 
 package edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling.SpRL2013;
 
-import edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling.HasSpan;
+import edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling.SpRLAnnotation;
 
 import java.math.BigInteger;
 import javax.xml.bind.annotation.*;
@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.*;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "")
 @XmlRootElement(name = "TRAJECTOR")
-public class TRAJECTOR implements HasSpan {
+public class TRAJECTOR implements SpRLAnnotation {
 
     @XmlAttribute(name = "id", required = true)
     protected String id;
