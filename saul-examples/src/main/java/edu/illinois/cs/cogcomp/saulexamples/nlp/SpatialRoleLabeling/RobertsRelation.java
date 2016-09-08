@@ -9,8 +9,6 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling;
 import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.Sentence;
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.TextAnnotation;
-import edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling.SpRL2015.RobertsElement;
-import edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling.SpRL2015.RobertsElementTypes;
 
 import java.util.ArrayList;
 import java.util.List;

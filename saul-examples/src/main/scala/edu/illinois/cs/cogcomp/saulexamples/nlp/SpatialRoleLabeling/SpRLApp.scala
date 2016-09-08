@@ -74,7 +74,7 @@ object SpRLApp extends App with Logging {
   }
   def saveRobertsLexicon(filePath: String): Unit = {
     val stream = new ObjectOutputStream(new FileOutputStream(filePath))
-    stream.writeObject(RobertsDataModel.spLexicon)
+    stream.writeObject(Dictionaries.spLexicon)
     stream.close()
   }
 

@@ -7,11 +7,9 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling
 
 import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
-import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{ Constituent, Sentence }
 import edu.illinois.cs.cogcomp.edison.features.factory.WordNetFeatureExtractor
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
 import edu.illinois.cs.cogcomp.saulexamples.nlp.CommonSensors._
-import edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling.SpRL2015.RobertsElementTypes
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling.SpRLSensors._
 
 import scala.collection.JavaConverters._
@@ -23,17 +21,14 @@ import scala.collection.mutable.ListBuffer
 object RobertsDataModel extends DataModel {
 
   val undefined = "[undefined]"
-  val parseView = ViewNames.PARSE_STANFORD
-  var spLexicon = HashSet[String]()
 
   // data model
-  val sentences = node[Sentence]
-  val tokens = node[Constituent]((x: Constituent) => getConstituentId(x))
+  val sentences = node[SpRLSentence]
   val relations = node[RobertsRelation]
-  val sentencesToTokens = edge(sentences, tokens)
+  val sentencesToRelations = edge(sentences, relations)
 
   // sensors
-  sentencesToTokens.addSensor(sentenceToTokens _)
+  sentencesToRelations.addSensor(SpRLSensors.sentencesToRelations _)
 
   // classifier labels
   val relationLabel = property(relations) {
@@ -97,7 +92,7 @@ object RobertsDataModel extends DataModel {
 
   val JF2_2 = property(relations) {
     x: RobertsRelation =>
-      if (x.landmarkIsDefined()) spLexicon.exists(s => s.contains(x.getLandmark.getText))
+      if (x.landmarkIsDefined()) Dictionaries.spLexicon.exists(s => s.contains(x.getLandmark.getText))
       else false
   }
 
@@ -185,7 +180,7 @@ object RobertsDataModel extends DataModel {
   }
 
   val JF2_12 = property(relations) {
-    x: RobertsRelation =>
+    x: RobertsRelation => ""
       val view = x.getTextAnnotation.getView(ViewNames.SRL_VERB)
       view match {
         case null =>
@@ -224,7 +219,7 @@ object RobertsDataModel extends DataModel {
         .map(r => if (r.getSource.getSpan == t.getSpan) r.getTarget else r.getSource)
 
       val otherPrep = preps.find(p => !i.isCovering(p.getSpan) &&
-        (getPosTag(p).startsWith("IN") || spLexicon.contains(p.toString.toLowerCase)))
+        (getPosTag(p).startsWith("IN") || Dictionaries.spLexicon.contains(p.toString.toLowerCase)))
 
       otherPrep.isDefined
   }

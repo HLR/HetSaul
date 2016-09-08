@@ -15,7 +15,7 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling.SpRL2013;
 
 import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
-import edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling.HasSpan;
+import edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling.SpRLAnnotation;
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling.SpRLXmlDocument;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -26,7 +26,6 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -211,7 +210,7 @@ public class SpRL2013Document implements SpRLXmlDocument {
         return tagRelationMap;
     }
 
-    private void addTagRelation(RELATION r, HasSpan tag) {
+    private void addTagRelation(RELATION r, SpRLAnnotation tag) {
         if(tag == null || tag.getStart().intValue() == -1)
             return;
 
