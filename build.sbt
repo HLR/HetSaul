@@ -1,4 +1,5 @@
 import de.heikoseeberger.sbtheader.HeaderPattern
+import sbtrelease.ReleaseStateTransformations._
 
 scalaVersion in ThisBuild := "2.11.7"
 
@@ -13,9 +14,13 @@ val headerMsg =  """/** This software is released under the University of Illino
                         |  */
                         |""".stripMargin
 
-lazy val root = (project in file(".")).
-  aggregate(saulCore, saulExamples)
-  .enablePlugins(AutomateHeaderPlugin)
+
+lazy val saulUser = System.getenv("SAUL_USER")
+lazy val user = if (saulUser == null) System.getProperty("user.name") else saulUser
+lazy val keyFile = new java.io.File(Path.userHome.absolutePath + "/.ssh/id_rsa")
+
+lazy val scalaDoc = taskKey[Unit]("Execute the shell script for releasing our Scala doc")
+scalaDoc := { "bash scaladoc.sh" ! }
 
 lazy val docSettings = Seq(
   autoAPIMappings := true,
@@ -23,14 +28,34 @@ lazy val docSettings = Seq(
   scalacOptions in Test ++= Seq("-Yrangepos")
 )
 
-lazy val saulUser = System.getenv("SAUL_USER")
-lazy val user = if(saulUser == null) System.getProperty("user.name") else saulUser
-lazy val keyFile = new java.io.File(Path.userHome.absolutePath + "/.ssh/id_rsa")
+lazy val releaseSettings = Seq(
+  releaseIgnoreUntrackedFiles := true,
+  releaseProcess := Seq[ReleaseStep](
+    checkSnapshotDependencies,
+    inquireVersions,
+    setReleaseVersion,
+    commitReleaseVersion,                   // performs the initial git checks
+    //tagRelease,
+    publishArtifacts,                       // checks whether `publishTo` is properly set up
+    releaseStepTask(scalaDoc),      //release the scalaDocs
+    setNextVersion,
+    commitNextVersion//,
+    //pushChanges                             // checks that an upstream branch is properly configured
+  )
+)
+
+lazy val publishSettings = Seq(
+  publishTo := Some(
+    Resolver.ssh(
+      "CogcompSoftwareRepo", "bilbo.cs.illinois.edu",
+      "/mounts/bilbo/disks/0/www/cogcomp/html/m2repo/") as (user, keyFile)
+  )
+  //isSnapshot := true // when releasing snapshot versions
+)
 
 lazy val commonSettings = Seq(
   organization := ccgGroupId,
   name := "saul-project",
-  version := "0.5",
   resolvers ++= Seq(
     Resolver.mavenLocal,
     "CogcompSoftware" at "http://cogcomp.cs.illinois.edu/m2repo/"
@@ -45,17 +70,17 @@ lazy val commonSettings = Seq(
     "ch.qos.logback" % "logback-classic" % "1.1.7"
   ),
   fork := true,
-  publishTo := Some(
-    Resolver.ssh(
-      "CogcompSoftwareRepo", "bilbo.cs.illinois.edu",
-      "/mounts/bilbo/disks/0/www/cogcomp/html/m2repo/") as (user, keyFile)
-  ),
-  isSnapshot := true,
   headers := Map(
     "scala" -> (HeaderPattern.cStyleBlockComment, headerMsg),
     "java" -> (HeaderPattern.cStyleBlockComment, headerMsg)
   )
-)
+) ++ publishSettings
+
+lazy val root = (project in file("."))
+  .settings(commonSettings: _*)
+  .settings(releaseSettings: _*)
+  .aggregate(saulCore, saulExamples)
+  .enablePlugins(AutomateHeaderPlugin)
 
 lazy val saulCore = (project in file("saul-core")).
   settings(commonSettings: _*).
