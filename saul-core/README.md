@@ -19,9 +19,10 @@ Visit each link for its content
  3. [Conceptual structure of a Saul program](doc/CONCEPTUALSTRUCTURE.md)
  2. [Data modeling and feature extraction](doc/DATAMODELING.md)
  3. [Learners and constraints](doc/SAULLANGUAGE.md)
- 4. [Model configurations](doc/Models.md)
+ 4. [Model configurations](doc/MODELS.md)
  5. [Saul library](doc/LBJLIBRARY.md)
 
+The api docs are included [here](http://cogcomp.cs.illinois.edu/software/doc/saul/). 
 
 ## Credits 
 This project has been started by [Parisa Kordjamshidi](mailto:kordjam@illinois.edu) and the development has been done in collaboration with [Hao Wu](mailto:haowu4@illinois.edu), [Sameer Singh](mailto:sameer@cs.washington.edu), [Daniel Khashabi](mailto:khashab2@illinois.edu), [Christos Christodoulopoulos](mailto:christod@illinois.edu). 
