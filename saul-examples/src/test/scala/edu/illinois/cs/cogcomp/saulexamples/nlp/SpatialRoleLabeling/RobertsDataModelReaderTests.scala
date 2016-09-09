@@ -18,7 +18,7 @@ class RobertsDataModelReaderTests extends FlatSpec with Matchers {
 
     val sentenceList = sentences()
       .filterNot(x => x.getSentence.getSentenceConstituent.getTextAnnotation.getId.startsWith("example.xml"))
-      .map(x=> x.getSentence).toList
+      .map(x => x.getSentence).toList
 
     val relationList = relations().toList
 
@@ -40,7 +40,7 @@ class RobertsDataModelReaderTests extends FlatSpec with Matchers {
   "Roberts Data Model Features" should "be correct for examples of the paper." in {
     val examples = sentences()
       .filter(x => x.getSentence.getSentenceConstituent.getTextAnnotation.getId.contains("example.xml"))
-      .map(x=> x.getSentence).toList
+      .map(x => x.getSentence).toList
 
     val e1 = examples(0)
     val rels1 = relations().filter(x => x.getSentence == e1).toList

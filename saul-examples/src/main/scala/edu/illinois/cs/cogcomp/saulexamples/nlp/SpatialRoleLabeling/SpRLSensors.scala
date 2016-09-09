@@ -6,7 +6,7 @@
   */
 package edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling
 
-import edu.illinois.cs.cogcomp.core.datastructures.{IntPair, ViewNames}
+import edu.illinois.cs.cogcomp.core.datastructures.{ IntPair, ViewNames }
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation._
 import edu.illinois.cs.cogcomp.edison.features.helpers.PathFeatureHelper
 import edu.illinois.cs.cogcomp.nlp.utilities.CollinsHeadFinder
@@ -23,7 +23,7 @@ import scala.util.matching.Regex
 object SpRLSensors extends Logging {
   val dependencyView = ViewNames.DEPENDENCY_STANFORD
 
-  def sentencesToRelations(sentence: SpRLSentence ) : List[RobertsRelation] = {
+  def sentencesToRelations(sentence: SpRLSentence): List[RobertsRelation] = {
 
     val relations = ListBuffer[RobertsRelation]()
     val constituents = sentence.getSentence.getView(ViewNames.TOKENS).asScala.toList
@@ -106,7 +106,7 @@ object SpRLSensors extends Logging {
   }
 
   def getDependencyRelations(ta: TextAnnotation): List[Relation] = {
-      ta.getView(dependencyView).asInstanceOf[TreeView].getRelations.asScala.toList
+    ta.getView(dependencyView).asInstanceOf[TreeView].getRelations.asScala.toList
   }
 
   private def getIndicatorCandidates(sentence: Sentence, lexicon: HashSet[String]): ListBuffer[Constituent] = {

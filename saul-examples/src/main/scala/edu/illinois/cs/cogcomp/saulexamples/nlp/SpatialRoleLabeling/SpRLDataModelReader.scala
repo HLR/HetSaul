@@ -36,7 +36,7 @@ object SpRLDataModelReader extends Logging {
           sentences += new SpRLSentence(s._2, ta.sentences.get(0), getRelations(doc, s._2).asJava)
           assert(ta.sentences.size() == 1)
         } catch {
-          case e : Exception => logger.info("error :" + s)
+          case e: Exception => logger.info("error :" + s)
         }
       })
     })
@@ -78,7 +78,7 @@ object SpRLDataModelReader extends Logging {
     val relations = ListBuffer[SpRLRelation]()
     val goldRelations = doc.getTAGS.getRELATION.asScala
       .filter(x => !tagIsNullOrOutOfSentence(doc.getSpatialIndicatorMap.get(x.getSpatialIndicatorId), offset)).toList
-    for(r <- goldRelations){
+    for (r <- goldRelations) {
       val tr = setNullIfEmpty(doc.getTrajectorHashMap.get(r.getTrajectorId))
       val lm = setNullIfEmpty(doc.getLandmarkHashMap.get(r.getLandmarkId))
       val sp = setNullIfEmpty(doc.getSpatialIndicatorMap.get(r.getSpatialIndicatorId))
@@ -88,7 +88,7 @@ object SpRLDataModelReader extends Logging {
   }
 
   private def setNullIfEmpty(t: SpRLAnnotation): SpRLAnnotation = {
-    t.getStart.intValue() match{
+    t.getStart.intValue() match {
       case -1 => null
       case _ => t
     }

@@ -181,20 +181,20 @@ object RobertsDataModel extends DataModel {
 
   val JF2_12 = property(relations) {
     x: RobertsRelation => ""
-//      val view = x.getTextAnnotation.getView(ViewNames.SRL_VERB)
-//      view match {
-//        case null =>
-//          "TRAJECTOR=;INDICATOR=;LANDMARK="
-//        case _ =>
-//          val tr = view.getLabelsCovering(x.getTrajector.getFirstConstituent).asScala.mkString
-//          val lm =
-//            if (x.landmarkIsDefined())
-//              view.getLabelsCovering(x.getLandmark.getFirstConstituent).asScala.mkString
-//            else undefined
-//          val sp = view.getLabelsCovering(x.getSpatialIndicator.getFirstConstituent).asScala.mkString
-//
-//          "TRAJECTOR=" + tr + ";INDICATOR=" + sp + ";LANDMARK=" + lm
-//      }
+    //      val view = x.getTextAnnotation.getView(ViewNames.SRL_VERB)
+    //      view match {
+    //        case null =>
+    //          "TRAJECTOR=;INDICATOR=;LANDMARK="
+    //        case _ =>
+    //          val tr = view.getLabelsCovering(x.getTrajector.getFirstConstituent).asScala.mkString
+    //          val lm =
+    //            if (x.landmarkIsDefined())
+    //              view.getLabelsCovering(x.getLandmark.getFirstConstituent).asScala.mkString
+    //            else undefined
+    //          val sp = view.getLabelsCovering(x.getSpatialIndicator.getFirstConstituent).asScala.mkString
+    //
+    //          "TRAJECTOR=" + tr + ";INDICATOR=" + sp + ";LANDMARK=" + lm
+    //      }
   }
 
   val JF2_13 = property(relations) {
