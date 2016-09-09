@@ -103,7 +103,7 @@ lazy val saulExamples = (project in file("saul-examples")).
       ccgGroupId % "illinois-corpusreaders" % cogcompNLPVersion,
       ccgGroupId % "saul-pos-tagger-models" % "1.3",
       ccgGroupId % "saul-er-models" % "1.5",
-      ccgGroupId % "saul-srl-models" % "1.1"
+      ccgGroupId % "saul-srl-models" % "1.2"
     )
   ).dependsOn(saulCore)
   .aggregate(saulCore)

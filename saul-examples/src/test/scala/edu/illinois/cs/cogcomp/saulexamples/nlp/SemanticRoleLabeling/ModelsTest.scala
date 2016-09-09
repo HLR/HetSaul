@@ -15,15 +15,17 @@ class ModelsTest extends FlatSpec with Matchers {
   "argument type classifier (aTr)" should "work." in {
     ClassifierUtils.LoadClassifier(SRLConfigurator.SRL_JAR_MODEL_PATH.value + "/models_aTr/", argumentTypeLearner)
     val results = argumentTypeLearner.test(exclude = "candidate")
-    results.perLabel.foreach {
-      case result =>
-        result.label match {
-          case "A0" => (result.f1 >= 0.9) should be(true)
-          case "A1" => (result.f1 >= 0.9) should be(true)
-          case "A2" => (result.f1 >= 0.6) should be(true)
-          case _ => (result.f1 >= 0.0) should be(true)
-        }
-    }
+    results.perLabel
+      .filter(!_.f1.isNaN)
+      .foreach {
+        result =>
+          result.label match {
+            case "A0" => (result.f1 >= 0.9) should be(true)
+            case "A1" => (result.f1 >= 0.9) should be(true)
+            case "A2" => (result.f1 >= 0.6) should be(true)
+            case _ => (result.f1 >= 0.0) should be(true)
+          }
+      }
   }
 
   "predicate identifier (dTr)" should "perform higher than 0.98." in {
