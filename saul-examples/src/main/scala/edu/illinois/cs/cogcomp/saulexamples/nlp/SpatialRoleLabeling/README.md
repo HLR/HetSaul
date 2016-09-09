@@ -13,8 +13,32 @@ Analogous to semantic role labeling, spatial role labeling is defined as the tas
 
 ## SpRL using Saul
 In this example, we implement the best performing algorithm for [task 3 of SemEval 2012](https://www.cs.york.ac.uk/semeval-2012/task3.html) proposed in [2] using Saul.
+
+### Data representation and preparation
+The SpRL data are in the form of annotated sentences, we need basic data structures to load these data and feed them to the Saul application. [`SpRLSentence`](../../../../../../../../java/edu/illinois/cs/cogcomp/saulexamples/nlp/SpatialRoleLabeling/SpRLSentence.java) and [`RobertsRelation`](../../../../../../../../java/edu/illinois/cs/cogcomp/saulexamples/nlp/SpatialRoleLabeling/RobertsRelation.java) classes used for this purpose. In order to benefit from all of the built-in features provided by `TextAnnotation`, we used `TextAnnotation.Sentence` to represent the sentences in the `SpRLSentence` class.
+The data sets are collections of xml files, so we used code generators to generate corresponding classes and a data reader for them.
+
+So, the next step is to load these files and convert them to a collection of `SpRLSentence`. In this step we split sentences in each document and convert them to `SpRLSentence` objects.
+
+```
+    val reader = new SpRLDataReader(path, classOf[SpRL2013Document])
+    reader.readData()
+    val sentences = ListBuffer[SpRLSentence]()
+    reader.documents.asScala.foreach(doc => {
+      val sentenceOffsetList = getDocumentSentences(doc, version)
+      sentenceOffsetList.foreach(s => {
+          val ta = TextAnnotationFactory.createTextAnnotation(version, doc.getFilename + s._2, s._1)
+          sentences += new SpRLSentence(s._2, ta.sentences.get(0), getRelations(doc, s._2).asJava)
+      })
+    })
+```
+`SpRLDataReader` is the xml data reader which loads data from the dataset. `getDocumentSentences` splits the sentences and returns a list of tuples. Each tuple contains a sentence and it's character offset in the document. 
+`TextAnnotationFactory.createTextAnnotation` uses the NLP-Pipeline to generate feature rich `TextAnnotation` for each sentence. `getRelations` returns the relations that correspond to the current sentence. 
+
+
+### Defining the `DataModel`
 In order to identify spatial relations, the authors of [2] used a simple method.
-A set of triples used to represent a spatial relations. They generated many candidates and trained a classifier to classify them. So here is the [`DataModel`](RobertsDataModel.scala) :
+A set of triples used to represent the spatial relations. They generated many candidates and trained a classifier to classify them. So here is the [`DataModel`](RobertsDataModel.scala) :
 ```scala
   // data model
   val sentences = node[SpRLSentence]
@@ -22,8 +46,8 @@ A set of triples used to represent a spatial relations. They generated many cand
   val sentencesToRelations = edge(sentences, relations)
 ```
 In this model, we have a set of sentences, each sentence connects to many relations through `sentencesToRelations` edges, which some of them can be `GOLD` or positive spatial relation and others that are `CANDIDATE` or non-spatial relations.
-In order to use many easy to use features that `TextAnnotation` provides, we defined a container class `SpRLSentence` that contains `TextAnnotaiton.Sentence` . By doing so, we can access to many built-in NLP features.
 
+### Sensors
 Next step is to determine sensors:
 ```
   // sensors
@@ -31,6 +55,7 @@ Next step is to determine sensors:
 ```
 The [`sentenceToRelations`](SpRLSensors.scala) sensor, generates candidate relations from the specified sentence, using the method described in the paper.
 
+### Features
 Now we can specify the features, all features are constructed using `property` method of `DataModel`. First of all we specify the label that the classifier tries to predict:
 ```
   // classifier labels
@@ -39,8 +64,27 @@ Now we can specify the features, all features are constructed using `property` m
   }
 ```
 
-The paper used many features in order to achieve the desired performance. `TextAnnotation` makes feature extraction very easy, see [Feature Extraction](FeatureExtraction.md) for detailed explanation.
+The paper used many features in order to achieve the desired performance. `TextAnnotation` makes feature extraction very easy, see [`RobertsDataModel`](RobertsDataModel.scala) for detailed implementations.
 
+### Classification
+The paper used a SVM classifier for relation classification. Defining this classifier is straightforward using Saul:
+
+```
+  val robertsFeatures = List(JF2_1, JF2_2, JF2_3, JF2_4, JF2_5, JF2_6, JF2_7, JF2_8,
+    JF2_9, JF2_10, JF2_11, JF2_12, JF2_13, JF2_14, JF2_15, BH1)
+
+  object robertsSupervised2Classifier extends Learnable[RobertsRelation](relations) {
+    override lazy val classifier = new SupportVectorMachine()
+    def label: Property[RobertsRelation] = relationLabel
+    override def feature = using(robertsFeatures)
+  }
+```
+We extend `Learnable` class of Saul and specify the type of classifier we want. Next the target label for classification is determined by implementing `label` property and finally the set of features needed for classification is provided.
+You can find this implementation in [`RobertsClassifiers`](RobertsClassifiers.scala)
+
+## Configurations
+All configurations needed to run this application are placed in 
+[`SpRLConfigurator`](../../../../../../../../java/edu/illinois/cs/cogcomp/saulexamples/nlp/SpatialRoleLabeling/SpRLConfigurator.java). In order to run the application for training, set `IsTraining` to `Configurator.TRUE` and for testing set it to `Configurator.FALSE`. 
 
 ## Test results for SemEval 2012 data
 The SemEval 2012 data-set is a subset of IAPR TC-12 Benchmark. 
