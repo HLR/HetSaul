@@ -18,12 +18,12 @@ object PopulateSpRLDataModel extends Logging {
   def apply(path: String, isTraining: Boolean, dataVersion: String, modelName: String, savedLexicon: HashSet[String]) = {
 
     modelName match {
-      case "Roberts" =>
+      case "Joint" =>
         val getLex: (List[SpRLSentence]) => HashSet[String] = if (isTraining) getLexicon else (x) => savedLexicon
         val sentences: List[SpRLSentence] = SpRLDataModelReader.read(path, dataVersion)
 
         Dictionaries.spLexicon = getLex(sentences)
-        RobertsDataModel.sentences.populate(sentences, train = isTraining)
+        SpRLDataModel.sentences.populate(sentences, train = isTraining)
     }
   }
 

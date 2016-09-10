@@ -10,6 +10,7 @@ import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
 import edu.illinois.cs.cogcomp.edison.features.factory.WordNetFeatureExtractor
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
 import edu.illinois.cs.cogcomp.saulexamples.nlp.CommonSensors._
+import edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling.Triplet.{SpRelation, SpRoleTypes}
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling.SpRLSensors._
 
 import scala.collection.JavaConverters._
@@ -18,13 +19,13 @@ import scala.collection.mutable.ListBuffer
 
 /** Created by taher on 8/10/16.
   */
-object RobertsDataModel extends DataModel {
+object SpRLDataModel extends DataModel {
 
   val undefined = "[undefined]"
 
   // data model
   val sentences = node[SpRLSentence]
-  val relations = node[RobertsRelation]
+  val relations = node[SpRelation]
   val sentencesToRelations = edge(sentences, relations)
 
   // sensors
@@ -32,32 +33,32 @@ object RobertsDataModel extends DataModel {
 
   // classifier labels
   val relationLabel = property(relations) {
-    x: RobertsRelation => x.getLabel.toString
+    x: SpRelation => x.getLabel.toString
   }
 
   // Basic Features
   val BF1 = property(relations) {
-    x: RobertsRelation => x.getTrajector.getText
+    x: SpRelation => x.getTrajector.getText
   }
 
   val BF2 = property(relations) {
-    x: RobertsRelation => if (x.landmarkIsDefined) x.getLandmark.getText else undefined
+    x: SpRelation => if (x.landmarkIsDefined) x.getLandmark.getText else undefined
   }
 
   val BF3 = property(relations) {
-    x: RobertsRelation => x.getSpatialIndicator.getText
+    x: SpRelation => x.getSpatialIndicator.getText
   }
 
   val BF4 = property(relations) {
-    x: RobertsRelation => getLemma(x.getTrajector.getFirstConstituent)
+    x: SpRelation => getLemma(x.getTrajector.getFirstConstituent)
   }
 
   val BF5 = property(relations) {
-    x: RobertsRelation => if (x.landmarkIsDefined()) getLemma(x.getLandmark.getFirstConstituent) else undefined
+    x: SpRelation => if (x.landmarkIsDefined()) getLemma(x.getLandmark.getFirstConstituent) else undefined
   }
 
   val BF6 = property(relations) {
-    x: RobertsRelation =>
+    x: SpRelation =>
       {
         val t = x.getTrajector.getFirstConstituent.getStartSpan
         val spStart = x.getSpatialIndicator.getFirstConstituent.getStartSpan
@@ -70,7 +71,7 @@ object RobertsDataModel extends DataModel {
   }
 
   val BF7 = property(relations) {
-    x: RobertsRelation =>
+    x: SpRelation =>
       if (!x.landmarkIsDefined()) undefined
       else {
 
@@ -87,17 +88,17 @@ object RobertsDataModel extends DataModel {
 
   //Supervised2 features
   val JF2_1 = property(relations) {
-    x: RobertsRelation => BF1(x) + "::" + BF3(x) + "::" + BF2(x)
+    x: SpRelation => BF1(x) + "::" + BF3(x) + "::" + BF2(x)
   }
 
   val JF2_2 = property(relations) {
-    x: RobertsRelation =>
+    x: SpRelation =>
       if (x.landmarkIsDefined()) Dictionaries.spLexicon.exists(s => s.contains(x.getLandmark.getText))
       else false
   }
 
   val JF2_3 = property(relations) {
-    x: RobertsRelation =>
+    x: SpRelation =>
       {
         val tokens = x.getTextAnnotation.getView(ViewNames.TOKENS)
           .getConstituentsCoveringSpan(x.getFirstArg.getSpan.getSecond, x.getLastArg.getSpan.getFirst)
@@ -107,23 +108,23 @@ object RobertsDataModel extends DataModel {
   }
 
   val JF2_4 = property(relations) {
-    x: RobertsRelation => BF3(x) + "::" + BF7(x)
+    x: SpRelation => BF3(x) + "::" + BF7(x)
   }
 
   val JF2_5 = property(relations) {
-    x: RobertsRelation => BF1(x)
+    x: SpRelation => BF1(x)
   }
 
   val JF2_6 = property(relations) {
-    x: RobertsRelation => BF7(x)
+    x: SpRelation => BF7(x)
   }
 
   val JF2_7 = property(relations) {
-    x: RobertsRelation => BF6(x) + "::" + BF3(x)
+    x: SpRelation => BF6(x) + "::" + BF3(x)
   }
 
   val JF2_8 = property(relations) {
-    x: RobertsRelation =>
+    x: SpRelation =>
       if (x.landmarkIsDefined()) {
         val fex = new WordNetFeatureExtractor
         fex.addFeatureType(WordNetFeatureExtractor.WordNetFeatureClass.hypernymsAllSenses)
@@ -133,7 +134,7 @@ object RobertsDataModel extends DataModel {
   }
 
   val JF2_9 = property(relations) {
-    x: RobertsRelation =>
+    x: SpRelation =>
 
       val fex = new WordNetFeatureExtractor
       fex.addFeatureType(WordNetFeatureExtractor.WordNetFeatureClass.hypernymsAllSenses)
@@ -141,7 +142,7 @@ object RobertsDataModel extends DataModel {
   }
 
   val JF2_10 = property(relations) {
-    x: RobertsRelation =>
+    x: SpRelation =>
       {
         val tokens = x.getTextAnnotation.getView(ViewNames.TOKENS)
           .getConstituentsCoveringSpan(x.getFirstArg.getSpan.getFirst, x.getLastArg.getSpan.getSecond)
@@ -150,12 +151,12 @@ object RobertsDataModel extends DataModel {
         tokens.foreach(t => {
           val arg = x.getCoveringArg(t.getSpan)
           if (arg != null) {
-            if (arg.getElementType == RobertsElementTypes.INDICATOR) {
-              if (!list.contains(RobertsElementTypes.INDICATOR.toString)) {
-                list += arg.getElementType.toString
+            if (arg.getSpRoleType == SpRoleTypes.INDICATOR) {
+              if (!list.contains(SpRoleTypes.INDICATOR.toString)) {
+                list += arg.getSpRoleType.toString
               }
             } else
-              list += arg.getElementType.toString
+              list += arg.getSpRoleType.toString
           } else {
             list += t.toString.toLowerCase()
           }
@@ -165,7 +166,7 @@ object RobertsDataModel extends DataModel {
   }
 
   val JF2_11 = property(relations) {
-    x: RobertsRelation =>
+    x: SpRelation =>
       val t = x.getTrajector.getFirstConstituent
       val i = x.getSpatialIndicator
 
@@ -180,7 +181,7 @@ object RobertsDataModel extends DataModel {
   }
 
   val JF2_12 = property(relations) {
-    x: RobertsRelation => ""
+    x: SpRelation => ""
     //      val view = x.getTextAnnotation.getView(ViewNames.SRL_VERB)
     //      view match {
     //        case null =>
@@ -198,18 +199,18 @@ object RobertsDataModel extends DataModel {
   }
 
   val JF2_13 = property(relations) {
-    x: RobertsRelation =>
+    x: SpRelation =>
       !x.landmarkIsDefined() &&
         !x.getSentence.getView(ViewNames.TOKENS).getConstituents.asScala
           .exists(c => !x.isInArgs(c.getSpan) && getPosTag(c).startsWith("NN"))
   }
 
   val JF2_14 = property(relations) {
-    x: RobertsRelation => BF4(x) + "::" + BF3(x) + "::" + BF5(x)
+    x: SpRelation => BF4(x) + "::" + BF3(x) + "::" + BF5(x)
   }
 
   val JF2_15 = property(relations) {
-    x: RobertsRelation =>
+    x: SpRelation =>
       val t = x.getTrajector.getFirstConstituent
       val i = x.getSpatialIndicator
 
@@ -225,7 +226,7 @@ object RobertsDataModel extends DataModel {
   }
 
   val BH1 = property(relations) {
-    x: RobertsRelation => x.getRelationType
+    x: SpRelation => x.getRelationType
   }
 
 }

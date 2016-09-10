@@ -1,4 +1,4 @@
-package edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling;
+package edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling.Triplet;
 
 import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
 import edu.illinois.cs.cogcomp.core.datastructures.ViewNames;
@@ -11,20 +11,20 @@ import java.util.List;
 /**
  * Created by taher on 8/11/16.
  */
-public class RobertsElement implements Comparable<RobertsElement> {
+public class SpRole implements Comparable<SpRole> {
 
-    private final RobertsElementTypes elementType;
+    private final SpRoleTypes spRoleType;
     private final IntPair span;
     private final Constituent sentence;
 
-    public RobertsElement(IntPair span, RobertsElementTypes elementType, Sentence sentence) {
+    public SpRole(IntPair span, SpRoleTypes spRoleType, Sentence sentence) {
         this.span = span;
         this.sentence = sentence.getSentenceConstituent();
-        this.elementType = elementType;
+        this.spRoleType = spRoleType;
     }
 
     @Override
-    public int compareTo(RobertsElement o) {
+    public int compareTo(SpRole o) {
         if (getSpan().getFirst() == o.getSpan().getFirst())
             return 0;
         else if (getSpan().getFirst() < o.getSpan().getFirst())
@@ -67,7 +67,7 @@ public class RobertsElement implements Comparable<RobertsElement> {
         return s!= null && span.getFirst() <= s.getFirst() && s.getSecond() <= span.getSecond();
     }
 
-    public RobertsElementTypes getElementType() {
-        return elementType;
+    public SpRoleTypes getSpRoleType() {
+        return spRoleType;
     }
 }

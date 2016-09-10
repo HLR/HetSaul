@@ -1,16 +1,17 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling
 
-import org.scalatest.{ FlatSpec, Matchers }
+import edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling.Triplet.{SpRelation, SpRelationLabels}
+import org.scalatest.{FlatSpec, Matchers}
 
 /** Created by taher on 8/14/16.
   */
-class RobertsDataModelReaderTests extends FlatSpec with Matchers {
+class SpRLDataModelReaderTests extends FlatSpec with Matchers {
   val path = getResourcePath("SpRL/2012/")
 
   private def getResourcePath(relativePath: String): String =
     getClass.getClassLoader.getResource(relativePath).getPath
 
-  import RobertsDataModel._
+  import SpRLDataModel._
 
   PopulateSpRLDataModel(path, true, "2012", "Roberts", null)
 
@@ -25,16 +26,16 @@ class RobertsDataModelReaderTests extends FlatSpec with Matchers {
     sentenceList.size should be(5)
 
     relationList.count(x => x.getSentence == sentenceList(0) &&
-      x.getLabel == RobertsRelation.RobertsRelationLabels.GOLD) should be(1)
+      x.getLabel == SpRelationLabels.GOLD) should be(1)
 
     relationList.count(x => x.getSentence == sentenceList(1) &&
-      x.getLabel == RobertsRelation.RobertsRelationLabels.GOLD) should be(2)
+      x.getLabel == Triplet.SpRelationLabels.GOLD) should be(2)
 
     relationList.count(x => x.getSentence == sentenceList(2) &&
-      x.getLabel == RobertsRelation.RobertsRelationLabels.GOLD) should be(1)
+      x.getLabel == Triplet.SpRelationLabels.GOLD) should be(1)
 
     relationList.count(x => x.getSentence == sentenceList(3) &&
-      x.getLabel == RobertsRelation.RobertsRelationLabels.GOLD) should be(2)
+      x.getLabel == Triplet.SpRelationLabels.GOLD) should be(2)
   }
 
   "Roberts Data Model Features" should "be correct for examples of the paper." in {
@@ -44,23 +45,23 @@ class RobertsDataModelReaderTests extends FlatSpec with Matchers {
 
     val e1 = examples(0)
     val rels1 = relations().filter(_.getSentence == e1).toList
-    val golds1 = rels1.filter(_.getLabel == RobertsRelation.RobertsRelationLabels.GOLD).toList
+    val golds1 = rels1.filter(_.getLabel == Triplet.SpRelationLabels.GOLD).toList
     val rel11 = golds1.head
 
     val e2 = examples(1)
     val rels2 = relations().filter(_.getSentence == e2).toList
-    val golds2 = rels2.filter(_.getLabel == RobertsRelation.RobertsRelationLabels.GOLD).toList
+    val golds2 = rels2.filter(_.getLabel == Triplet.SpRelationLabels.GOLD).toList
     val rel21 = golds2.filter(_.getTrajector.getText == "bushes").head
     val rel22 = golds2.filter(_.getTrajector.getText == "trees").head
 
     val e3 = examples(2)
     val rels3 = relations().filter(_.getSentence == e3).toList
-    val golds3 = rels3.filter(_.getLabel == RobertsRelation.RobertsRelationLabels.GOLD).toList
+    val golds3 = rels3.filter(_.getLabel == Triplet.SpRelationLabels.GOLD).toList
     val rel31 = golds3.head
 
     val e4 = examples(3)
     val rels4 = relations().filter(_.getSentence == e4).toList
-    val golds4 = rels4.filter(_.getLabel == RobertsRelation.RobertsRelationLabels.GOLD).toList
+    val golds4 = rels4.filter(_.getLabel == Triplet.SpRelationLabels.GOLD).toList
     val rel41 = golds4.head
 
     golds1.size should be(1)

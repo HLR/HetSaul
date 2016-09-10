@@ -4,7 +4,7 @@
   * Developed by: The Cognitive Computations Group, University of Illinois at Urbana-Champaign
   * http://cogcomp.cs.illinois.edu/
   */
-package edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling;
+package edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling.Triplet;
 
 import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.Sentence;
@@ -16,27 +16,27 @@ import java.util.List;
 /**
  * Created by taher on 8/10/16.
  */
-public class RobertsRelation {
-    private final RobertsElement trajector;
-    private final RobertsElement spatialIndicator;
-    private final RobertsElement landmark;
-    private final RobertsRelationLabels label;
+public class SpRelation {
+    private final SpRole trajector;
+    private final SpRole spatialIndicator;
+    private final SpRole landmark;
+    private final SpRelationLabels label;
     private final Sentence sentence;
-    private final List<RobertsElement> orderedArgs;
+    private final List<SpRole> orderedArgs;
     private final String relationId;
 
 
-    public RobertsRelation(Sentence sentence, IntPair trajectorSpan, IntPair spatialIndicatorSpan,
-                           IntPair landmarkSpan, RobertsRelationLabels label, String relationId) {
+    public SpRelation(Sentence sentence, IntPair trajectorSpan, IntPair spatialIndicatorSpan,
+                      IntPair landmarkSpan, SpRelationLabels label, String relationId) {
 
-        this.trajector = new RobertsElement(trajectorSpan, RobertsElementTypes.TRAJECTOR, sentence);
-        this.spatialIndicator = new RobertsElement(spatialIndicatorSpan, RobertsElementTypes.INDICATOR, sentence);
+        this.trajector = new SpRole(trajectorSpan, SpRoleTypes.TRAJECTOR, sentence);
+        this.spatialIndicator = new SpRole(spatialIndicatorSpan, SpRoleTypes.INDICATOR, sentence);
         this.landmark = landmarkSpan == null ? null :
-                new RobertsElement(landmarkSpan, RobertsElementTypes.LANDMARK, sentence);
+                new SpRole(landmarkSpan, SpRoleTypes.LANDMARK, sentence);
         this.label = label;
         this.sentence = sentence;
 
-        orderedArgs = new ArrayList<RobertsElement>();
+        orderedArgs = new ArrayList<SpRole>();
         getOrderedArgs().add(this.getTrajector());
         getOrderedArgs().add(this.getSpatialIndicator());
         if (landmarkIsDefined())
@@ -51,7 +51,7 @@ public class RobertsRelation {
         return getLandmark() != null;
     }
 
-    public RobertsRelationLabels getLabel() {
+    public SpRelationLabels getLabel() {
         return label;
     }
 
@@ -63,43 +63,43 @@ public class RobertsRelation {
         return getSentence().getSentenceConstituent().getTextAnnotation();
     }
 
-    public RobertsElement getFirstArg() {
+    public SpRole getFirstArg() {
         return getOrderedArgs().get(0);
     }
 
-    public RobertsElement getMidArg() {
+    public SpRole getMidArg() {
         return getOrderedArgs().get(getOrderedArgs().size() / 2);
     }
 
-    public RobertsElement getLastArg() {
+    public SpRole getLastArg() {
         return getOrderedArgs().get(getOrderedArgs().size() - 1);
     }
 
-    public RobertsElement getTrajector() {
+    public SpRole getTrajector() {
         return trajector;
     }
 
-    public RobertsElement getSpatialIndicator() {
+    public SpRole getSpatialIndicator() {
         return spatialIndicator;
     }
 
-    public RobertsElement getLandmark() {
+    public SpRole getLandmark() {
         return landmark;
     }
 
-    public List<RobertsElement> getOrderedArgs() {
+    public List<SpRole> getOrderedArgs() {
         return orderedArgs;
     }
 
     public boolean isInArgs(IntPair p) {
-        for (RobertsElement e : orderedArgs)
+        for (SpRole e : orderedArgs)
             if (e.getSpan().getFirst() <= p.getFirst() && p.getSecond() <= e.getSpan().getSecond())
                 return true;
         return false;
     }
 
-    public RobertsElement getCoveringArg(IntPair p) {
-        for (RobertsElement e : orderedArgs)
+    public SpRole getCoveringArg(IntPair p) {
+        for (SpRole e : orderedArgs)
             if (e.getSpan().getFirst() <= p.getFirst() && p.getSecond() <= e.getSpan().getSecond())
                 return e;
         return null;
@@ -107,26 +107,21 @@ public class RobertsRelation {
 
     public String getRelationType() {
         List<String> types = new ArrayList<>();
-        for (RobertsElement a : orderedArgs)
-            types.add(a.getElementType().toString());
+        for (SpRole a : orderedArgs)
+            types.add(a.getSpRoleType().toString());
         return String.join("_", types);
     }
 
     @Override
     public String toString() {
         List<String> texts = new ArrayList<>();
-        for (RobertsElement a : orderedArgs)
-            texts.add(a.getText() + "[" + a.getElementType().toString() + "]");
+        for (SpRole a : orderedArgs)
+            texts.add(a.getText() + "[" + a.getSpRoleType().toString() + "]");
         return String.join(" ", texts) + ": " + getLabel();
     }
 
     public String getRelationId() {
         return relationId;
-    }
-
-    public enum RobertsRelationLabels {
-        GOLD,
-        CANDIDATE,
     }
 
 }

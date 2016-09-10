@@ -38,15 +38,15 @@ object SpRLApp extends App with Logging {
   logger.info("population starts.")
 
   modelName match {
-    case "Roberts" =>
-      val name = "robertsSupervised2"
+    case "Joint" =>
+      val name = "joint"
       val lexPath = modelDir + version + File.separator + name + File.separator + "lexicon.lex"
       val lex = if (isTrain) null else loadRobertsLexicon(lexPath)
       PopulateSpRLDataModel(getDataPath(), isTrain, version, modelName, lex)
       if (isTrain) {
         saveRobertsLexicon(lexPath)
       }
-      runClassifier(RobertsClassifiers.robertsSupervised2Classifier, name)
+      runClassifier(SpRLClassifiers.relationClassifier, name)
   }
 
   def runClassifier[T <: AnyRef](classifier: Learnable[T], name: String) = {
