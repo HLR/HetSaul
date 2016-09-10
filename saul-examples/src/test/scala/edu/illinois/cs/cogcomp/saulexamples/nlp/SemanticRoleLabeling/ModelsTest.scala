@@ -22,7 +22,7 @@ class ModelsTest extends FlatSpec with Matchers {
           result.label match {
             case "A0" => result.f1 should be(0.95 +- 0.05)
             case "A1" => result.f1 should be(0.95 +- 0.05)
-            case "A2" => result.f1 should be(0.8 +- 0.2)
+            case "A2" => result.f1 should be(0.8 +- 0.03)
             case _ => (result.f1 >= 0.0) should be(true)
           }
       }
@@ -70,7 +70,7 @@ class ModelsTest extends FlatSpec with Matchers {
         result.label match {
           case "A0" => result.f1 should be(0.95 +- 0.05)
           case "A1" => result.f1 should be(0.95 +- 0.05)
-          case "A2" => result.f1 should be(0.8 +- 0.2)
+          case "A2" => result.f1 should be(0.8 +- 0.03)
           case _ => ""
         }
     }
@@ -84,7 +84,7 @@ class ModelsTest extends FlatSpec with Matchers {
         result.label match {
           case "A0" => result.f1 should be(0.95 +- 0.05)
           case "A1" => result.f1 should be(0.95 +- 0.05)
-          case "A2" => result.f1 should be(0.8 +- 0.2)
+          case "A2" => result.f1 should be(0.8 +- 0.03)
           case _ => ""
         }
     }
