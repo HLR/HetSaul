@@ -2,7 +2,7 @@
 In paper [1], the task of spatial role labeling is introduced and an annotation scheme proposed that is language-independent and facilitates the application of machine learning techniques. The framework consists of a set of spatial roles. For a basic example, in the following sentence:
 
 
-Give me [the gray book] (trajector) [on] (spatialindicator) [the big table] (landmark).
+Give me [the gray book]{trajector} [on]{spatialindicator} [the big table]{landmark}.
 
 
 The phrase headed by the token book is referring to a trajector object, the phrase headed by the token table is referring to the role of a landmark and these are related by the spatial expression on denoted as spatial indicator. The spatial indicator (often a preposition) establishes the type of spatial relation.
@@ -15,7 +15,7 @@ Analogous to semantic role labeling, spatial role labeling is defined as the tas
 In this example, we implement the best performing algorithm for [task 3 of SemEval 2012](https://www.cs.york.ac.uk/semeval-2012/task3.html) proposed in [2] using Saul.
 
 ### Data representation and preparation
-The SpRL data are in the form of annotated sentences, we need basic data structures to load these data and feed them to the Saul application. [`SpRLSentence`](../../../../../../../../java/edu/illinois/cs/cogcomp/saulexamples/nlp/SpatialRoleLabeling/SpRLSentence.java) and [`RobertsRelation`](../../../../../../../../java/edu/illinois/cs/cogcomp/saulexamples/nlp/SpatialRoleLabeling/RobertsRelation.java) classes used for this purpose. In order to benefit from all of the built-in features provided by `TextAnnotation`, we used `TextAnnotation.Sentence` to represent the sentences in the `SpRLSentence` class.
+The SpRL data are in the form of annotated sentences, we need basic data structures to load these data and feed them to the Saul application. [`SpRLSentence`](../../../../../../../../java/edu/illinois/cs/cogcomp/saulexamples/nlp/SpatialRoleLabeling/SpRLSentence.java) and [`SpRelation`](../../../../../../../../java/edu/illinois/cs/cogcomp/saulexamples/nlp/SpatialRoleLabeling/Triplet/SpRelation.java) classes used for this purpose. In order to benefit from all of the built-in features provided by `TextAnnotation`, we used `TextAnnotation.Sentence` to represent the sentences in the `SpRLSentence` class.
 The data sets are collections of xml files, so we used code generators to generate corresponding classes and a data reader for them.
 
 So, the next step is to load these files and convert them to a collection of `SpRLSentence`. In this step we split sentences in each document and convert them to `SpRLSentence` objects.
@@ -38,11 +38,11 @@ So, the next step is to load these files and convert them to a collection of `Sp
 
 ### Defining the `DataModel`
 In order to identify spatial relations, the authors of [2] used a simple method.
-A set of triples used to represent the spatial relations. They generated many candidates and trained a classifier to classify them. So here is the [`DataModel`](RobertsDataModel.scala) :
+A set of triples used to represent the spatial relations. They generated many candidates and trained a classifier to classify them. So here is the [`DataModel`](SpRLDataModel.scala) :
 ```scala
   // data model
   val sentences = node[SpRLSentence]
-  val relations = node[RobertsRelation]
+  val relations = node[SpRelation]
   val sentencesToRelations = edge(sentences, relations)
 ```
 In this model, we have a set of sentences, each sentence connects to many relations through `sentencesToRelations` edges, which some of them can be `GOLD` or positive spatial relation and others that are `CANDIDATE` or non-spatial relations.
@@ -60,27 +60,26 @@ Now we can specify the features, all features are constructed using `property` m
 ```
   // classifier labels
   val relationLabel = property(relations) {
-    x: RobertsRelation => x.getLabel.toString
+    x: SpRelation => x.getLabel.toString
   }
 ```
 
-The paper used many features in order to achieve the desired performance. `TextAnnotation` makes feature extraction very easy, see [`RobertsDataModel`](RobertsDataModel.scala) for detailed implementations.
+The paper used many features in order to achieve the desired performance. `TextAnnotation` makes feature extraction very easy, see [`SpRLDataModel`](SpRLDataModel.scala) for detailed implementations.
 
 ### Classification
 The paper used a SVM classifier for relation classification. Defining this classifier is straightforward using Saul:
 
 ```
-  val robertsFeatures = List(JF2_1, JF2_2, JF2_3, JF2_4, JF2_5, JF2_6, JF2_7, JF2_8,
+  val relationFeatures = List(JF2_1, JF2_2, JF2_3, JF2_4, JF2_5, JF2_6, JF2_7, JF2_8,
     JF2_9, JF2_10, JF2_11, JF2_12, JF2_13, JF2_14, JF2_15, BH1)
-
-  object robertsSupervised2Classifier extends Learnable[RobertsRelation](relations) {
+  object relationClassifier extends Learnable[SpRelation](relations) {
     override lazy val classifier = new SupportVectorMachine()
-    def label: Property[RobertsRelation] = relationLabel
-    override def feature = using(robertsFeatures)
+    def label: Property[SpRelation] = relationLabel
+    override def feature = using(relationFeatures)
   }
 ```
 We extend `Learnable` class of Saul and specify the type of classifier we want. Next the target label for classification is determined by implementing `label` property and finally the set of features needed for classification is provided.
-You can find this implementation in [`RobertsClassifiers`](RobertsClassifiers.scala)
+You can find this implementation in [`SpRLClassifiers`](SpRLClassifiers.scala)
 
 ## Configurations
 All configurations needed to run this application are placed in 
