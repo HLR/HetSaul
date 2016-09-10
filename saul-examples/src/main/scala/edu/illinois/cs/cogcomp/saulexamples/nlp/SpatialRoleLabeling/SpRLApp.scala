@@ -38,8 +38,8 @@ object SpRLApp extends App with Logging {
   logger.info("population starts.")
 
   modelName match {
-    case "Joint" =>
-      val name = "joint"
+    case "Relation" =>
+      val name = "Relation"
       val lexPath = modelDir + version + File.separator + name + File.separator + "lexicon.lex"
       val lex = if (isTrain) null else loadRobertsLexicon(lexPath)
       PopulateSpRLDataModel(getDataPath(), isTrain, version, modelName, lex)
