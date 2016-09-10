@@ -132,7 +132,7 @@ abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val onClassifi
       )(o.asInstanceOf[T])
   }
 
-  /** Derives Test Instances from the data model.
+  /** Derives test instances from the data model
     *
     * @return Iterable of test instances for this classifier
     */

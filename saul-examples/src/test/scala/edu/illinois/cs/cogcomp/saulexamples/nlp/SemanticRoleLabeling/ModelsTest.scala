@@ -20,9 +20,9 @@ class ModelsTest extends FlatSpec with Matchers {
       .foreach {
         result =>
           result.label match {
-            case "A0" => (result.f1 >= 0.9) should be(true)
-            case "A1" => (result.f1 >= 0.9) should be(true)
-            case "A2" => (result.f1 >= 0.6) should be(true)
+            case "A0" => result.f1 should be(0.95 +- 0.05)
+            case "A1" => result.f1 should be(0.95 +- 0.05)
+            case "A2" => result.f1 should be(0.8 +- 0.2)
             case _ => (result.f1 >= 0.0) should be(true)
           }
       }
@@ -32,8 +32,8 @@ class ModelsTest extends FlatSpec with Matchers {
     ClassifierUtils.LoadClassifier(SRLConfigurator.SRL_JAR_MODEL_PATH.value + "/models_dTr/", predicateClassifier)
     val results = predicateClassifier.test()
     results.perLabel.foreach {
-      case result =>
-        result.label match { case "true" => (result.f1 >= 0.98) should be(true) }
+      result =>
+        result.label match { case "true" => result.f1 should be(0.99 +- 0.01) }
     }
   }
 
@@ -57,7 +57,7 @@ class ModelsTest extends FlatSpec with Matchers {
     ClassifierUtils.LoadClassifier(SRLConfigurator.SRL_JAR_MODEL_PATH.value + "/models_bTr/", argumentXuIdentifierGivenApredicate)
     val results = argumentXuIdentifierGivenApredicate.test()
     results.perLabel.foreach {
-      case result =>
+      result =>
         result.label match { case "true" => (result.f1 >= 0.95) should be(true) }
     }
   }
@@ -66,11 +66,11 @@ class ModelsTest extends FlatSpec with Matchers {
     ClassifierUtils.LoadClassifier(SRLConfigurator.SRL_JAR_MODEL_PATH.value + "/models_cTr/", argumentTypeLearner)
     val results = argumentTypeLearner.test()
     results.perLabel.foreach {
-      case result =>
+      result =>
         result.label match {
-          case "A0" => (result.f1 >= 0.9) should be(true)
-          case "A1" => (result.f1 >= 0.9) should be(true)
-          case "A2" => (result.f1 >= 0.6) should be(true)
+          case "A0" => result.f1 should be(0.95 +- 0.05)
+          case "A1" => result.f1 should be(0.95 +- 0.05)
+          case "A2" => result.f1 should be(0.8 +- 0.2)
           case _ => ""
         }
     }
@@ -80,11 +80,11 @@ class ModelsTest extends FlatSpec with Matchers {
     ClassifierUtils.LoadClassifier(SRLConfigurator.SRL_JAR_MODEL_PATH.value + "/models_fTr/", argumentTypeLearner)
     val results = argumentTypeLearner.test(exclude = "candidate")
     results.perLabel.foreach {
-      case result =>
+      result =>
         result.label match {
-          case "A0" => (result.f1 >= 0.9) should be(true)
-          case "A1" => (result.f1 >= 0.9) should be(true)
-          case "A2" => (result.f1 >= 0.6) should be(true)
+          case "A0" => result.f1 should be(0.95 +- 0.05)
+          case "A1" => result.f1 should be(0.95 +- 0.05)
+          case "A2" => result.f1 should be(0.8 +- 0.2)
           case _ => ""
         }
     }

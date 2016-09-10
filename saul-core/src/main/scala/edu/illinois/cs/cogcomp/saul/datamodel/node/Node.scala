@@ -105,29 +105,30 @@ class Node[T <: AnyRef](val keyFunc: T => Any = (x: T) => x, val tag: ClassTag[T
     val nodeInstance = toNT(instance)
 
     if (containsNT(nodeInstance)) {
-      //       logger.warn(s"The instance $t is duplicate and it will be ignored! " +
-      //         s"This might be because you add the same instance to both train and test set. ")
-      return
-    }
-
-    val order = count.incrementAndGet()
-
-    if (train) {
-      this.trainingSet += nodeInstance
+      logger.trace(s"The instance $t is duplicate and it will be ignored! " +
+        s"This might be because you add the same instance to both train and test set. ")
     } else {
-      this.testingSet += nodeInstance
+
+      val order = count.incrementAndGet()
+
+      if (train) {
+        this.trainingSet.add(nodeInstance)
+      } else {
+        this.testingSet.add(nodeInstance)
+      }
+
+      this.collection.add(nodeInstance)
+      this.orderingMap.put(order, nodeInstance)
+      this.reverseOrderingMap.put(nodeInstance, order)
+
+      if (populateEdge) {
+        outgoing.foreach(_.populateUsingFrom(instance, train))
+        incoming.foreach(_.populateUsingTo(instance, train))
+      }
+
+      // TODO: Populating join nodes takes significant amount of time on large graphs. Investigate.
+      joinNodes.foreach(_.addFromChild(this, instance, train, populateEdge))
     }
-
-    this.collection.add(nodeInstance)
-    this.orderingMap.put(order, nodeInstance)
-    this.reverseOrderingMap.put(nodeInstance, order)
-
-    if (populateEdge) {
-      outgoing.foreach(_.populateUsingFrom(instance, train))
-      incoming.foreach(_.populateUsingTo(instance, train))
-    }
-
-    joinNodes.foreach(_.addFromChild(this, instance, train, populateEdge))
   }
 
   def populateFrom(n: Node[_]): Unit = {
