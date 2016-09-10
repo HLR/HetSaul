@@ -6,7 +6,7 @@
   */
 package edu.illinois.cs.cogcomp.saul.datamodel
 
-import edu.illinois.cs.cogcomp.lbjava.util.{ ExceptionlessInputStream, ExceptionlessOutputStream }
+import edu.illinois.cs.cogcomp.core.datastructures.vectors.{ ExceptionlessInputStream, ExceptionlessOutputStream }
 import edu.illinois.cs.cogcomp.saul.datamodel.edge.{ AsymmetricEdge, Edge, Link, SymmetricEdge }
 import edu.illinois.cs.cogcomp.saul.datamodel.node.{ JoinNode, Node, NodeProperty }
 import edu.illinois.cs.cogcomp.saul.datamodel.property.features.discrete._

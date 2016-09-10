@@ -6,7 +6,7 @@
   */
 package edu.illinois.cs.cogcomp.saulexamples.nlp.EntityRelation
 
-import edu.illinois.cs.cogcomp.saul.classifier.{ ClassifierUtils, JointTrain }
+import edu.illinois.cs.cogcomp.saul.classifier.{ ClassifierUtils, JointTrainSparseNetwork }
 import edu.illinois.cs.cogcomp.saul.util.Logging
 import edu.illinois.cs.cogcomp.saulexamples.EntityMentionRelation.datastruct.ConllRelation
 import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityRelation.EntityRelationClassifiers._
@@ -14,7 +14,7 @@ import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityRelation.EntityRelationDat
 import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityRelation.EntityRelationConstrainedClassifiers._
 
 object EntityRelationApp extends Logging {
-  // learned models from the "saul-conll-er-tagger-models" jar package
+  // learned models from the "saul-er-models" jar package
   val jarModelPath = "edu/illinois/cs/cogcomp/saulexamples/nlp/EntityRelation/models/"
 
   def main(args: Array[String]): Unit = {
@@ -118,7 +118,7 @@ object EntityRelationApp extends Logging {
     // joint training
     val jointTrainIteration = 5
     logger.info(s"Joint training $jointTrainIteration iterations. ")
-    JointTrain.train[ConllRelation](
+    JointTrainSparseNetwork.train[ConllRelation](
       pairs,
       PerConstrainedClassifier :: OrgConstrainedClassifier :: LocConstrainedClassifier ::
         WorksFor_PerOrg_ConstrainedClassifier :: LivesIn_PerOrg_relationConstrainedClassifier :: Nil,

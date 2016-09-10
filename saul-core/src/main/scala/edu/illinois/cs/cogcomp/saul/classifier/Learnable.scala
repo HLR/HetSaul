@@ -9,13 +9,13 @@ package edu.illinois.cs.cogcomp.saul.classifier
 import java.io.File
 import java.net.URL
 
+import edu.illinois.cs.cogcomp.core.datastructures.vectors.ExceptionlessOutputStream
 import edu.illinois.cs.cogcomp.core.io.IOUtils
 import edu.illinois.cs.cogcomp.lbjava.classify.{ FeatureVector, TestDiscrete }
 import edu.illinois.cs.cogcomp.lbjava.learn.Learner.Parameters
 import edu.illinois.cs.cogcomp.lbjava.learn._
-import edu.illinois.cs.cogcomp.lbjava.parse.{ FoldParser, Parser }
 import edu.illinois.cs.cogcomp.lbjava.parse.FoldParser.SplitPolicy
-import edu.illinois.cs.cogcomp.lbjava.util.ExceptionlessOutputStream
+import edu.illinois.cs.cogcomp.lbjava.parse.{ FoldParser, Parser }
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
 import edu.illinois.cs.cogcomp.saul.datamodel.edge.Link
 import edu.illinois.cs.cogcomp.saul.datamodel.node.Node
