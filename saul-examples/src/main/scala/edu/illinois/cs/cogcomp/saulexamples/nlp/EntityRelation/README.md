@@ -35,29 +35,29 @@ for this problem. Also there is a summary of the performances for our main class
         Person Classifier Evaluation
          Label   Precision Recall   F1   LCount PCount
         ----------------------------------------------
-        false       99.447 98.472 98.957  61178  60578
-        true        63.900 83.166 72.271   1990   2590
+        false       98.728 99.706 99.214  61178  61784
+        true        86.994 60.503 71.369   1990   1384
         ----------------------------------------------
-        Accuracy    97.989   -      -      -     63168
+        Accuracy    98.471   -      -      -     63168
         ==============================================
         Organization Classifier Evaluation
          Label   Precision Recall   F1   LCount PCount
         ----------------------------------------------
-        false       99.069 98.693 98.881  61896  61661
-        true        46.317 54.874 50.234   1272   1507
+        false       98.666 99.798 99.229  61896  62606
+        true        77.758 34.355 47.655   1272    562
         ----------------------------------------------
-        Accuracy    97.811   -      -      -     63168
+        Accuracy    98.480   -      -      -     63168
         ==============================================
         Location Classifier Evaluation
          Label   Precision Recall   F1   LCount PCount
         ----------------------------------------------
-        false       98.985 98.823 98.904  60760  60661
-        true        71.480 74.419 72.920   2408   2507
+        false       98.334 99.676 99.000  60760  61589
+        true        87.524 57.392 69.325   2408   1579
         ----------------------------------------------
-        Accuracy    97.893   -      -      -     63168
+        Accuracy    98.064   -      -      -     63168
         ==============================================
 ```
-            
+
 And the summary of performances for independent relation classifiers:
 
 ```
@@ -65,34 +65,34 @@ And the summary of performances for independent relation classifiers:
          WorksFor Classifier Evaluation
           Label   Precision Recall   F1   LCount PCount
          ----------------------------------------------
-         false       96.916 51.765 67.485    850    454
-         true        20.388 88.235 33.123    119    515
+         false       91.317 71.765 80.369    850    668
+         true        20.266 51.261 29.048    119    301
          ----------------------------------------------
-         Accuracy    56.244   -      -      -       969
+         Accuracy    69.247   -      -      -       969
          ==============================================
          LivesIn Classifier Evaluation
           Label   Precision Recall   F1   LCount PCount
          ----------------------------------------------
-         false       76.319 85.694 80.735    692    777
-         true        48.438 33.574 39.659    277    192
+         false       78.524 86.127 82.150    692    759
+         true        54.286 41.155 46.817    277    210
          ----------------------------------------------
-         Accuracy    70.795   -      -      -       969
+         Accuracy    73.271   -      -      -       969
          ==============================================
          LocatedIn Classifier Evaluation
           Label   Precision Recall   F1   LCount PCount
          ----------------------------------------------
-         false       98.899 99.446 99.172    903    908
-         true        91.803 84.848 88.189     66     61
+         false       99.779 99.889 99.834    903    904
+         true        98.462 96.970 97.710     66     65
          ----------------------------------------------
-         Accuracy    98.452   -      -      -       969
+         Accuracy    99.690   -      -      -       969
          ==============================================
          OrgBasedIn Classifier Evaluation
           Label   Precision Recall   F1   LCount PCount
          ----------------------------------------------
-         false       99.174 98.630 98.901    730    726
-         true        95.885 97.490 96.680    239    243
+         false       97.067 99.726 98.378    730    750
+         true        99.087 90.795 94.760    239    219
          ----------------------------------------------
-         Accuracy    98.349   -      -      -       969
+         Accuracy    97.523   -      -      -       969
          ==============================================
 ```
 
@@ -112,20 +112,20 @@ And the summary of performances for independent relation classifiers:
         WorksFor Pipeline Classifier Evaluation
          Label   Precision Recall   F1   LCount PCount
         ----------------------------------------------
-        false       93.608 77.529 84.813    850    704
-        true        27.925 62.185 38.542    119    265
+        false       93.740 72.235 81.595    850    655
+        true        24.841 65.546 36.028    119    314
         ----------------------------------------------
-        Accuracy    75.645   -      -      -       969
+        Accuracy    71.414   -      -      -       969
         ==============================================
         LivesIn Pipeline Classifier Evaluation
          Label   Precision Recall   F1   LCount PCount
         ----------------------------------------------
-        false       78.062 83.815 80.836    692    743
-        true        50.442 41.155 45.328    277    226
+        false       77.060 87.861 82.107    692    789
+        true        53.333 34.657 42.013    277    180
         ----------------------------------------------
-        Accuracy    71.620   -      -      -       969
+        Accuracy    72.652   -      -      -       969
         ==============================================
-```         
+```
             
  - Learning Plus Inference (L+I): In the scenario the classifiers are learned independently but at the test time we use 
             constrained inference to maintain structural consistency. We device constraints to relate independent entity 
@@ -136,43 +136,43 @@ And the summary of performances for independent relation classifiers:
         Person Classifier Evaluation with training
          Label   Precision Recall   F1   LCount PCount
         ----------------------------------------------
-        false       99.724 98.875 99.297 124800 123738
-        true        71.802 91.269 80.373   3917   4979
+        false       98.761 99.703 99.230  61178  61761
+        true        87.065 61.558 72.122   1990   1407
         ----------------------------------------------
-        Accuracy    98.644   -      -      -    128717
+        Accuracy    98.501   -      -      -     63168
         ==============================================
         Organization Classifier Evaluation
          Label   Precision Recall   F1   LCount PCount
         ----------------------------------------------
-        false       99.538 99.090 99.314 126219 125650
-        true        62.537 76.781 68.931   2498   3067
+        false       98.681 99.615 99.146  61896  62482
+        true        65.306 35.220 45.761   1272    686
         ----------------------------------------------
-        Accuracy    98.657   -      -      -    128717
+        Accuracy    98.319   -      -      -     63168
         ==============================================
         Location Classifier Evaluation
          Label   Precision Recall   F1   LCount PCount
         ----------------------------------------------
-        false       99.465 99.255 99.360 123952 123691
-        true        81.635 86.107 83.812   4765   5026
+        false       98.375 99.617 98.992  60760  61527
+        true        85.801 58.472 69.548   2408   1641
         ----------------------------------------------
-        Accuracy    98.769   -      -      -    128717
+        Accuracy    98.048   -      -      -     63168
         ==============================================
         WorkFor Classifier Evaluation
          Label   Precision Recall   F1   LCount PCount
         ----------------------------------------------
-        false       98.253 81.967 89.374   1647   1374
-        true        55.935 94.015 70.140    401    674
+        false       90.530 84.353 87.333    850    792
+        true        24.859 36.975 29.730    119    177
         ----------------------------------------------
-        Accuracy    84.326   -      -      -      2048
+        Accuracy    78.535   -      -      -       969
         ==============================================
         LivesIn Classifier Evaluation
          Label   Precision Recall   F1   LCount PCount
         ----------------------------------------------
-        false       85.581 96.005 90.494   1527   1713
-        true        81.791 52.591 64.019    521    335
+        false       76.347 94.220 84.347    692    854
+        true        65.217 27.076 38.265    277    115
         ----------------------------------------------
-        Accuracy    84.961   -      -      -      2048
-        ==============================================           
+        Accuracy    75.026   -      -      -       969
+        ==============================================
 ```           
             
  - Joint Training: We seek to train classifiers so they will produce the correct global classification. To
@@ -180,66 +180,47 @@ And the summary of performances for independent relation classifiers:
                   determines which classifiers to train so that together, the classifiers and the inference procedure 
                   yield the desired result. 
 ```
-        Peop
-        tp: 1914.0 fp: 480.0 tn: 63142.0 fn: 13.0 
-         accuracy    0.99247890890784 
-         precision   0.7994987468671679 
-         recall      0.9932537623248573 
-         f1          0.8859060402684564 
-        Peop
-        tp: 1915.0 fp: 484.0 tn: 63138.0 fn: 12.0 
-         accuracy    0.9924331416192467 
-         precision   0.7982492705293872 
-         recall      0.9937727036844837 
-         f1          0.8853444290337494 
-        Org
-        tp: 1194.0 fp: 242.0 tn: 64081.0 fn: 32.0 
-         accuracy    0.9958199209751484 
-         precision   0.8314763231197771 
-         recall      0.9738988580750407 
-         f1          0.8970698722764838 
-        Org
-        tp: 1196.0 fp: 242.0 tn: 64081.0 fn: 30.0 
-         accuracy    0.9958504325008772 
-         precision   0.8317107093184979 
-         recall      0.9755301794453507 
-         f1          0.8978978978978979 
-        Loc
-        tp: 2290.0 fp: 1015.0 tn: 62177.0 fn: 67.0 
-         accuracy    0.9834932645806953 
-         precision   0.6928895612708018 
-         recall      0.9715740347899873 
-         f1          0.8089014482515012 
-        Loc
-        tp: 2298.0 fp: 1015.0 tn: 62177.0 fn: 59.0 
-         accuracy    0.9836153106836107 
-         precision   0.693631150015092 
-         recall      0.9749681798896903 
-         f1          0.8105820105820106 
-        Work_For
-        tp: 281.0 fp: 54.0 tn: 743.0 fn: 1.0 
-         accuracy    0.9490268767377201 
-         precision   0.8388059701492537 
-         recall      0.9964539007092199 
-         f1          0.9108589951377634 
-        Work_For
-        tp: 282.0 fp: 1.0 tn: 796.0 fn: 0.0 
-         accuracy    0.9990732159406858 
-         precision   0.9964664310954063 
-         recall      1.0 
-         f1          0.9982300884955753 
-        Live_In
-        tp: 244.0 fp: 147.0 tn: 688.0 fn: 0.0 
-         accuracy    0.8637627432808156 
-         precision   0.6240409207161125 
-         recall      1.0 
-         f1          0.768503937007874 
-        Live_In
-        tp: 243.0 fp: 18.0 tn: 817.0 fn: 1.0 
-         accuracy    0.9823911028730306 
-         precision   0.9310344827586207 
-         recall      0.9959016393442623 
-         f1          0.9623762376237623 
+        ==============================================
+        Person Classifier Evaluation
+         Label   Precision Recall   F1   LCount PCount
+        ----------------------------------------------
+        false       98.804 99.696 99.248  61178  61730
+        true        87.065 62.915 73.046   1990   1438
+        ----------------------------------------------
+        Accuracy    98.537   -      -      -     63168
+        ==============================================
+        Organization Classifier Evaluation
+         Label   Precision Recall   F1   LCount PCount
+        ----------------------------------------------
+        false       98.692 99.573 99.131  61896  62449
+        true        63.282 35.770 45.706   1272    719
+        ----------------------------------------------
+        Accuracy    98.289   -      -      -     63168
+        ==============================================
+        Location Classifier Evaluation
+         Label   Precision Recall   F1   LCount PCount
+        ----------------------------------------------
+        false       98.498 99.516 99.004  60760  61388
+        true        83.483 61.711 70.965   2408   1780
+        ----------------------------------------------
+        Accuracy    98.075   -      -      -     63168
+        ==============================================
+        WorkFor Classifier Evaluation
+         Label   Precision Recall   F1   LCount PCount
+        ----------------------------------------------
+        false       91.711 80.706 85.857    850    748
+        true        25.792 47.899 33.529    119    221
+        ----------------------------------------------
+        Accuracy    76.677   -      -      -       969
+        ==============================================
+        LivesIn Classifier Evaluation
+         Label   Precision Recall   F1   LCount PCount
+        ----------------------------------------------
+        false       77.904 89.162 83.154    692    792
+        true        57.627 36.823 44.934    277    177
+        ----------------------------------------------
+        Accuracy    74.200   -      -      -       969
+        ==============================================
 ```
 
 ## Using it in your code

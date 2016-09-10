@@ -6,7 +6,7 @@
   */
 package edu.illinois.cs.cogcomp.saul.datamodel.edge
 
-import edu.illinois.cs.cogcomp.lbjava.util.{ ExceptionlessInputStream, ExceptionlessOutputStream }
+import edu.illinois.cs.cogcomp.core.datastructures.vectors.{ ExceptionlessInputStream, ExceptionlessOutputStream }
 import edu.illinois.cs.cogcomp.saul.datamodel.node.Node
 
 import scala.collection.mutable

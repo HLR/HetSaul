@@ -3,7 +3,7 @@ import sbtrelease.ReleaseStateTransformations._
 
 scalaVersion in ThisBuild := "2.11.7"
 
-val cogcompNLPVersion = "3.0.64"
+val cogcompNLPVersion = "3.0.71"
 val cogcompPipelineVersion = "0.1.25"
 val ccgGroupId = "edu.illinois.cs.cogcomp"
 val headerMsg =  """/** This software is released under the University of Illinois/Research and Academic Use License. See
@@ -62,7 +62,7 @@ lazy val commonSettings = Seq(
   ),
   javaOptions ++= List("-Xmx11g"),
   libraryDependencies ++= Seq(
-    ccgGroupId % "LBJava" % "1.2.20" withSources,
+    ccgGroupId % "LBJava" % "1.2.24" withSources,
     ccgGroupId % "illinois-core-utilities" % cogcompNLPVersion withSources,
     "com.gurobi" % "gurobi" % "6.0",
     "org.apache.commons" % "commons-math3" % "3.0",
@@ -101,9 +101,10 @@ lazy val saulExamples = (project in file("saul-examples")).
       ccgGroupId % "illinois-curator" % cogcompNLPVersion,
       ccgGroupId % "illinois-edison" % cogcompNLPVersion,
       ccgGroupId % "illinois-corpusreaders" % cogcompNLPVersion,
+      ccgGroupId % "illinois-pos" % cogcompNLPVersion,
       ccgGroupId % "saul-pos-tagger-models" % "1.3",
-      ccgGroupId % "saul-er-models" % "1.3",
-      ccgGroupId % "saul-srl-models" % "1.1"
+      ccgGroupId % "saul-er-models" % "1.5",
+      ccgGroupId % "saul-srl-models" % "1.2"
     )
   ).dependsOn(saulCore)
   .aggregate(saulCore)

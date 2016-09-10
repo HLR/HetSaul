@@ -30,7 +30,12 @@ import scala.collection.JavaConversions._
   */
 object PopulateSRLDataModel extends Logging {
 
-  def apply[T <: AnyRef](testOnly: Boolean = false, useGoldPredicate: Boolean = false, useGoldArgBoundaries: Boolean = false, rm: ResourceManager = new SRLConfigurator().getDefaultConfig): SRLMultiGraphDataModel = {
+  def apply[T <: AnyRef](
+    testOnly: Boolean = false,
+    useGoldPredicate: Boolean = false,
+    useGoldArgBoundaries: Boolean = false,
+    rm: ResourceManager = new SRLConfigurator().getDefaultConfig
+  ): SRLMultiGraphDataModel = {
 
     val frameManager: SRLFrameManager = new SRLFrameManager(rm.getString(SRLConfigurator.PROPBANK_HOME.key))
     val useCurator = rm.getBoolean(SRLConfigurator.USE_CURATOR)

@@ -6,7 +6,8 @@
   */
 package edu.illinois.cs.cogcomp.saul.constraint
 
-import edu.illinois.cs.cogcomp.lbjava.infer.{ ILPSolver, ParameterizedConstraint, FirstOrderConstraint }
+import edu.illinois.cs.cogcomp.infer.ilp.ILPSolver
+import edu.illinois.cs.cogcomp.lbjava.infer.{ ParameterizedConstraint, FirstOrderConstraint }
 import edu.illinois.cs.cogcomp.saul.classifier.infer.InferenceCondition
 
 import scala.reflect.ClassTag

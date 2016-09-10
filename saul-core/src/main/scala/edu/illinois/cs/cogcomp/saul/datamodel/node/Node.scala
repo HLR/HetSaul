@@ -6,15 +6,17 @@
   */
 package edu.illinois.cs.cogcomp.saul.datamodel.node
 
+import edu.illinois.cs.cogcomp.core.datastructures.vectors.{ ExceptionlessInputStream, ExceptionlessOutputStream }
 import edu.illinois.cs.cogcomp.lbjava.classify.FeatureVector
-import edu.illinois.cs.cogcomp.lbjava.util.{ ExceptionlessInputStream, ExceptionlessOutputStream }
+import edu.illinois.cs.cogcomp.saul.datamodel.edge.Edge
 import edu.illinois.cs.cogcomp.saul.datamodel.property.Property
 import edu.illinois.cs.cogcomp.saul.datamodel.property.features.discrete.DiscreteProperty
-import edu.illinois.cs.cogcomp.saul.datamodel.edge.Edge
 import edu.illinois.cs.cogcomp.saul.util.Logging
 
-import scala.collection.mutable.{ ArrayBuffer, ListBuffer, HashMap => MutableHashMap, LinkedHashSet => MutableSet, Map => MutableMap }
+import java.util.concurrent.atomic.AtomicInteger
+
 import scala.collection.mutable
+import scala.collection.mutable.{ ArrayBuffer, ListBuffer, HashMap => MutableHashMap, LinkedHashSet => MutableSet, Map => MutableMap }
 import scala.reflect.ClassTag
 
 trait NodeProperty[T <: AnyRef] extends Property[T] {
@@ -85,19 +87,7 @@ class Node[T <: AnyRef](val keyFunc: T => Any = (x: T) => x, val tag: ClassTag[T
     for (e <- outgoing) e.clear
   }
 
-  private var count = 0
-
-  private def incrementCount(): Int = this.synchronized {
-    val ret = count
-    count = count + 1
-    ret
-  }
-
-  private def decreaseCount(): Int = this.synchronized {
-    val ret = count
-    count = count - 1
-    ret
-  }
+  private var count: AtomicInteger = new AtomicInteger()
 
   def contains(t: T): Boolean = collection.contains(toNT(t))
 
@@ -105,21 +95,39 @@ class Node[T <: AnyRef](val keyFunc: T => Any = (x: T) => x, val tag: ClassTag[T
 
   private def containsNT(nt: NT): Boolean = collection.contains(nt)
 
-  def addInstance(t: T, train: Boolean = true, populateEdge: Boolean = true) = {
-    val nt = toNT(t)
-    if (!containsNT(nt)) {
-      val order = incrementCount()
-      if (train) this.trainingSet += nt else this.testingSet += nt
-      this.collection += nt
-      this.orderingMap += (order -> nt)
-      this.reverseOrderingMap += (nt -> order)
-      if (populateEdge) {
-        outgoing.foreach(_.populateUsingFrom(t, train))
-        incoming.foreach(_.populateUsingTo(t, train))
-      }
-      joinNodes.foreach(_.addFromChild(this, t, train, populateEdge))
+  /** Adds an instance to the the [[Node]].
+    *
+    * @param instance Node instance.
+    * @param train If the instance is a training instance.
+    * @param populateEdge If populating edges from the current Node.
+    */
+  def addInstance(instance: T, train: Boolean = true, populateEdge: Boolean = true): Unit = {
+    val nodeInstance = toNT(instance)
+
+    if (containsNT(nodeInstance)) {
+      logger.trace(s"The instance $instance is duplicate and it will be ignored! " +
+        s"This might be because you add the same instance to both train and test set. ")
     } else {
-      logger.warn(s"The instance $t is duplicate and it will be ignored! This might be because you add the same instance to both train and test set. ")
+
+      val order = count.incrementAndGet()
+
+      if (train) {
+        this.trainingSet.add(nodeInstance)
+      } else {
+        this.testingSet.add(nodeInstance)
+      }
+
+      this.collection.add(nodeInstance)
+      this.orderingMap.put(order, nodeInstance)
+      this.reverseOrderingMap.put(nodeInstance, order)
+
+      if (populateEdge) {
+        outgoing.foreach(_.populateUsingFrom(instance, train))
+        incoming.foreach(_.populateUsingTo(instance, train))
+      }
+
+      // TODO: Populating join nodes takes significant amount of time on large graphs. Investigate.
+      joinNodes.foreach(_.addFromChild(this, instance, train, populateEdge))
     }
   }
 
@@ -265,7 +273,7 @@ class Node[T <: AnyRef](val keyFunc: T => Any = (x: T) => x, val tag: ClassTag[T
   }
 
   def writeDerivedInstances(out: ExceptionlessOutputStream) = {
-    out.writeInt(count)
+    out.writeInt(count.get())
     out.writeInt(derivedInstances.size)
     derivedInstances.foreach {
       case (id, featureVector) =>
@@ -275,7 +283,7 @@ class Node[T <: AnyRef](val keyFunc: T => Any = (x: T) => x, val tag: ClassTag[T
   }
 
   def loadDerivedInstances(in: ExceptionlessInputStream) = {
-    count = in.readInt()
+    count = new AtomicInteger(in.readInt())
     val instanceCount = in.readInt()
     (0 until instanceCount).foreach {
       lineIndex =>
@@ -290,10 +298,9 @@ class Node[T <: AnyRef](val keyFunc: T => Any = (x: T) => x, val tag: ClassTag[T
   final val propertyCacheList = new ListBuffer[MutableHashMap[_, Any]]()
 
   def clearPropertyCache(): Unit = {
-    if (propertyCacheList nonEmpty) {
+    if (propertyCacheList.nonEmpty) {
       logger.info("clean property cache: cleaning " + propertyCacheList.size + " maps")
       propertyCacheList.foreach(_.clear)
     }
   }
 }
-
