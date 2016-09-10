@@ -21,9 +21,9 @@ object TextAnnotationFactory {
 
   val settings = new Properties()
   settings.setProperty(PipelineConfigurator.USE_POS.key, Configurator.TRUE)
-  settings.setProperty(PipelineConfigurator.USE_NER_CONLL.key, Configurator.TRUE)
+  settings.setProperty(PipelineConfigurator.USE_NER_CONLL.key, Configurator.FALSE)
   settings.setProperty(PipelineConfigurator.USE_NER_ONTONOTES.key, Configurator.FALSE)
-  settings.setProperty(PipelineConfigurator.USE_SRL_VERB.key, Configurator.TRUE)
+  settings.setProperty(PipelineConfigurator.USE_SRL_VERB.key, Configurator.FALSE)
   settings.setProperty(PipelineConfigurator.USE_SRL_NOM.key, Configurator.FALSE)
   settings.setProperty(PipelineConfigurator.USE_STANFORD_DEP.key, Configurator.TRUE)
   settings.setProperty(PipelineConfigurator.USE_SHALLOW_PARSE.key, Configurator.TRUE)

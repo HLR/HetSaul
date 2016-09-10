@@ -86,14 +86,14 @@ object SpRLSensors extends Logging {
     val down = paths.getSecond.asScala.toList
 
     val path: StringBuilder = new StringBuilder
-    var i = 0;
+    var i = 0
     while (i < up.size - 1) {
-      path.append(getRelationName(relations, up(i), up(i + 1), "Ã¢â€ â€˜"))
+      path.append(getRelationName(relations, up(i), up(i + 1), "↑"))
       i += 1
     }
     i = down.size - 1
     while (i > 0) {
-      path.append(getRelationName(relations, down(i), down(i - 1), "Ã¢â€ â€œ"))
+      path.append(getRelationName(relations, down(i), down(i - 1), "↓"))
       i -= 1
     }
 
