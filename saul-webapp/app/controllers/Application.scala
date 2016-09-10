@@ -27,7 +27,7 @@ object Application {
     "scala.tools.nsc.Interpreter",
     "scala.AnyVal",
     "edu.illinois.cs.cogcomp.saulexamples.nlp.EmailSpam.SpamApp",
-    "edu.illinois.cs.cogcomp.saulexamples.bioInformatics.regressionModel.MyApp",
+    "edu.illinois.cs.cogcomp.saulexamples.DrugResponse.myApp",
     "edu.illinois.cs.cogcomp.saul.datamodel.DataModel",
     "edu.illinois.cs.cogcomp.lbjava.parse.Parser",
     "edu.illinois.cs.cogcomp.core.datastructures.textannotation.TextAnnotation",
