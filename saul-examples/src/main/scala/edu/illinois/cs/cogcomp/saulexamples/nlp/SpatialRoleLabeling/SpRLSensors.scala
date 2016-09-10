@@ -6,13 +6,13 @@
   */
 package edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling
 
-import edu.illinois.cs.cogcomp.core.datastructures.{IntPair, ViewNames}
+import edu.illinois.cs.cogcomp.core.datastructures.{ IntPair, ViewNames }
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation._
 import edu.illinois.cs.cogcomp.edison.features.helpers.PathFeatureHelper
 import edu.illinois.cs.cogcomp.nlp.utilities.CollinsHeadFinder
 import edu.illinois.cs.cogcomp.saul.util.Logging
 import edu.illinois.cs.cogcomp.saulexamples.nlp.CommonSensors
-import edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling.Triplet.{SpRelation, SpRelationLabels}
+import edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling.Triplet.{ SpRelation, SpRelationLabels }
 
 import scala.collection.JavaConverters._
 import scala.collection.immutable.HashSet
@@ -88,12 +88,12 @@ object SpRLSensors extends Logging {
     val path: StringBuilder = new StringBuilder
     var i = 0;
     while (i < up.size - 1) {
-      path.append(getRelationName(relations, up(i), up(i + 1), "↑"))
+      path.append(getRelationName(relations, up(i), up(i + 1), "Ã¢â€ â€˜"))
       i += 1
     }
     i = down.size - 1
     while (i > 0) {
-      path.append(getRelationName(relations, down(i), down(i - 1), "↓"))
+      path.append(getRelationName(relations, down(i), down(i - 1), "Ã¢â€ â€œ"))
       i -= 1
     }
 
