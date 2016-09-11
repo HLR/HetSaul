@@ -1,12 +1,11 @@
 # Saul Webapp 
 
 ## Running
-- Through sbt: 
-- Run `sbt`
-- Choose the project: `project webApp`
-- Run it: `run`
+- Enter the sbt environment: `sbt`
+- Choose the webapp project: `project webApp`
+- Spin up the webapp: `run`; to specify a port, include it after `run`: `run PORT_NUM`. 
 
-To stop it, use `Ctrl+D`
+To stop it, use `Ctrl+D`. 
 
 ## Usage
 After spinning up the server, go to `localhost:9000` through any web browser.
