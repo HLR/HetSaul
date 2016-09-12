@@ -45,9 +45,7 @@ object PopulateSRLDataModel extends Logging {
       case true =>
         val nonDefaultProps = new Properties()
         TextAnnotationFactory.enableSettings(nonDefaultProps, RESPECT_TOKENIZATION)
-        CuratorFactory.buildCuratorClient(
-          new CuratorConfigurator().getConfig(new ResourceManager(nonDefaultProps))
-        )
+        TextAnnotationFactory.createCuratorAnnotatorService(nonDefaultProps)
       case false =>
         val nonDefaultProps = new Properties()
         TextAnnotationFactory.disableSettings(nonDefaultProps, USE_NER_CONLL, USE_NER_ONTONOTES, USE_SRL_VERB, USE_SRL_NOM, USE_STANFORD_DEP)
