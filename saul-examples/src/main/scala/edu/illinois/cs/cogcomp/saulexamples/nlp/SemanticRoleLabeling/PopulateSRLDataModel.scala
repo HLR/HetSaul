@@ -12,17 +12,17 @@ import edu.illinois.cs.cogcomp.annotation.AnnotatorException
 import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{ Constituent, TextAnnotation, TreeView }
 import edu.illinois.cs.cogcomp.core.datastructures.trees.Tree
-import edu.illinois.cs.cogcomp.core.utilities.configuration.{ Configurator, ResourceManager }
+import edu.illinois.cs.cogcomp.core.utilities.configuration.ResourceManager
+import edu.illinois.cs.cogcomp.curator.CuratorConfigurator._
 import edu.illinois.cs.cogcomp.curator.{ CuratorConfigurator, CuratorFactory }
 import edu.illinois.cs.cogcomp.edison.annotators.ClauseViewGenerator
-import edu.illinois.cs.cogcomp.nlp.common.PipelineConfigurator
-import edu.illinois.cs.cogcomp.nlp.pipeline.IllinoisPipelineFactory
+import edu.illinois.cs.cogcomp.nlp.common.PipelineConfigurator._
 import edu.illinois.cs.cogcomp.nlp.utilities.ParseUtils
 import edu.illinois.cs.cogcomp.saul.util.Logging
 import edu.illinois.cs.cogcomp.saulexamples.data.{ SRLDataReader, SRLFrameManager }
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLSensors._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.CommonSensors._
-import org.slf4j.{ Logger, LoggerFactory }
+import edu.illinois.cs.cogcomp.saulexamples.nlp.TextAnnotationFactory
 
 import scala.collection.JavaConversions._
 
@@ -44,24 +44,16 @@ object PopulateSRLDataModel extends Logging {
     val annotatorService = useCurator match {
       case true =>
         val nonDefaultProps = new Properties()
-        nonDefaultProps.setProperty(CuratorConfigurator.RESPECT_TOKENIZATION.key, Configurator.TRUE)
+        TextAnnotationFactory.enableSettings(nonDefaultProps, RESPECT_TOKENIZATION)
         CuratorFactory.buildCuratorClient(
           new CuratorConfigurator().getConfig(new ResourceManager(nonDefaultProps))
         )
       case false =>
         val nonDefaultProps = new Properties()
+        TextAnnotationFactory.disableSettings(nonDefaultProps, USE_NER_CONLL, USE_NER_ONTONOTES, USE_SRL_VERB, USE_SRL_NOM, USE_STANFORD_DEP)
         if (parseViewName.equals(ViewNames.PARSE_GOLD))
-          nonDefaultProps.setProperty(PipelineConfigurator.USE_POS.key, Configurator.FALSE)
-        nonDefaultProps.setProperty(PipelineConfigurator.USE_NER_CONLL.key, Configurator.FALSE)
-        nonDefaultProps.setProperty(PipelineConfigurator.USE_NER_ONTONOTES.key, Configurator.FALSE)
-        nonDefaultProps.setProperty(PipelineConfigurator.USE_SRL_VERB.key, Configurator.FALSE)
-        nonDefaultProps.setProperty(PipelineConfigurator.USE_SRL_NOM.key, Configurator.FALSE)
-        nonDefaultProps.setProperty(PipelineConfigurator.USE_STANFORD_DEP.key, Configurator.FALSE)
-        if (parseViewName.equals(ViewNames.PARSE_GOLD))
-          nonDefaultProps.setProperty(PipelineConfigurator.USE_STANFORD_PARSE.key, Configurator.FALSE)
-        IllinoisPipelineFactory.buildPipeline(
-          new CuratorConfigurator().getConfig(new ResourceManager(nonDefaultProps))
-        )
+          TextAnnotationFactory.disableSettings(nonDefaultProps, USE_POS, USE_STANFORD_PARSE)
+        TextAnnotationFactory.createPipelineAnnotatorService(nonDefaultProps)
     }
     val clauseViewGenerator = parseViewName match {
       case ViewNames.PARSE_GOLD => new ClauseViewGenerator(parseViewName, "CLAUSES_GOLD")

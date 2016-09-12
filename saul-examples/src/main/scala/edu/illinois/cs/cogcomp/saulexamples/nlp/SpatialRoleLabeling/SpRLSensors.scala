@@ -182,10 +182,10 @@ object SpRLSensors extends Logging {
       val parsePhrase = tree.getParsePhrase(phrase)
       val headId = CollinsHeadFinder.getInstance.getHeadWordPosition(parsePhrase)
       val head = ta.getView(ViewNames.TOKENS).asInstanceOf[TokenLabelView].getConstituentAtToken(headId)
-      if (constituents.exists(x => x.getSpan == head.getSpan) && isArgCandidate(head))
+      if (constituents.exists(_.getSpan == head.getSpan) && isArgCandidate(head))
         return headId
 
-      val candidates = constituents.filter(c => isArgCandidate(c))
+      val candidates = constituents.filter(isArgCandidate)
       if (candidates.nonEmpty) {
         val lastId = candidates.last.getStartSpan
         return lastId

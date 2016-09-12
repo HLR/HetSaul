@@ -9,47 +9,45 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp
 import java.util.Properties
 
 import edu.illinois.cs.cogcomp.annotation.AnnotatorService
+import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.{ TextAnnotation, TokenLabelView }
-import edu.illinois.cs.cogcomp.core.utilities.configuration.{ Configurator, ResourceManager }
-import edu.illinois.cs.cogcomp.curator.CuratorConfigurator
-import edu.illinois.cs.cogcomp.nlp.common.PipelineConfigurator
+import edu.illinois.cs.cogcomp.core.utilities.configuration.{ Configurator, Property, ResourceManager }
+import edu.illinois.cs.cogcomp.curator.{ CuratorConfigurator, CuratorFactory }
+import edu.illinois.cs.cogcomp.curator.CuratorConfigurator._
+import edu.illinois.cs.cogcomp.nlp.common.PipelineConfigurator._
 import edu.illinois.cs.cogcomp.nlp.pipeline.IllinoisPipelineFactory
 
 /** Created by taher on 7/30/16.
   */
 object TextAnnotationFactory {
 
-  val settings = new Properties()
-  settings.setProperty(PipelineConfigurator.USE_POS.key, Configurator.TRUE)
-  settings.setProperty(PipelineConfigurator.USE_NER_CONLL.key, Configurator.FALSE)
-  settings.setProperty(PipelineConfigurator.USE_NER_ONTONOTES.key, Configurator.FALSE)
-  settings.setProperty(PipelineConfigurator.USE_SRL_VERB.key, Configurator.FALSE)
-  settings.setProperty(PipelineConfigurator.USE_SRL_NOM.key, Configurator.FALSE)
-  settings.setProperty(PipelineConfigurator.USE_STANFORD_DEP.key, Configurator.TRUE)
-  settings.setProperty(PipelineConfigurator.USE_SHALLOW_PARSE.key, Configurator.TRUE)
-  settings.setProperty(PipelineConfigurator.USE_STANFORD_PARSE.key, Configurator.TRUE)
-  settings.setProperty(PipelineConfigurator.STFRD_MAX_SENTENCE_LENGTH.key, "10000")
-  settings.setProperty(PipelineConfigurator.STFRD_TIME_PER_SENTENCE.key, "100000")
+  def disableSettings(settings: Properties, props: Property*) = {
+    props.foreach(p => settings.setProperty(p.key, Configurator.FALSE))
+  }
 
-  var annotatorService: AnnotatorService = null
+  def enableSettings(settings: Properties, props: Property*) = {
+    props.foreach(p => settings.setProperty(p.key, Configurator.TRUE))
+  }
 
-  def createTextAnnotation(corpusId: String, textId: String, text: String, views: String*): TextAnnotation = {
-    if (annotatorService == null)
-      applySettings()
-    val ta = annotatorService.createAnnotatedTextAnnotation(corpusId, textId, text)
+  def createTextAnnotation(as: AnnotatorService, corpusId: String, textId: String, text: String, views: String*): TextAnnotation = {
+    val ta = as.createAnnotatedTextAnnotation(corpusId, textId, text)
     views.foreach(v => ta.addView(v, new TokenLabelView(v, ta)))
     ta
   }
 
-  def applySettings() = {
-    val config = new CuratorConfigurator().getConfig(new ResourceManager(settings))
-    annotatorService = IllinoisPipelineFactory.buildPipeline(config)
+  def createBasicTextAnnotation(as: AnnotatorService, corpusId: String, textId: String, text: String): TextAnnotation =
+    as.createBasicTextAnnotation(corpusId, textId, text)
+
+  def createPipelineAnnotatorService(settings: Properties): AnnotatorService = {
+    IllinoisPipelineFactory.buildPipeline(
+      new CuratorConfigurator().getConfig(new ResourceManager(settings))
+    )
   }
 
-  def createBasicTextAnnotation(corpusId: String, textId: String, text: String): TextAnnotation = {
-    if (annotatorService == null)
-      applySettings()
-    val ta = annotatorService.createBasicTextAnnotation(corpusId, textId, text)
-    ta
+  def createCuratorAnnotatorService(settings: Properties): AnnotatorService = {
+    CuratorFactory.buildCuratorClient(
+      new CuratorConfigurator().getConfig(new ResourceManager(settings))
+    )
   }
+
 }

@@ -17,9 +17,10 @@ class SpRLDataModelReaderTests extends FlatSpec with Matchers {
 
   "SpRL Data Model Reader" should "Reads data correctly." in {
 
-    val sentenceList = sentences()
-      .filterNot(_.getSentence.getSentenceConstituent.getTextAnnotation.getId.startsWith("example.xml"))
-      .map(_.getSentence).toList
+    val sentenceList = sentences().collect {
+      case s if !s.getSentence.getSentenceConstituent.getTextAnnotation.getId.startsWith("example.xml") =>
+        s.getSentence
+    }.toList
 
     val relationList = relations().toList
 
@@ -39,9 +40,10 @@ class SpRLDataModelReaderTests extends FlatSpec with Matchers {
   }
 
   "SpRL Data Model Features" should "be correct for examples of the paper." in {
-    val examples = sentences()
-      .filter(_.getSentence.getSentenceConstituent.getTextAnnotation.getId.contains("example.xml"))
-      .map(_.getSentence).toList
+    val examples = sentences().collect {
+      case s if s.getSentence.getSentenceConstituent.getTextAnnotation.getId.startsWith("example.xml") =>
+        s.getSentence
+    }.toList
 
     val e1 = examples(0)
     val rels1 = relations().filter(_.getSentence == e1).toList
@@ -148,9 +150,10 @@ class SpRLDataModelReaderTests extends FlatSpec with Matchers {
     JF2_11(rel22) should be("")
     JF2_11(rels1(3)) should be("of") // cars parked in[INDICATOR] front[TRAJECTOR] of the house: front---prep--->of
 
-    // JF2_12(rel11) should be("TRAJECTOR=A1;INDICATOR=AM-LOC;LANDMARK=AM-LOC")
-    // JF2_12(rel21) should be("TRAJECTOR=;INDICATOR=;LANDMARK=")
-    // JF2_12(rel22) should be("TRAJECTOR=;INDICATOR=;LANDMARK=")
+    // TODO: enable these tests when SRL became more accurate or using curator for annotation
+    //JF2_12(rel11) should be("TRAJECTOR=A1;INDICATOR=AM-LOC;LANDMARK=AM-LOC")
+    //JF2_12(rel21) should be("TRAJECTOR=;INDICATOR=;LANDMARK=")
+    //JF2_12(rel22) should be("TRAJECTOR=;INDICATOR=;LANDMARK=")
 
     JF2_13(rel11) should be("false")
     JF2_13(rel21) should be("false")

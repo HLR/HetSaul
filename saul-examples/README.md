@@ -25,7 +25,10 @@ to classify text documents as either Spam or Not Spam was also created.
 a task in natural language processing consisting of the detection of the semantic arguments associated with the predicate 
 or verb of a sentence and their classification into their specific roles.
 
-5. [Part-of-Speech Tagging](src/main/scala/edu/illinois/cs/cogcomp/saulexamples/nlp/POSTagger/README.md): 
+5. [Spatial Role Labeling](src/main/scala/edu/illinois/cs/cogcomp/saulexamples/nlp/SpatialRoleLabeling/README.md): 
+In Spatial Role Labeling, we try to find spatial relations and label spatial roles such as trajectors, landmarks, and spatial indicators in the sentence. 
+
+6. [Part-of-Speech Tagging](src/main/scala/edu/illinois/cs/cogcomp/saulexamples/nlp/POSTagger/README.md): 
 Part-of-Speech Tagging is the identification of words as nouns, verbs, adjectives, adverbs, etc. 
 
 * Note: Examples are under active development. 

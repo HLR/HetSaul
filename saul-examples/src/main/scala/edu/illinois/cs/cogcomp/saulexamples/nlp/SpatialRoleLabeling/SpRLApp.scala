@@ -83,16 +83,3 @@ object SpRLApp extends App with Logging {
     else properties.getString(TEST_DIR)
   }
 }
-
-object SpRLTestApp extends App {
-  val text = "cars parked in front of the house ."
-  val ta = TextAnnotationFactory.createTextAnnotation("", "", text)
-  val tokens = ta.getView(ViewNames.TOKENS).getConstituents.asScala
-  val view = ta.getView(ViewNames.SRL_VERB)
-  val const = view.getConstituents.asScala
-  println(ta.getAvailableViews)
-
-  tokens.foreach(x =>
-    println(x.toString + " : " + view.getLabelsCovering(x)))
-}
-

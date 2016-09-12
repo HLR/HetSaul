@@ -6,8 +6,12 @@
   */
 package edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling
 
+import java.util.Properties
+
+import edu.illinois.cs.cogcomp.annotation.AnnotatorService
 import edu.illinois.cs.cogcomp.core.datastructures.IntPair
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation._
+import edu.illinois.cs.cogcomp.nlp.common.PipelineConfigurator._
 import edu.illinois.cs.cogcomp.saul.util.Logging
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling.SpRL2013.SpRL2013Document
 import edu.illinois.cs.cogcomp.saulexamples.nlp.TextAnnotationFactory
@@ -21,27 +25,24 @@ object SpRLDataModelReader extends Logging {
 
   def read(path: String, version: String): List[SpRLSentence] = {
 
+    val settings = new Properties()
+    TextAnnotationFactory.disableSettings(settings, USE_SRL_NOM, USE_NER_ONTONOTES)
+    val as = TextAnnotationFactory.createPipelineAnnotatorService(settings)
     val reader = new SpRLDataReader(path, classOf[SpRL2013Document])
     reader.readData()
-    val sentences = ListBuffer[SpRLSentence]()
-    reader.documents.asScala.foreach(doc => {
 
+    reader.documents.asScala.flatMap { doc =>
       logger.info("working on " + doc.getFilename + " ...")
-      val sentenceOffsetList = getDocumentSentences(doc, version)
+      val sentenceOffsetList = getDocumentSentences(as, doc, version)
 
-      sentenceOffsetList.foreach(f = s => {
-        try {
-          assert(s._1 == doc.getTEXT.getContent.substring(s._2.getFirst, s._2.getSecond))
-          val ta = TextAnnotationFactory.createTextAnnotation(version, doc.getFilename + s._2, s._1)
-          sentences += new SpRLSentence(s._2, ta.sentences.get(0), getRelations(doc, s._2).asJava)
+      sentenceOffsetList.map {
+        case (sentence, offset) =>
+          assert(sentence == doc.getTEXT.getContent.substring(offset.getFirst, offset.getSecond))
+          val ta = TextAnnotationFactory.createTextAnnotation(as, version, doc.getFilename + offset, sentence)
           assert(ta.sentences.size() == 1)
-        } catch {
-          case e: Exception => logger.info("error :" + s)
-        }
-      })
-    })
-
-    sentences.toList
+          new SpRLSentence(offset, ta.sentences.get(0), getRelations(doc, offset).asJava)
+      }
+    }.toList
   }
 
   private def getSentenceOffset(s: Sentence): IntPair = {
@@ -51,7 +52,7 @@ object SpRLDataModelReader extends Logging {
     new IntPair(start, end)
   }
 
-  private def getDocumentSentences(doc: SpRL2013Document, version: String): List[(String, IntPair)] = {
+  private def getDocumentSentences(as: AnnotatorService, doc: SpRL2013Document, version: String): List[(String, IntPair)] = {
     version match {
       case "2012" => {
         // 2012 sentences end with '.\n\n' so
@@ -67,7 +68,7 @@ object SpRLDataModelReader extends Logging {
       case "2013" => {
         // 2013 sentences are more complex to split compared to 2012 version, so we let the TextAnnotationFactory
         // do it
-        val ta = TextAnnotationFactory.createBasicTextAnnotation(version, doc.getFilename, doc.getTEXT().getContent)
+        val ta = TextAnnotationFactory.createBasicTextAnnotation(as, version, doc.getFilename, doc.getTEXT().getContent)
         ta.sentences().asScala.map(s => (s.getText, getSentenceOffset(s))).toList
       }
     }
