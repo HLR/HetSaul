@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<SpRL>
+    <TEXT>cars parked in front of the house .
+
+bushes and small trees on the hill .
+
+a huge column with a football on top .
+
+trees on the right .
+
+</TEXT>
+    <TAGS>
+        <TRAJECTOR text="cars" end="4" start="0" id="T1"/>
+        <TRAJECTOR text="bushes" end="43" start="37" id="T2"/>
+        <TRAJECTOR text="trees" end="59" start="54" id="T3"/>
+        <TRAJECTOR text="football" end="104" start="96" id="T4"/>
+        <TRAJECTOR text="trees" end="120" start="115" id="T5"/>
+
+        <LANDMARK text="house" end="33" start="28" id="L1"/>
+        <LANDMARK text="hill" end="71" start="67" id="L2"/>
+        <LANDMARK text="column" end="88" start="82" id="L3"/>
+        <LANDMARK text="" end="-1" start="-1" id="L4"/>
+
+        <SPATIAL_INDICATOR text="in front of" end="23" start="12" id="S1"/>
+        <SPATIAL_INDICATOR text="on" end="62" start="60" id="S2"/>
+        <SPATIAL_INDICATOR text="on top" end="111" start="105" id="S3"/>
+        <SPATIAL_INDICATOR text="on the right" end="133" start="121" id="S4"/>
+
+        <RELATION general_type="region" spatial_indicator_id="S1" landmark_id="L1" trajector_id="T1" id="SR1"/>
+        <RELATION general_type="region" spatial_indicator_id="S2" landmark_id="L2" trajector_id="T2" id="SR2"/>
+        <RELATION general_type="region" spatial_indicator_id="S2" landmark_id="L2" trajector_id="T3" id="SR3"/>
+        <RELATION general_type="region" spatial_indicator_id="S3" landmark_id="L3" trajector_id="T4" id="SR4"/>
+        <RELATION general_type="region" spatial_indicator_id="S4" landmark_id="L4" trajector_id="T5" id="SR5"/>
+    </TAGS>
+</SpRL>

@@ -51,7 +51,7 @@ class ConstraintsTest extends FlatSpec with Matchers {
     relationsToPredicates.addSensor(relToPredicate _)
     sentencesToStringTree.addSensor(textAnnotationToStringTree _)
     val posTag = property(predicates, "posC") {
-      x: Constituent => getPOS(x)
+      x: Constituent => getPosTag(x)
     }
     val argumentLabelGold = property(relations, "l") {
       r: Relation => r.getRelationName

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<SpaceEvalTaskv1.2>
+<TEXT><![CDATA[test document]]></TEXT>
+<TAGS>
+<PLACE id="pl29" start="-1" end="-1" text="" type="" dimensionality="POINT" form="NOM" domain="" continent="" state="" country="" ctv="" gazref="" latLong="" elevation="" mod="" dcl="FALSE" countable="TRUE" gquant="" scopes="" comment="the point at which they started the Enduros, 100 km from the confluence" />
+<PATH id="p12" start="-1" end="-1" text="" beginID="" endID="" midIDs="" type="" dimensionality="VOLUME" form="NOM" domain="" gazref="" latLong="" elevation="" mod="" dcl="FALSE" countable="TRUE" gquant="" scopes="" comment="source for 'we bend off on the forest road'" />
+<SPATIAL_ENTITY id="se21" start="-1" end="-1" text="" type="" dimensionality="POINT" form="NOM" domain="" latLong="" elevation="" mod="" dcl="FALSE" countable="TRUE" gquant="" scopes="" comment="subsuming mover for 'Daniel and I start with our Enduros'" />
+<SPATIAL_ENTITY id="se8" start="1016" end="1018" text="We" type="" dimensionality="AREA" form="NOM" domain="" latLong="" elevation="" mod="" dcl="FALSE" countable="TRUE" gquant="" scopes="" comment="" />
+<NONMOTION_EVENT id="e1" start="1299" end="1302" text="lie" domain="" latLong="" elevation="" mod="" countable="" gquant="" scopes="" comment="" />
+<MOTION id="m9" start="1026" end="1031" text="drive" domain="" latLong="" elevation="" motion_type="COMPOUND" motion_class="FOLLOW" motion_sense="LITERAL" mod="" countable="" gquant="" scopes="" comment="" />
+<SPATIAL_SIGNAL id="s4" start="1303" end="1305" text="on" cluster="" semantic_type="TOPOLOGICAL" comment="" />
+<MOTION_SIGNAL id="ms12" start="1037" end="1039" text="on" motion_signal_type="PATH" comment="" />
+<MEASURE id="me4" start="1032" end="1036" text="near" value="NEAR" unit="" comment="" />
+<MEASURE id="me0" start="83" end="105" text="approx. 100 kilometers" value="~100" unit="kilometers" comment="" />
+<QSLINK id="qsl10" fromID="pl23" fromText="Here" toID="pl24" toText="point" relType="EQ" trajector="pl23" landmark="pl24" trigger="" comment="" />
+<OLINK id="ol0" fromID="p7" fromText="branches" toID="pl8" toText="point" relType="TOWARD" trajector="p7" landmark="pl8" trigger="s0" frame_type="RELATIVE" referencePt="VIEWER" projective="TRUE" comment="" />
+<MOVELINK id="mvl1" fromID="m20" fromText="Enduros" toID="se21" toText="" trigger="m20" source="pl29" goal="" midPoint="" mover="se21" landmark="" goal_reached="" pathID="" motion_signalID="ms2" comment="" />
+<MEASURELINK id="ml1" fromID="m0" fromText="travelled" toID="m0" toText="travelled" trajector="m0" landmark="m0" relType="GENERAL_DIMENSION" val="me1" endPoint1="" endPoint2="" comment="" />
+<METALINK id="metal38" fromID="se3" fromText="we" toID="se1" toText="I" objectID1="se3" objectID2="se1" relType="SPLITCOREFERENCE" comment="" />
+<CP><![CDATA[45N22E]]></CP>
+<URL><![CDATA[http://confluence.org/confluence.php?id=9791]]></URL>
+</TAGS>
+</SpaceEvalTaskv1.2>

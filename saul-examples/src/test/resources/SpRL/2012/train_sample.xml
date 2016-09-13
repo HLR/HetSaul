@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<SpRL>
+    <TEXT>About 20 kids in traditional clothing and hats waiting on stairs .
+
+a house and a green wall with gate in the background .
+
+a sign saying that plants can't be picked up on the right .
+
+a rock hole in the ground surrounded by sand .
+
+one man in a white tee-shirt , grey pants and a white cap is holding a shovel , the other one is wearing black pants , a white jumper and a traditional hat , is walking towards him .
+
+</TEXT>
+    <TAGS>
+        <TRAJECTOR text="About 20 kids " end="14" start="0" id="T1"/>
+        <TRAJECTOR text="a house" end="75" start="68" id="T2"/>
+        <TRAJECTOR text="a green wall" end="92" start="80" id="T3"/>
+        <TRAJECTOR text="a sign" end="130" start="124" id="T4"/>
+        <TRAJECTOR text="a rock hole" end="196" start="185" id="T5"/>
+        <TRAJECTOR text="the other one" end="326" start="313" id="T6"/>
+        <LANDMARK text="stairs" end="64" start="58" id="L1"/>
+        <LANDMARK text="the background" end="120" start="106" id="L2"/>
+        <LANDMARK end="-1" start="-1" id="L3"/>
+        <LANDMARK text="the ground" end="210" start="200" id="L4"/>
+        <LANDMARK text="sand" end="229" start="225" id="L5"/>
+        <LANDMARK text="towards him" end="413" start="402" id="L6"/>
+        <SPATIAL_INDICATOR text="on" end="57" start="55" id="S1"/>
+        <SPATIAL_INDICATOR text="in" end="105" start="103" id="S2"/>
+        <SPATIAL_INDICATOR text="on the right" end="181" start="169" id="S3"/>
+        <SPATIAL_INDICATOR text="in" end="199" start="197" id="S4"/>
+        <SPATIAL_INDICATOR text="surrounded by" end="224" start="211" id="S5"/>
+        <SPATIAL_INDICATOR text="walking towards" end="409" start="394" id="S6"/>
+        <RELATION general_type="region" spatial_indicator_id="S1" landmark_id="L1" trajector_id="T1" id="SR1"/>
+        <RELATION general_type="region" spatial_indicator_id="S2" landmark_id="L2" trajector_id="T2" id="SR2"/>
+        <RELATION general_type="region" spatial_indicator_id="S2" landmark_id="L2" trajector_id="T3" id="SR3"/>
+        <RELATION general_type="direction" spatial_indicator_id="S3" landmark_id="L3" trajector_id="T4" id="SR4"/>
+        <RELATION general_type="region" spatial_indicator_id="S4" landmark_id="L4" trajector_id="T5" id="SR5"/>
+        <RELATION general_type="region" spatial_indicator_id="S5" landmark_id="L5" trajector_id="T5" id="SR6"/>
+        <RELATION general_type="direction" spatial_indicator_id="S6" landmark_id="L6" trajector_id="T6" id="SR7"/>
+    </TAGS>
+</SpRL>

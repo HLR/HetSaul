@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<SpRL>
+    <URL>﻿http://confluence.org/confluence.php?id=9796</URL>
+    <CP>44°N 24°E</CP>
+    <TEXT>test document</TEXT>
+    <TAGS>
+        <TRAJECTOR text="we" end="61" start="59" id="T0"/>
+        <TRAJECTOR text="" end="-1" start="-1" id="T16"/>
+        <LANDMARK text="the long stretched village Marsani" end="444" start="410" id="L0"/>
+        <SPATIAL_INDICATOR text="in the middle of" end="409" start="393" id="S0"/>
+        <MOTION_INDICATOR text="reached" end="905" start="898" id="M10"/>
+        <PATH text="from Drobeta-Turnu Severin to Craiova on the E 70" end="134" start="85" id="P0"/>
+        <DIRECTION text="south" end="162" start="157" id="DIR0"/>
+        <RELATION FoR="intrinsic" relative_value="" absolute_value="" RCC8_value="DC" specific_type="RCC8"
+                  general_type="REGION" qualitative_value="" quantitative_value="" path_id="" direction_id=""
+                  motion_id="" spatial_indicator_id="S3" landmark_id="L4" trajector_id="T9" id="SR9"/>
+    </TAGS>
+</SpRL>
