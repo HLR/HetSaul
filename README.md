@@ -17,8 +17,7 @@ If you want to use Saul in your project, should first add it as your dependency.
 Note that this is the *recommended* way of using it; if you don't use any 
 dependency management system, you can use compile it directly (next section).
 Here are examples of how it is done in different dependency managment frameworks. 
-For each sample code, replace `VERSION` with the version number reported [in our
-sbt file](https://github.com/IllinoisCogComp/saul/blob/master/build.sbt#L10). 
+For each sample code, replace `VERSION` with the latest [Saul version number](http://cogcomp.cs.illinois.edu/m2repo/edu/illinois/cs/cogcomp/saul_2.11/). 
 
  - Maven 
 
