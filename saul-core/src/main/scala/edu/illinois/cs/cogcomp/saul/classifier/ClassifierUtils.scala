@@ -6,6 +6,8 @@
   */
 package edu.illinois.cs.cogcomp.saul.classifier
 
+import edu.illinois.cs.cogcomp.saul.classifier.infer.InitSparseNetwork
+import edu.illinois.cs.cogcomp.saul.datamodel.node.Node
 import edu.illinois.cs.cogcomp.saul.util.Logging
 
 /** Utility functions for various operations (e.g. training, testing, saving, etc) on multiple classifiers.
@@ -165,6 +167,14 @@ object ClassifierUtils extends Logging {
     }
   }
 
+  object InitializeClassifiers {
+    def apply[HEAD <: AnyRef](node: Node[HEAD], cl: ConstrainedClassifier[_, HEAD]*) = {
+      cl.map {
+        constrainedLearner =>
+          InitSparseNetwork(node, constrainedLearner)
+      }
+    }
+  }
   /** some utility functions for playing arounds results of classifiers */
   private def resultToList(someResult: AbstractResult): List[Double] = {
     List(someResult.f1, someResult.precision, someResult.recall)

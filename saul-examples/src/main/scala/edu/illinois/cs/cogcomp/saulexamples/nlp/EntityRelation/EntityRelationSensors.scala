@@ -30,7 +30,8 @@ object EntityRelationSensors {
   lazy val (sentencesAll, relationsAll, entitiesAll) = readConllData(path + "EntityMentionRelation/conll04.corp")
   lazy val (sentencesTrain, relationsTrain, entitiesTrain) = readConllData(path + "EntityMentionRelation/conll04_train.corp")
   lazy val (sentencesTest, relationsTest, entitiesTest) = readConllData(path + "EntityMentionRelation/conll04_test.corp")
-  lazy val (sentencesSmallSetTest, testRelationsSmallSetTest, entitiesSmallSetTest) = readConllData(resourcePath + "conll04-smallDocument.txt")
+  lazy val (sentencesSmallSet, testRelationsSmallSet, entitiesSmallSet) = readConllData(resourcePath + "conll04_train_small.corp")
+  lazy val (sentencesSmallSetTest, testRelationsSmallSetTest, entitiesSmallSetTest) = readConllData(resourcePath + "conll04_test_small.corp")
 
   def sentenceToRelation_GeneratingSensor(s: ConllRawSentence): List[ConllRelation] = {
     s.relations.asScala.toList
@@ -45,10 +46,11 @@ object EntityRelationSensors {
   }
 
   def relationToFirstArg_MatchingSensor(r: ConllRelation, t: ConllRawToken): Boolean = {
-    r.sentId.equals(t.sentId) && r.e1.wordId == t.wordId
+    r.sentId.equals(t.sentId) && r.e1.wordId == t.wordId && r.e1.hashCode() == t.hashCode()
   }
 
   def relationToSecondArg_MatchingSensor(r: ConllRelation, t: ConllRawToken): Boolean = {
-    r.sentId.equals(t.sentId) && r.e2.wordId == t.wordId
+    r.sentId.equals(t.sentId) && r.e2.wordId == t.wordId && r.e2.hashCode() == t.hashCode()
+
   }
 }

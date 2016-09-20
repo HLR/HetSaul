@@ -1,0 +1,706 @@
+0	Other	0	O	JJ	Palestinian	O	O	O
+0	O	1	O	NNP	Uprising	O	O	O
+0	O	2	O	NNP	Affects	O	O	O
+0	Other	3	O	NNP	Israeli	O	O	O
+0	O	4	O	NNP	Artists	O	O	O
+
+
+1	O	0	O	IN	By	O	O	O
+1	Peop	1	O	NNP/NNP	RONI/RABIN	O	O	O
+
+
+2	Org	0	O	NNP/NNP	Associated/Press	O	O	O
+2	O	1	O	NNP	Writer	O	O	O
+
+
+3	O	0	O	DT	The	O	O	O
+3	O	1	O	JJ	long	O	O	O
+3	Other	2	O	JJ	Palestinian	O	O	O
+3	O	3	O	NN	uprising	O	O	O
+3	O	4	O	VBZ	has	O	O	O
+3	O	5	O	VBN	brought	O	O	O
+3	O	6	O	NN	bitterness	O	O	O
+3	O	7	O	TO	to	O	O	O
+3	Other	8	O	JJ	Israeli	O	O	O
+3	O	9	O	NN	humor	O	O	O
+3	O	10	O	,	COMMA	O	O	O
+3	O	11	O	CC	and	O	O	O
+3	O	12	O	DT	the	O	O	O
+3	O	13	O	NN	comedian	O	O	O
+3	O	14	O	POS	's	O	O	O
+3	O	15	O	NN	opener	O	O	O
+3	O	16	O	VBD	was	O	O	O
+3	O	17	O	RB	not	O	O	O
+3	O	18	O	VBN	meant	O	O	O
+3	O	19	O	TO	to	O	O	O
+3	O	20	O	VB	put	O	O	O
+3	O	21	O	PP$	his	O	O	O
+3	O	22	O	NN	audience	O	O	O
+3	O	23	O	IN	at	O	O	O
+3	O	24	O	NN	ease	O	O	O
+3	O	25	O	.	.	O	O	O
+
+
+4	O	0	O	``	`	O	O	O
+4	O	1	O	``	`	O	O	O
+4	O	2	O	NNS	Soldiers	O	O	O
+4	O	3	O	IN	in	O	O	O
+4	O	4	O	NN	uniform	O	O	O
+4	O	5	O	VBP	get	O	O	O
+4	O	6	O	IN	in	O	O	O
+4	O	7	O	IN	with	O	O	O
+4	O	8	O	DT	a	O	O	O
+4	O	9	O	NN	discount	O	O	O
+4	O	10	O	,	COMMA	O	O	O
+4	O	11	O	''	'	O	O	O
+4	O	12	O	''	'	O	O	O
+4	Peop	13	O	NNP/NNP	Yonathan/Geffen	O	O	O
+4	O	14	O	VBD	said	O	O	O
+4	O	15	O	,	COMMA	O	O	O
+4	O	16	O	CC	and	O	O	O
+4	O	17	O	IN	after	O	O	O
+4	O	18	O	DT	a	O	O	O
+4	O	19	O	NN	pause	O	O	O
+4	O	20	O	:	:	O	O	O
+4	O	21	O	``	`	O	O	O
+4	O	22	O	``	`	O	O	O
+4	O	23	O	NNS	Soldiers	O	O	O
+4	O	24	O	IN	with	O	O	O
+4	O	25	O	NNS	clubs	O	O	O
+4	O	26	O	VBP	get	O	O	O
+4	O	27	O	IN	in	O	O	O
+4	O	28	O	NN	free.	O	O	O
+4	O	29	O	''	'	O	O	O
+4	O	30	O	''	'	O	O	O
+
+
+5	O	0	O	PRP	He	O	O	O
+5	O	1	O	VBD	referred	O	O	O
+5	O	2	O	TO	to	O	O	O
+5	O	3	O	NNS	beatings	O	O	O
+5	O	4	O	IN	by	O	O	O
+5	O	5	O	NNS	soldiers	O	O	O
+5	O	6	O	IN	of	O	O	O
+5	O	7	O	NNS	protesters	O	O	O
+5	O	8	O	IN	in	O	O	O
+5	O	9	O	DT	the	O	O	O
+5	O	10	O	VBD	occupied	O	O	O
+5	Loc	11	O	NNP/NNP	West/Bank	O	O	O
+5	O	12	O	CC	and	O	O	O
+5	Loc	13	O	NNP/NNP	Gaza/Strip	O	O	O
+5	O	14	O	,	COMMA	O	O	O
+5	O	15	O	WRB	where	O	O	O
+5	O	16	O	RBR	more	O	O	O
+5	O	17	O	IN	than	O	O	O
+5	O	18	O	CD	300	O	O	O
+5	Other	19	O	NNPS	Palestinians	O	O	O
+5	O	20	O	VBP	have	O	O	O
+5	O	21	O	VBN	been	O	O	O
+5	O	22	O	VBN	killed	O	O	O
+5	O	23	O	CC	and	O	O	O
+5	O	24	O	NNS	thousands	O	O	O
+5	O	25	O	VBN	wounded	O	O	O
+5	O	26	O	.	.	O	O	O
+
+
+6	O	0	O	PDT	Such	O	O	O
+6	O	1	O	DT	a	O	O	O
+6	O	2	O	NN	joke	O	O	O
+6	O	3	O	MD	would	O	O	O
+6	O	4	O	VB	have	O	O	O
+6	O	5	O	VBN	been	O	O	O
+6	O	6	O	JJ	unthinkable	O	O	O
+6	O	7	O	IN	before	O	O	O
+6	O	8	O	DT	the	O	O	O
+6	O	9	O	NN	rebellion	O	O	O
+6	O	10	O	VBD	began	O	O	O
+6	Other	11	O	NNP/CD/,/CD	Dec./8/COMMA/1987	O	O	O
+6	O	12	O	.	.	O	O	O
+
+
+7	O	0	O	IN	In	O	O	O
+7	O	1	O	NN	night	O	O	O
+7	O	2	O	NNS	clubs	O	O	O
+7	O	3	O	,	COMMA	O	O	O
+7	O	4	O	NNS	theaters	O	O	O
+7	O	5	O	CC	and	O	O	O
+7	O	6	O	NNS	galleries	O	O	O
+7	O	7	O	,	COMMA	O	O	O
+7	O	8	O	NNS	artists	O	O	O
+7	O	9	O	IN	of	O	O	O
+7	O	10	O	JJ	various	O	O	O
+7	O	11	O	NNS	kinds	O	O	O
+7	O	12	O	VB	grapple	O	O	O
+7	O	13	O	IN	with	O	O	O
+7	O	14	O	NNS	questions	O	O	O
+7	O	15	O	IN	about	O	O	O
+7	O	16	O	DT	the	O	O	O
+7	O	17	O	NN	violence	O	O	O
+7	O	18	O	IN	of	O	O	O
+7	O	19	O	NN	occupation	O	O	O
+7	O	20	O	CC	and	O	O	O
+7	O	21	O	DT	the	O	O	O
+7	O	22	O	JJ	brutalizing	O	O	O
+7	O	23	O	NN	effect	O	O	O
+7	O	24	O	IN	on	O	O	O
+7	Other	25	O	JJ	Israeli	O	O	O
+7	O	26	O	NN	society	O	O	O
+7	O	27	O	IN	of	O	O	O
+7	O	28	O	DT	the	O	O	O
+7	O	29	O	NN	army	O	O	O
+7	O	30	O	POS	's	O	O	O
+7	O	31	O	NN	handling	O	O	O
+7	O	32	O	IN	of	O	O	O
+7	O	33	O	DT	the	O	O	O
+7	O	34	O	NN	uprising	O	O	O
+7	O	35	O	.	.	O	O	O
+
+
+8	O	0	O	DT	A	O	O	O
+8	O	1	O	NN	satire	O	O	O
+8	O	2	O	IN	by	O	O	O
+8	O	3	O	NN	nightclub	O	O	O
+8	O	4	O	JJ	performer	O	O	O
+8	Peop	5	O	NNP/NNP	Dudu/Topaz	O	O	O
+8	O	6	O	VBZ	takes	O	O	O
+8	O	7	O	DT	the	O	O	O
+8	O	8	O	NN	form	O	O	O
+8	O	9	O	IN	of	O	O	O
+8	O	10	O	DT	an	O	O	O
+8	O	11	O	NN	army	O	O	O
+8	O	12	O	NN	radio	O	O	O
+8	O	13	O	VBP	report	O	O	O
+8	O	14	O	IN	of	O	O	O
+8	O	15	O	DT	an	O	O	O
+8	O	16	O	NN	incident	O	O	O
+8	O	17	O	VBD	said	O	O	O
+8	O	18	O	TO	to	O	O	O
+8	O	19	O	VB	have	O	O	O
+8	O	20	O	VBN	begun	O	O	O
+8	O	21	O	WRB	when	O	O	O
+8	O	22	O	DT	a	O	O	O
+8	O	23	O	JJ	young	O	O	O
+8	Other	24	O	NN	Palestinian	O	O	O
+8	O	25	O	VBN	urinated	O	O	O
+8	O	26	O	IN	on	O	O	O
+8	O	27	O	DT	a	O	O	O
+8	O	28	O	NN	soldier	O	O	O
+8	O	29	O	POS	's	O	O	O
+8	O	30	O	NN	leg	O	O	O
+8	O	31	O	.	.	O	O	O
+
+
+9	Peop	0	O	NNP	Topaz	O	O	O
+9	O	1	O	VBD	was	O	O	O
+9	O	2	O	VBN	barred	O	O	O
+9	O	3	O	IN	from	O	O	O
+9	O	4	O	DT	a	O	O	O
+9	O	5	O	NN	radio	O	O	O
+9	O	6	O	VBP	talk	O	O	O
+9	O	7	O	VBP	show	O	O	O
+9	O	8	O	IN	for	O	O	O
+9	Other	9	O	CD/NNS	two/weeks	O	O	O
+9	O	10	O	IN	for	O	O	O
+9	O	11	O	NNS	comments	O	O	O
+9	O	12	O	JJ	critical	O	O	O
+9	O	13	O	IN	of	O	O	O
+9	O	14	O	DT	the	O	O	O
+9	O	15	O	NN	army	O	O	O
+9	O	16	O	.	.	O	O	O
+
+
+10	Loc	0	O	NNP	Israel	O	O	O
+10	O	1	O	NN	television	O	O	O
+10	O	2	O	VBD	rejected	O	O	O
+10	O	3	O	DT	a	O	O	O
+10	O	4	O	NN	skit	O	O	O
+10	O	5	O	IN	by	O	O	O
+10	O	6	O	NN	comedian	O	O	O
+10	Peop	7	O	NNP/NNP	Tuvia/Tzafir	O	O	O
+10	O	8	O	IN	that	O	O	O
+10	O	9	O	VBN	attacked	O	O	O
+10	O	10	O	JJ	public	O	O	O
+10	O	11	O	NN	apathy	O	O	O
+10	O	12	O	IN	by	O	O	O
+10	O	13	O	VBG	depicting	O	O	O
+10	O	14	O	DT	an	O	O	O
+10	Other	15	O	JJ	Israeli	O	O	O
+10	O	16	O	NN	family	O	O	O
+10	O	17	O	VBG	watching	O	O	O
+10	O	18	O	NN	TV	O	O	O
+10	O	19	O	IN	while	O	O	O
+10	O	20	O	DT	a	O	O	O
+10	O	21	O	NN	fire	O	O	O
+10	O	22	O	VBD	raged	O	O	O
+10	O	23	O	IN	outside	O	O	O
+10	O	24	O	.	.	O	O	O
+
+7	0	Live_In
+
+11	O	0	O	NNS	Lyrics	O	O	O
+11	O	1	O	IN	in	O	O	O
+11	O	2	O	``	`	O	O	O
+11	O	3	O	``	`	O	O	O
+11	Other	4	O	NNP/IN/NNP	Coexistence/With/Love	O	O	O
+11	O	5	O	,	COMMA	O	O	O
+11	O	6	O	''	'	O	O	O
+11	O	7	O	''	'	O	O	O
+11	O	8	O	DT	a	O	O	O
+11	O	9	O	JJ	new	O	O	O
+11	O	10	O	NN	album	O	O	O
+11	O	11	O	IN	by	O	O	O
+11	O	12	O	NN	vocalist	O	O	O
+11	Peop	13	O	NNP/NNP	Astar/Shamir	O	O	O
+11	O	14	O	,	COMMA	O	O	O
+11	O	15	O	VBP	accuse	O	O	O
+11	O	16	O	DT	the	O	O	O
+11	O	17	O	NN	government	O	O	O
+11	O	18	O	IN	of	O	O	O
+11	O	19	O	VBG	failing	O	O	O
+11	O	20	O	TO	to	O	O	O
+11	O	21	O	VB	explore	O	O	O
+11	O	22	O	NNS	options	O	O	O
+11	O	23	O	IN	for	O	O	O
+11	O	24	O	NN	peace	O	O	O
+11	O	25	O	IN	while	O	O	O
+11	O	26	O	JJ	young	O	O	O
+11	O	27	O	NNS	soldiers	O	O	O
+11	O	28	O	VBP	do	O	O	O
+11	O	29	O	DT	the	O	O	O
+11	O	30	O	JJ	dirty	O	O	O
+11	O	31	O	NN	work	O	O	O
+11	O	32	O	IN	of	O	O	O
+11	O	33	O	NN	occupation	O	O	O
+11	O	34	O	.	.	O	O	O
+
+
+12	O	0	O	IN	As	O	O	O
+12	O	1	O	CD	one	O	O	O
+12	O	2	O	IN	of	O	O	O
+12	O	3	O	PP$	her	O	O	O
+12	O	4	O	NNS	songs	O	O	O
+12	O	5	O	,	COMMA	O	O	O
+12	O	6	O	``	`	O	O	O
+12	O	7	O	``	`	O	O	O
+12	Other	8	O	DT/NNP/IN/DT/NN	A/Moment/Before/the/Storm	O	O	O
+12	O	9	O	,	COMMA	O	O	O
+12	O	10	O	''	'	O	O	O
+12	O	11	O	''	'	O	O	O
+12	O	12	O	VBZ	puts	O	O	O
+12	O	13	O	PRP	it	O	O	O
+12	O	14	O	:	:	O	O	O
+12	O	15	O	``	`	O	O	O
+12	O	16	O	``	`	O	O	O
+12	O	17	O	PP$	My	O	O	O
+12	O	18	O	NN	brother	O	O	O
+12	O	19	O	NN	isn	O	O	O
+12	O	20	O	NN	't	O	O	O
+12	O	21	O	DT	a	O	O	O
+12	O	22	O	JJ	cruel	O	O	O
+12	O	23	O	NN	soldier	O	O	O
+12	O	24	O	,	COMMA	O	O	O
+12	O	25	O	CC	but	O	O	O
+12	O	26	O	PRP	he	O	O	O
+12	O	27	O	VBZ	's	O	O	O
+12	O	28	O	NN	cold	O	O	O
+12	O	29	O	IN	in	O	O	O
+12	O	30	O	PP$	his	O	O	O
+12	O	31	O	NN	soul	O	O	O
+12	O	32	O	.	.	O	O	O
+
+
+13	O	0	O	RB	Early	O	O	O
+13	O	1	O	JJ	last	O	O	O
+13	O	2	O	NN	year	O	O	O
+13	O	3	O	,	COMMA	O	O	O
+13	O	4	O	NN	army	O	O	O
+13	O	5	O	NN	radio	O	O	O
+13	O	6	O	VBD	banned	O	O	O
+13	O	7	O	NN	pop	O	O	O
+13	O	8	O	NN	singer	O	O	O
+13	Peop	9	O	NNP/NNP	Si/Hyman	O	O	O
+13	O	10	O	POS	's	O	O	O
+13	O	11	O	NN	song	O	O	O
+13	O	12	O	``	`	O	O	O
+13	O	13	O	``	`	O	O	O
+13	Other	14	O	NN/CC/NNP	Shooting/and/Crying	O	O	O
+13	O	15	O	''	'	O	O	O
+13	O	16	O	''	'	O	O	O
+13	O	17	O	IN	about	O	O	O
+13	O	18	O	NNS	soldiers	O	O	O
+13	O	19	O	WP	who	O	O	O
+13	O	20	O	VBD	used	O	O	O
+13	O	21	O	DT	a	O	O	O
+13	O	22	O	NN	bulldozer	O	O	O
+13	O	23	O	TO	to	O	O	O
+13	O	24	O	VB	bury	O	O	O
+13	O	25	O	CD	four	O	O	O
+13	O	26	O	JJ	young	O	O	O
+13	Other	27	O	NNPS	Palestinians	O	O	O
+13	O	28	O	JJ	alive	O	O	O
+13	O	29	O	IN	in	O	O	O
+13	O	30	O	DT	a	O	O	O
+13	Loc	31	O	NNP/NNP	West/Bank	O	O	O
+13	O	32	O	NN	village	O	O	O
+13	O	33	O	.	.	O	O	O
+
+
+14	Peop	0	O	NNP	Hyman	O	O	O
+14	O	1	O	VBZ	asks	O	O	O
+14	O	2	O	IN	in	O	O	O
+14	O	3	O	DT	the	O	O	O
+14	O	4	O	NN	chorus	O	O	O
+14	O	5	O	,	COMMA	O	O	O
+14	O	6	O	VBG	alluding	O	O	O
+14	O	7	O	TO	to	O	O	O
+14	O	8	O	DT	the	O	O	O
+14	Org	9	O	JJ	Nazi	O	O	O
+14	O	10	O	NN	extermination	O	O	O
+14	O	11	O	IN	of	O	O	O
+14	Other	12	O	CD/CD	6/million	O	O	O
+14	Other	13	O	NNPS	Jews	O	O	O
+14	O	14	O	.	.	O	O	O
+
+
+15	O	0	O	IN	In	O	O	O
+15	O	1	O	DT	a	O	O	O
+15	Loc	2	O	NNP	Jaffa	O	O	O
+15	O	3	O	NN	nightclub	O	O	O
+15	O	4	O	,	COMMA	O	O	O
+15	Peop	5	O	NNP	Tzafir	O	O	O
+15	O	6	O	VBZ	performs	O	O	O
+15	O	7	O	DT	a	O	O	O
+15	O	8	O	NN	skit	O	O	O
+15	O	9	O	VBG	accusing	O	O	O
+15	O	10	O	NNP	Prime	O	O	O
+15	Peop	11	O	NNP/NNP	Yitzhak/Shamir	O	O	O
+15	O	12	O	IN	of	O	O	O
+15	O	13	O	VBG	ignoring	O	O	O
+15	O	14	O	NNS	opportunities	O	O	O
+15	O	15	O	IN	for	O	O	O
+15	O	16	O	NN	peace	O	O	O
+15	O	17	O	.	.	O	O	O
+
+
+16	Other	0	O	NNPS	Palestinians	O	O	O
+16	O	1	O	VBP	have	O	O	O
+16	O	2	O	VBN	incorporated	O	O	O
+16	O	3	O	NNS	themes	O	O	O
+16	O	4	O	IN	of	O	O	O
+16	O	5	O	DT	the	O	O	O
+16	O	6	O	NN	uprising	O	O	O
+16	O	7	O	IN	into	O	O	O
+16	O	8	O	NNS	songs	O	O	O
+16	O	9	O	CC	and	O	O	O
+16	O	10	O	NNS	plays	O	O	O
+16	O	11	O	.	.	O	O	O
+
+
+17	O	0	O	DT	An	O	O	O
+17	O	1	O	NN	art	O	O	O
+17	O	2	O	NN	exhibit	O	O	O
+17	O	3	O	IN	at	O	O	O
+17	O	4	O	DT	the	O	O	O
+17	Org	5	O	NNP/NNP	Hakawati/Theatre	O	O	O
+17	O	6	O	IN	in	O	O	O
+17	Other	7	O	JJ	Arab	O	O	O
+17	O	8	O	JJ	east	O	O	O
+17	Loc	9	O	NNP	Jerusalem	O	O	O
+17	O	10	O	VBD	was	O	O	O
+17	O	11	O	DT	a	O	O	O
+17	O	12	O	NN	series	O	O	O
+17	O	13	O	IN	of	O	O	O
+17	O	14	O	NNS	portraits	O	O	O
+17	O	15	O	IN	of	O	O	O
+17	Other	16	O	NNPS	Palestinians	O	O	O
+17	O	17	O	VBN	killed	O	O	O
+17	O	18	O	IN	in	O	O	O
+17	O	19	O	DT	the	O	O	O
+17	O	20	O	NN	rebellion	O	O	O
+17	O	21	O	.	.	O	O	O
+
+5	9	OrgBased_In
+
+18	O	0	O	DT	The	O	O	O
+18	O	1	O	JJ	new	O	O	O
+18	O	2	O	NN	play	O	O	O
+18	O	3	O	``	`	O	O	O
+18	O	4	O	``	`	O	O	O
+18	Other	5	O	VBG/IN/DT/NN	Waiting/for/the/Savior	O	O	O
+18	O	6	O	POS	'	O	O	O
+18	O	7	O	''	'	O	O	O
+18	O	8	O	VBZ	depicts	O	O	O
+18	O	9	O	JJ	buffoon-like	O	O	O
+18	Other	10	O	JJ	Israeli	O	O	O
+18	O	11	O	NNS	soldiers	O	O	O
+18	O	12	O	VBG	harassing	O	O	O
+18	Other	13	O	NNPS	Palestinians	O	O	O
+18	O	14	O	VBG	going	O	O	O
+18	O	15	O	IN	about	O	O	O
+18	O	16	O	PP$	their	O	O	O
+18	O	17	O	NN	daily	O	O	O
+18	O	18	O	NNS	lives	O	O	O
+18	O	19	O	.	.	O	O	O
+
+
+19	O	0	O	``	`	O	O	O
+19	O	1	O	``	`	O	O	O
+19	O	2	O	NN	Everything	O	O	O
+19	O	3	O	VBZ	is	O	O	O
+19	O	4	O	JJ	political	O	O	O
+19	O	5	O	,	COMMA	O	O	O
+19	O	6	O	''	'	O	O	O
+19	O	7	O	''	'	O	O	O
+19	O	8	O	VBD	said	O	O	O
+19	Peop	9	O	NNP/NNP	Jamal/Ghosheh	O	O	O
+19	O	10	O	,	COMMA	O	O	O
+19	O	11	O	NN	director	O	O	O
+19	O	12	O	IN	of	O	O	O
+19	O	13	O	DT	the	O	O	O
+19	O	14	O	FW	theatre	O	O	O
+19	O	15	O	.	.	O	O	O
+
+
+20	O	0	O	IN	For	O	O	O
+20	Other	1	O	JJ	Israeli	O	O	O
+20	O	2	O	NNS	performers	O	O	O
+20	O	3	O	,	COMMA	O	O	O
+20	O	4	O	WP	who	O	O	O
+20	O	5	O	VBP	do	O	O	O
+20	O	6	O	JJ	active	O	O	O
+20	O	7	O	CC	and	O	O	O
+20	O	8	O	JJ	reserve	O	O	O
+20	O	9	O	NN	army	O	O	O
+20	O	10	O	NN	duty	O	O	O
+20	O	11	O	IN	like	O	O	O
+20	O	12	O	NN	everyone	O	O	O
+20	O	13	O	JJ	else	O	O	O
+20	O	14	O	,	COMMA	O	O	O
+20	O	15	O	PRP	it	O	O	O
+20	O	16	O	VBZ	is	O	O	O
+20	O	17	O	RBR	more	O	O	O
+20	O	18	O	VBN	complicated	O	O	O
+20	O	19	O	.	.	O	O	O
+
+
+21	O	0	O	DT	The	O	O	O
+21	O	1	O	NN	comedian	O	O	O
+21	O	2	O	,	COMMA	O	O	O
+21	O	3	O	WP$	whose	O	O	O
+21	O	4	O	NN	father	O	O	O
+21	O	5	O	VBD	came	O	O	O
+21	O	6	O	RB	here	O	O	O
+21	O	7	O	IN	from	O	O	O
+21	O	8	O	DT	the	O	O	O
+21	Loc	9	O	NNP/NNP	Soviet/Union	O	O	O
+21	O	10	O	,	COMMA	O	O	O
+21	O	11	O	VBD	said	O	O	O
+21	O	12	O	IN	in	O	O	O
+21	O	13	O	DT	an	O	O	O
+21	O	14	O	NN	interview	O	O	O
+21	O	15	O	:	:	O	O	O
+21	O	16	O	``	`	O	O	O
+21	O	17	O	``	`	O	O	O
+21	O	18	O	DT	This	O	O	O
+21	O	19	O	VBZ	is	O	O	O
+21	O	20	O	RB	not	O	O	O
+21	O	21	O	DT	the	O	O	O
+21	O	22	O	NN	country	O	O	O
+21	O	23	O	PRP	I	O	O	O
+21	O	24	O	VBD	wanted	O	O	O
+21	O	25	O	.	.	O	O	O
+
+
+22	Other	0	O	JJ	Italian	O	O	O
+22	O	1	O	NNS	Police	O	O	O
+22	O	2	O	VB	Find	O	O	O
+22	Other	3	O	NN/CD	$10/Million	O	O	O
+22	O	4	O	IN	in	O	O	O
+22	O	5	O	NNP	Fake	O	O	O
+22	Loc	6	O	NNP	U.S.	O	O	O
+22	O	7	O	NNS	Bills	O	O	O
+
+
+23	Loc	0	O	NNP	PERUGIA	O	O	O
+23	O	1	O	,	COMMA	O	O	O
+23	Loc	2	O	NNP	Italy	O	O	O
+23	O	3	O	-LRB-	-LRB-	O	O	O
+23	Org	4	O	NNP	AP	O	O	O
+23	O	5	O	-RRB-	-RRB-	O	O	O
+
+0	2	Located_In
+4	0	OrgBased_In
+4	2	OrgBased_In
+
+24	O	0	O	NNS	Police	O	O	O
+24	O	1	O	VBD	arrested	O	O	O
+24	O	2	O	CD	10	O	O	O
+24	O	3	O	NNS	people	O	O	O
+24	O	4	O	CC	and	O	O	O
+24	O	5	O	VBD	confiscated	O	O	O
+24	Other	6	O	NN/CD	$10/million	O	O	O
+24	O	7	O	IN	in	O	O	O
+24	O	8	O	JJ	counterfeit	O	O	O
+24	Loc	9	O	NNP	U.S.	O	O	O
+24	O	10	O	NN	currency	O	O	O
+24	O	11	O	,	COMMA	O	O	O
+24	O	12	O	DT	an	O	O	O
+24	Other	13	O	JJ	Italian	O	O	O
+24	O	14	O	NN	news	O	O	O
+24	O	15	O	NN	agency	O	O	O
+24	O	16	O	VBD	reported	O	O	O
+24	O	17	O	.	.	O	O	O
+
+
+25	O	0	O	DT	The	O	O	O
+25	O	1	O	NNS	bills	O	O	O
+25	O	2	O	VBD	were	O	O	O
+25	O	3	O	RB	reportedly	O	O	O
+25	O	4	O	VBN	distributed	O	O	O
+25	O	5	O	IN	through	O	O	O
+25	O	6	O	JJ	central	O	O	O
+25	Loc	7	O	NNP	Italy	O	O	O
+25	O	8	O	IN	after	O	O	O
+25	O	9	O	VBG	being	O	O	O
+25	O	10	O	VBN	manufactured	O	O	O
+25	O	11	O	IN	in	O	O	O
+25	Loc	12	O	NNP	Rome	O	O	O
+25	O	13	O	,	COMMA	O	O	O
+25	O	14	O	WRB	where	O	O	O
+25	O	15	O	NNS	police	O	O	O
+25	O	16	O	VBD	seized	O	O	O
+25	O	17	O	DT	a	O	O	O
+25	O	18	O	NN	printing	O	O	O
+25	O	19	O	NN	press	O	O	O
+25	O	20	O	.	.	O	O	O
+
+
+26	O	0	O	NNS	Officials	O	O	O
+26	O	1	O	IN	in	O	O	O
+26	Loc	2	O	NNP	Perugia	O	O	O
+26	O	3	O	IN	in	O	O	O
+26	Loc	4	O	NNP	Umbria	O	O	O
+26	O	5	O	NN	province	O	O	O
+26	O	6	O	VBD	said	O	O	O
+26	O	7	O	CD	five	O	O	O
+26	O	8	O	NNS	people	O	O	O
+26	O	9	O	VBD	were	O	O	O
+26	O	10	O	VBN	arrested	O	O	O
+26	O	11	O	RB	there	O	O	O
+26	O	12	O	NNP	Tuesday	O	O	O
+26	O	13	O	NN	night	O	O	O
+26	O	14	O	IN	after	O	O	O
+26	O	15	O	NNS	police	O	O	O
+26	O	16	O	VBD	stopped	O	O	O
+26	O	17	O	PP$	their	O	O	O
+26	O	18	O	NN	car	O	O	O
+26	O	19	O	CC	and	O	O	O
+26	O	20	O	VBD	found	O	O	O
+26	Other	21	O	NN/CD	$1/million	O	O	O
+26	O	22	O	IN	in	O	O	O
+26	O	23	O	JJ	bogus	O	O	O
+26	O	24	O	NNS	bills	O	O	O
+26	O	25	O	IN	in	O	O	O
+26	O	26	O	DT	the	O	O	O
+26	O	27	O	NN	trunk	O	O	O
+26	O	28	O	.	.	O	O	O
+
+2	4	Located_In
+
+27	O	0	O	DT	The	O	O	O
+27	Org	1	O	NNP	ANSA	O	O	O
+27	O	2	O	NN	news	O	O	O
+27	O	3	O	NN	agency	O	O	O
+27	O	4	O	VBD	said	O	O	O
+27	O	5	O	DT	the	O	O	O
+27	O	6	O	NN	operation	O	O	O
+27	O	7	O	VBD	involved	O	O	O
+27	O	8	O	NN	police	O	O	O
+27	O	9	O	IN	in	O	O	O
+27	Loc	10	O	NNP	Umbria	O	O	O
+27	O	11	O	CC	and	O	O	O
+27	Loc	12	O	NNP	Lazio	O	O	O
+27	O	13	O	NNS	provinces	O	O	O
+27	O	14	O	IN	in	O	O	O
+27	O	15	O	JJ	central	O	O	O
+27	Loc	16	O	NNP	Italy	O	O	O
+27	O	17	O	CC	and	O	O	O
+27	Loc	18	O	NNP	Campania	O	O	O
+27	O	19	O	NN	province	O	O	O
+27	O	20	O	IN	in	O	O	O
+27	O	21	O	DT	the	O	O	O
+27	O	22	O	NN	south	O	O	O
+27	O	23	O	,	COMMA	O	O	O
+27	O	24	O	IN	without	O	O	O
+27	O	25	O	VBG	specifying	O	O	O
+27	O	26	O	JJ	exact	O	O	O
+27	O	27	O	NN	arrest	O	O	O
+27	O	28	O	NNS	locations	O	O	O
+27	O	29	O	.	.	O	O	O
+
+10	16	Located_In
+12	16	Located_In
+18	16	Located_In
+
+28	Loc	0	O	NNP	Rome	O	O	O
+28	O	1	O	VBZ	is	O	O	O
+28	O	2	O	IN	in	O	O	O
+28	Loc	3	O	NNP	Lazio	O	O	O
+28	O	4	O	NN	province	O	O	O
+28	O	5	O	CC	and	O	O	O
+28	Loc	6	O	NNP	Naples	O	O	O
+28	O	7	O	IN	in	O	O	O
+28	Loc	8	O	NNP	Campania	O	O	O
+28	O	9	O	.	.	O	O	O
+
+0	3	Located_In
+6	8	Located_In
+
+29	O	0	O	NNS	Police	O	O	O
+29	O	1	O	VBD	began	O	O	O
+29	O	2	O	VBG	investigating	O	O	O
+29	O	3	O	IN	after	O	O	O
+29	O	4	O	VBG	getting	O	O	O
+29	O	5	O	NNS	reports	O	O	O
+29	O	6	O	IN	that	O	O	O
+29	O	7	O	DT	an	O	O	O
+29	O	8	O	RB	unusually	O	O	O
+29	O	9	O	JJ	large	O	O	O
+29	O	10	O	NN	number	O	O	O
+29	O	11	O	IN	of	O	O	O
+29	Loc	12	O	NNP	U.S.	O	O	O
+29	O	13	O	NNS	dollars	O	O	O
+29	O	14	O	VBD	was	O	O	O
+29	O	15	O	VBG	being	O	O	O
+29	O	16	O	VBN	used	O	O	O
+29	O	17	O	TO	to	O	O	O
+29	O	18	O	VB	pay	O	O	O
+29	O	19	O	IN	for	O	O	O
+29	O	20	O	NNS	goods	O	O	O
+29	O	21	O	CC	and	O	O	O
+29	O	22	O	NNS	services	O	O	O
+29	O	23	O	IN	in	O	O	O
+29	O	24	O	NN	tourist	O	O	O
+29	O	25	O	NNS	centers	O	O	O
+29	O	26	O	.	.	O	O	O
+
+
+30	Other	0	O	NNP/NNP	WASHINGTON/TODAY	O	O	O
+30	O	1	O	:	:	O	O	O
+30	Peop	2	O	NNP	Reagan	O	O	O
+30	O	3	O	VBZ	Takes	O	O	O
+30	O	4	O	NNP	High	O	O	O
+30	O	5	O	NNP	Road	O	O	O
+30	O	6	O	IN	in	O	O	O
+30	O	7	O	NNP	Farewell	O	O	O
+30	O	8	O	NNP	Speech	O	O	O
+
+
+31	O	0	O	IN	By	O	O	O
+31	Peop	1	O	NNP/NNP/NNP	W./DALE/NELSON	O	O	O
+
+
+32	Org	0	O	NNP/NNP	Associated/Press	O	O	O
+32	O	1	O	NNP	Writer	O	O	O
+
+

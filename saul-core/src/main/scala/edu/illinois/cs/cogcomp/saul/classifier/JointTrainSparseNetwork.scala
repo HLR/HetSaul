@@ -6,9 +6,10 @@
   */
 package edu.illinois.cs.cogcomp.saul.classifier
 
-import edu.illinois.cs.cogcomp.lbjava.learn.{ Learner, LinearThresholdUnit, SparseNetworkLearner }
+import edu.illinois.cs.cogcomp.lbjava.learn.{ LinearThresholdUnit, SparseNetworkLearner }
 import edu.illinois.cs.cogcomp.saul.datamodel.node.Node
 import org.slf4j.{ Logger, LoggerFactory }
+
 import scala.reflect.ClassTag
 
 /** Created by Parisa on 5/22/15.
@@ -17,18 +18,19 @@ object JointTrainSparseNetwork {
 
   val logger: Logger = LoggerFactory.getLogger(this.getClass)
   var difference = 0
-  def apply[HEAD <: AnyRef](node: Node[HEAD], cls: List[ConstrainedClassifier[_, HEAD]])(implicit headTag: ClassTag[HEAD]) = {
-    train[HEAD](node, cls, 1)
+  def apply[HEAD <: AnyRef](node: Node[HEAD], cls: List[ConstrainedClassifier[_, HEAD]], init: Boolean)(implicit headTag: ClassTag[HEAD]) = {
+    train[HEAD](node, cls, 1, init)
   }
 
-  def apply[HEAD <: AnyRef](node: Node[HEAD], cls: List[ConstrainedClassifier[_, HEAD]], it: Int)(implicit headTag: ClassTag[HEAD]) = {
-    train[HEAD](node, cls, it)
+  def apply[HEAD <: AnyRef](node: Node[HEAD], cls: List[ConstrainedClassifier[_, HEAD]], it: Int, init: Boolean)(implicit headTag: ClassTag[HEAD]) = {
+    train[HEAD](node, cls, it, init)
   }
 
   @scala.annotation.tailrec
-  def train[HEAD <: AnyRef](node: Node[HEAD], cls: List[ConstrainedClassifier[_, HEAD]], it: Int)(implicit headTag: ClassTag[HEAD]): Unit = {
+  def train[HEAD <: AnyRef](node: Node[HEAD], cls: List[ConstrainedClassifier[_, HEAD]], it: Int, init: Boolean)(implicit headTag: ClassTag[HEAD]): Unit = {
     // forall members in collection of the head (dm.t) do
     logger.info("Training iteration: " + it)
+    if (init) ClassifierUtils.InitializeClassifiers(node, cls: _*)
     if (it == 0) {
       // Done
       println("difference=", difference)
@@ -101,7 +103,7 @@ object JointTrainSparseNetwork {
             }
           }
       }
-      train(node, cls, it - 1)
+      train(node, cls, it - 1, false)
     }
   }
 }

@@ -13,7 +13,6 @@ import edu.illinois.cs.cogcomp.saul.classifier.{ ClassifierUtils, JointTrainSpar
 import edu.illinois.cs.cogcomp.saul.util.Logging
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLClassifiers._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLConstrainedClassifiers.argTypeConstraintClassifier
-import org.slf4j.{ Logger, LoggerFactory }
 
 object SRLApps extends Logging {
   import SRLConfigurator._
@@ -149,7 +148,7 @@ object RunningApps extends App with Logging {
         argumentTypeLearner.modelDir = modelDir + expName
         val outputFile = modelDir + srlPredictionsFile
         logger.info("Global training... ")
-        JointTrainSparseNetwork(sentences, argTypeConstraintClassifier :: Nil, 100)
+        JointTrainSparseNetwork(sentences, argTypeConstraintClassifier :: Nil, 100, true)
         argumentTypeLearner.save()
         argTypeConstraintClassifier.test(relations.getTestingInstances, outputFile, 200, exclude = "candidate")
     }
