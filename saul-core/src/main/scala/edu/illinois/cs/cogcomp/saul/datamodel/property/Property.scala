@@ -32,9 +32,15 @@ trait Property[T] extends LBJClassifierEquivalent {
 
   val classifier = makeClassifierWithName(name)
 
-  def addToFeatureVector(instance: T, featureVector: FeatureVector): FeatureVector
+  def addToFeatureVector(instance: T, featureVector: FeatureVector): FeatureVector = {
+    featureVector.addFeatures(this.classifier.classify(instance))
+    featureVector
+  }
 
-  def addToFeatureVector(instance: T, featureVector: FeatureVector, nameOfClassifier: String): FeatureVector
+  def addToFeatureVector(instance: T, featureVector: FeatureVector, nameOfClassifier: String): FeatureVector = {
+    featureVector.addFeatures(makeClassifierWithName(nameOfClassifier).classify(instance))
+    featureVector
+  }
 
   def makeClassifierWithName(n: String): FeatureGenerator
 }

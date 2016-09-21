@@ -55,9 +55,4 @@ case class CombinedDiscreteProperty[T <: AnyRef](atts: List[Property[T]])(implic
     atts.foreach(_.addToFeatureVector(instance, featureVector))
     featureVector
   }
-
-  def addToFeatureVector(instance: T, featureVector: FeatureVector, nameOfClassifier: String): FeatureVector = {
-    featureVector.addFeatures(makeClassifierWithName(nameOfClassifier).classify(instance))
-    featureVector
-  }
 }

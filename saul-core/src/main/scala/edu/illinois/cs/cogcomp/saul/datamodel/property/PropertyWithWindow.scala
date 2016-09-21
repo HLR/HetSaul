@@ -208,5 +208,4 @@ class PropertyWithWindow[T <: AnyRef](
       result
     }
   }
-
 }

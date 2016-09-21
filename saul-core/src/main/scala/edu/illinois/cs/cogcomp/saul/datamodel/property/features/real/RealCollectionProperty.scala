@@ -59,14 +59,4 @@ case class RealCollectionProperty[T <: AnyRef](name: String, sensor: T => List[D
       featureVector
     }
   }
-
-  override def addToFeatureVector(instance: T, featureVector: FeatureVector): FeatureVector = {
-    featureVector.addFeatures(this.classifier.classify(instance))
-    featureVector
-  }
-
-  def addToFeatureVector(instance: T, featureVector: FeatureVector, nameOfClassifier: String): FeatureVector = {
-    featureVector.addFeatures(makeClassifierWithName(nameOfClassifier).classify(instance))
-    featureVector
-  }
 }

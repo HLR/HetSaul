@@ -37,14 +37,4 @@ case class RealGenProperty[T <: AnyRef](name: String, sensor: T => List[Double])
       featureVector
     }
   }
-
-  override def addToFeatureVector(t: T, fv: FeatureVector): FeatureVector = {
-    fv.addFeatures(this.classifier.classify(t))
-    fv
-  }
-
-  def addToFeatureVector(t: T, fv: FeatureVector, nameOfClassifier: String): FeatureVector = {
-    fv.addFeatures(makeClassifierWithName(nameOfClassifier).classify(t))
-    fv
-  }
 }

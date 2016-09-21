@@ -41,14 +41,4 @@ class DiscreteGenProperty[T <: AnyRef](val name: String, val sensor: T => List[S
       super.classify(examples)
     }
   }
-  override def addToFeatureVector(t: T, fv: FeatureVector): FeatureVector = {
-    fv.addFeatures(this.classifier.classify(t))
-    fv
-  }
-
-  def addToFeatureVector(t: T, fv: FeatureVector, nameOfClassifier: String): FeatureVector = {
-    fv.addFeatures(makeClassifierWithName(nameOfClassifier).classify(t))
-    fv
-  }
-
 }

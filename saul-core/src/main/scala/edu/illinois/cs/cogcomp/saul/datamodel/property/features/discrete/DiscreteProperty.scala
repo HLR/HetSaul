@@ -76,14 +76,4 @@ case class DiscreteProperty[T <: AnyRef](name: String, sensor: T => String, rang
       }
     }
   }
-
-  override def addToFeatureVector(t: T, featureVector: FeatureVector): FeatureVector = {
-    featureVector.addFeature(this.classifier.featureValue(t))
-    featureVector
-  }
-
-  def addToFeatureVector(t: T, featureVector: FeatureVector, nameOfClassifier: String): FeatureVector = {
-    featureVector.addFeature(makeClassifierWithName(nameOfClassifier).featureValue(t))
-    featureVector
-  }
 }

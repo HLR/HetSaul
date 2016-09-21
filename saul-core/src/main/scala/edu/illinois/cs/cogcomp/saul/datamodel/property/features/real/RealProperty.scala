@@ -40,13 +40,4 @@ case class RealProperty[T <: AnyRef](name: String, sensor: T => Double)(implicit
         }
       }
     }
-
-  override def addToFeatureVector(instance: T, featureVector: FeatureVector): FeatureVector = {
-    featureVector.addFeature(this.classifier.featureValue(instance))
-    featureVector
-  }
-  def addToFeatureVector(instance: T, featureVector: FeatureVector, nameOfClassifier: String): FeatureVector = {
-    featureVector.addFeature(makeClassifierWithName(nameOfClassifier).featureValue(instance))
-    featureVector
-  }
 }

@@ -53,14 +53,4 @@ case class DiscreteCollectionProperty[T <: AnyRef](name: String, sensor: T => Li
       }
     }
   }
-
-  override def addToFeatureVector(t: T, featureVector: FeatureVector): FeatureVector = {
-    featureVector.addFeatures(this.classifier.classify(t))
-    featureVector
-  }
-
-  def addToFeatureVector(t: T, featureVector: FeatureVector, classifierName: String): FeatureVector = {
-    featureVector.addFeatures(makeClassifierWithName(classifierName).classify(t))
-    featureVector
-  }
 }
