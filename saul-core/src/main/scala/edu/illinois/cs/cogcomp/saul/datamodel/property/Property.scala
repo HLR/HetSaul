@@ -8,6 +8,7 @@ package edu.illinois.cs.cogcomp.saul.datamodel.property
 
 import edu.illinois.cs.cogcomp.lbjava.classify.{ FeatureVector, Classifier => FeatureGenerator }
 import edu.illinois.cs.cogcomp.saul.datamodel.node.Node
+import edu.illinois.cs.cogcomp.saul.datamodel.property.features.ClassifierContainsInLBP
 import edu.illinois.cs.cogcomp.saul.lbjrelated.LBJClassifierEquivalent
 
 import scala.reflect.ClassTag
@@ -17,8 +18,9 @@ import scala.reflect.ClassTag
   *
   * @tparam T Type of the attribute
   */
-trait Property[T] extends LBJClassifierEquivalent {
+trait Property[T] {
 
+  val containingPackage = "LBP_Package"
   val name: String
 
   val tag: ClassTag[T]
@@ -26,11 +28,13 @@ trait Property[T] extends LBJClassifierEquivalent {
 
   val sensor: T => S
 
-  def apply(instance: T): S = {
-    sensor(instance)
-  }
+  def apply(instance: T): S = sensor(instance)
 
-  val classifier = makeClassifierWithName(name)
+  def featureVector(instance: T): FeatureVector
+
+  def value(instance: T): Option[T] = None
+
+  private val classifier = makeClassifierWithName(name)
 
   def addToFeatureVector(instance: T, featureVector: FeatureVector): FeatureVector = {
     featureVector.addFeatures(this.classifier.classify(instance))
@@ -42,7 +46,29 @@ trait Property[T] extends LBJClassifierEquivalent {
     featureVector
   }
 
-  def makeClassifierWithName(n: String): FeatureGenerator
+  final def makeClassifierWithName(n: String): FeatureGenerator = {
+    new ClassifierContainsInLBP {
+      name = n
+
+      override def getOutputType: String = {
+        tag match {
+          case discrete: ClassTag[String] => "discrete"
+          case discreteArray: ClassTag[List[String]] => "discrete%"
+          case _ => "discrete"
+        }
+      }
+
+      override def classify(o: scala.Any): FeatureVector = featureVector(o.asInstanceOf[T])
+
+      override def discreteValue(o: scala.Any): String = featureVector(o.asInstanceOf[T]).discreteValueArray().head
+
+      override def realValue(o: scala.Any): Double = featureVector(o.asInstanceOf[T]).realValueArray().head
+
+      override def discreteValueArray(o: scala.Any): Array[String] = featureVector(o.asInstanceOf[T]).discreteValueArray()
+
+      override def realValueArray(o: scala.Any): Array[Double] = featureVector(o.asInstanceOf[T]).realValueArray()
+    }
+  }
 }
 
 object Property {

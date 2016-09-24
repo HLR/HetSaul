@@ -23,7 +23,11 @@ case class CombinedDiscreteProperty[T <: AnyRef](atts: List[Property[T]])(implic
 
   val packageName = "LBP_Package"
 
-  override def makeClassifierWithName(n: String): Classifier = new ClassifierContainsInLBP {
+  val classifier = makeInternalClassifierWithName(name)
+
+  override def featureVector(instance: T): FeatureVector = classifier.classify(instance)
+
+  def makeInternalClassifierWithName(n: String): Classifier = new ClassifierContainsInLBP {
     this.containingPackage = packageName
     this.name = n
 
@@ -42,7 +46,9 @@ case class CombinedDiscreteProperty[T <: AnyRef](atts: List[Property[T]])(implic
 
     override def getCompositeChildren: util.LinkedList[_] = {
       val result: util.LinkedList[Classifier] = new util.LinkedList[Classifier]()
-      atts.foreach(x => result.add(x.classifier))
+
+      // TODO:bhargav - Check if we still need to do this.
+      atts.foreach(x => result.add(Property.entitiesToLBJFeature(x)))
       result
     }
 

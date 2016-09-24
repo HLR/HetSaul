@@ -6,9 +6,8 @@
   */
 package edu.illinois.cs.cogcomp.saul.datamodel.property.features.real
 
-import edu.illinois.cs.cogcomp.lbjava.classify.{ RealArrayStringFeature, FeatureVector, Classifier }
+import edu.illinois.cs.cogcomp.lbjava.classify.{ RealArrayStringFeature, FeatureVector }
 import edu.illinois.cs.cogcomp.saul.datamodel.property.TypedProperty
-import edu.illinois.cs.cogcomp.saul.datamodel.property.features.ClassifierContainsInLBP
 
 import scala.reflect.ClassTag
 
@@ -22,37 +21,18 @@ import scala.reflect.ClassTag
 case class RealArrayProperty[T <: AnyRef](name: String, sensor: T => List[Double])(implicit val tag: ClassTag[T])
   extends RealPropertyCollection[T] with TypedProperty[T, List[Double]] {
 
-  // TODO: shouldn't this be this.name?
-  val ra = this
+  override def featureVector(instance: T): FeatureVector = {
+    val values = sensor(instance)
 
-  override def makeClassifierWithName(__name: String): Classifier = new ClassifierContainsInLBP() {
-    this.containingPackage = "LBP_Package"
+    val featureVector = new FeatureVector
 
-    this.name = __name
-
-    override def realValueArray(instance: AnyRef): Array[Double] = {
-      classify(instance).realValueArray
+    values.zipWithIndex.foreach {
+      case (value, idx) => featureVector.addFeature(new RealArrayStringFeature(this.containingPackage, this.name, "", value, idx, 0))
     }
 
-    override def classify(instance: Array[AnyRef]): Array[FeatureVector] = {
-      super.classify(instance)
-    }
+    // TODO: Commented by Daniel. Make sure this does not create any bugs
+    //(0 to values.size) foreach { x => featureVector.getFeature(x).setArrayLength(values.size) }
 
-    def classify(example: AnyRef): FeatureVector = {
-
-      val d: T = example.asInstanceOf[T]
-      val values = sensor(d)
-
-      val featureVector = new FeatureVector
-
-      values.zipWithIndex.foreach {
-        case (value, idx) => featureVector.addFeature(new RealArrayStringFeature(this.containingPackage, this.name, "", value, idx, 0))
-      }
-
-      // TODO: Commented by Daniel. Make sure this does not create any bugs
-      //(0 to values.size) foreach { x => featureVector.getFeature(x).setArrayLength(values.size) }
-
-      featureVector
-    }
+    featureVector
   }
 }
