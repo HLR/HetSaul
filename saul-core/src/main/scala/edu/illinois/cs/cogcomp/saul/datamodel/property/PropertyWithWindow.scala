@@ -152,18 +152,6 @@ class PropertyWithWindow[T <: AnyRef](
     }
   }
 
-  override def addToFeatureVector(t: T, fv: FeatureVector): FeatureVector = {
-    // All it need to do is calling the curated classifiers.
-    hiddenProperties.foreach(_.addToFeatureVector(t, fv))
-    fv
-  }
-
-  override def addToFeatureVector(t: T, fv: FeatureVector, name: String): FeatureVector = {
-    // All it need to do is calling the curated classifiers.
-    hiddenProperties.foreach(_.addToFeatureVector(t, fv))
-    fv
-  }
-
   override val name: String = {
     s"WindowProperty($before,$after}_Of${this.properties.map(_.name).mkString("|")}})"
   }
@@ -171,7 +159,7 @@ class PropertyWithWindow[T <: AnyRef](
   override def featureVector(instance: T): FeatureVector = {
     val __result: FeatureVector = new FeatureVector()
 
-    hiddenProperties.foreach(_.addToFeatureVector(instance, __result))
+    hiddenProperties.foreach(Property.addToFeatureVector(_, instance, __result))
 
     __result
   }

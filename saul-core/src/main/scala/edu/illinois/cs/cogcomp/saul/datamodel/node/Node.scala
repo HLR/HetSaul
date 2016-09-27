@@ -266,7 +266,7 @@ class Node[T <: AnyRef](val keyFunc: T => Any = (x: T) => x, val tag: ClassTag[T
         val featureVector = new FeatureVector()
         castedProperties.foreach {
           property =>
-            property.addToFeatureVector(instance.apply, featureVector, property.name)
+            Property.addToFeatureVector(property, instance.apply, featureVector)
         }
         derivedInstances.put(instanceId, featureVector)
     }

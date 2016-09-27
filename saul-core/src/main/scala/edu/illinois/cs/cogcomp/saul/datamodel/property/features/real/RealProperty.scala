@@ -13,6 +13,8 @@ import scala.reflect.ClassTag
 
 case class RealProperty[T <: AnyRef](name: String, sensor: T => Double)(implicit val tag: ClassTag[T]) extends TypedProperty[T, Double] {
 
+  override def outputType: String = "real"
+
   override def featureVector(instance: T): FeatureVector = {
     val result: Double = sensor(instance)
     new FeatureVector(new RealPrimitiveStringFeature(containingPackage, name, "", result))

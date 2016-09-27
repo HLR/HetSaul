@@ -6,10 +6,11 @@
   */
 package edu.illinois.cs.cogcomp.saul.datamodel.property
 
-import edu.illinois.cs.cogcomp.lbjava.classify.{ FeatureVector, Classifier => FeatureGenerator }
+import java.util
+
+import edu.illinois.cs.cogcomp.lbjava.classify.{Classifier, FeatureVector}
 import edu.illinois.cs.cogcomp.saul.datamodel.node.Node
 import edu.illinois.cs.cogcomp.saul.datamodel.property.features.ClassifierContainsInLBP
-import edu.illinois.cs.cogcomp.saul.lbjrelated.LBJClassifierEquivalent
 
 import scala.reflect.ClassTag
 
@@ -32,49 +33,37 @@ trait Property[T] {
 
   def featureVector(instance: T): FeatureVector
 
-  def value(instance: T): Option[T] = None
+  def outputType: String = "discrete"
 
-  private val classifier = makeClassifierWithName(name)
-
-  def addToFeatureVector(instance: T, featureVector: FeatureVector): FeatureVector = {
-    featureVector.addFeatures(this.classifier.classify(instance))
-    featureVector
-  }
-
-  def addToFeatureVector(instance: T, featureVector: FeatureVector, nameOfClassifier: String): FeatureVector = {
-    featureVector.addFeatures(makeClassifierWithName(nameOfClassifier).classify(instance))
-    featureVector
-  }
-
-  final def makeClassifierWithName(n: String): FeatureGenerator = {
-    new ClassifierContainsInLBP {
-      name = n
-
-      override def getOutputType: String = {
-        tag match {
-          case discrete: ClassTag[String] => "discrete"
-          case discreteArray: ClassTag[List[String]] => "discrete%"
-          case _ => "discrete"
-        }
-      }
-
-      override def classify(o: scala.Any): FeatureVector = featureVector(o.asInstanceOf[T])
-
-      override def discreteValue(o: scala.Any): String = featureVector(o.asInstanceOf[T]).discreteValueArray().head
-
-      override def realValue(o: scala.Any): Double = featureVector(o.asInstanceOf[T]).realValueArray().head
-
-      override def discreteValueArray(o: scala.Any): Array[String] = featureVector(o.asInstanceOf[T]).discreteValueArray()
-
-      override def realValueArray(o: scala.Any): Array[Double] = featureVector(o.asInstanceOf[T]).realValueArray()
-    }
-  }
+  def compositeChildren: Option[util.LinkedList[Classifier]] = None
 }
 
 object Property {
 
-  /** Transfer a list of properties to a lbj classifier. */
-  def entitiesToLBJFeature[T](atts: Property[T]): FeatureGenerator = {
-    atts.classifier
+  /** Transfer a properties to a lbj classifier. */
+  def makeClassifier[T](property: Property[T]): Classifier = {
+    new ClassifierContainsInLBP {
+      name = property.name
+      containingPackage = property.containingPackage
+
+      override def getOutputType: String = property.outputType
+
+      override def classify(o: scala.Any): FeatureVector = property.featureVector(o.asInstanceOf[T])
+
+      override def discreteValue(o: scala.Any): String = property.featureVector(o.asInstanceOf[T]).discreteValueArray().head
+
+      override def realValue(o: scala.Any): Double = property.featureVector(o.asInstanceOf[T]).realValueArray().head
+
+      override def discreteValueArray(o: scala.Any): Array[String] = property.featureVector(o.asInstanceOf[T]).discreteValueArray()
+
+      override def realValueArray(o: scala.Any): Array[Double] = property.featureVector(o.asInstanceOf[T]).realValueArray()
+
+      override def getCompositeChildren: util.LinkedList[_] = property.compositeChildren.orNull
+    }
+  }
+
+  def addToFeatureVector[T](property: Property[T], instance: T, fv: FeatureVector): FeatureVector = {
+    fv.addFeatures(property.featureVector(instance))
+    fv
   }
 }

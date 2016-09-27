@@ -15,7 +15,7 @@ trait RealPropertyCollection[T <: AnyRef] extends Property[T]
 
 case class RealGenProperty[T <: AnyRef](name: String, sensor: T => List[Double])(implicit val tag: ClassTag[T]) extends RealPropertyCollection[T] with TypedProperty[T, List[Double]] {
 
-  val ra = this.name
+  override def outputType: String = "real%"
 
   override def featureVector(instance: T): FeatureVector = {
     val values = sensor(instance)

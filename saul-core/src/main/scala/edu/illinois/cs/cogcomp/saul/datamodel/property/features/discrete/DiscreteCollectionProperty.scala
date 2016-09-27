@@ -13,6 +13,8 @@ import scala.reflect.ClassTag
 
 case class DiscreteCollectionProperty[T <: AnyRef](name: String, sensor: T => List[String], ordered: Boolean)(implicit val tag: ClassTag[T]) extends TypedProperty[T, List[String]] {
 
+  override def outputType: String = "discrete%"
+
   override def featureVector(instance: T): FeatureVector = {
     val values = sensor(instance)
 

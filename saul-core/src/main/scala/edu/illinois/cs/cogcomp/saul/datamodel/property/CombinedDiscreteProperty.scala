@@ -9,7 +9,6 @@ package edu.illinois.cs.cogcomp.saul.datamodel.property
 import java.util
 
 import edu.illinois.cs.cogcomp.lbjava.classify.{ Classifier, FeatureVector }
-import edu.illinois.cs.cogcomp.saul.datamodel.property.features.ClassifierContainsInLBP
 
 import scala.reflect.ClassTag
 
@@ -23,42 +22,19 @@ case class CombinedDiscreteProperty[T <: AnyRef](atts: List[Property[T]])(implic
 
   val packageName = "LBP_Package"
 
-  val classifier = makeInternalClassifierWithName(name)
+  override def outputType: String = "mixed%"
 
-  override def featureVector(instance: T): FeatureVector = classifier.classify(instance)
-
-  def makeInternalClassifierWithName(n: String): Classifier = new ClassifierContainsInLBP {
-    this.containingPackage = packageName
-    this.name = n
-
-    override def getOutputType: String = "mixed%"
-
-    def classify(instance: AnyRef): FeatureVector = {
-      val t: T = instance.asInstanceOf[T]
-      val featureVector = new FeatureVector()
-      atts.foreach(_.addToFeatureVector(t, featureVector))
-      featureVector
-    }
-
-    override def classify(examples: Array[AnyRef]): Array[FeatureVector] = {
-      super.classify(examples)
-    }
-
-    override def getCompositeChildren: util.LinkedList[_] = {
-      val result: util.LinkedList[Classifier] = new util.LinkedList[Classifier]()
-
-      // TODO:bhargav - Check if we still need to do this.
-      atts.foreach(x => result.add(Property.entitiesToLBJFeature(x)))
-      result
-    }
-
-    override def discreteValue(example: AnyRef): String = {
-      atts.head(example.asInstanceOf[T]).asInstanceOf[String]
-    }
+  override def featureVector(instance: T): FeatureVector = {
+    val featureVector = new FeatureVector()
+    atts.foreach(Property.addToFeatureVector(_, instance, featureVector))
+    featureVector
   }
 
-  override def addToFeatureVector(instance: T, featureVector: FeatureVector): FeatureVector = {
-    atts.foreach(_.addToFeatureVector(instance, featureVector))
-    featureVector
+  override def compositeChildren: Option[util.LinkedList[Classifier]] = {
+    val result: util.LinkedList[Classifier] = new util.LinkedList[Classifier]()
+
+    // TODO:bhargav - Check if we still need to do this.
+    atts.foreach(x => result.add(Property.makeClassifier(x)))
+    Some(result)
   }
 }

@@ -13,6 +13,8 @@ import scala.reflect.ClassTag
 
 case class RealCollectionProperty[T <: AnyRef](name: String, sensor: T => List[Double], ordered: Boolean)(implicit val tag: ClassTag[T]) extends RealPropertyCollection[T] with TypedProperty[T, List[Double]] {
 
+  override def outputType: String = "real%"
+
   override def featureVector(instance: T): FeatureVector = {
     val values = sensor(instance)
     val featureVector = new FeatureVector

@@ -23,9 +23,5 @@ class EvaluatedProperty[T <: AnyRef, U](val property: TypedProperty[T, U], val v
 
   override def featureVector(instance: T): FeatureVector = typedProperties.featureVector(instance)
 
-  override def addToFeatureVector(instance: T, featureVector: FeatureVector): FeatureVector = featureVector
-
-  override def addToFeatureVector(instance: T, featureVector: FeatureVector, nameOfClassifier: String) = featureVector
-
   override val sensor: (T) => String = { t: T => "" }
 }
