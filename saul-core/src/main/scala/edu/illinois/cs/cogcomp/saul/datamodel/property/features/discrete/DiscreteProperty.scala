@@ -14,6 +14,8 @@ import scala.reflect.ClassTag
 case class DiscreteProperty[T <: AnyRef](name: String, sensor: T => String, range: Option[List[String]])(implicit val tag: ClassTag[T])
   extends TypedProperty[T, String] {
 
+  override def allowableValues: Array[String] = range.map(_.toArray[String]).getOrElse(Array.empty[String])
+
   override def featureVector(instance: T): FeatureVector = {
     range match {
       case Some(rangeValue) =>

@@ -54,7 +54,7 @@ abstract class Learnable[T <: AnyRef](val node: Node[T], val parameters: Paramet
   def combinedProperties = if (label != null) new CombinedDiscreteProperty[T](this.feature.filterNot(_.name == label.name))
   else new CombinedDiscreteProperty[T](this.feature)
 
-  def lbpFeatures = Property.makeClassifier(combinedProperties)
+  def lbpFeatures = Property.convertToClassifier(combinedProperties)
 
   /** classifier need to be defined by the user */
   val classifier: Learner
@@ -102,7 +102,7 @@ abstract class Learnable[T <: AnyRef](val node: Node[T], val parameters: Paramet
 
   private def setLabeler(): Unit = {
     if (label != null) {
-      val oracle = Property.makeClassifier(label)
+      val oracle = Property.convertToClassifier(label)
       logger.debug(s"Setting the labeler to be ${oracle}")
       classifier.setLabeler(oracle)
     }
@@ -220,7 +220,7 @@ abstract class Learnable[T <: AnyRef](val node: Node[T], val parameters: Paramet
   def learn(iteration: Int, data: Iterable[T]): Unit = {
     createFiles()
 
-    val oracle = Property.makeClassifier(label)
+    val oracle = Property.convertToClassifier(label)
     logger.debug(s"==> Learning using the feature extractors to be ${lbpFeatures.getCompositeChildren}")
     logger.debug(s"==> Learning using the labeler to be ${oracle}")
     logger.debug(classifier.getExtractor.getCompositeChildren.toString)
@@ -304,8 +304,8 @@ abstract class Learnable[T <: AnyRef](val node: Node[T], val parameters: Paramet
       if (prediction == null && groundTruth == null) {
         TestDiscrete.testDiscrete(classifier, classifier.getLabeler, testParser)
       } else {
-        val predictionClassifer = Property.makeClassifier(prediction)
-        val groundTruthClassifier = Property.makeClassifier(groundTruth)
+        val predictionClassifer = Property.convertToClassifier(prediction)
+        val groundTruthClassifier = Property.convertToClassifier(groundTruth)
         TestDiscrete.testDiscrete(new TestDiscrete(), predictionClassifer, groundTruthClassifier, testParser, logging, outputGranularity)
       }
     }

@@ -13,8 +13,6 @@ import scala.reflect.ClassTag
 
 case class DiscreteArrayProperty[T <: AnyRef](name: String, sensor: T => List[String])(implicit val tag: ClassTag[T]) extends TypedProperty[T, List[String]] {
 
-  override def outputType: String = "discrete%"
-
   override def featureVector(instance: T): FeatureVector = {
     val values = sensor(instance)
 
@@ -22,7 +20,7 @@ case class DiscreteArrayProperty[T <: AnyRef](name: String, sensor: T => List[St
     __result = new FeatureVector
 
     values.zipWithIndex.foreach {
-      case (__value, __featureIndex) => __result.addFeature(new DiscreteArrayStringFeature(this.containingPackage, this.name, "", __value, __featureIndex.toShort, 0.toShort, __featureIndex, 0))
+      case (__value, __featureIndex) => __result.addFeature(new DiscreteArrayStringFeature(this.containingPackage, this.name, "", __value, (-1).toShort, 0.toShort, __featureIndex, 0))
     }
 
     (0 to values.size) foreach { x => __result.getFeature(x).setArrayLength(values.size) }

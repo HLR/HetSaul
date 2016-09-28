@@ -157,10 +157,8 @@ class PropertyWithWindow[T <: AnyRef](
   }
 
   override def featureVector(instance: T): FeatureVector = {
-    val __result: FeatureVector = new FeatureVector()
-
-    hiddenProperties.foreach(Property.addToFeatureVector(_, instance, __result))
-
-    __result
+    val result: FeatureVector = new FeatureVector()
+    hiddenProperties.foreach(property => result.addFeatures(property.featureVector(instance)))
+    result
   }
 }

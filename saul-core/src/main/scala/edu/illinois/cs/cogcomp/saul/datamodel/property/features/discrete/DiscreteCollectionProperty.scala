@@ -13,8 +13,6 @@ import scala.reflect.ClassTag
 
 case class DiscreteCollectionProperty[T <: AnyRef](name: String, sensor: T => List[String], ordered: Boolean)(implicit val tag: ClassTag[T]) extends TypedProperty[T, List[String]] {
 
-  override def outputType: String = "discrete%"
-
   override def featureVector(instance: T): FeatureVector = {
     val values = sensor(instance)
 
@@ -25,7 +23,7 @@ case class DiscreteCollectionProperty[T <: AnyRef](name: String, sensor: T => Li
         case (value, idx) =>
           featureVector.addFeature(
             new DiscreteArrayStringFeature(this.containingPackage, this.name, "", value,
-              values.indexOf(value).toShort, 0.toShort, idx, 0)
+              (-1).toShort, 0.toShort, idx, 0)
           )
       }
       // TODO: Daniel commented this line. Make sure this does not introduce a bug
@@ -36,7 +34,7 @@ case class DiscreteCollectionProperty[T <: AnyRef](name: String, sensor: T => Li
           val id = value
           featureVector.addFeature(new DiscretePrimitiveStringFeature(
             this.containingPackage,
-            this.name, id, value, values.indexOf(value).toShort, 0.toShort
+            this.name, id, value, (-1).toShort, 0.toShort
           ))
       }
     }

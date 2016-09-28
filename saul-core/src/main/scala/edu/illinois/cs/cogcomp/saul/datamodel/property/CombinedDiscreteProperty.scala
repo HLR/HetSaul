@@ -26,7 +26,7 @@ case class CombinedDiscreteProperty[T <: AnyRef](atts: List[Property[T]])(implic
 
   override def featureVector(instance: T): FeatureVector = {
     val featureVector = new FeatureVector()
-    atts.foreach(Property.addToFeatureVector(_, instance, featureVector))
+    atts.foreach(property => featureVector.addFeatures(property.featureVector(instance)))
     featureVector
   }
 
@@ -34,7 +34,7 @@ case class CombinedDiscreteProperty[T <: AnyRef](atts: List[Property[T]])(implic
     val result: util.LinkedList[Classifier] = new util.LinkedList[Classifier]()
 
     // TODO:bhargav - Check if we still need to do this.
-    atts.foreach(x => result.add(Property.makeClassifier(x)))
+    atts.foreach(x => result.add(Property.convertToClassifier(x)))
     Some(result)
   }
 }
