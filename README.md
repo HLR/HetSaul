@@ -28,13 +28,13 @@ The project's [official chat group is at Slack](https://cogcomp.slack.com/messag
 
 Visit each link for its content
 
- 1. [Introduction](doc/INTRO.md)
- 2. [Installation] (doc/INSTALLATION.md)
- 3. [Conceptual structure of a Saul program](doc/CONCEPTUALSTRUCTURE.md)
- 2. [Data modeling and feature extraction](doc/DATAMODELING.md)
- 3. [Learners and constraints](doc/SAULLANGUAGE.md)
- 4. [Model configurations](doc/MODELS.md)
- 5. [Saul library](doc/LBJLIBRARY.md)
+ 1. [Introduction](saul-core/doc/INTRO.md)
+ 2. [Installation] (saul-core/doc/INSTALLATION.md)
+ 3. [Conceptual structure of a Saul program](saul-core/doc/CONCEPTUALSTRUCTURE.md)
+ 2. [Data modeling and feature extraction](saul-core/doc/DATAMODELING.md)
+ 3. [Learners and constraints](saul-core/doc/SAULLANGUAGE.md)
+ 4. [Model configurations](saul-core/doc/MODELS.md)
+ 5. [Saul library](saul-core/doc/LBJLIBRARY.md)
 
 The api docs are included [here](http://cogcomp.cs.illinois.edu/software/doc/saul/). 
 
