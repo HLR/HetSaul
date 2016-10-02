@@ -1,13 +1,14 @@
 # Entity-Relation classification 
 
-This is the problem of recognizing the `kill (KFJ, Oswald)` relation in the sentence "J. V. 
-Oswald was murdered at JFK after his assassin, R. U. KFJ..." This task requires making several
-local decisions, such as identifying named entities in the sentence, in order to support the 
-relation identification. For example, it may be useful to identify that Oswald and KFJ are 
-people, and JFK is a location. This, in turn, may help to identify that the kill action is 
-described in the sentence. At the same time, the relation kill constrains its arguments to 
-be people (or at least, not to be locations) and helps to enforce that Oswald and KFJ are 
-likely to be people, while JFK is not.
+This is the problem of recognizing the `kill (KFJ, Oswald)` relation in the sentence
+
+ "J. V. Oswald was murdered at JFK after his assassin, R. U. KFJ..."
+
+ This task requires making several local decisions, such as identifying named entities in the sentence, in order to support the
+ relation identification. For example, it may be useful to identify that `Oswald` and `KFJ` are
+ people, and `JFK` is a location. This, in turn, may help to identify that the kill action is
+  described in the sentence. At the same time, the relation `kill` constrains its arguments to
+ be people (or at least, not to be locations) and helps to enforce that `Oswald` and `KFJ` are likely to be people, while `JFK` is not.
 
 The problem is defined in terms of a collection of discrete random variables representing 
 binary relations and their arguments; we seek an optimal assignment to the variables in 
@@ -15,10 +16,10 @@ the presence of the constraints on the binary relations between variables and th
 types. To read more on the formulation of the problem please refer to [1]. 
 
 One important goal in this task is to show the training with different paradigms, which are 
-described in the next secion. 
+described in the next section.
 
-We evaluate the current systems on the Conll-2004 data. We use 2942 train sentences (6955 entities and 1079 relations) 
-and 2573 test sentences (7219 entities and 969 relations). 
+The type of entities that we extract in this example are E={Person, Location, Organization} and the typ of relations are R={WorksFor, LivesIn, LocatedIn, OrgBasedIn}.
+We evaluate the current systems on the Conll-2004 data. We use 2942 train sentences (6955 entities and 1079 relations) and 2573 test sentences (7219 entities and 969 relations).
 
 ## Training and inference paradigms
 

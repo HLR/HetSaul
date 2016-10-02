@@ -2,7 +2,7 @@
 
 ## Running
 - Enter the sbt environment: `sbt`
-- Choose the webapp project: `project webApp`
+- Choose the webapp project: `project saulWebapp`
 - Spin up the webapp: `run`; to specify a port, include it after `run`: `run PORT_NUM`. 
 
 To stop it, use `Ctrl+D`. 
