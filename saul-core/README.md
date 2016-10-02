@@ -25,13 +25,15 @@ Visit each link for its content
 The api docs are included [here](http://cogcomp.cs.illinois.edu/software/doc/saul/). 
 
 ## Credits 
-This project has been started by [Parisa Kordjamshidi](mailto:kordjam@illinois.edu) and the development has been done in collaboration with [Hao Wu](mailto:haowu4@illinois.edu), [Sameer Singh](mailto:sameer@cs.washington.edu), [Daniel Khashabi](mailto:khashab2@illinois.edu), [Christos Christodoulopoulos](mailto:christod@illinois.edu). 
+This project has been started by [Parisa Kordjamshidi](mailto:kordjam@illinois.edu) and the development has been done in collaboration with [Hao Wu](mailto:haowu4@illinois.edu), [Sameer Singh](mailto:sameer@cs.washington.edu), [Daniel Khashabi](mailto:khashab2@illinois.edu), [Christos Christodoulopoulos](mailto:christod@illinois.edu) and [Bhargav Mangipudi](mailto:mangipu2@illinois.edu). 
 
 If you use this tool, please cite the following paper: 
 
 [1] Parisa Kordjamshidi, Dan Roth, and Hao Wu. "Saul: Towards declarative learning based programming." 
 Proceedings of the International Joint Conferences on Artificial Intelligence (IJCAI), 2015.
 
+[2] Parisa Kordjamshidi, Daniel Khashabi, Christos Christodoulopoulos, Bhargav Mangipudi, Sameer Singh and Dan Roth. "Better call Saul: Flexible Programming for Learning and Inference in NLP." International Conference on Computational Linguistics (COLING), 2016. 
+
 ## Licensing
-_To see the full license for this software, see the LICENSE (in `doc` directory) or visit the download page 
+_To see the full license for this software, see the LICENSE (in root directory) or visit the download page 
 for this software and press `Download`. The next screen displays the license._
