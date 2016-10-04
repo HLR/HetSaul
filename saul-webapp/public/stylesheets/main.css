@@ -84,6 +84,7 @@ input[type="text"], textarea {
 
 .well2{
     margin-left: 5px;
+    margin-bottom: 5px;
     display: inline-block;
     min-height: 20px;
 }

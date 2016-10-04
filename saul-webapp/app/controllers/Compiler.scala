@@ -109,13 +109,14 @@ final class Compiler(rootDir: String, completeClasspath: String, reporterCallbac
     // Load and instantiate compiled class.
     val name = fileName.split('.')
     val runtimeMirror = universe.runtimeMirror(classLoader)
-    try {
+    /*try {*/
+      println(packageName)
       val module = runtimeMirror.staticModule(packageName + "." + name(0))
       val obj = runtimeMirror.reflectModule(module)
       obj.instance
-    } catch {
+    /*} catch {
       case _ => throw new CompilerException(List(List("Instantiation Error. Did you get the path to the training data correct?")))
-    }
+    }*/
   }
 
   def executeWithoutLog(file: Any): Unit = {

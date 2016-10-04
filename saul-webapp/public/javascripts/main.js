@@ -8,10 +8,62 @@ $(document).ready(function(){
     });
     $("#errors").hide();
 
-    setupExamples();
+    setupExamples2();
 
 })
+var setupExamples2 = function (){
+    $("#ToyExample").click(function(){
+        deleteAllFiles();
+        var content = ["package test","","import edu.illinois.cs.cogcomp.saul.datamodel.DataModel","import logging.Logger.{ error, info }", "","object $$$$$$ extends DataModel {","","    val firstNames = node[String]","    val lastNames = node[String]","    val name = edge(firstNames,lastNames)","    val prefix = property(firstNames,\"prefix\")((s: String) => s.charAt(1).toString)","    val prefix2 = property(firstNames,\"prefix\")((s: String) => s.charAt(0).toString)","","    def main(args : Array[String]): Unit ={","        firstNames.populate(Seq(\"Dave\",\"John\",\"Mark\",\"Michael\"))","        lastNames.populate(Seq(\"Dell\",\"Jacobs\",\"Maron\",\"Mario\"))","        name.populateWith(_.charAt(0) == _.charAt(0))","    }","}"];
+        newFile(content);
+    });
 
+    var addButtons = function(data){
+
+        for(var pro in data){
+            $("#collapseExamples").append('<button type="button" class="btn btn-info well2" id="' + data[pro] +'">' +data[pro]+'</button>');
+            
+            $("#"+data[pro]).click(function(event){
+
+                $.ajax({
+                    type : 'POST',
+                    url : "/getExampleFile",
+                    headers: { 
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json' 
+                            },
+                    data: JSON.stringify({
+                        "projectName": event.target.id
+                    }),
+                    success : function(data){
+                        deleteAllFiles();
+                        for(var idx in data){
+                            console.log(idx);
+                            console.log(data[idx]);
+                            newFileWithFilename(idx,data[idx]);
+                        }
+                    },
+                    error: onError
+                });
+            });
+        }
+    }
+    $.ajax({
+        type : 'POST',
+        url : "/getExamples",
+        headers: { 
+                'Accept': 'application/json',
+                'Content-Type': 'application/json' 
+                },
+        data: JSON.stringify({
+            "data": ""
+        }),
+        success : addButtons,
+        error: onError
+    });
+
+
+}
 var setupExamples = function(){
         $("#ToyExample").click(function(){
             deleteAllFiles();
@@ -229,9 +281,6 @@ var newFile = function(content){
     })
     var editor = $("<div class='editor active' id='editor"+idx+"'></div>");
     $("#workspace").append(editor);
-    for(var line in content){
-        content[line] = content[line].replace("$$$$$$","test"+idx);
-    }
     setEditor("editor"+idx,"scala",content);
 }
 
