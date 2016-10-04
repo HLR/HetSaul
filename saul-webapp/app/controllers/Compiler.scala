@@ -110,7 +110,6 @@ final class Compiler(rootDir: String, completeClasspath: String, reporterCallbac
     val name = fileName.split('.')
     val runtimeMirror = universe.runtimeMirror(classLoader)
     /*try {*/
-      println(packageName)
       val module = runtimeMirror.staticModule(packageName + "." + name(0))
       val obj = runtimeMirror.reflectModule(module)
       obj.instance
