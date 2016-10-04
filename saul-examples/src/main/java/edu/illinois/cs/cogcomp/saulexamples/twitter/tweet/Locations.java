@@ -23,4 +23,5 @@ public class Locations {
     public static final Location JOHANNESBURG = Utils.getCityLocation(27.942449, -26.238923, 28.1376, -26.10412);
     public static final Location MEXICO_CITY = Utils.getCityLocation(-99.326777, 19.18871, -98.960448, 19.592757);
     public static final Location RIO_DE_JANEIRO = Utils.getCityLocation(-43.79506, -23.076347, -43.101836, -22.746199);
+    public static final Location New_ORLEANS = Utils.getCityLocation(-92.4060058594,-88.3850097656,30.9870617439,29.4012851779);
 }

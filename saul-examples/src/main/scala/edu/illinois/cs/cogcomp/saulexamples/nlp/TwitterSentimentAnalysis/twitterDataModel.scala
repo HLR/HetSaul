@@ -10,7 +10,9 @@ object twitterDataModel extends DataModel {
   val tweet = node[Tweet]
 
   val WordFeatures = property(tweet) {
-    x: Tweet => x.getWords.toList
+    x: Tweet =>
+      val a= x.getWords.toList
+      a
   }
 
   val BigramFeatures = property(tweet) {
