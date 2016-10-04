@@ -11,7 +11,7 @@ object twitterDataModel extends DataModel {
 
   val WordFeatures = property(tweet) {
     x: Tweet =>
-      val a= x.getWords.toList
+      val a = x.getWords.toList
       a
   }
 

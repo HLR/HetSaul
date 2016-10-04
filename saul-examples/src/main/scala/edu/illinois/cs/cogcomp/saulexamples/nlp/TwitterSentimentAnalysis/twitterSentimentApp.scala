@@ -5,7 +5,7 @@ import java.util
 import com.twitter.hbc.core.endpoint.Location
 import edu.illinois.cs.cogcomp.saul.classifier.ClassifierUtils
 import edu.illinois.cs.cogcomp.saulexamples.nlp.TwitterSentimentAnalysis.twitterClassifiers.sentimentClassifier
-import edu.illinois.cs.cogcomp.saulexamples.twitter.tweet.{ClassifierMessageHandler, Locations, TwitterClient}
+import edu.illinois.cs.cogcomp.saulexamples.twitter.tweet.{ ClassifierMessageHandler, Locations, TwitterClient }
 
 import scala.collection.JavaConversions._
 

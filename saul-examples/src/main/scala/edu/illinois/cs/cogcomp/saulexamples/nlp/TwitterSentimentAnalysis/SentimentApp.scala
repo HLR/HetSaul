@@ -1,6 +1,7 @@
 package edu.illinois.cs.cogcomp.saulexamples.nlp.TwitterSentimentAnalysis
 
 import edu.illinois.cs.cogcomp.saul.classifier.ClassifierUtils
+import edu.illinois.cs.cogcomp.saulexamples.nlp.EmailSpam.SpamClassifiers.SpamClassifier
 import edu.illinois.cs.cogcomp.saulexamples.twitter.datastructures.Tweet
 import edu.illinois.cs.cogcomp.saulexamples.twitter.tweet.TweetReader
 import org.apache.commons.io.filefilter.FalseFileFilter
@@ -17,7 +18,9 @@ object SentimentApp extends App {
   tweet.populate(TrainReader.tweets.toList)
   tweet.populate(TestReader.tweets.toList, train = false)
   //sentimentClassifier.learn(10)
-  ClassifierUtils.LoadClassifier(sentimentClassifier)
+  //SpamClassifier.save()
+  sentimentClassifier.load()
+  //ClassifierUtils.LoadClassifier("models/", sentimentClassifier)
   sentimentClassifier.classifier.discreteValue(new Tweet("here is my tweet."))
   sentimentClassifier.test()
 }
