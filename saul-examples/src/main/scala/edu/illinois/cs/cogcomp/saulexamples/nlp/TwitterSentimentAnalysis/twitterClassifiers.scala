@@ -8,7 +8,7 @@ import twitterDataModel._
   */
 object twitterClassifiers {
 
-  object twitterClassifier extends Learnable[Tweet](tweet) {
+  object sentimentClassifier extends Learnable[Tweet](tweet) {
     def label = Label
     override def feature = using()
     override lazy val classifier = new SparseNetworkLearner()
