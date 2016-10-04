@@ -22,7 +22,7 @@ object twitterSentimentApp extends App {
   val client: TwitterClient = new TwitterClient(null, locations, null);
 
   // A separate thread for handling the queue of tweets
-  val messageHandler: ClassifierMessageHandler = new ClassifierMessageHandler(client.getMsgQueue(), client.getClient(), sentimentClassifier);
+  val messageHandler: ClassifierMessageHandler = new ClassifierMessageHandler(client.getMsgQueue(), client.getClient(), sentimentClassifier.classifier);
   val thread: Thread = new Thread(messageHandler);
   thread.start();
 }
