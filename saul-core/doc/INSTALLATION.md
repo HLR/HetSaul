@@ -2,8 +2,61 @@
  * [Scala](http://www.scala-lang.org/) 2.11.7
  * [Simple Build Tool(sbt)](http://www.scala-sbt.org/)
 
-## How to compile the software
-For details of how to compile the software refer to [the main readme file](../README.md#compiling-saul). 
+## How to use the software
+
+### Using Saul as dependency 
+If you want to use Saul in your project, should first add it as your dependency. 
+Note that this is the *recommended* way of using it; if you don't use any 
+dependency management system, you can use compile it directly (next section).
+Here are examples of how it is done in different dependency managment frameworks. 
+For each sample code, replace `VERSION` with the latest [Saul version number](http://cogcomp.cs.illinois.edu/m2repo/edu/illinois/cs/cogcomp/saul_2.11/). 
+
+ - Maven 
+
+```xml
+<repositories>
+    <repository>
+        <id>CogcompSoftware</id>
+        <name>CogcompSoftware</name>
+        <url>http://cogcomp.cs.illinois.edu/m2repo/</url>
+    </repository>
+</repositories>
+
+<dependencies>
+    <dependency>
+        <groupId>edu.illinois.cs.cogcomp</groupId>
+        <artifactId>saul</artifactId>
+        <version>VERSION</version>
+    </dependency>
+</dependencies>
+```
+
+ - SBT 
+
+```sbt
+resolvers += "CogcompSoftware" at "http://cogcomp.cs.illinois.edu/m2repo/"
+libraryDependencies += "edu.illinois.cs.cogcomp" % "saul_2.11" % "VERSION"
+```
+
+ - Gradle 
+ 
+```
+compile 'edu.illinois.cs.cogcomp:saul_2.11:VERSION'
+```
+
+### Compiling Saul  
+Usually you need this options if you are developing using Saul, or 
+you want to run the examples.  
+
+First, run `sbt`. 
+
+- `projects` will show the names of the existing module names. 
+    - `project saulCore` will take you inside the core package. 
+    -  `project saulExamples` will take you inside the examples package.
+    - `project saulWebapp` will take you inside the webapp package. Then type `run` to start the server. Type `localhost:9000` in browser address bar to see the webapp.
+- Inside each project you can `compile` it, or `run` it. 
+- To fix the formatting problems, run `format`
+
 
 ## Installing Solvers for Inference 
 Saul uses the the solvers included in [illinois-inference](https://gitlab-beta.engr.illinois.edu/cogcomp/inference/) 
