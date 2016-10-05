@@ -1,6 +1,6 @@
 .DS_Store
 data
-*/data
+*/twitter
 .idea
 /RUNNING_PID
 */logs/
@@ -16,5 +16,5 @@ annotation-cache/
 *.lc
 *.lex
 *~
-*/*.swp 
+*/*.swp
 *.swp

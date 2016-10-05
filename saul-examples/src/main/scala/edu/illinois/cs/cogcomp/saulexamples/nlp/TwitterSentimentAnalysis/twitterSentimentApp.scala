@@ -3,9 +3,8 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp.TwitterSentimentAnalysis
 import java.util
 
 import com.twitter.hbc.core.endpoint.Location
-import edu.illinois.cs.cogcomp.saul.classifier.ClassifierUtils
 import edu.illinois.cs.cogcomp.saulexamples.nlp.TwitterSentimentAnalysis.twitterClassifiers.sentimentClassifier
-import edu.illinois.cs.cogcomp.saulexamples.twitter.tweet.{ ClassifierMessageHandler, Locations, TwitterClient }
+import edu.illinois.cs.cogcomp.saulexamples.twitter.tweet.{ClassifierMessageHandler, Locations, TwitterClient}
 
 import scala.collection.JavaConversions._
 
@@ -21,7 +20,7 @@ object twitterSentimentApp extends App {
   //List<String> languages = Arrays.asList("en", "es");
 
   val client: TwitterClient = new TwitterClient(null, locations, null);
-  ClassifierUtils.LoadClassifier(sentimentClassifier)
+  sentimentClassifier.load()
   // A separate thread for handling the queue of tweets
   val messageHandler: ClassifierMessageHandler = new ClassifierMessageHandler(client.getMsgQueue(), client.getClient(), sentimentClassifier.classifier);
   val thread: Thread = new Thread(messageHandler);
