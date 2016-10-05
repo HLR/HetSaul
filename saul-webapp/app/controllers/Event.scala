@@ -18,4 +18,6 @@ object Event {
   final case class PopulateData() extends Event
 
   final case class Query() extends Event
+
+  final case class GetExample() extends Event
 }

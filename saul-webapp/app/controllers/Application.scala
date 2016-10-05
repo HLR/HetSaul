@@ -22,7 +22,7 @@ import _root_.util._
 object Application {
 
   val rootDir = "/tmp"
-
+  val exampleDir = "./saul-examples/src/main/scala/edu/illinois/cs/cogcomp/saulexamples"
   val completeClasspath = (List(
     "scala.tools.nsc.Interpreter",
     "scala.AnyVal",
@@ -66,6 +66,22 @@ class Application extends Controller {
     Ok(views.html.plot("Plot Visualization"))
   }
 
+  def getExamples = Action(parse.json) { implicit request =>
+
+    Ok(Json.toJson(IOUtils.findLeafFolders(exampleDir)))
+  }
+
+  def getExampleFile = Action(parse.json) { implicit request =>
+    val files = parseRequest(GetExample(), request)
+    files match {
+      case Some(fileMap) => {
+        val (k,v) = fileMap.head
+        Ok(Json.toJson(IOUtils.getExampleFileContentList(exampleDir,v)))
+
+      }
+      case _ => Ok(getErrorJson(Json.toJson("No filemap found.")))
+    }
+  }
   def acceptDisplayModel = Action(parse.json) { implicit request =>
     execute(DisplayModel(), request)
   }
