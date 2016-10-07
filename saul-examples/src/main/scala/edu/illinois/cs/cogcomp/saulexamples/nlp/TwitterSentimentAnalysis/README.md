@@ -12,12 +12,12 @@ The Data for this example comes from two different sources. One is the collected
 and is used offline for a standard training and test setting. Second is the stream of the data that is received from tweeter online and is used to classify the tweets as they arrived.
 
 # Twitter client
-For the second real time data we need to use a tweeter client that is described [here](src/main/scala/edu/illinois/cs/cogcomp/saulexamples/nlp/TwitterSentimentAnalysis/TwiterClient.md).
+For the second real time data we need to use a tweeter client that is described [here](TwiterClient.md).
 This includes the java codes that enables us to receive real time twitter data and filter it according to our interest using some keywords. This code is independent from the Saul's learning based programs.
 
 ## The Declarations
 This part includes Data model declarations and Classifiers declarations.
-The [data model](src/main/scala/edu/illinois/cs/cogcomp/saulexamples/nlp/TwitterSentimentAnalysis/twitterDataModel.scala) contains one type of `node`
+The [data model](twitterDataModel.scala) contains one type of `node`
 
 ```  val tweet = node[Tweet]```
 
@@ -31,7 +31,7 @@ The first two properties return the list of words and the list of pairs of words
 as features of the classifiers, later.
 The last property returns the sentiment label of the piece of text. This can be used as the unknown label of a tweet to be predicted by trained classifiers.
 
-The [classifier declaration](src/main/scala/edu/illinois/cs/cogcomp/saulexamples/nlp/TwitterSentimentAnalysis/twitterClassifiers.scala) is very standard.
+The [classifier declaration](twitterClassifiers.scala) is very standard.
 It includes the specification of the label:
  ```def label = Label```
 
@@ -54,7 +54,7 @@ We have two applications for this example. One is a program that populates the a
  ``` sentimentClassifier.learn(10)
    sentimentClassifier.test()```
 
-see [here](src/main/scala/edu/illinois/cs/cogcomp/saulexamples/nlp/TwitterSentimentAnalysis/SentimentApp.scala).
+see [here](SentimentApp.scala).
 
 Another App is a one that makes use of the trained classifiers to predict the sentiment of the stream of tweets, [here](twitterStreamApp.scala).
 
