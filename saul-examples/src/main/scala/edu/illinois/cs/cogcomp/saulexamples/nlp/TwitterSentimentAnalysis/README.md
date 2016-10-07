@@ -8,7 +8,7 @@ Twitter sentiment analysis can answer such a question. There are commercial sent
 As any other learning based program in Saul, the sentiment analyser also has the following components:
 
 ## The Reader
-The Data for this example comes from two different sources. One is the collected tweets by Stanford university which is stored in csv files with the format described [here](src/main/scala/edu/illinois/cs/cogcomp/saulexamples/nlp/TwitterSentimentAnalysis/DataFormat.txt),
+The Data for this example comes from two different sources. One is the collected tweets by Stanford university which is stored in csv files with the format described [here](DataFormat.txt),
 and is used offline for a standard training and test setting. Second is the stream of the data that is received from tweeter online and is used to classify the tweets as they arrived.
 
 # Twitter client
