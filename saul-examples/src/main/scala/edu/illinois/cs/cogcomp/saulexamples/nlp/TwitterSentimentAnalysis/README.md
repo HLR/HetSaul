@@ -2,8 +2,9 @@
 
 Sentiment Analysis is the process of determining whether a piece of text is positive, negative or neutral. It’s also called opinion mining that is inferring the opinion or attitude of a speaker.
 A common use case for this task is to discover how people feel about a particular topic.
-For example, you want to find out if people on Twitter are interested in seafood  New Orleans restaurants.
-Twitter sentiment analysis will answer this question. There are also commercial sentiment analyzers available but here we show how you can write one for yourself using Saul.
+For example, you want to find out if people on Twitter are interested in New Orleans seafood restaurants.
+Twitter sentiment analysis can answer such a question. There are commercial sentiment analyzers available but here we show how you can write one for yourself using Saul.
+
 As any other learning based program in Saul, the sentiment analyser also has the following components:
 
 ## The Reader
