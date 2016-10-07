@@ -224,7 +224,18 @@ And the summary of performances for independent relation classifiers:
         ==============================================
 ```
 
+
+
+## Testing the Entity Classifier interactively
+
+For a quick demo of the Entity Type Classifier, you can run the following command in the project's root folder:
+
+```shell
+sbt "project saulExamples" "runMain edu.illinois.cs.cogcomp.saulexamples.nlp.EntityRelation.EntityRelationApp"
+```
+
 ## Using it in your code
+
 Add Sual as your dependency in your maven: 
 
 ```xml
