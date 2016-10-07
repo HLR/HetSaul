@@ -12,12 +12,12 @@ The Data for this example comes from two different sources. One is the collected
 and is used offline for a standard training and test setting. Second is the stream of the data that is received from tweeter online and is used to classify the tweets as they arrived.
 
 # Twitter client
-For the second real time data we need to use a tweeter client that is described [here](/src/main/scala/edu/illinois/cs/cogcomp/saulexamples/nlp/TwitterSentimentAnalysis/TwiterClient.md).
+For the second real time data we need to use a tweeter client that is described [here](src/main/scala/edu/illinois/cs/cogcomp/saulexamples/nlp/TwitterSentimentAnalysis/TwiterClient.md).
 This includes the java codes that enables us to receive real time twitter data and filter it according to our interest using some keywords. This code is independent from the Saul's learning based programs.
 
 ## The Declarations
 This part includes Data model declarations and Classifiers declarations.
-The [data model](/src/main/scala/edu/illinois/cs/cogcomp/saulexamples/nlp/TwitterSentimentAnalysis/twitterDataModel.scala) contains one type of `node`
+The [data model](src/main/scala/edu/illinois/cs/cogcomp/saulexamples/nlp/TwitterSentimentAnalysis/twitterDataModel.scala) contains one type of `node`
 
 ```  val tweet = node[Tweet]```
 
