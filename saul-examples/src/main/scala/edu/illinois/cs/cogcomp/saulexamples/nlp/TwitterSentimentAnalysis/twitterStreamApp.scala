@@ -10,7 +10,7 @@ import scala.collection.JavaConversions._
 
 /** Created by parisa on 10/4/16.
   */
-object twitterSentimentApp extends App {
+object twitterStreamApp extends App {
 
   // Set up location filters
   val locations: List[Location] = util.Arrays.asList(Locations.URBANA_CHAMPAIGN, Locations.New_ORLEANS).toList;

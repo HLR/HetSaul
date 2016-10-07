@@ -15,9 +15,7 @@ object SentimentApp extends App {
   tweet.populate(TrainReader.tweets.toList)
   tweet.populate(TestReader.tweets.toList, train = false)
   sentimentClassifier.learn(10)
-  sentimentClassifier.save()
-  //sentimentClassifier.load()
-  //ClassifierUtils.LoadClassifier("models/", sentimentClassifier)
-  sentimentClassifier.classifier.discreteValue(new Tweet("here is my tweet."))
   sentimentClassifier.test()
+  sentimentClassifier.classifier.discreteValue(new Tweet("here is my tweet."))
+  sentimentClassifier.save()
 }

@@ -24,7 +24,7 @@ public class ClassifierMessageHandler extends MessageHandler {
                 String msg = msgQueue.take();
                 Utils.printInfo(new JSONObject(msg));
                 String text = Utils.getCleanText(new JSONObject(msg));
-                // Need to convert the text to a Tweet datastructure for the LBJava classifer to work
+                // Need to convert the text to a Tweet datastructure for the classifier to work
                 String decision = classifier.discreteValue(new Tweet(text));
                 System.out.println("\t***Sentiment classification: " + decision);
             } catch (InterruptedException e) {

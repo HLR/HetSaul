@@ -8,9 +8,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TweetReader implements Parser {
+public class TweetReader {
     public List<Tweet> tweets;
-    int currentTweet;
+    //int currentTweet;
 
     public TweetReader(String dataFile) {
         tweets = new ArrayList<>();
@@ -27,18 +27,18 @@ public class TweetReader implements Parser {
         }
     }
 
-    @Override
-    public Object next() {
-        if (currentTweet >= tweets.size())
-            return null;
-        return tweets.get(currentTweet++);
-    }
-
-    @Override
-    public void reset() {
-        currentTweet = 0;
-    }
-
-    @Override
-    public void close() {}
+//    @Override
+//    public Object next() {
+//        if (currentTweet >= tweets.size())
+//            return null;
+//        return tweets.get(currentTweet++);
+//    }
+//
+//    @Override
+//    public void reset() {
+//        currentTweet = 0;
+//    }
+//
+//    @Override
+//    public void close() {}
 }
