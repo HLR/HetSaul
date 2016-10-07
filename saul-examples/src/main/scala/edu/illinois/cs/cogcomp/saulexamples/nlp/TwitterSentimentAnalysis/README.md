@@ -23,7 +23,9 @@ This code is independent from the Saul's learning based programs.
 This part includes Data model declarations and Classifiers declarations.
 The [data model](twitterDataModel.scala) contains one type of `node`
 
-```  val tweet = node[Tweet]```
+```scala
+val tweet = node[Tweet]
+```
 
 and three types of properties:
 
@@ -38,31 +40,38 @@ The last property returns the sentiment label of the piece of text. This can be 
 
 The [classifier declaration](twitterClassifiers.scala) is very standard.
 It includes the specification of the label:
- ```scala
-    def label = Label```
+
+```scala
+    def label = Label
+    
+```    
 
  and features which are all among properties defined in the data model:
 
  ```scala
-    override def feature = using(WordFeatures, BigramFeatures)```
+    override def feature = using(WordFeatures, BigramFeatures)
+ ```
 
  in addition to the classification algorithm:
 
  ```scala
-  override lazy val classifier = new SparseNetworkLearner() ```
+  override lazy val classifier = new SparseNetworkLearner()
+  ```
 
 ## The applications
 We have two applications for this example. One is a program that populates the actual data read from the reader into the data model:
 
  ```scala
      tweet.populate(TrainReader.tweets.toList)
-     tweet.populate(TestReader.tweets.toList, train = false)```
+     tweet.populate(TestReader.tweets.toList, train = false)
+ ```
 
  and then trains and tests the sentiment classifier:
 
  ```scala
    sentimentClassifier.learn(10)
-   sentimentClassifier.test()```
+   sentimentClassifier.test()
+ ```
 
 see [here](SentimentApp.scala).
 
