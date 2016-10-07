@@ -27,9 +27,10 @@ The [data model](twitterDataModel.scala) contains one type of `node`
 
 and three types of properties:
 
- ``` val WordFeatures = property(tweet) ...
+ ```scala
+    val WordFeatures = property(tweet) ...
      val BigramFeatures = property(tweet) ...
-     val Label = property(tweet) ...
+     val Label = property(tweet)...
  ```
 The first two properties return the list of words and the list of pairs of words given a piece of text. These properties can be used
 as features of the classifiers, later.
@@ -37,25 +38,30 @@ The last property returns the sentiment label of the piece of text. This can be 
 
 The [classifier declaration](twitterClassifiers.scala) is very standard.
 It includes the specification of the label:
- ```def label = Label```
+ ```scala
+    def label = Label```
 
  and features which are all among properties defined in the data model:
 
- ```   override def feature = using(WordFeatures, BigramFeatures)```
+ ```scala
+    override def feature = using(WordFeatures, BigramFeatures)```
 
  in addition to the classification algorithm:
 
- ``` override lazy val classifier = new SparseNetworkLearner() ```
+ ```scala
+  override lazy val classifier = new SparseNetworkLearner() ```
 
 ## The applications
 We have two applications for this example. One is a program that populates the actual data read from the reader into the data model:
 
- ``` tweet.populate(TrainReader.tweets.toList)
+ ```scala
+     tweet.populate(TrainReader.tweets.toList)
      tweet.populate(TestReader.tweets.toList, train = false)```
 
  and then trains and tests the sentiment classifier:
 
- ``` sentimentClassifier.learn(10)
+ ```scala
+   sentimentClassifier.learn(10)
    sentimentClassifier.test()```
 
 see [here](SentimentApp.scala).
