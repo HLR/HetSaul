@@ -56,7 +56,7 @@ We have two applications for this example. One is a program that populates the a
 
 see [here](src/main/scala/edu/illinois/cs/cogcomp/saulexamples/nlp/TwitterSentimentAnalysis/SentimentApp.scala).
 
-Another App is a one that makes use of the trained classifiers to predict the sentiment of the stream of tweets, [here](src/main/scala/edu/illinois/cs/cogcomp/saulexamples/nlp/TwitterSentimentAnalysis/twitterStreamApp.scala).
+Another App is a one that makes use of the trained classifiers to predict the sentiment of the stream of tweets, [here](twitterStreamApp.scala).
 
 
 
