@@ -70,6 +70,7 @@ lazy val commonSettings = Seq(
     "ch.qos.logback" % "logback-classic" % "1.1.7"
   ),
   fork := true,
+  connectInput in run := true,
   headers := Map(
     "scala" -> (HeaderPattern.cStyleBlockComment, headerMsg),
     "java" -> (HeaderPattern.cStyleBlockComment, headerMsg)
@@ -103,7 +104,7 @@ lazy val saulExamples = (project in file("saul-examples")).
       ccgGroupId % "illinois-corpusreaders" % cogcompNLPVersion,
       ccgGroupId % "illinois-pos" % cogcompNLPVersion,
       ccgGroupId % "saul-pos-tagger-models" % "1.3",
-      ccgGroupId % "saul-er-models" % "1.5",
+      ccgGroupId % "saul-er-models" % "1.7",
       ccgGroupId % "saul-srl-models" % "1.2",
       "org.json" % "json" % "20140107",
       "com.twitter" % "hbc-core" % "2.2.0"
