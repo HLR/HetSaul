@@ -5,7 +5,7 @@ A common use case for this task is to discover how people feel about a particula
 For example, you want to find out if people on Twitter are interested in New Orleans seafood restaurants.
 Twitter sentiment analysis can answer such a question. There are commercial sentiment analyzers available but here we show how you can write one for yourself using Saul.
 
-As any other learning based program in Saul, the sentiment analyser also has the following components:
+As any other learning based program in Saul, the sentiment analyser also has the components of (Readers, DataModel, Classifiers, Applications), described as follows:
 
 ## The Reader
 The Data for this example comes from two different sources. One is the collected tweets by Stanford university which is stored in csv files with the format described [here](DataFormat.txt),
