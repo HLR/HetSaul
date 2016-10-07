@@ -9,11 +9,15 @@ As any other learning based program in Saul, the sentiment analyser also has the
 
 ## The Reader
 The Data for this example comes from two different sources. One is the collected tweets by Stanford university which is stored in csv files with the format described [here](DataFormat.txt),
-and is used offline for a standard training and test setting. Second is the stream of the data that is received from tweeter online and is used to classify the tweets as they arrived.
+and is used offline for a standard training and test setting. Each tweet in this collection has been manually annotated by human with one of the three above mentioned labels. There is a Reader program called `TweetReader` that helps you
+to read the data items in the collection of tweets.
+Second source of data, is the stream of messages that is received from tweeter online and is used to classify the tweets as they arrived. For using this source you will need to
+use a twitter client which is also provided in this package.
 
 # Twitter client
-For the second real time data we need to use a tweeter client that is described [here](TwiterClient.md).
-This includes the java codes that enables us to receive real time twitter data and filter it according to our interest using some keywords. This code is independent from the Saul's learning based programs.
+For the usage of real time data you need to use a tweeter client that is described [here](TwiterClient.md).
+This client includes the instructions and the java codes that enables us to receive real time twitter data and filter it according to our interest using some keywords.
+This code is independent from the Saul's learning based programs.
 
 ## The Declarations
 This part includes Data model declarations and Classifiers declarations.

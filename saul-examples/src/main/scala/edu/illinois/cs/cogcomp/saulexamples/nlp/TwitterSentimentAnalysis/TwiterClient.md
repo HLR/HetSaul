@@ -74,5 +74,5 @@ classify them, here with a sentiment label. Therefor we have prepared a `Classif
      }
 ```
 
-This `ClassifierMessageHandler` can be left unchanged as it is in [here](/src/main/java/edu/illinois/cs/cogcomp/saulexamples/twitter/tweet/ClassifierMessageHandler.java). However, you can work on the Saul side of the Learning based programs and improve
+This `ClassifierMessageHandler` can be left unchanged as it is in [here](src/main/java/edu/illinois/cs/cogcomp/saulexamples/twitter/tweet/ClassifierMessageHandler.java). However, you can work on the Saul side of the Learning based programs and improve
 your classifiers, use better models and pass them to the same module here.
