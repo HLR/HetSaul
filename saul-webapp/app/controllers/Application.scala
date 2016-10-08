@@ -45,7 +45,8 @@ object Application {
     "org.slf4j.impl.StaticLoggerBinder",
     "org.slf4j.LoggerFactory",
     "util.VisualizerInstance",
-    "weka.classifiers.bayes.NaiveBayes"
+    "weka.classifiers.bayes.NaiveBayes",
+    "com.twitter.hbc.core.endpoint.Location"
   ).flatMap(x => classPathOfClass(x)) ::: List(rootDir)).mkString(File.pathSeparator)
 }
 
