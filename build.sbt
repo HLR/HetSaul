@@ -87,10 +87,7 @@ lazy val saulCore = (project in file("saul-core")).
   settings(commonSettings: _*).
   settings(docSettings: _*).
   settings(
-    name := "saul",
-    libraryDependencies ++= Seq(
-      "com.typesafe.play" % "play_2.11" % "2.4.3"
-    )
+    name := "saul"
   ).enablePlugins(AutomateHeaderPlugin)
 
 lazy val saulExamples = (project in file("saul-examples")).
@@ -119,6 +116,7 @@ lazy val saulWebapp = (project in file("saul-webapp")).
   settings(
     name := "saul-webapp",
     libraryDependencies ++= Seq(
+      "com.typesafe.play" % "play_2.11" % "2.4.3",
       "org.webjars" %% "webjars-play" % "2.4.0-1",
       "org.webjars" % "bootstrap" % "3.3.6",
       "org.webjars.bower" % "tether-shepherd" % "1.1.3",
