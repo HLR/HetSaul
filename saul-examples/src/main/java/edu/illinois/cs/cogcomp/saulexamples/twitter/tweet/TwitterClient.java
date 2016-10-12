@@ -58,7 +58,7 @@ public class TwitterClient {
         }
         Properties props = new Properties();
         try {
-            props.load(new FileReader("config/auth.properties"));
+            props.load(new FileReader("../config/auth.properties"));
         } catch (IOException e) {
             e.printStackTrace();
             System.exit(-1);
