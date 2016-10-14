@@ -1,28 +1,19 @@
 package ssvm
 
-import edu.illinois.cs.cogcomp.lbjava.learn.StochasticGradientDescent
-import edu.illinois.cs.cogcomp.saul.classifier.Learnable
-import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
-
 /**
  * Created by Parisa on 10/13/16.
  */
-import bDataModel._
 
-object bClassifier extends Learnable(randomNode){
-def label= prop1
-def features= using(prop1)
-  override lazy val classifier = new StochasticGradientDescent
-}
+object randomDataApp extends App{
+  import randomDataModel._
+  for (i<- 1 to 100) {
+    randomNode.addInstance(i.toString)
+    println(randomNode() prop randomProperty)
+    println(randomNode() prop randomLabel)
 
-object bDataModel extends DataModel{
- val randomNode=node[Double]
-  val prop1= property(randomNode) {
-    x: Double =>
-      val r = scala.util.Random
-      r.nextDouble()
-  }
-
+ }
+randomClassifiers.bClassifier.crossValidation(3)
+ // randomClassifiers.bClassifier.test(randomNode.getAllInstances)
 }
 //function test_svm_struct_learn
 //% TEST_SVM_STRUCT_LEARN
