@@ -1,19 +1,25 @@
 package ssvm
 
-/**
- * Created by Parisa on 10/13/16.
- */
+//import org.sameersingh.scalaplot.Implicits._
 
-object randomDataApp extends App{
+/** Created by Parisa on 10/13/16.
+  */
+
+object randomDataApp extends App {
   import randomDataModel._
-  for (i<- 1 to 100) {
+  for (i <- 1 to 100) {
     randomNode.addInstance(i.toString)
     println(randomNode() prop randomProperty)
     println(randomNode() prop randomLabel)
 
- }
-randomClassifiers.bClassifier.crossValidation(3)
- // randomClassifiers.bClassifier.test(randomNode.getAllInstances)
+  }
+  val ex = randomNode.getAllInstances.head
+  (randomClassifiers.bClassifier.classifier.classify(ex))
+
+ // val x = 0.0 until 2.0 * math.Pi by 0.1
+  //output(PNG("docs/img/", "test"), xyChart(x ->(math.sin(_), math.cos(_))))
+  //randomClassifiers.bClassifier.crossValidation(3)
+  // randomClassifiers.bClassifier.test(randomNode.getAllInstances)
 }
 //function test_svm_struct_learn
 //% TEST_SVM_STRUCT_LEARN

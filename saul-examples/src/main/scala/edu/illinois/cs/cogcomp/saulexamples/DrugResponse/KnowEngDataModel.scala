@@ -101,8 +101,7 @@ object KnowEngDataModel extends DataModel {
   val textSimilarity = property(geneGene) {
     x: GeneGene => x.STRING_textmining
   }
-  val ethnicity1 = property(patientDrug)
-  {
+  val ethnicity1 = property(patientDrug) {
     x: PatientDrug => (patientDrug(x) ~> pdPatient prop ethnicity).propValues.toList
   }
   val cP1 = property(patientDrug) {

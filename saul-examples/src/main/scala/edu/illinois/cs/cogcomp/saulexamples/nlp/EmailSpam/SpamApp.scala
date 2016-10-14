@@ -37,8 +37,9 @@ object SpamApp extends Logging {
   def TrainAndTestSpamClassifier(): Unit = {
     /** Defining the data and specifying it's location  */
     SpamDataModel.email populate trainData
-    SpamClassifierWeka.learn(30)
-    SpamClassifierWeka.test(testData)
+    SpamClassifier.forget()
+    SpamClassifier.learn(30)
+    SpamClassifier.test(testData)
   }
 
   /** Spam Classifcation, followed by caching the data-model graph. */
