@@ -1,4 +1,5 @@
 import de.heikoseeberger.sbtheader.HeaderPattern
+import sbt.Keys._
 import sbtrelease.ReleaseStateTransformations._
 
 scalaVersion in ThisBuild := "2.11.7"
@@ -53,7 +54,6 @@ lazy val publishSettings = Seq(
   //isSnapshot := true // when releasing snapshot versions
 )
 
-libraryDependencies += "org.sameersingh.scalaplot" % "scalaplot" % "0.0.4"
 //libraryDependencies  ++= Seq(
 //  // Last stable release
 //  "org.scalanlp" %% "breeze" % "0.12",
@@ -77,7 +77,8 @@ lazy val commonSettings = Seq(
   name := "saul-project",
   resolvers ++= Seq(
     Resolver.mavenLocal,
-    "CogcompSoftware" at "http://cogcomp.cs.illinois.edu/m2repo/"
+    "CogcompSoftware" at "http://cogcomp.cs.illinois.edu/m2repo/",
+    "Sonatype Releases" at "https://oss.sonatype.org/content/repositories/releases/"
   ),
   javaOptions ++= List("-Xmx11g"),
   libraryDependencies ++= Seq(
@@ -86,7 +87,10 @@ lazy val commonSettings = Seq(
     "com.gurobi" % "gurobi" % "6.0",
     "org.apache.commons" % "commons-math3" % "3.0",
     "org.scalatest" % "scalatest_2.11" % "2.2.4",
-    "ch.qos.logback" % "logback-classic" % "1.1.7"
+    "ch.qos.logback" % "logback-classic" % "1.1.7",
+    "org.scalanlp" %% "breeze" % "0.12",
+    "org.scalanlp" %% "breeze-natives" % "0.12",
+    "org.scalanlp" %% "breeze-viz" % "0.12"
   ),
   fork := true,
   connectInput in run := true,

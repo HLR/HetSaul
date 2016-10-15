@@ -16,7 +16,7 @@ object randomDataModel extends DataModel {
 
   val randomLabel = property(randomNode) {
     x: String =>
-      2 * (if (r.nextGaussian() > 0) 1 else 0) - 1
+      ( 2 * (if (r.nextGaussian() > 0) 1 else 0) - 1).toString
   }
 
   val randomProperty = property(randomNode) {

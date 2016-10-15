@@ -15,17 +15,18 @@ object SpamDataModel extends DataModel {
   val email = node[Document]
 
   val words = property(email) {
-    x: Document => val a= x.getWords.toList.length.toDouble
+    x: Document =>
+      val a = x.getWords.toList.length.toDouble
       a
   }
 
-//  val bigrams = property(email) {
-//    x: Document =>
-//      val words = x.getWords.toList
-//
-//      /** bigram features */
-//      words.sliding(2).map(_.mkString("-")).toList
-//  }
+  //  val bigrams = property(email) {
+  //    x: Document =>
+  //      val words = x.getWords.toList
+  //
+  //      /** bigram features */
+  //      words.sliding(2).map(_.mkString("-")).toList
+  //  }
 
   val spamLabel = property(email) {
     x: Document => x.getLabel
