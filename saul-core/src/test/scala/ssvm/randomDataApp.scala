@@ -19,20 +19,19 @@ object randomDataApp extends App {
   bClassifier.learn(30)
   bClassifier.test(ex)
 
-  val p2= (randomNode() prop randomProperty) zip(randomNode() prop randomLabel)
-  val x2= DenseVector(p2.filter(x=> x._2.equals("1")).map(x => x._1(0)).toArray)
-  val y2= DenseVector(p2.filter(x=> x._2.equals("1")).map(x=>x._1(1)).toArray)
-  val x_minus= DenseVector(p2.filter(x=> x._2.equals("-1")).map(x => x._1(0)).toArray)
-  val y_minus= DenseVector(p2.filter(x=> x._2.equals("-1")).map(x=>x._1(1)).toArray)
+  val p2 = (randomNode() prop randomProperty) zip (randomNode() prop randomLabel)
+  val x2 = DenseVector(p2.filter(x => x._2.equals("1")).map(x => x._1(0)).toArray)
+  val y2 = DenseVector(p2.filter(x => x._2.equals("1")).map(x => x._1(1)).toArray)
+  val x_minus = DenseVector(p2.filter(x => x._2.equals("-1")).map(x => x._1(0)).toArray)
+  val y_minus = DenseVector(p2.filter(x => x._2.equals("-1")).map(x => x._1(1)).toArray)
 
   // val p1=(randomNode() prop randomLabel)
 
   val f = Figure()
   val p = f.subplot(0)
-  val x = linspace(0.0,1.0)
+  val x = linspace(0.0, 1.0)
   p += plot(x2, y2, '.')
-  p += plot(x_minus,y_minus,'.')
- // p += plot(x, x :^ 3.0, '.')
+  p += plot(x_minus, y_minus, '.')
   p.xlabel = "x axis"
   p.ylabel = "y axis"
   f.saveas("lines.png")
