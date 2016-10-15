@@ -99,9 +99,9 @@ lazy val saulExamples = (project in file("saul-examples")).
       ccgGroupId % "illinois-edison" % cogcompNLPVersion,
       ccgGroupId % "illinois-corpusreaders" % cogcompNLPVersion,
       ccgGroupId % "illinois-pos" % cogcompNLPVersion,
-      ccgGroupId % "saul-pos-tagger-models" % "1.3",
-      ccgGroupId % "saul-er-models" % "1.7",
-      ccgGroupId % "saul-srl-models" % "1.2",
+      ccgGroupId % "saul-pos-tagger-models" % "1.4",
+      ccgGroupId % "saul-er-models" % "1.8",
+      ccgGroupId % "saul-srl-models" % "1.3",
       "org.json" % "json" % "20140107",
       "com.twitter" % "hbc-core" % "2.2.0"
     )
