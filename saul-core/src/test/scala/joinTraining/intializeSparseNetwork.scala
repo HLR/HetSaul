@@ -71,16 +71,12 @@ class initializeSparseNetwork extends FlatSpec with Matchers {
     wv2.size() should be(0)
     TestBiClassifier.learn(2)
     JointTrainSparseNetwork.train(tokens, cls, 5, false)
-    //TestBiClassifier.learn(2)
 
     val wv1After = clNet1.getNetwork.get(0).asInstanceOf[LinearThresholdUnit].getWeightVector
     val wv2After = clNet2.getNetwork.get(0).asInstanceOf[LinearThresholdUnit].getWeightVector
 
-    //Everything should be the same
-    //wv1After.size() should be(4)
+    wv1After.size() should be(5)
     wv2After.size() should be(12)
-    // Combined size should be 12
-    // m.wv.getLength should be(12)
   }
 
   object testModel extends DataModel {
