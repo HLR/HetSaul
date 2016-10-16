@@ -17,49 +17,59 @@ To use a custom configuration file (containing the property keys of `ExamplesCon
 ## Example
 Input sentence:  Washington covers Seattle for associated press.
 Output with srl labels:
+```
  (covers) [Predicate]
  (covers, Washington) [A0]
  (covers, Associated-Press) [A1]
  (covers, Seattle) [AM-PNC]
+```
 
 ## Application Structure
-Similar to other applications in Saul, here also we have a datamodel in file `SRLMultiGraphDataModel`, a bunch of single classifier definitions in file `SRLClassifires`, a bunch of constraints to be used by global models during either training or test in file `SRLConstraints`, a bunch of constraied classifiers in file SRLConstrainedClassifiers and the running configurations that are all placed in one file called `SRLApp`.
+Similar to other applications in Saul, here also we have a datamodel in file `SRLMultiGraphDataModel`, a bunch of single 
+classifier definitions in file `SRLClassifires`, a bunch of constraints to be used by global models during either training 
+or test in file `SRLConstraints`, a bunch of constrained classifiers in file `SRLConstrainedClassifiers` and the running 
+configurations that are all placed in one file called `SRLApp`.
 For using the reader and populating data there is a program in file `PopulateSRLDataModel`.
-In contrast to other Saul applications this data model has been defined as a class instead of as an object. The reason is the effciency of the population of the data model, we skip the details of this implementation choice.
-However, when making this choice we should be aware that the populated object by the data should be the same as the object that is imported to the Classifiers declaration file.
-Since the data model class has been parametrized, to avoid creating new objects when using different parameters, the data model can be rewritten in a way that the properties are parametrized rather than the data model itself, in this case the properties which use framenet frames can recieve it as a parameter individually.
-We reffer the reader to see an example of defining such parametrized properties alongwith Learnable classes rather than Learnable objects in DrugResponse example of KnowEng data model in SaulExamples package.
+In contrast to other Saul applications this data model has been defined as a class instead of as an object. The reason 
+is the efficiency of the population of the data model, we skip the details of this implementation choice.
+However, when making this choice we should be aware that the populated object by the data should be the same as the object 
+that is imported to the classifiers declaration file.
+Since the data model class has been parametrized, to avoid creating new objects when using different parameters, the data 
+model can be rewritten in a way that the properties are parametrized rather than the data model itself, in this case 
+the properties which use the FrameNet frames can receive it as a parameter.
+We refer the reader to see an example of defining such parametrized properties along with `Learnable` classes and 
+contrast it with the `Learnable` objects in `DrugResponse` example of `KnowEng` data model.
    
-There are various machine learning models to solve this including pipelines, learning only models (LO), learning plus inference models (L+I)
- and Joint Learning models (IBT).
- The test units and SRLApp are runnable on a sample `SRLToy` folder in `resources` due to the licencing issues of the full dataset. 
- If you have access to propbank data, you could use the following setting in the `SRLConfigurator`.
+There are various machine learning configurations to solve this including pipelines, learning only models (LO), 
+learning plus inference models (L+I) and Joint Learning models (IBT).
+The test units and SRLApp are runnable on a sample toy dataset located in `resources/SRLToy` folder. 
+Accessing the full dataset needs proper licenses. If you have access to the PropBank data, you could 
+set the following properties in the `SRLConfigurator`: 
 
 ```scala
 public static final Property TREEBANK_HOME = new Property("treebankHome", "./data/treebank");
 public static final Property PROPBANK_HOME = new Property("propbankHome","./data/propbank");
 public static final Property TEST_SECTION = new Property("testSection","23");
 ```
-For the results reported in this document, the training is done on folders 2-21 of probbank data and test on the folder 23.
+
+For the results reported in this document, the training is done on sections 2-21 of ProbBank data and tested on section 23.
 We have designed a number of configurations and the trained models which are packaged and can be tested.
 
-Here, we describe the configurations accompanied in this package and the results that you should get but using those models.
-Pred.: Predicate Cand.: Candidate
+Here we describe the configurations accompanied in this package and the results that you should get by using the pre-trained models.
+In the following lines `Pred.` stands for "Predicate" and  `Cand.` stands for "Candidate". 
 
-<pre>
 
-  | Predicate   |      Argument        |  Model                   | Name |
-  |-------------|----------------------|--------------------------|------|
-  | Gold Pred.  |  Gold Boundaries     | Argument Type Classifier |aTr   |
-  | Gold Pred.  |  XuPalmer Candidates | Argument identifier      |bTr   |
-  | Gold Pred.  |  XuPalmer Candidates | Argument Type Classifier |cTr   |
-  | Pred. Cand. |    N A               | Predicate Classifier     |dTr   |
-  | Pred. Cand. |  XuPalmer Candidates | Argument identifier      |eTr   |
-  | Pred. Cand  |  XuPalmer Candidates | Argument Type Classifier |fTr   |
-  | Gold Pred.  |  Gold Boundries      | Argument Type Classifier |jTr   |
-  | Gold Pred.  | Argument Identifier  | Argument Type Classifier |pTr   |
+| Predicate   |      Argument        |  Model                   | Name |
+| -----------| -------------------- | ------------------------ | ---- |
+| Gold Pred.  |  Gold Boundaries     | Argument Type Classifier | aTr   |
+| Gold Pred.  |  XuPalmer Candidates | Argument identifier      | bTr   |
+| Gold Pred.  |  XuPalmer Candidates | Argument Type Classifier | cTr   |
+| Predicted Cand. |    NA                | Predicate Classifier     | dTr   |
+| Predicted Cand. |  XuPalmer Candidates | Argument identifier      | eTr   |
+| Predicted Cand.  |  XuPalmer Candidates | Argument Type Classifier | fTr   |
+| Gold Pred.  |  Gold Boundries      | Argument Type Classifier | jTr   |
+| Gold Pred.  | Argument Identifier  | Argument Type Classifier | pTr   |
 
-</pre>
 
 #### Training independent models
   * Given gold predicates:
@@ -116,7 +126,7 @@ Pred.: Predicate Cand.: Candidate
    Accuracy    85.351   -      -      -     14479
 </pre>
 
-  - [x] **[bTr]** Train `Argument identifier` given XuPalmerCandidates
+  - [x] **[bTr]** Train `Argument identifier` given Xue-Palmer candidates
 
 <pre>
 
@@ -127,7 +137,7 @@ Pred.: Predicate Cand.: Candidate
 
 </pre>
 
-  - [x] **[cTr]** Train  `Argument Type Classifier` given XuPalmerCandidates
+  - [x] **[cTr]** Train  `Argument Type Classifier` given Xue-Palmer candidates
 
  argument classifier test results:
 
@@ -197,7 +207,7 @@ Pred.: Predicate Cand.: Candidate
    Accuracy    99.265   -      -      -      7208
 </pre>
 
-   - [x] **[eTr]** Train `Argument identifier` given XuPalmerCandidates
+   - [x] **[eTr]** Train `Argument identifier` given Xue-Palmer Candidates
    
 <pre>
   Label   Precision Recall   F1   LCount PCount
@@ -207,7 +217,9 @@ Pred.: Predicate Cand.: Candidate
     ----------------------------------------------
     Accuracy    97.317   -      -      -     55193
 </pre>
-      - [x] **[fTr]**  Train `Argument Type Classifier` given XuPalmerCandidates
+
+   - [x] **[fTr]**  Train `Argument Type Classifier` given Xue-Palmer candidates
+   
 <pre>
   argument classifier test results:  Label   Precision Recall   F1   LCount PCount
   -----------------------------------------------
@@ -260,7 +272,9 @@ Pred.: Predicate Cand.: Candidate
   Overall      82.479 80.793 81.627  14479  14183
   Accuracy     93.921   -      -      -     55193
 </pre>
-     - [x] **[gTr]** Train `Argument Type Classifier` separately for main roles and adjuncts (if needed)
+
+   - [x] **[gTr]** Train `Argument Type Classifier` separately for main roles and adjuncts (if needed)
+
 <pre>
   argument classifier test results:  Label   Precision Recall   F1   LCount PCount
   -----------------------------------------------
@@ -567,7 +581,7 @@ Pred.: Predicate Cand.: Candidate
 
    - [ ] **[aTrJ]** Train **dTr, eTr, fTr** jointly
       * Add constraints gradually and train various models considering subsets of constraints
-    - [ ] **[aTr]**
+   - [ ] **[aTr]**
 
 #### Fourth phase: testing joint models
 
