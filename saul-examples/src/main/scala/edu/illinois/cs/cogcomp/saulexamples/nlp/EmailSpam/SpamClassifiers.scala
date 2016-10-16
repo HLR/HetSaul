@@ -16,7 +16,7 @@ object SpamClassifiers {
   object SpamClassifier extends Learnable(email) {
     def label = spamLabel
     override lazy val classifier = new SupportVectorMachine()
-    override def feature = using(words)
+    override def feature = using(words, bigrams)
   }
 
   object SpamClassifierWithCache extends Learnable(email) {
