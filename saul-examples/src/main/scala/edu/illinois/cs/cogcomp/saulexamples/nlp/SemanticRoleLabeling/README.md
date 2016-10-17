@@ -341,8 +341,7 @@ In the following lines `Pred.` stands for "Predicate" and  `Cand.` stands for "C
 
 #### Second phase: test independent models
 
- -[x] **[aTs]** Test **aTr, bTr, cTr, dTr, eTr, fTr, gTr** independently.
- -aTr with constraints.
+ - [x] **[aTr]** with constraints.
 
 <pre>
 
@@ -398,7 +397,7 @@ In the following lines `Pred.` stands for "Predicate" and  `Cand.` stands for "C
   Accuracy    85.358    -      -      -     14479
 </pre>
 
-  -[aTr] test with pipeline of identification without constraints.
+ - [x] **[aTr]** test with pipeline of identification without constraints.
 
 <pre>
   Label   Precision Recall   F1   LCount PCount
@@ -574,7 +573,7 @@ In the following lines `Pred.` stands for "Predicate" and  `Cand.` stands for "C
 </pre>
 
    - [ ] **[bTs]** Test `pipe1Model` : **dTr** => **eTr** (given identified predicates) => **fTr** (given identified arguments)
-    - [ ] **[cTs]** Test **dTr, eTr, fTr** jointly given various number of constraints
+   - [ ] **[cTs]** Test **dTr, eTr, fTr** jointly given various number of constraints
       * Add constraints gradually and test.
 
 #### Third phase: training joint models
