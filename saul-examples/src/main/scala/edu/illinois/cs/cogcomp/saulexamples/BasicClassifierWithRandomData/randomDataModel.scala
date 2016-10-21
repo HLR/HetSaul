@@ -1,4 +1,4 @@
-package ssvm
+package edu.illinois.cs.cogcomp.saulexamples.BasicClassifierWithRandomData
 
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
 

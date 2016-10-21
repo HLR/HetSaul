@@ -1,4 +1,4 @@
-package joinTraining
+package JoinTrainingTests
 
 import edu.illinois.cs.cogcomp.infer.ilp.OJalgoHook
 import edu.illinois.cs.cogcomp.lbjava.infer.FirstOrderConstant
