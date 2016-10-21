@@ -21,7 +21,7 @@ import _root_.util._
 
 object Application {
 
-  val rootDir = "/tmp"
+  val rootDir = System.getProperty("java.io.tmpdir")
   val exampleDir = "./saul-examples/src/main/scala/edu/illinois/cs/cogcomp/saulexamples"
   val completeClasspath = (List(
     "scala.tools.nsc.Interpreter",
