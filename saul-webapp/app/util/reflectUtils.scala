@@ -6,14 +6,23 @@
   */
 package util
 
+import scala.util.matching.Regex
+
 object ReflectUtils {
 
-  //Example input: package somePackageName;
-  val re = """package\s(.*)\s""".r
+
 
   def getCodePackageName(code: String) = {
-    (re findFirstIn code) match {
-      case Some(v) => (v.split(" "))(1).replaceFirst("\\n", "").replaceFirst(";", "")
+
+    //Example input: package somePackageName;
+    val re = """package\s(.*)\s""".r
+    extractUsingRegex(code, re)
+
+  }
+
+  def extractUsingRegex(code:String, regex:Regex) = {
+    (regex findFirstIn code) match {
+      case Some(v) => (v.split(" "))(1).replaceAll("\\n", "").replaceAll(";", "").replace("\\n","")
       case None => play.api.Logger.error("Could not find package name."); ""
     }
   }

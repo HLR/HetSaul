@@ -20,7 +20,16 @@ of 1,044,112 words. The test corpus consists of 129,654 words of which 3,331 are
 
 The accuracy on the test test data is 96.439%.  
 
+## Testing the POS Tagger interactively
+
+For a quick demo of the POS Tagger, you can run the following command in the project's root folder.
+
+```shell
+sbt "project saulExamples" "runMain edu.illinois.cs.cogcomp.saulexamples.nlp.POSTagger.POSTaggerApp"
+```
+
 ## Using it in your project
+
 If you want to use this in your project, you need to take two steps. First add the dependencies, and then call the functions in your program. 
 Here is how you can add maven dependencies into your program: 
 

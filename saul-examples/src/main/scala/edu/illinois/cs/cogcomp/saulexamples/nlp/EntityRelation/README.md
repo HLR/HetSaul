@@ -133,48 +133,48 @@ And the summary of performances for independent relation classifiers:
             and independent relations together. Here is a summary of the evaluations: 
              
 ```
-        ==============================================
-        Person Classifier Evaluation with training
-         Label   Precision Recall   F1   LCount PCount
-        ----------------------------------------------
-        false       98.761 99.703 99.230  61178  61761
-        true        87.065 61.558 72.122   1990   1407
-        ----------------------------------------------
-        Accuracy    98.501   -      -      -     63168
-        ==============================================
-        Organization Classifier Evaluation
-         Label   Precision Recall   F1   LCount PCount
-        ----------------------------------------------
-        false       98.681 99.615 99.146  61896  62482
-        true        65.306 35.220 45.761   1272    686
-        ----------------------------------------------
-        Accuracy    98.319   -      -      -     63168
-        ==============================================
-        Location Classifier Evaluation
-         Label   Precision Recall   F1   LCount PCount
-        ----------------------------------------------
-        false       98.375 99.617 98.992  60760  61527
-        true        85.801 58.472 69.548   2408   1641
-        ----------------------------------------------
-        Accuracy    98.048   -      -      -     63168
-        ==============================================
-        WorkFor Classifier Evaluation
-         Label   Precision Recall   F1   LCount PCount
-        ----------------------------------------------
-        false       90.530 84.353 87.333    850    792
-        true        24.859 36.975 29.730    119    177
-        ----------------------------------------------
-        Accuracy    78.535   -      -      -       969
-        ==============================================
-        LivesIn Classifier Evaluation
-         Label   Precision Recall   F1   LCount PCount
-        ----------------------------------------------
-        false       76.347 94.220 84.347    692    854
-        true        65.217 27.076 38.265    277    115
-        ----------------------------------------------
-        Accuracy    75.026   -      -      -       969
-        ==============================================
-```           
+     ===============================================
+     Evaluating PerConstrainedClassifier
+      Label   Precision Recall   F1   LCount PCount
+     ----------------------------------------------
+     false       98.788 99.752 99.267  61178  61775
+     true        89.088 62.362 73.367   1990   1393
+     ----------------------------------------------
+     Accuracy    98.574   -      -      -     63168
+     ===============================================
+     Evaluating OrgConstrainedClassifier
+      Label   Precision Recall   F1   LCount PCount
+     ----------------------------------------------
+     false       98.714 99.622 99.166  61896  62465
+     true        66.714 36.871 47.494   1272    703
+     ----------------------------------------------
+     Accuracy    98.358   -      -      -     63168
+     ===============================================
+     Evaluating LocConstrainedClassifier
+      Label   Precision Recall   F1   LCount PCount
+     ----------------------------------------------
+     false       98.375 99.643 99.005  60760  61543
+     true        86.646 58.472 69.824   2408   1625
+     ----------------------------------------------
+     Accuracy    98.073   -      -      -     63168
+     ===============================================
+     Evaluating WorksFor_PerOrg_ConstrainedClassifier
+      Label   Precision Recall   F1   LCount PCount
+     ----------------------------------------------
+     false       90.783 84.588 87.576    850    792
+     true        25.989 38.655 31.081    119    177
+     ----------------------------------------------
+     Accuracy    78.947   -      -      -       969
+     ===============================================
+     Evaluating LivesIn_PerOrg_relationConstrainedClassifier
+      Label   Precision Recall   F1   LCount PCount
+     ----------------------------------------------
+     false       76.581 94.509 84.605    692    854
+     true        66.957 27.798 39.286    277    115
+     ----------------------------------------------
+     Accuracy    75.439   -      -      -       969
+     ===============================================     
+```
             
  - Joint Training: We seek to train classifiers so they will produce the correct global classification. To
                   this end, the key difference from the other approach is that here, feedback from the inference process 
@@ -224,7 +224,18 @@ And the summary of performances for independent relation classifiers:
         ==============================================
 ```
 
+
+
+## Testing the Entity Classifier interactively
+
+For a quick demo of the Entity Type Classifier, you can run the following command in the project's root folder:
+
+```shell
+sbt "project saulExamples" "runMain edu.illinois.cs.cogcomp.saulexamples.nlp.EntityRelation.EntityRelationApp"
+```
+
 ## Using it in your code
+
 Add Sual as your dependency in your maven: 
 
 ```xml

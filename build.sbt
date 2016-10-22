@@ -70,6 +70,7 @@ lazy val commonSettings = Seq(
     "ch.qos.logback" % "logback-classic" % "1.1.7"
   ),
   fork := true,
+  connectInput in run := true,
   headers := Map(
     "scala" -> (HeaderPattern.cStyleBlockComment, headerMsg),
     "java" -> (HeaderPattern.cStyleBlockComment, headerMsg)
@@ -86,10 +87,7 @@ lazy val saulCore = (project in file("saul-core")).
   settings(commonSettings: _*).
   settings(docSettings: _*).
   settings(
-    name := "saul",
-    libraryDependencies ++= Seq(
-      "com.typesafe.play" % "play_2.11" % "2.4.3"
-    )
+    name := "saul"
   ).enablePlugins(AutomateHeaderPlugin)
 
 lazy val saulExamples = (project in file("saul-examples")).
@@ -103,7 +101,7 @@ lazy val saulExamples = (project in file("saul-examples")).
       ccgGroupId % "illinois-corpusreaders" % cogcompNLPVersion,
       ccgGroupId % "illinois-pos" % cogcompNLPVersion,
       ccgGroupId % "saul-pos-tagger-models" % "1.3",
-      ccgGroupId % "saul-er-models" % "1.5",
+      ccgGroupId % "saul-er-models" % "1.7",
       ccgGroupId % "saul-srl-models" % "1.2",
       "org.json" % "json" % "20140107",
       "com.twitter" % "hbc-core" % "2.2.0"
@@ -118,6 +116,7 @@ lazy val saulWebapp = (project in file("saul-webapp")).
   settings(
     name := "saul-webapp",
     libraryDependencies ++= Seq(
+      "com.typesafe.play" % "play_2.11" % "2.4.3",
       "org.webjars" %% "webjars-play" % "2.4.0-1",
       "org.webjars" % "bootstrap" % "3.3.6",
       "org.webjars.bower" % "tether-shepherd" % "1.1.3",

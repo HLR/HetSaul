@@ -1,3 +1,9 @@
+/** This software is released under the University of Illinois/Research and Academic Use License. See
+  * the LICENSE file in the root folder for details. Copyright (c) 2016
+  *
+  * Developed by: The Cognitive Computations Group, University of Illinois at Urbana-Champaign
+  * http://cogcomp.cs.illinois.edu/
+  */
 package edu.illinois.cs.cogcomp.saulexamples.twitter.tweet;
 
 import edu.illinois.cs.cogcomp.core.io.LineIO;
@@ -8,9 +14,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TweetReader implements Parser {
+public class TweetReader {
     public List<Tweet> tweets;
-    int currentTweet;
+    //int currentTweet;
 
     public TweetReader(String dataFile) {
         tweets = new ArrayList<>();
@@ -27,18 +33,18 @@ public class TweetReader implements Parser {
         }
     }
 
-    @Override
-    public Object next() {
-        if (currentTweet >= tweets.size())
-            return null;
-        return tweets.get(currentTweet++);
-    }
-
-    @Override
-    public void reset() {
-        currentTweet = 0;
-    }
-
-    @Override
-    public void close() {}
+//    @Override
+//    public Object next() {
+//        if (currentTweet >= tweets.size())
+//            return null;
+//        return tweets.get(currentTweet++);
+//    }
+//
+//    @Override
+//    public void reset() {
+//        currentTweet = 0;
+//    }
+//
+//    @Override
+//    public void close() {}
 }

@@ -73,7 +73,7 @@ final class Compiler(rootDir: String, completeClasspath: String, reporterCallbac
         val sett = new Settings()
         sett.classpath.value = completeClasspath
         sett.bootclasspath.value = sett.classpath.value
-        sett.outdir.value = "/tmp"
+        sett.outdir.value = System.getProperty("java.io.tmpdir")
 
         val reporter = reporterCallback(sett)
         val g = new Global(sett, reporter)
@@ -109,13 +109,13 @@ final class Compiler(rootDir: String, completeClasspath: String, reporterCallbac
     // Load and instantiate compiled class.
     val name = fileName.split('.')
     val runtimeMirror = universe.runtimeMirror(classLoader)
-    try {
+    /*try {*/
       val module = runtimeMirror.staticModule(packageName + "." + name(0))
       val obj = runtimeMirror.reflectModule(module)
       obj.instance
-    } catch {
+    /*} catch {
       case _ => throw new CompilerException(List(List("Instantiation Error. Did you get the path to the training data correct?")))
-    }
+    }*/
   }
 
   def executeWithoutLog(file: Any): Unit = {

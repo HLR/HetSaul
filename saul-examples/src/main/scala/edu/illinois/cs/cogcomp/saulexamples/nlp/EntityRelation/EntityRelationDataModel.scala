@@ -66,6 +66,12 @@ object EntityRelationDataModel extends DataModel {
     t: ConllRawToken => t.getLength
   }
 
+  val posWindowFeature = property(tokens, "POSWindow") { token: ConllRawToken =>
+    tokens.getWithWindow(token, -2, 2)
+      .flatten
+      .map({ token: ConllRawToken => pos(token) })
+  }
+
   val relFeature = property(pairs) {
     token: ConllRelation =>
       "w1-word-" + token.e1.phrase :: "w2-word-" + token.e2.phrase ::

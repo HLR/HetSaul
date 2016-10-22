@@ -1,3 +1,9 @@
+/** This software is released under the University of Illinois/Research and Academic Use License. See
+  * the LICENSE file in the root folder for details. Copyright (c) 2016
+  *
+  * Developed by: The Cognitive Computations Group, University of Illinois at Urbana-Champaign
+  * http://cogcomp.cs.illinois.edu/
+  */
 package edu.illinois.cs.cogcomp.saulexamples.twitter.tweet;
 
 import com.twitter.hbc.httpclient.BasicClient;
@@ -24,7 +30,7 @@ public class ClassifierMessageHandler extends MessageHandler {
                 String msg = msgQueue.take();
                 Utils.printInfo(new JSONObject(msg));
                 String text = Utils.getCleanText(new JSONObject(msg));
-                // Need to convert the text to a Tweet datastructure for the LBJava classifer to work
+                // Need to convert the text to a Tweet datastructure for the classifier to work
                 String decision = classifier.discreteValue(new Tweet(text));
                 System.out.println("\t***Sentiment classification: " + decision);
             } catch (InterruptedException e) {

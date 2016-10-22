@@ -6,12 +6,18 @@
   */
 package edu.illinois.cs.cogcomp.saulexamples.nlp.EntityRelation
 
+import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
+import edu.illinois.cs.cogcomp.nlp.tokenizer.StatefulTokenizer
+import edu.illinois.cs.cogcomp.nlp.utility.TokenizerTextAnnotationBuilder
 import edu.illinois.cs.cogcomp.saul.classifier.{ ClassifierUtils, JointTrainSparseNetwork }
 import edu.illinois.cs.cogcomp.saul.util.Logging
 import edu.illinois.cs.cogcomp.saulexamples.EntityMentionRelation.datastruct.ConllRelation
 import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityRelation.EntityRelationClassifiers._
-import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityRelation.EntityRelationDataModel._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityRelation.EntityRelationConstrainedClassifiers._
+import edu.illinois.cs.cogcomp.saulexamples.nlp.EntityRelation.EntityRelationDataModel._
+import edu.illinois.cs.cogcomp.saulexamples.nlp.POSTagger.POSTaggerApp
+
+import scala.io.StdIn
 
 object EntityRelationApp extends Logging {
   // learned models from the "saul-er-models" jar package
@@ -19,7 +25,7 @@ object EntityRelationApp extends Logging {
 
   def main(args: Array[String]): Unit = {
     /** Choose the experiment you're interested in by changing the following line */
-    val testType = ERExperimentType.JointTraining
+    val testType = ERExperimentType.InteractiveMode
 
     testType match {
       case ERExperimentType.IndependentClassifiers => trainIndependentClassifiers()
@@ -28,11 +34,12 @@ object EntityRelationApp extends Logging {
       case ERExperimentType.PipelineTestFromModel => testPipelineRelationModels()
       case ERExperimentType.LPlusI => runLPlusI()
       case ERExperimentType.JointTraining => runJointTraining()
+      case ERExperimentType.InteractiveMode => interactiveWithPretrainedModels()
     }
   }
 
   object ERExperimentType extends Enumeration {
-    val IndependentClassifiers, LPlusI, TestFromModel, JointTraining, PipelineTraining, PipelineTestFromModel = Value
+    val IndependentClassifiers, LPlusI, TestFromModel, JointTraining, PipelineTraining, PipelineTestFromModel, InteractiveMode = Value
   }
 
   /** in this scenario we train and test classifiers independent of each other. In particular, the relation classifier
@@ -134,5 +141,37 @@ object EntityRelationApp extends Logging {
       (testRels, WorksFor_PerOrg_ConstrainedClassifier),
       (testRels, LivesIn_PerOrg_relationConstrainedClassifier)
     )
+  }
+
+  /** Interactive model to annotate input sentences with Pre-trained models
+    */
+  def interactiveWithPretrainedModels(): Unit = {
+    // Load independent classifiers.
+    ClassifierUtils.LoadClassifier(
+      jarModelPath,
+      PersonClassifier, OrganizationClassifier, LocationClassifier,
+      WorksForClassifier, LivesInClassifier, LocatedInClassifier, OrgBasedInClassifier
+    )
+
+    val posAnnotator = POSTaggerApp.getPretrainedAnnotator()
+    val entityAnnotator = new EntityAnnotator(ViewNames.NER_CONLL)
+    val taBuilder = new TokenizerTextAnnotationBuilder(new StatefulTokenizer())
+
+    while (true) {
+      println("Enter a sentence to annotate (or Press Enter to exit)")
+      val input = StdIn.readLine()
+
+      input match {
+        case sentence: String if sentence.trim.nonEmpty =>
+          // Create a Text Annotation with the current input sentence.
+          val ta = taBuilder.createTextAnnotation(sentence.trim)
+          posAnnotator.addView(ta)
+          entityAnnotator.addView(ta)
+
+          println("Part-Of-Speech View: " + ta.getView(ViewNames.POS).toString)
+          println("Entity View: " + ta.getView(ViewNames.NER_CONLL).toString)
+        case _ => return
+      }
+    }
   }
 }

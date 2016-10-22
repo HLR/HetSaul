@@ -1,75 +1,81 @@
+# Sentiment analysis
 
-# illinois-twitter-client
+Sentiment Analysis is the process of determining whether a piece of text is positive, negative or neutral. It’s also called opinion mining that is inferring the opinion or attitude of a speaker.
+A common use case for this task is to discover how people feel about a particular topic.
+For example, you want to find out if people on Twitter are interested in New Orleans seafood restaurants.
+Twitter sentiment analysis can answer such a question. There are commercial sentiment analyzers available but here we show how you can write one for yourself using Saul.
 
-A thin client for accessing Twitter's (filtered) firehose. Uses the [Hosebird Client twitter library](https://github.com/twitter/hbc).
+As any other learning based program in Saul, the sentiment analyser also has the components of (Readers, DataModel, Classifiers, Applications), described as follows:
 
-## Requirements
-To use the client, you need to get authentication tokens from Twitter, by registering your app [here](https://apps.twitter.com).
- - Go to the above link and press the `Creat New App` button.
- - Fill in the form about your new application.
+## The Reader
+The Data for this example comes from two different sources. One is the collected tweets by Stanford university which is stored in csv files with the format described [here](DataFormat.txt),
+and is used offline for a standard training and test setting. Each tweet in this collection has been manually annotated by human with one of the three above mentioned labels. There is a Reader program called `TweetReader` that helps you
+to read the data items in the collection of tweets.
+Second source of data, is the stream of messages that is received from tweeter online and is used to classify the tweets as they arrived. For using this source you will need to
+use a twitter client which is also provided in this package.
 
-Once you have your tokens, store them in `config/auth.properties` using the following keys:
+# Twitter client
+For the usage of real time data you need to use a tweeter client that is described [here](TwiterClient.md).
+This client includes the instructions and the java codes that enables us to receive real time twitter data and filter it according to our interest using some keywords.
+This code is independent from the Saul's learning based programs.
 
-    consumerKey = 1234key
-    consumerSecret = 1234secret
-    token = 1234token
-    secret = 1234secret
+## The Declarations
+This part includes Data model declarations and Classifiers declarations.
+The [data model](twitterDataModel.scala) contains one type of `node`
 
-## Running
-A typical scenario involves instantiating the `TwitterClient` with some filters (locations, search terms, languages)
-and creating a `MessageHandler` thread that can access the queue of messages coming from the stream.
+```scala
+val tweet = node[Tweet]
+```
 
-    public static void main(String[] args) {
-        // Set up location filters
-        List<Location> locations = Arrays.asList(Locations.URBANA_CHAMPAIGN, Locations.EDINBURGH);
-        // Set up search-term filters
-        //List<String> terms = Arrays.asList("machine learning", "natural language processing");
-        // Set up language filters
-        //List<String> languages = Arrays.asList("en", "es");
+and three types of properties:
 
-        TwitterClient client = new TwitterClient(null, locations, null);
+ ```scala
+    val WordFeatures = property(tweet) ...
+     val BigramFeatures = property(tweet) ...
+     val Label = property(tweet)...
+ ```
+The first two properties return the list of words and the list of pairs of words given a piece of text. These properties can be used
+as features of the classifiers, later.
+The last property returns the sentiment label of the piece of text. This can be used as the unknown label of a tweet to be predicted by trained classifiers.
 
-        // A separate thread for handling the queue of tweets
-        MessageHandler simpleMessageHandler = new SimpleMessageHandler(client.getMsgQueue(), client.getClient());
-        Thread thread = new Thread(simpleMessageHandler);
-        thread.start();
-    }
+The [classifier declaration](twitterClassifiers.scala) is very standard.
+It includes the specification of the label:
 
-    public class SimpleMessageHandler extends MessageHandler {
+```scala
+    def label = Label
+    
+```    
 
-        public SimpleMessageHandler(BlockingQueue<String> msgQueue, BasicClient client) {
-            super(msgQueue, client);
-        }
+ and features which are all among properties defined in the data model:
 
-        public void run() {
-            while (!client.isDone()) {
-                try {
-                    String msg = msgQueue.take();
-                    Utils.printInfo(new JSONObject(msg));
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-            client.stop();
-        }
-    }
+ ```scala
+    override def feature = using(WordFeatures, BigramFeatures)
+ ```
 
-`ClassifierMessageHandler` is another example of `MessageHandler` where a `Classifier` is called on
-every message in the stream.
-The folder `data` contains sample sentiment annotated data from [here](http://cs.stanford.edu/people/alecmgo/trainingandtestdata.zip).
+ in addition to the classification algorithm:
 
-    public void run() {
-        while (!client.isDone()) {
-            try {
-                String msg = msgQueue.take();
-                Utils.printInfo(new JSONObject(msg));
-                String text = Utils.getCleanText(new JSONObject(msg));
-                // Need to convert the text to a Tweet datastructure for the LBJava classifer to work
-                String decision = classifier.discreteValue(new Tweet(text));
-                System.out.println("\t***Sentiment classification: " + decision);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-        client.stop();
-    }
+ ```scala
+  override lazy val classifier = new SparseNetworkLearner()
+  ```
+
+## The applications
+We have two applications for this example. One is a program that populates the actual data read from the reader into the data model:
+
+ ```scala
+     tweet.populate(TrainReader.tweets.toList)
+     tweet.populate(TestReader.tweets.toList, train = false)
+ ```
+
+ and then trains and tests the sentiment classifier:
+
+ ```scala
+   sentimentClassifier.learn(10)
+   sentimentClassifier.test()
+ ```
+
+see [here](SentimentApp.scala).
+
+Another App is a one that makes use of the trained classifiers to predict the sentiment of the stream of tweets, [here](twitterStreamApp.scala).
+
+
+

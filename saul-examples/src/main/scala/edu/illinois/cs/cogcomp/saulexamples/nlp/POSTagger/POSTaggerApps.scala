@@ -6,10 +6,13 @@
   */
 package edu.illinois.cs.cogcomp.saulexamples.nlp.POSTagger
 
+import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.Constituent
-import edu.illinois.cs.cogcomp.core.utilities.configuration.{ Property, ResourceManager, Configurator }
+import edu.illinois.cs.cogcomp.core.utilities.configuration.{ Configurator, Property, ResourceManager }
 import edu.illinois.cs.cogcomp.lbjava.classify.TestDiscrete
 import edu.illinois.cs.cogcomp.nlp.corpusreaders.PennTreebankPOSReader
+import edu.illinois.cs.cogcomp.nlp.tokenizer.StatefulTokenizer
+import edu.illinois.cs.cogcomp.nlp.utility.TokenizerTextAnnotationBuilder
 import edu.illinois.cs.cogcomp.pos.POSLabeledUnknownWordParser
 import edu.illinois.cs.cogcomp.saul.classifier.ClassifierUtils
 import edu.illinois.cs.cogcomp.saul.parser.IterableToLBJavaParser
@@ -18,6 +21,7 @@ import edu.illinois.cs.cogcomp.saulexamples.nlp.POSTagger.POSDataModel._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.CommonSensors
 
 import scala.collection.JavaConversions._
+import scala.io.StdIn
 
 object POSConfigurator extends Configurator {
   private val prefix = "../data/POS/"
@@ -35,16 +39,17 @@ object POSConfigurator extends Configurator {
 
 object POSTaggerApp {
   object POSExperimentType extends Enumeration {
-    val TrainAndTest, TestFromModel = Value
+    val TrainAndTest, TestFromModel, Interactive = Value
   }
 
   def main(args: Array[String]): Unit = {
     /** Choose the experiment you're interested in by changing the following line */
-    val testType = POSExperimentType.TestFromModel
+    val testType = POSExperimentType.Interactive
 
     testType match {
       case POSExperimentType.TrainAndTest => trainAndTest()
       case POSExperimentType.TestFromModel => testWithPretrainedModels()
+      case POSExperimentType.Interactive => interactiveWithPretrainedModels()
     }
   }
 
@@ -117,5 +122,41 @@ object POSTaggerApp {
 
     tester.printPerformance(System.out)
   }
-}
 
+  /** Load Pretrained models into classifiers and return a POSAnnotator
+    */
+  def getPretrainedAnnotator(finalViewName: String = ViewNames.POS): POSAnnotator = {
+    // Load POSClassifier.
+    ClassifierUtils.LoadClassifier(
+      POSConfigurator.jarModelPath,
+      BaselineClassifier, MikheevClassifier, POSTaggerKnown, POSTaggerUnknown
+    )
+
+    val annotator = new POSAnnotator(finalViewName)
+    val resourceManager = POSConfigurator.getDefaultConfig
+    annotator.initialize(resourceManager)
+
+    annotator
+  }
+
+  /** Interactive model to annotate input sentences with Pre-trained models
+    */
+  def interactiveWithPretrainedModels(): Unit = {
+    val annotator = getPretrainedAnnotator()
+    val taBuilder = new TokenizerTextAnnotationBuilder(new StatefulTokenizer())
+
+    while (true) {
+      println("Enter a sentence to annotate (or Press Enter to exit)")
+      val input = StdIn.readLine()
+
+      input match {
+        case sentence: String if sentence.trim.nonEmpty =>
+          // Create a Text Annotation with the current input sentence.
+          val ta = taBuilder.createTextAnnotation(sentence.trim)
+          annotator.addView(ta)
+          println(ta.getView(ViewNames.POS).toString)
+        case _ => return
+      }
+    }
+  }
+}
