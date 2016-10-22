@@ -17,6 +17,18 @@ object OrgClassifier extends Learnable[ConllRawToken](ErDataModelExample) {
     containsInPersonList, wordLen, containsInCityList)
 }
 ```
+### train and test classifiers
+
+call `train()` method to train your classifier using the populated data in the data model's training instances:
+
+```scala
+OrgClassifier.train()
+```
+call `test()` method to test your classifier using the populated data model's test instance:
+
+ ```scala
+ OrgClassifier.test()
+```
 
 ### Saving and loading classifiers
  Simply call the `save()` method:
