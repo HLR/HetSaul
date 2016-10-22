@@ -26,6 +26,7 @@ Visit each link for its content
 <a name="Tutorial"></a>
  1. [Introduction](saul-core/doc/INTRO.md)
  2. [Installation] (saul-core/doc/INSTALLATION.md)
+ 3. [Programmers workflow] (saul-core/doc/WORKFLOW.md)
  3. [Conceptual structure of a Saul program](saul-core/doc/CONCEPTUALSTRUCTURE.md)
  2. [Data modeling and feature extraction](saul-core/doc/DATAMODELING.md)
  3. [Learners and constraints](saul-core/doc/SAULLANGUAGE.md)
