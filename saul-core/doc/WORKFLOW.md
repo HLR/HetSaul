@@ -8,16 +8,17 @@ A Saul programmer needs to think about doing this workflow.
 
  ```scala
    object myDataModelName extends DataModel {
-   //the definition of nodes, edges and properties come here!
+        //the definition of nodes, edges and properties come here!
    }
   ```
 
 3) Create an object for defining your classifiers, for a simple standard machine learning task you
 will probably have only one classifier to define. This will be in such a template ([see more](SAULLANGUAGE.md)):
+
 ```scala
 object allMyClassifiers {
- object myClassifierName1 extends Learnable(myNode){
- //the definition of features, label and algorithm comes here!
+    object myClassifierName1 extends Learnable(myNode){
+         //the definition of features, label and algorithm comes here!
  }
  ...
 ```
@@ -37,11 +38,11 @@ your global constraints in there in the following template (for the classic mach
 makes predictions or whatever you need in your learning based program, this is a typical scenario for a main app that uses classifiers ([see more](CONCEPTUALSTRUCTURE.md)):
 
 ```scala
-object myMainApplication extends App{
-// call your reader here and read the data in some collection
-// populate you collection into the data model
-// call train over your defined classifiers or load a pre-trained model into your classifier
-//call test to evaluate your classifiers or use your classifier for other prediction purposes
+object myMainApplication extends App {
+     // call your reader here and read the data in some collection
+     // populate you collection into the data model
+     // call train over your defined classifiers or load a pre-trained model into your classifier
+     // call test to evaluate your classifiers or use your classifier for other prediction purposes
 }
 ```
 
