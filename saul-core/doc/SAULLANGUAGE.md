@@ -1,8 +1,8 @@
 ## Learners
-Learners get an input and make a prediction. It can be a classifier, a regresion (which are both trained) or any rule-based system. 
+Learners get an input and make a prediction. It can be a classifier, a regression (which are both trained) or any rule-based system. 
 Here are the basic parameters used definition of a learners:  
 
-  - `label`: A `Property` whihch defines the output prediction. In case of classification 
+  - `label`: A `Property` which defines the output prediction. In case of classification 
     problems, it is the "category" of the one object. For example, in a document classification 
     task, the category of one text document can be related to its topic, e.g. Sport, politics, etc.
   - `feature`: A set of `Property`s fed to the learner as the input. For example in the case of classification, the classifiers will be trained based on such properties. Example properties are set of words that occur in a document (Bag of words).
