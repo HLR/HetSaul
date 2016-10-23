@@ -6,13 +6,17 @@ A Saul programmer needs to think about doing this workflow.
 2) Create a datamodel object by opening a new file and input your declaration in this template ([see more](DATAMODELING.md)):
 
  ```scala
-   object myDataModelName extends DataModel { the definition of nodes, edges and properties come here!}
+   object myDataModelName extends DataModel {
+   //the definition of nodes, edges and properties come here!
+   }
   ```
 3) Create an object for defining your classifiers, for a simple standard machine learning task you
 will probably have only one classifier to define. This will be in such a template ([see more](SAULLANGUAGE.md)):
 ```scala
 object allMyClassifiers {
- object myClassifierName1 extends Learnable(myNode){the definition of features, label and algorithm comes here!}
+ object myClassifierName1 extends Learnable(myNode){
+ //the definition of features, label and algorithm comes here!
+ }
  ...
 ```
 4) For the advanced usage of Saul when you deal with predicting structured output and using constraints you open another object and define
@@ -20,8 +24,9 @@ your global constraints in there in the following template (for the classic mach
 
  ```scala
  object allMyConstraints {
-     val myFirstConstraintName = ConstrainedClassifier.constraint[ObjectType] { x: ObjectType =>
-     myLogicalExpression that describes my constrain comes here!
+     val myFirstConstraintName = ConstrainedClassifier.constraint[ObjectType] {
+      x: ObjectType =>
+     //myLogicalExpression that describes my constrain comes here!
    }
 ```
 5) Having the above items in place, now you can write your application that loads the data (population of the data into the data model) trains over the data, tests the models
