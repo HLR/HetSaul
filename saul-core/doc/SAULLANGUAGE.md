@@ -18,6 +18,18 @@ object OrgClassifier extends Learnable[ConllRawToken](ErDataModelExample) {
   override lazy val classifier = new SparseNetworkLearner()
 }
 ```
+### train and test classifiers
+
+Call `train()` method to train your classifier using the populated data in the data model's training instances:
+
+```scala
+OrgClassifier.train()
+```
+Call `test()` method to test your classifier using the populated data model's test instance:
+
+ ```scala
+ OrgClassifier.test()
+```
 
 ### Availale algorithms 
 Here is a list of available algorithms in Saul:
