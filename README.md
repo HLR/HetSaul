@@ -26,11 +26,12 @@ Visit each link for its content
 <a name="Tutorial"></a>
  1. [Introduction](saul-core/doc/INTRO.md)
  2. [Installation] (saul-core/doc/INSTALLATION.md)
- 3. [Conceptual structure of a Saul program](saul-core/doc/CONCEPTUALSTRUCTURE.md)
- 2. [Data modeling and feature extraction](saul-core/doc/DATAMODELING.md)
- 3. [Learners and constraints](saul-core/doc/SAULLANGUAGE.md)
- 4. [Model configurations](saul-core/doc/MODELS.md)
- 5. [Saul library](saul-core/doc/LBJLIBRARY.md)
+ 3. [Programmers workflow] (saul-core/doc/WORKFLOW.md)
+ 4. [Conceptual structure of a Saul program](saul-core/doc/CONCEPTUALSTRUCTURE.md)
+ 5. [Data modeling and feature extraction](saul-core/doc/DATAMODELING.md)
+ 6. [Learners and constraints](saul-core/doc/SAULLANGUAGE.md)
+ 7. [Model configurations](saul-core/doc/MODELS.md)
+ 8. [Saul library](saul-core/doc/LBJLIBRARY.md)
 
 The api docs are included [here](http://cogcomp.cs.illinois.edu/software/doc/saul/). 
 

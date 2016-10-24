@@ -1,22 +1,41 @@
-## Classifiers
-Here are the basic types essential for using classifiers.
+## Learners
+Learners get an input and make a prediction. It can be a classifier, a regression (which are both trained) or any rule-based system. 
+Here are the basic parameters used definition of a learners:  
 
-  - `Label`: The "category" of the one object. For example, in a classification task, the category
-  of one text  document can be related to its topic, e.g. Sport, politics, etc.
-  - `Features`: A set of properties of object that is used for the classifiers to be trained based on
-  those, for example the set of words that occur in a document can be used as feature s of that document (Bag of words).
-  - `Parameters`: Variables used to fine tune the classifier. It differs from one type of classification method to another.
+  - `label`: A `Property` which defines the output prediction. In case of classification 
+    problems, it is the "category" of the one object. For example, in a document classification 
+    task, the category of one text document can be related to its topic, e.g. Sport, politics, etc.
+  - `feature`: A set of `Property`s fed to the learner as the input. For example in the case of classification, the classifiers will be trained based on such properties. Example properties are set of words that occur in a document (Bag of words).
+  - `classifier`: defines the type of the learning algorithm used. 
 
-A classifier can be defined in the following way:
+Here is an example classifier:
 
 ```scala
 object OrgClassifier extends Learnable[ConllRawToken](ErDataModelExample) {
-  override def label: Property[ConllRawToken] = entityType is "Org"
-
+  def label: Property[ConllRawToken] = entityType is "Org"
   override def feature = using(word, phrase, containsSubPhraseMent, containsSubPhraseIng,
     containsInPersonList, wordLen, containsInCityList)
+  override lazy val classifier = new SparseNetworkLearner()
 }
 ```
+### train and test classifiers
+
+Call `train()` method to train your classifier using the populated data in the data model's training instances:
+
+```scala
+OrgClassifier.train()
+```
+Call `test()` method to test your classifier using the populated data model's test instance:
+
+ ```scala
+ OrgClassifier.test()
+```
+
+### Availale algorithms 
+Here is a list of available algorithms in Saul:
+ - [LBJava learning algorithms](https://github.com/IllinoisCogComp/lbjava/blob/master/lbjava/doc/ALGORITHMS.md) 
+ - [Weka learning algorithms](https://github.com/IllinoisCogComp/saul/blob/master/saul-core/src/main/java/edu/illinois/cs/cogcomp/saul/learn/SaulWekaWrapper.md)
+
 
 ### Saving and loading classifiers
  Simply call the `save()` method:
