@@ -59,8 +59,7 @@ lazy val commonSettings = Seq(
   name := "saul-project",
   resolvers ++= Seq(
     Resolver.mavenLocal,
-    "CogcompSoftware" at "http://cogcomp.cs.illinois.edu/m2repo/",
-    "Sonatype Releases" at "https://oss.sonatype.org/content/repositories/releases/"
+    "CogcompSoftware" at "http://cogcomp.cs.illinois.edu/m2repo/"
   ),
   javaOptions ++= List("-Xmx11g"),
   libraryDependencies ++= Seq(
