@@ -18,14 +18,16 @@ object OrgClassifier extends Learnable[ConllRawToken](ErDataModelExample) {
   override lazy val classifier = new SparseNetworkLearner()
 }
 ```
-### train and test classifiers
+### Training and Testing classifiers
 
-Call `train()` method to train your classifier using the populated data in the data model's training instances:
+-Call `train()` method to train your classifier using the populated data in the data model's training instances:
 
 ```scala
-OrgClassifier.train()
+OrgClassifier.learn(numberOfIterations)
 ```
-Call `test()` method to test your classifier using the populated data model's test instance:
+where number of iteration determines how many times the training algorithm should iterate over training data.
+
+-Call `test()` method to test your classifier using the populated data model's test instance:
 
  ```scala
  OrgClassifier.test()
@@ -45,19 +47,23 @@ OrgClassifier.save()
 
 By default the classifier will be save into two files (a `.lc` model file and a `.lex` lexicon file). In order to
  save the classifier in another location, you can set the location in parameter `modelDir`; for example:
+
 ```scala
 OrgClassifier.modelDir = "myFancyModels/"
 OrgClassifier.save()
 ```
+
 This will save the two model files into the directory `myFancyModels`.
 
 To load the models you can call the `load()` method.
+
 ```scala
 OrgClassifier.load()
 ```
 
 If you have different versions of the same classifier (say, different features, different number of iterations, etc),
 you can add a suffix to the model files of each variation:
+
 ```scala
 OrgClassifier.modelSuffix = "20-iterations"
 OrgClassifier.save()
@@ -83,14 +89,15 @@ val PersonWorkFor=ConstraintClassifier.constraintOf[ConllRelation] {
 ```
 
 ## Constrained Classifiers
+
 A constrained classifier can be defined in the following form:
 
 ```scala
-object LocConstraintClassifier extends ConstraintClassifier[ConllRawToken, ConllRelation](ErDataModelExample, LocClassifier) {
+       object LocConstraintClassifier extends ConstraintClassifier[ConllRawToken, ConllRelation](ErDataModelExample, LocClassifier) {
 
-  def subjectTo = Per_Org
+       def subjectTo = Per_Org
 
-  override val pathToHead = Some('containE2)
-  //    override def filter(t: ConllRawToken,h:ConllRelation): Boolean = t.wordId==h.wordId2
-}
-```
+      override val pathToHead = Some('containE2)
+       //    override def filter(t: ConllRawToken,h:ConllRelation): Boolean = t.wordId==h.wordId2
+      }
+ ```
