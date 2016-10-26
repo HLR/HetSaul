@@ -9,43 +9,43 @@ import org.scalatest.{ FlatSpec, Matchers }
 
 /** Created by Parisa on 9/18/16.
   */
-class initializeSparseNetwork extends FlatSpec with Matchers {
+class InitializeSparseNetwork extends FlatSpec with Matchers {
 
   // Testing the original functions with real classifiers
   "integration test" should "work" in {
     // Initialize toy model
-    import testModel._
+    import TestModel._
     object TestClassifier extends Learnable(tokens) {
       def label = testLabel
       override def feature = using(word)
       override lazy val classifier = new SparseNetworkLearner()
     }
-    object TestBiClassifier extends Learnable(tokens) {
+    object TestClassifierWithExtendedFeatures extends Learnable(tokens) {
       def label = testLabel
       override def feature = using(word, biWord)
       override lazy val classifier = new SparseNetworkLearner()
     }
     object TestConstraintClassifier extends ConstrainedClassifier[String, String](TestClassifier) {
       def subjectTo = ConstrainedClassifier.constraint { _ => new FirstOrderConstant(true) }
-       override val solver = new OJalgoHook
+      override val solver = new OJalgoHook
     }
-    object TestBiConstraintClassifier extends ConstrainedClassifier[String, String](TestBiClassifier) {
+    object TestConstraintClassifierWithExtendedFeatures extends ConstrainedClassifier[String, String](TestClassifierWithExtendedFeatures) {
       def subjectTo = ConstrainedClassifier.constraint { _ => new FirstOrderConstant(true) }
-       override val solver = new OJalgoHook
+      override val solver = new OJalgoHook
     }
 
     val words = List("this", "is", "a", "test", "candidate", ".")
     tokens.populate(words)
 
-    val cls = List(TestConstraintClassifier, TestBiConstraintClassifier)
+    val cls = List(TestConstraintClassifier, TestConstraintClassifierWithExtendedFeatures)
 
     TestConstraintClassifier.onClassifier.classifier.getLexicon.size() should be(0)
-    TestBiConstraintClassifier.onClassifier.classifier.getLexicon.size() should be(0)
+    TestConstraintClassifierWithExtendedFeatures.onClassifier.classifier.getLexicon.size() should be(0)
     TestConstraintClassifier.onClassifier.classifier.getLabelLexicon.size() should be(0)
-    TestBiConstraintClassifier.onClassifier.classifier.getLabelLexicon.size() should be(0)
+    TestConstraintClassifierWithExtendedFeatures.onClassifier.classifier.getLabelLexicon.size() should be(0)
 
     val clNet1 = TestConstraintClassifier.onClassifier.classifier.asInstanceOf[SparseNetworkLearner]
-    val clNet2 = TestBiConstraintClassifier.onClassifier.classifier.asInstanceOf[SparseNetworkLearner]
+    val clNet2 = TestConstraintClassifierWithExtendedFeatures.onClassifier.classifier.asInstanceOf[SparseNetworkLearner]
 
     clNet1.getNetwork.size() should be(0)
     clNet2.getNetwork.size() should be(0)
@@ -53,9 +53,9 @@ class initializeSparseNetwork extends FlatSpec with Matchers {
     ClassifierUtils.InitializeClassifiers(tokens, cls: _*)
 
     TestConstraintClassifier.onClassifier.classifier.getLexicon.size() should be(6)
-    TestBiConstraintClassifier.onClassifier.classifier.getLexicon.size() should be(12)
+    TestConstraintClassifierWithExtendedFeatures.onClassifier.classifier.getLexicon.size() should be(12)
     TestConstraintClassifier.onClassifier.classifier.getLabelLexicon.size() should be(2)
-    TestBiConstraintClassifier.onClassifier.classifier.getLabelLexicon.size() should be(2)
+    TestConstraintClassifierWithExtendedFeatures.onClassifier.classifier.getLabelLexicon.size() should be(2)
 
     clNet1.getNetwork.size() should be(2)
     clNet2.getNetwork.size() should be(2)
@@ -65,7 +65,7 @@ class initializeSparseNetwork extends FlatSpec with Matchers {
 
     wv1.size() should be(0)
     wv2.size() should be(0)
-    TestBiClassifier.learn(2)
+    TestClassifierWithExtendedFeatures.learn(2)
     JointTrainSparseNetwork.train(tokens, cls, 5, false)
 
     val wv1After = clNet1.getNetwork.get(0).asInstanceOf[LinearThresholdUnit].getWeightVector
@@ -75,7 +75,7 @@ class initializeSparseNetwork extends FlatSpec with Matchers {
     wv2After.size() should be(12)
   }
 
-  object testModel extends DataModel {
+  object TestModel extends DataModel {
     val tokens = node[String]
     val iEdge = edge(tokens, tokens)
     val testLabel = property(tokens) { x: String => x.equals("candidate") }

@@ -4,8 +4,6 @@ import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
 
 import scala.math._
 
-/** Created by Parisa on 10/14/16.
-  */
 object RandomDataModel extends DataModel {
   val randomNode = node[String]
   val th = Pi / 3
@@ -23,7 +21,6 @@ object RandomDataModel extends DataModel {
     x: String =>
       val p = List(2 * r.nextGaussian(), 0.5 * r.nextGaussian())
       val p1new = p(1) + randomLabel(x).toDouble
-      val p2 = List(c * p1new - s * p(1), c * p1new + s * p(1))
-      p2
+      List(c * p1new - s * p(1), c * p1new + s * p(1))
   }
 }

@@ -41,8 +41,15 @@ object KnowEngDataModel extends DataModel {
     x: Patient => x.gender
   }
 
-  val ethnicity = property(patients) {
+  //The ethnicity property can be directly derived from patient nodes
+  // but also from parientDrug nodes using the edges defined between the two types of nodes
+  // the following two properties show these two cases.
+  val ethnicity_direct = property(patients) {
     x: Patient => x.ethnicity
+  }
+
+  val ethnicity_Indirect = property(patientDrug) {
+    x: PatientDrug => (patientDrug(x) ~> pdPatient prop ethnicity_direct).propValues.toList
   }
 
   val geneName = property(genes) {
@@ -101,9 +108,7 @@ object KnowEngDataModel extends DataModel {
   val textSimilarity = property(geneGene) {
     x: GeneGene => x.STRING_textmining
   }
-  val ethnicity1 = property(patientDrug) {
-    x: PatientDrug => (patientDrug(x) ~> pdPatient prop ethnicity).propValues.toList
-  }
+
   val cP1 = property(patientDrug) {
     x: PatientDrug => (patientDrug(x) ~> pdPatient prop age).propValues.toList
   }
