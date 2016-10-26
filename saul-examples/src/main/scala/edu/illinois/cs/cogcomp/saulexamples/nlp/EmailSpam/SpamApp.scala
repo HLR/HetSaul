@@ -36,16 +36,17 @@ object SpamApp extends Logging {
   /** A standard method for testing the Spam Classification problem. Simply training and testing the resulting model.*/
   def TrainAndTestSpamClassifier(): Unit = {
     /** Defining the data and specifying it's location  */
-    SpamDataModel.docs populate trainData
-    SpamClassifierWeka.learn(30)
-    SpamClassifierWeka.test(testData)
+    SpamDataModel.email populate trainData
+    SpamClassifier.forget()
+    SpamClassifier.learn(30)
+    SpamClassifier.test(testData)
   }
 
   /** Spam Classifcation, followed by caching the data-model graph. */
   val graphCacheFile = "models/temp.model"
   def SpamClassifierWithGraphCache(): Unit = {
     /** Defining the data and specifying it's location  */
-    SpamDataModel.docs populate trainData
+    SpamDataModel.email populate trainData
     SpamDataModel.deriveInstances()
     SpamDataModel.write(graphCacheFile)
     SpamClassifierWithCache.learn(30)
@@ -66,7 +67,7 @@ object SpamApp extends Logging {
     * predictions before serialization.
     */
   def SpamClassifierWithSerialization(): Unit = {
-    SpamDataModel.docs populate trainData
+    SpamDataModel.email populate trainData
     SpamClassifier.learn(30)
     SpamClassifier.save()
     DeserializedSpamClassifier.load(SpamClassifier.lcFilePath, SpamClassifier.lexFilePath)
