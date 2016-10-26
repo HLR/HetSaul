@@ -6,7 +6,7 @@ import scala.math._
 
 /** Created by Parisa on 10/14/16.
   */
-object randomDataModel extends DataModel {
+object RandomDataModel extends DataModel {
   val randomNode = node[String]
   val th = Pi / 3
   val c = cos(th)

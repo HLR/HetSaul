@@ -1,4 +1,4 @@
-package JoinTrainingTests
+package edu.illinois.cs.cogcomp.saul.classifier.JoinTrainingTests
 
 import edu.illinois.cs.cogcomp.infer.ilp.OJalgoHook
 import edu.illinois.cs.cogcomp.lbjava.infer.FirstOrderConstant
@@ -27,15 +27,11 @@ class initializeSparseNetwork extends FlatSpec with Matchers {
     }
     object TestConstraintClassifier extends ConstrainedClassifier[String, String](TestClassifier) {
       def subjectTo = ConstrainedClassifier.constraint { _ => new FirstOrderConstant(true) }
-      //override val pathToHead = Some(-iEdge)
-      // override def filter(t: String, h: String): Boolean = t.equals(h)
-      override val solver = new OJalgoHook
+       override val solver = new OJalgoHook
     }
     object TestBiConstraintClassifier extends ConstrainedClassifier[String, String](TestBiClassifier) {
       def subjectTo = ConstrainedClassifier.constraint { _ => new FirstOrderConstant(true) }
-      // override val pathToHead = Some(-iEdge)
-      //override def filter(t: String, h: String): Boolean = t.equals(h)
-      override val solver = new OJalgoHook
+       override val solver = new OJalgoHook
     }
 
     val words = List("this", "is", "a", "test", "candidate", ".")

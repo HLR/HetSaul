@@ -1,5 +1,4 @@
 import de.heikoseeberger.sbtheader.HeaderPattern
-import sbt.Keys._
 import sbtrelease.ReleaseStateTransformations._
 
 scalaVersion in ThisBuild := "2.11.7"

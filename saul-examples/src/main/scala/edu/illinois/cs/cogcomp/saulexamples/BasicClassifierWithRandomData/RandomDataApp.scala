@@ -1,18 +1,18 @@
 package edu.illinois.cs.cogcomp.saulexamples.BasicClassifierWithRandomData
-import edu.illinois.cs.cogcomp.saulexamples.BasicClassifierWithRandomData.randomClassifiers.bClassifier
+import edu.illinois.cs.cogcomp.saulexamples.BasicClassifierWithRandomData.RandomClassifiers.bClassifier
 
 /** Created by Parisa on 10/13/16.
   */
-object randomDataApp extends App {
+object RandomDataApp extends App {
 
-  import randomDataModel._
+  import RandomDataModel._
   for (i <- 1 to 100) {
     randomNode.addInstance(i.toString)
   }
   val ex = randomNode.getAllInstances
   val graphCacheFile = "models/temp.model"
-  randomDataModel.deriveInstances()
-  randomDataModel.write(graphCacheFile)
+  RandomDataModel.deriveInstances()
+  RandomDataModel.write(graphCacheFile)
   bClassifier.learn(30)
   bClassifier.test(ex)
 }
