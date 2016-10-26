@@ -37,10 +37,10 @@ lazy val releaseSettings = Seq(
     commitReleaseVersion,                   // performs the initial git checks
     //tagRelease,
     publishArtifacts,                       // checks whether `publishTo` is properly set up
-    releaseStepTask(scalaDoc),      //release the scalaDocs
+    releaseStepTask(scalaDoc),              //release the scalaDocs
     setNextVersion,
-    commitNextVersion//,
-    //pushChanges                             // checks that an upstream branch is properly configured
+    commitNextVersion,
+    pushChanges                             // checks that an upstream branch is properly configured
   )
 )
 
@@ -50,7 +50,6 @@ lazy val publishSettings = Seq(
       "CogcompSoftwareRepo", "bilbo.cs.illinois.edu",
       "/mounts/bilbo/disks/0/www/cogcomp/html/m2repo/") as (user, keyFile)
   )
-  //isSnapshot := true // when releasing snapshot versions
 )
 
 lazy val commonSettings = Seq(
