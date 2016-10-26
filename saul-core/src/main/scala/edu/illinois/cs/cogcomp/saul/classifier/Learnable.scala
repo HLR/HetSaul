@@ -11,7 +11,7 @@ import java.net.URL
 
 import edu.illinois.cs.cogcomp.core.datastructures.vectors.ExceptionlessOutputStream
 import edu.illinois.cs.cogcomp.core.io.IOUtils
-import edu.illinois.cs.cogcomp.lbjava.classify.{ FeatureVector, TestDiscrete }
+import edu.illinois.cs.cogcomp.lbjava.classify.{ Classifier, FeatureVector, TestDiscrete }
 import edu.illinois.cs.cogcomp.lbjava.learn.Learner.Parameters
 import edu.illinois.cs.cogcomp.lbjava.learn._
 import edu.illinois.cs.cogcomp.lbjava.parse.FoldParser.SplitPolicy
@@ -54,7 +54,7 @@ abstract class Learnable[T <: AnyRef](val node: Node[T], val parameters: Paramet
   def combinedProperties = if (label != null) new CombinedDiscreteProperty[T](this.feature.filterNot(_.name == label.name))
   else new CombinedDiscreteProperty[T](this.feature)
 
-  def lbpFeatures = combinedProperties.classifier
+  def lbpFeatures = Property.convertToClassifier(combinedProperties)
 
   /** classifier need to be defined by the user */
   val classifier: Learner
@@ -102,7 +102,7 @@ abstract class Learnable[T <: AnyRef](val node: Node[T], val parameters: Paramet
 
   private def setLabeler(): Unit = {
     if (label != null) {
-      val oracle = Property.entitiesToLBJFeature(label)
+      val oracle = Property.convertToClassifier(label)
       logger.debug(s"Setting the labeler to be ${oracle}")
       classifier.setLabeler(oracle)
     }
@@ -220,7 +220,7 @@ abstract class Learnable[T <: AnyRef](val node: Node[T], val parameters: Paramet
   def learn(iteration: Int, data: Iterable[T]): Unit = {
     createFiles()
 
-    val oracle = Property.entitiesToLBJFeature(label)
+    val oracle = Property.convertToClassifier(label)
     logger.debug(s"==> Learning using the feature extractors to be ${lbpFeatures.getCompositeChildren}")
     logger.debug(s"==> Learning using the labeler to be ${oracle}")
     logger.debug(classifier.getExtractor.getCompositeChildren.toString)
@@ -300,10 +300,16 @@ abstract class Learnable[T <: AnyRef](val node: Node[T], val parameters: Paramet
   def test(testParser: Parser, prediction: Property[T], groundTruth: Property[T], exclude: String, outputGranularity: Int): Results = {
     testParser.reset()
     val logging = if (loggerConfig.Logger("edu.illinois.cs.cogcomp.saul.classifier.Learnable").isLevelInfo()) true else false
-    val tester = if (prediction == null && groundTruth == null)
-      TestDiscrete.testDiscrete(classifier, classifier.getLabeler, testParser)
-    else
-      TestDiscrete.testDiscrete(new TestDiscrete(), prediction.classifier, groundTruth.classifier, testParser, logging, outputGranularity)
+    val tester = {
+      if (prediction == null && groundTruth == null) {
+        TestDiscrete.testDiscrete(classifier, classifier.getLabeler, testParser)
+      } else {
+        val predictionClassifer = Property.convertToClassifier(prediction)
+        val groundTruthClassifier = Property.convertToClassifier(groundTruth)
+        TestDiscrete.testDiscrete(new TestDiscrete(), predictionClassifer, groundTruthClassifier, testParser, logging, outputGranularity)
+      }
+    }
+
     if (!exclude.isEmpty) {
       tester.addNull(exclude)
     }
@@ -369,7 +375,7 @@ abstract class Learnable[T <: AnyRef](val node: Node[T], val parameters: Paramet
       foldParser.reset()
       logger.info(s"Testing on fold $k")
       foldParser.setFromPivot(true)
-      this.test(foldParser, prediction, groundTruth, exclude, outputGranularity)
+      test(foldParser, prediction, groundTruth, exclude, outputGranularity)
     }
   }
 

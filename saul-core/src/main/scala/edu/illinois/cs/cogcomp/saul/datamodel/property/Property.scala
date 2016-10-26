@@ -6,9 +6,10 @@
   */
 package edu.illinois.cs.cogcomp.saul.datamodel.property
 
-import edu.illinois.cs.cogcomp.lbjava.classify.{ FeatureVector, Classifier => FeatureGenerator }
+import java.util
+
+import edu.illinois.cs.cogcomp.lbjava.classify.{ Classifier, FeatureVector }
 import edu.illinois.cs.cogcomp.saul.datamodel.node.Node
-import edu.illinois.cs.cogcomp.saul.lbjrelated.LBJClassifierEquivalent
 
 import scala.reflect.ClassTag
 
@@ -17,8 +18,9 @@ import scala.reflect.ClassTag
   *
   * @tparam T Type of the attribute
   */
-trait Property[T] extends LBJClassifierEquivalent {
+trait Property[T] {
 
+  private[property] val containingPackage = "LBP_Package"
   val name: String
 
   val tag: ClassTag[T]
@@ -26,23 +28,19 @@ trait Property[T] extends LBJClassifierEquivalent {
 
   val sensor: T => S
 
-  def apply(instance: T): S = {
-    sensor(instance)
-  }
+  def apply(instance: T): S = sensor(instance)
 
-  val classifier = makeClassifierWithName(name)
+  def featureVector(instance: T): FeatureVector
 
-  def addToFeatureVector(instance: T, featureVector: FeatureVector): FeatureVector
+  def outputType: String = "discrete"
 
-  def addToFeatureVector(instance: T, featureVector: FeatureVector, nameOfClassifier: String): FeatureVector
+  def allowableValues: Array[String] = Array.empty[String]
 
-  def makeClassifierWithName(n: String): FeatureGenerator
+  def compositeChildren: Option[util.LinkedList[Classifier]] = None
 }
 
 object Property {
 
-  /** Transfer a list of properties to a lbj classifier. */
-  def entitiesToLBJFeature[T](atts: Property[T]): FeatureGenerator = {
-    atts.classifier
-  }
+  /** Transfer a properties to a lbj classifier. */
+  def convertToClassifier[T](property: Property[T]): Classifier = new LBPClassifier[T](property)
 }

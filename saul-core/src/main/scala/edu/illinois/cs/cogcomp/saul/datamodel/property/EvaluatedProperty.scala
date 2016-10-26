@@ -6,8 +6,8 @@
   */
 package edu.illinois.cs.cogcomp.saul.datamodel.property
 
-import edu.illinois.cs.cogcomp.lbjava.classify.{ FeatureVector, Classifier }
-import edu.illinois.cs.cogcomp.saul.datamodel.property.features.discrete.{ BooleanProperty, DiscreteProperty }
+import edu.illinois.cs.cogcomp.lbjava.classify.FeatureVector
+import edu.illinois.cs.cogcomp.saul.datamodel.property.features.discrete.BooleanProperty
 
 import scala.reflect.ClassTag
 
@@ -21,12 +21,7 @@ class EvaluatedProperty[T <: AnyRef, U](val property: TypedProperty[T, U], val v
 
   val typedProperties = new BooleanProperty[T](name, this.boolMapping)
 
-  override def makeClassifierWithName(n: String): Classifier = {
-    typedProperties.makeClassifierWithName(n)
-  }
+  override def featureVector(instance: T): FeatureVector = typedProperties.featureVector(instance)
 
-  override def addToFeatureVector(instance: T, featureVector: FeatureVector): FeatureVector = featureVector
-
-  def addToFeatureVector(instance: T, featureVector: FeatureVector, nameOfClassifier: String) = featureVector
   override val sensor: (T) => String = { t: T => "" }
 }
