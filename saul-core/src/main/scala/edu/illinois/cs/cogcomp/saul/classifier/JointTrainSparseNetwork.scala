@@ -18,16 +18,16 @@ object JointTrainSparseNetwork {
 
   val logger: Logger = LoggerFactory.getLogger(this.getClass)
   var difference = 0
-  def apply[HEAD <: AnyRef](node: Node[HEAD], cls: List[ConstrainedClassifier[_, HEAD]], init: Boolean,lossAugmented: Boolean)(implicit headTag: ClassTag[HEAD]) = {
-    train[HEAD](node, cls, 1, init,lossAugmented)
+  def apply[HEAD <: AnyRef](node: Node[HEAD], cls: List[ConstrainedClassifier[_, HEAD]], init: Boolean, lossAugmented: Boolean)(implicit headTag: ClassTag[HEAD]) = {
+    train[HEAD](node, cls, 1, init, lossAugmented)
   }
 
-  def apply[HEAD <: AnyRef](node: Node[HEAD], cls: List[ConstrainedClassifier[_, HEAD]], it: Int, init: Boolean, lossAugmented: Boolean=false)(implicit headTag: ClassTag[HEAD]) = {
+  def apply[HEAD <: AnyRef](node: Node[HEAD], cls: List[ConstrainedClassifier[_, HEAD]], it: Int, init: Boolean, lossAugmented: Boolean = false)(implicit headTag: ClassTag[HEAD]) = {
     train[HEAD](node, cls, it, init, lossAugmented)
   }
 
   @scala.annotation.tailrec
-  def train[HEAD <: AnyRef](node: Node[HEAD], cls: List[ConstrainedClassifier[_, HEAD]], it: Int, init: Boolean, lossAugmented: Boolean=false)(implicit headTag: ClassTag[HEAD]): Unit = {
+  def train[HEAD <: AnyRef](node: Node[HEAD], cls: List[ConstrainedClassifier[_, HEAD]], it: Int, init: Boolean, lossAugmented: Boolean = false)(implicit headTag: ClassTag[HEAD]): Unit = {
     // forall members in collection of the head (dm.t) do
     logger.info("Training iteration: " + it)
     if (init) ClassifierUtils.InitializeClassifiers(node, cls: _*)
@@ -44,10 +44,10 @@ object JointTrainSparseNetwork {
               logger.info(s"Training: $idx examples inferred.")
 
             if (lossAugmented)
-            cls.foreach{ cls_i =>
-              cls_i.onClassifier.classifier.setLossFlag()
-              cls_i.onClassifier.classifier.setCandidates(cls_i.getCandidates(h).size * cls.size)
-               }
+              cls.foreach { cls_i =>
+                cls_i.onClassifier.classifier.setLossFlag()
+                cls_i.onClassifier.classifier.setCandidates(cls_i.getCandidates(h).size * cls.size)
+              }
 
             cls.foreach {
               currentClassifier: ConstrainedClassifier[_, HEAD] =>
@@ -108,10 +108,10 @@ object JointTrainSparseNetwork {
 
             }
           }
-            if (lossAugmented)
-              cls.foreach{ cls_i =>
-                cls_i.onClassifier.classifier.unsetLossFlag()
-              }
+          if (lossAugmented)
+            cls.foreach { cls_i =>
+              cls_i.onClassifier.classifier.unsetLossFlag()
+            }
       }
       train(node, cls, it - 1, false)
     }

@@ -3,9 +3,9 @@ package edu.illinois.cs.cogcomp.saulexamples.Badge
 /** Created by Parisa on 9/13/16.
   */
 
-import edu.illinois.cs.cogcomp.saul.classifier.{JointTrain, JointTrainSparseNetwork}
-import edu.illinois.cs.cogcomp.saulexamples.Badge.BadgeClassifiers.{BadgeOppositClassifier, BadgeClassifier}
-import edu.illinois.cs.cogcomp.saulexamples.Badge.BadgeConstraintClassifiers.{badgeConstrainedClassifier, badgeConstrainedClassifierMulti, oppositBadgeConstrainedClassifier, oppositBadgeConstrainedClassifierMulti}
+import edu.illinois.cs.cogcomp.saul.classifier.{ JointTrain, JointTrainSparseNetwork }
+import edu.illinois.cs.cogcomp.saulexamples.Badge.BadgeClassifiers.{ BadgeOppositClassifier, BadgeClassifier }
+import edu.illinois.cs.cogcomp.saulexamples.Badge.BadgeConstraintClassifiers.{ badgeConstrainedClassifier, badgeConstrainedClassifierMulti, oppositBadgeConstrainedClassifier, oppositBadgeConstrainedClassifierMulti }
 import edu.illinois.cs.cogcomp.saulexamples.Badge.BadgeDataModel._
 
 import scala.collection.JavaConversions._
@@ -32,7 +32,7 @@ object BadgesApp {
       case BadgeExperimentType.JoinTrainSparsePerceptron => JoinTrainSparsePerceptron()
       case BadgeExperimentType.JointTrainSparseNetwork => JoinTrainSparseNetwork()
       case BadgeExperimentType.JointTrainSparseNetworkLossAugmented => LossAugmentedJoinTrainSparseNetwork()
-     }
+    }
   }
 
   /*Test the join training with SparsePerceptron*/
@@ -57,10 +57,10 @@ object BadgesApp {
   /*Test the joinTraining with SparseNetwork and doing loss augmented inference*/
   def LossAugmentedJoinTrainSparseNetwork(): Unit = {
 
-   JointTrainSparseNetwork.train(badge, cls, 5, init =  true,lossAugmented = true)
+    JointTrainSparseNetwork.train(badge, cls, 5, init = true, lossAugmented = true)
 
     badgeConstrainedClassifierMulti.test()
     oppositBadgeConstrainedClassifierMulti.test()
   }
-  
+
 }
