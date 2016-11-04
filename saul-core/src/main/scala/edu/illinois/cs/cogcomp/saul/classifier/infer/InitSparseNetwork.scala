@@ -33,7 +33,7 @@ object InitSparseNetwork {
               if (label >= N || iLearner.getNetwork.get(label) == null) {
                 val isConjunctiveLabels = iLearner.isUsingConjunctiveLabels | iLearner.getLabelLexicon.lookupKey(label).isConjunctive
                 iLearner.setConjunctiveLabels(isConjunctiveLabels)
-                val ltu: LinearThresholdUnit = iLearner.getBaseLTU
+                val ltu: LinearThresholdUnit = iLearner.getBaseLTU.clone().asInstanceOf[LinearThresholdUnit]
                 ltu.initialize(iLearner.getNumExamples, iLearner.getNumFeatures)
                 iLearner.getNetwork.set(label, ltu)
               }

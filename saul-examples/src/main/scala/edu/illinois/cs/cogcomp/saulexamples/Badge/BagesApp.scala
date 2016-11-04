@@ -3,8 +3,7 @@ package edu.illinois.cs.cogcomp.saulexamples.Badge
 /** Created by Parisa on 9/13/16.
   */
 
-import edu.illinois.cs.cogcomp.saul.classifier.SL_model.StructuredLearning
-import edu.illinois.cs.cogcomp.saul.classifier.{ClassifierUtils, JointTrain, JointTrainSparseNetwork}
+import edu.illinois.cs.cogcomp.saul.classifier.{JointTrain, JointTrainSparseNetwork}
 import edu.illinois.cs.cogcomp.saulexamples.Badge.BadgeClassifiers.{BadgeOppositClassifier, BadgeClassifier}
 import edu.illinois.cs.cogcomp.saulexamples.Badge.BadgeConstraintClassifiers.{badgeConstrainedClassifier, badgeConstrainedClassifierMulti, oppositBadgeConstrainedClassifier, oppositBadgeConstrainedClassifierMulti}
 import edu.illinois.cs.cogcomp.saulexamples.Badge.BadgeDataModel._
@@ -21,10 +20,11 @@ object BadgesApp {
   val cls = List(badgeConstrainedClassifierMulti, oppositBadgeConstrainedClassifierMulti)
 
   object BadgeExperimentType extends Enumeration {
-    val JoinTrainSparsePerceptron, JointTrainSparseNetwork, JointTrainSparseNetworkLossAugmented, JoinTrainSL = Value
+    val JoinTrainSparsePerceptron, JointTrainSparseNetwork, JointTrainSparseNetworkLossAugmented = Value
   }
 
   def main(args: Array[String]): Unit = {
+
     /** Choose the experiment you're interested in by changing the following line */
     val testType = BadgeExperimentType.JointTrainSparseNetworkLossAugmented
 
@@ -32,8 +32,7 @@ object BadgesApp {
       case BadgeExperimentType.JoinTrainSparsePerceptron => JoinTrainSparsePerceptron()
       case BadgeExperimentType.JointTrainSparseNetwork => JoinTrainSparseNetwork()
       case BadgeExperimentType.JointTrainSparseNetworkLossAugmented => LossAugmentedJoinTrainSparseNetwork()
-      case BadgeExperimentType.JoinTrainSL => JoinTrainSL()
-    }
+     }
   }
 
   /*Test the join training with SparsePerceptron*/
