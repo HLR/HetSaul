@@ -63,18 +63,5 @@ object BadgesApp {
     badgeConstrainedClassifierMulti.test()
     oppositBadgeConstrainedClassifierMulti.test()
   }
-
-  /*Test the joinTraining with Structured output prediction in SL*/
-  def JoinTrainSL(): Unit = {
-
-    ClassifierUtils.InitializeClassifiers(badge, cls: _*)
-    val m = StructuredLearning(badge, cls, usePreTrained = false)
-
-    badgeConstrainedClassifierMulti.test()
-    oppositBadgeConstrainedClassifier.test()
-
-    StructuredLearning.Evaluate(badge, cls, m, "")
-
-  }
-
+  
 }
