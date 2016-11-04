@@ -6,12 +6,8 @@
   */
 package edu.illinois.cs.cogcomp.saul.datamodel.property
 
-import java.util
-
-import edu.illinois.cs.cogcomp.lbjava.classify.Classifier
 import edu.illinois.cs.cogcomp.lbjava.classify.FeatureVector
 import edu.illinois.cs.cogcomp.saul.datamodel.node.Node
-import edu.illinois.cs.cogcomp.saul.datamodel.property.features.ClassifierContainsInLBP
 import edu.illinois.cs.cogcomp.saul.datamodel.property.features.discrete.DiscreteProperty
 import edu.illinois.cs.cogcomp.saul.datamodel.property.features.discrete.DiscreteGenProperty
 import edu.illinois.cs.cogcomp.saul.datamodel.property.features.real.RealProperty
@@ -156,57 +152,13 @@ class PropertyWithWindow[T <: AnyRef](
     }
   }
 
-  override def addToFeatureVector(t: T, fv: FeatureVector): FeatureVector = {
-    // All it need to do is calling the curated classifiers.
-    hiddenProperties.foreach(_.addToFeatureVector(t, fv))
-    fv
-  }
-
-  override def addToFeatureVector(t: T, fv: FeatureVector, name: String): FeatureVector = {
-    // All it need to do is calling the curated classifiers.
-    hiddenProperties.foreach(_.addToFeatureVector(t, fv))
-    fv
-  }
-
   override val name: String = {
     s"WindowProperty($before,$after}_Of${this.properties.map(_.name).mkString("|")}})"
   }
 
-  val o = this
-
-  // TODO: use the real classifiers
-  override def makeClassifierWithName(n: String): Classifier = new ClassifierContainsInLBP() {
-
-    val parent = o
-
-    this.containingPackage = "LBP_Package"
-    this.name = n
-
-    override def getOutputType: String = {
-      "mixed%"
-    }
-
-    def classify(__example: AnyRef): FeatureVector = {
-
-      val t: T = __example.asInstanceOf[T]
-      val __result: FeatureVector = new FeatureVector()
-
-      parent.hiddenProperties.foreach(_.addToFeatureVector(t, __result))
-
-      __result
-    }
-
-    override def classify(examples: Array[AnyRef]): Array[FeatureVector] = {
-      super.classify(examples)
-    }
-
-    override def getCompositeChildren: util.LinkedList[_] = {
-      val result: util.LinkedList[Classifier] = new util.LinkedList[Classifier]()
-      parent.properties.foreach(x => {
-        result.add(x.classifier)
-      })
-      result
-    }
+  override def featureVector(instance: T): FeatureVector = {
+    val result: FeatureVector = new FeatureVector()
+    hiddenProperties.foreach(property => result.addFeatures(property.featureVector(instance)))
+    result
   }
-
 }

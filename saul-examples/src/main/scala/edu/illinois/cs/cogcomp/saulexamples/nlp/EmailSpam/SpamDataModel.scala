@@ -12,13 +12,15 @@ import edu.illinois.cs.cogcomp.saulexamples.data.Document
 import scala.collection.JavaConversions._
 
 object SpamDataModel extends DataModel {
-  val docs = node[Document]
+  val email = node[Document]
 
-  val wordFeature = property(docs, "wordF") {
-    x: Document => x.getWords.toList
+  val words = property(email) {
+    x: Document =>
+      val a = x.getWords.toList.length.toDouble
+      a
   }
 
-  val bigramFeature = property(docs, "bigram") {
+  val bigrams = property(email) {
     x: Document =>
       val words = x.getWords.toList
 
@@ -26,7 +28,7 @@ object SpamDataModel extends DataModel {
       words.sliding(2).map(_.mkString("-")).toList
   }
 
-  val spamLabel = property(docs, "label") {
+  val spamLabel = property(email) {
     x: Document => x.getLabel
   }
 }

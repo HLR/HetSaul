@@ -37,10 +37,10 @@ lazy val releaseSettings = Seq(
     commitReleaseVersion,                   // performs the initial git checks
     //tagRelease,
     publishArtifacts,                       // checks whether `publishTo` is properly set up
-    releaseStepTask(scalaDoc),      //release the scalaDocs
+    releaseStepTask(scalaDoc),              //release the scalaDocs
     setNextVersion,
-    commitNextVersion//,
-    //pushChanges                             // checks that an upstream branch is properly configured
+    commitNextVersion,
+    pushChanges                             // checks that an upstream branch is properly configured
   )
 )
 
@@ -50,7 +50,6 @@ lazy val publishSettings = Seq(
       "CogcompSoftwareRepo", "bilbo.cs.illinois.edu",
       "/mounts/bilbo/disks/0/www/cogcomp/html/m2repo/") as (user, keyFile)
   )
-  //isSnapshot := true // when releasing snapshot versions
 )
 
 lazy val commonSettings = Seq(
@@ -62,7 +61,7 @@ lazy val commonSettings = Seq(
   ),
   javaOptions ++= List("-Xmx11g"),
   libraryDependencies ++= Seq(
-    ccgGroupId % "LBJava" % "1.2.24" withSources,
+    ccgGroupId % "LBJava" % "1.2.25" withSources,
     ccgGroupId % "illinois-core-utilities" % cogcompNLPVersion withSources,
     "com.gurobi" % "gurobi" % "6.0",
     "org.apache.commons" % "commons-math3" % "3.0",
@@ -100,9 +99,9 @@ lazy val saulExamples = (project in file("saul-examples")).
       ccgGroupId % "illinois-edison" % cogcompNLPVersion,
       ccgGroupId % "illinois-corpusreaders" % cogcompNLPVersion,
       ccgGroupId % "illinois-pos" % cogcompNLPVersion,
-      ccgGroupId % "saul-pos-tagger-models" % "1.3",
-      ccgGroupId % "saul-er-models" % "1.7",
-      ccgGroupId % "saul-srl-models" % "1.2",
+      ccgGroupId % "saul-pos-tagger-models" % "1.4",
+      ccgGroupId % "saul-er-models" % "1.8",
+      ccgGroupId % "saul-srl-models" % "1.3",
       "org.json" % "json" % "20140107",
       "com.twitter" % "hbc-core" % "2.2.0"
     )
