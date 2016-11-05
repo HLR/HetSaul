@@ -20,6 +20,10 @@ object BadgeConstraintClassifiers {
       (BadgeClassifier on x is "negative") ==> (BadgeOppositClassifier on x is "positive")
   }
 
+  val binaryConstraintOverMultiClassifiers = ConstrainedClassifier.constraint[String] {
+    x: String =>
+      (BadgeClassifierMulti on x is "negative") ==> (BadgeOppositClassifierMulti on x is "positive")
+  }
   object badgeConstrainedClassifier extends ConstrainedClassifier[String, String](BadgeClassifier) {
     def subjectTo = binaryConstraint
     override val solver = new OJalgoHook
@@ -31,12 +35,12 @@ object BadgeConstraintClassifiers {
   }
 
   object badgeConstrainedClassifierMulti extends ConstrainedClassifier[String, String](BadgeClassifierMulti) {
-    def subjectTo = binaryConstraint
+    def subjectTo = binaryConstraintOverMultiClassifiers
     override val solver = new OJalgoHook
   }
 
   object oppositBadgeConstrainedClassifierMulti extends ConstrainedClassifier[String, String](BadgeOppositClassifierMulti) {
-    def subjectTo = binaryConstraint
+    def subjectTo = binaryConstraintOverMultiClassifiers
     override val solver = new OJalgoHook
   }
 
