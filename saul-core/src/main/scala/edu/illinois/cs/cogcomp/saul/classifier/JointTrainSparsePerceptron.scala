@@ -14,7 +14,7 @@ import scala.reflect.ClassTag
 
 /** Created by parisakordjamshidi on 29/01/15.
   */
-object JointTrain {
+object JointTrainSparsePerceptron {
   def testClassifiers(cls: Classifier, oracle: Classifier, ds: List[AnyRef]): Unit = {
 
     val results = ds.map({

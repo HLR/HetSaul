@@ -9,7 +9,7 @@ package edu.illinois.cs.cogcomp.saulexamples.Badge
 /** Created by Parisa on 9/13/16.
   */
 
-import edu.illinois.cs.cogcomp.saul.classifier.{ JointTrain, JointTrainSparseNetwork }
+import edu.illinois.cs.cogcomp.saul.classifier.{ JointTrainSparsePerceptron, JointTrainSparseNetwork }
 import edu.illinois.cs.cogcomp.saulexamples.Badge.BadgeClassifiers.{ BadgeOppositClassifier, BadgeClassifier }
 import edu.illinois.cs.cogcomp.saulexamples.Badge.BadgeConstraintClassifiers.{ badgeConstrainedClassifier, badgeConstrainedClassifierMulti, oppositBadgeConstrainedClassifier, oppositBadgeConstrainedClassifierMulti }
 import edu.illinois.cs.cogcomp.saulexamples.Badge.BadgeDataModel._
@@ -45,7 +45,7 @@ object BadgesApp {
   def JoinTrainSparsePerceptron(): Unit = {
     BadgeClassifier.test()
     BadgeOppositClassifier.test()
-    JointTrain.train(BadgeDataModel.badge, List(badgeConstrainedClassifier, oppositBadgeConstrainedClassifier), 5)
+    JointTrainSparsePerceptron.train(BadgeDataModel.badge, List(badgeConstrainedClassifier, oppositBadgeConstrainedClassifier), 5)
     oppositBadgeConstrainedClassifier.test()
     badgeConstrainedClassifier.test()
     BadgeClassifier.test()
