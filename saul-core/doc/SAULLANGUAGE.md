@@ -29,8 +29,8 @@ where number of iteration determines how many times the training algorithm shoul
 
 -Call `test()` method to test your classifier using the populated data model's test instance:
 
- ```scala
- OrgClassifier.test()
+```scala
+OrgClassifier.test()
 ```
 
 ### Availale algorithms 
@@ -41,6 +41,7 @@ Here is a list of available algorithms in Saul:
 
 ### Saving and loading classifiers
  Simply call the `save()` method:
+
 ```scala
 OrgClassifier.save()
 ```
@@ -81,11 +82,13 @@ A constraint classifiers is a classifier that predicts the class labels with reg
 This is done with the following construct
 
 ```scala
-val PersonWorkFor=ConstraintClassifier.constraintOf[ConllRelation] {
-  x:ConllRelation => {
+val PersonWorkFor=ConstraintClassifier.constraintOf[ConllRelation]
+ {
+  x:ConllRelation =>
+  {
     ((workForClassifier on x) isTrue) ==> ((PersonClassifier on x.e1) isTrue)
   }
-}
+ }
 ```
 
 ## Constrained Classifiers
@@ -93,11 +96,10 @@ val PersonWorkFor=ConstraintClassifier.constraintOf[ConllRelation] {
 A constrained classifier can be defined in the following form:
 
 ```scala
-       object LocConstraintClassifier extends ConstraintClassifier[ConllRawToken, ConllRelation](ErDataModelExample, LocClassifier) {
-
-       def subjectTo = Per_Org
-
-      override val pathToHead = Some('containE2)
-       //    override def filter(t: ConllRawToken,h:ConllRelation): Boolean = t.wordId==h.wordId2
-      }
+object LocConstraintClassifier extends ConstraintClassifier[ConllRawToken, ConllRelation](ErDataModelExample, LocClassifier)
+ {
+   def subjectTo = Per_Org
+   override val pathToHead = Some('containE2)
+   //override def filter(t: ConllRawToken,h:ConllRelation): Boolean = t.wordId==h.wordId2
+ }
  ```
