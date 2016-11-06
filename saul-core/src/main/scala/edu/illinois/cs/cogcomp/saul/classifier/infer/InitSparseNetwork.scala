@@ -18,7 +18,10 @@ object InitSparseNetwork {
     //this means we are not reading any model into the SparseNetworks
     // but we forget all the models and go over the data to build the right
     // size for the lexicon and the right number of the ltu s
+
     cClassifier.onClassifier.classifier.forget()
+    assert(cClassifier.onClassifier.classifier.getClass.getName.contains("SparseNetworkLearner"), "The classifier should be of type SparseNetworkLearner!")
+
     val iLearner = cClassifier.onClassifier.classifier.asInstanceOf[SparseNetworkLearner]
     allHeads.foreach {
       head =>

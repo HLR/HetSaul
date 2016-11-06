@@ -9,7 +9,7 @@ package edu.illinois.cs.cogcomp.saul.classifier
 import edu.illinois.cs.cogcomp.lbjava.learn.{ LinearThresholdUnit, SparseNetworkLearner }
 import edu.illinois.cs.cogcomp.saul.datamodel.node.Node
 import org.slf4j.{ Logger, LoggerFactory }
-
+import Predef._
 import scala.reflect.ClassTag
 
 /** Created by Parisa on 5/22/15.
@@ -51,6 +51,7 @@ object JointTrainSparseNetwork {
 
             cls.foreach {
               currentClassifier: ConstrainedClassifier[_, HEAD] =>
+                assert(currentClassifier.onClassifier.classifier.getClass.getName.contains("SparseNetworkLearner"), "The classifier should be of type SparseNetworkLearner!")
                 val oracle = currentClassifier.onClassifier.getLabeler
                 val baseClassifier = currentClassifier.onClassifier.classifier.asInstanceOf[SparseNetworkLearner]
                 currentClassifier.getCandidates(h) foreach {
@@ -79,7 +80,7 @@ object JointTrainSparseNetwork {
                           val a1 = a(1).asInstanceOf[Array[Double]] // exampleValues
                           val exampleLabels = a(2).asInstanceOf[Array[Int]]
                           val label = exampleLabels(0)
-                          var N = baseClassifier.getNetwork.size
+                          val N = baseClassifier.getNetwork.size
 
                           if (label >= N || baseClassifier.getNetwork.get(label) == null) {
                             val conjugateLabels = baseClassifier.isUsingConjunctiveLabels | baseClassifier.getLabelLexicon.lookupKey(label).isConjunctive
@@ -88,7 +89,6 @@ object JointTrainSparseNetwork {
                             val ltu: LinearThresholdUnit = baseClassifier.getBaseLTU.clone().asInstanceOf[LinearThresholdUnit]
                             ltu.initialize(baseClassifier.getNumExamples, baseClassifier.getNumFeatures)
                             baseClassifier.getNetwork.set(label, ltu)
-                            N = label + 1
                           }
 
                           // test push

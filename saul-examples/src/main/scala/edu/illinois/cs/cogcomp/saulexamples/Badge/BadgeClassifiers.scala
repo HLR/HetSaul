@@ -30,7 +30,7 @@ object BadgeClassifiers {
 it uses SparseNetworks instead of SparsePerceptrons*/
   object BadgeClassifierMulti extends Learnable[String](badge) {
     def label = BadgeLabel
-    override lazy val classifier = new SparseNetworkLearner()
+    override lazy val classifier = new SparsePerceptron()
     override def feature = using(BadgeFeature1)
   }
   /*This is the opposite multi-class classifier of the BadgeClassifierMulti */
