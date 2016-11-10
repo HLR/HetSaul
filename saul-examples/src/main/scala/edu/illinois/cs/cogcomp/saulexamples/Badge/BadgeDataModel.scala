@@ -7,6 +7,7 @@
 package edu.illinois.cs.cogcomp.saulexamples.Badge
 
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
+import edu.illinois.cs.cogcomp.saulexamples.Badge.BadgeClassifiers.BadgeClassifier
 
 /** Created by Parisa on 9/13/16.
   */
@@ -41,6 +42,13 @@ object BadgeDataModel extends DataModel {
           "false"
         else
           "true"
+      }
+  }
+
+  val BadgePrediction = property(badge)("true", "false") {
+    x: String =>
+      {
+        BadgeClassifier(x)
       }
   }
 }

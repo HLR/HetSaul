@@ -10,7 +10,7 @@ package edu.illinois.cs.cogcomp.saulexamples.Badge
   */
 
 import edu.illinois.cs.cogcomp.saul.classifier.{ JointTrainSparsePerceptron, JointTrainSparseNetwork }
-import edu.illinois.cs.cogcomp.saulexamples.Badge.BadgeClassifiers.{ BadgeOppositClassifier, BadgeClassifier }
+import edu.illinois.cs.cogcomp.saulexamples.Badge.BadgeClassifiers._
 import edu.illinois.cs.cogcomp.saulexamples.Badge.BadgeConstraintClassifiers.{ badgeConstrainedClassifier, badgeConstrainedClassifierMulti, oppositBadgeConstrainedClassifier, oppositBadgeConstrainedClassifierMulti }
 import edu.illinois.cs.cogcomp.saulexamples.Badge.BadgeDataModel._
 
@@ -26,18 +26,19 @@ object BadgesApp {
   val cls = List(badgeConstrainedClassifierMulti, oppositBadgeConstrainedClassifierMulti)
 
   object BadgeExperimentType extends Enumeration {
-    val JoinTrainSparsePerceptron, JointTrainSparseNetwork, JointTrainSparseNetworkLossAugmented = Value
+    val JoinTrainSparsePerceptron, JointTrainSparseNetwork, JointTrainSparseNetworkLossAugmented, Pipeline = Value
   }
 
   def main(args: Array[String]): Unit = {
 
     /** Choose the experiment you're interested in by changing the following line */
-    val testType = BadgeExperimentType.JointTrainSparseNetworkLossAugmented
+    val testType = BadgeExperimentType.Pipeline
 
     testType match {
       case BadgeExperimentType.JoinTrainSparsePerceptron => JoinTrainSparsePerceptron()
       case BadgeExperimentType.JointTrainSparseNetwork => JoinTrainSparseNetwork()
       case BadgeExperimentType.JointTrainSparseNetworkLossAugmented => LossAugmentedJoinTrainSparseNetwork()
+      case BadgeExperimentType.Pipeline => Pipeline()
     }
   }
 
@@ -67,6 +68,15 @@ object BadgesApp {
 
     badgeConstrainedClassifierMulti.test()
     oppositBadgeConstrainedClassifierMulti.test()
+  }
+
+  /* This model trains the BadgeClassifier and then it takes the prediction of the BadgeClassifier as the only input
+  feature and trains a pipeline function to predict the opposite label*/
+  def Pipeline(): Unit = {
+    BadgeClassifier.learn(5)
+    BadgeClassifier.test()
+    BadgeOppositPipeline.learn(5)
+    BadgeOppositPipeline.test()
   }
 
 }

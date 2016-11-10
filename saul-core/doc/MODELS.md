@@ -78,24 +78,33 @@ The list of parameters are the following:
 
 ###Basic approach
 
-The Basic approach for training the models jointly is to do a global prediction at each step of the training and if the
+The basic approach for training the models jointly is to do a global prediction at each step of the training and if the
 predictions are wrong update the weights of the related variables.
 
 ###Loss augmented
 
-The loss-augmented approach adds the loss of the prediction explicitly to the objective of the training and finds the most violated output;
-it updates the weights of the model according to the errors made in the most violated output.
-This is an approach that is used in structured SVMs and Structured Perceptrons. However, considering an arbitrary loss in the objective
-will make complexities in the optimization, therefore in the implemented version, here, we assume the loss is decomposed similar to
-feature function. That is, the loss is a hamming loss defined per classifier. The loss of the whole output will be the weighted sum of
- the all predicted components of the output structure.
+The loss-augmented approach adds the loss of the prediction explicitly to the objective of the training and finds the most violated output per each training example;
+it updates the weights of the model according to the errors made in the prediction of the most violated output.
+This approach minimizes a convex upper bound of the loss function and has been used in structured SVMs and Structured Perceptrons.
+ However, considering an arbitrary loss in the objective will make complexities in the optimization, therefore in the implemented version, here, we assume the loss is decomposed similar to
+feature function. That is, the loss is a hamming loss defined per classifier. The loss of the whole structured output is computed by the weighted sum of
+ the loss of its components.
  In Saul, the programmer can indicate if he/she needs to consider this global hamming loss in the objective or not. And this can be done by passing
  the above mentioned `param5` as true in the `JointTrainingSparseNetwork` algorithm.
+ An example of this usage can be seen [here](saul-examples/src/main/scala/edu/illinois/cs/cogcomp/saulexamples/Badge/BagesApp.scala) at line #64.
 
 <a name="pipeline">
 ##Pipelines.
 Building pipelines is naturally granted in Saul. The programmer can simply define properties that are the predictions of
-the classifiers and use those outputs as the input of other classifiers by mentioning them in the list of the features.
+the classifiers and use those outputs as the input of other classifiers by mentioning them in the list of the properties in the below construct when defining the
+pipeline classifiers,
+
+```scala
+def feature = using(/*list of properties including the prediction of other classifiers.*/)
+```
+.
+See [here](saul-examples/src/main/scala/edu/illinois/cs/cogcomp/saulexamples/Badge/BadgeClassifiers.scala), at line #43, for an example.
+
 
 
 

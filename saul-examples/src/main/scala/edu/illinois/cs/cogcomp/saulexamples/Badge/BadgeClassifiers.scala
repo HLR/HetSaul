@@ -39,4 +39,10 @@ it uses SparseNetworks instead of SparsePerceptrons*/
     override lazy val classifier = new SparseNetworkLearner()
     override def feature = using(BadgeFeature1)
   }
+  /* */
+  object BadgeOppositPipeline extends Learnable[String](badge) {
+    def label = BadgeOppositLabel
+    override lazy val classifier = new SparsePerceptron()
+    override def feature = using(BadgePrediction)
+  }
 }
