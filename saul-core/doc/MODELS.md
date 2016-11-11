@@ -9,7 +9,7 @@ By complex models we mean the models that aim at prediction of more than one out
 Such models can be designed using the following paradigms,
 
    * [Local models](#local) trains single classifiers (Learning only models (LO)) each of which learns and predicts a single variable in the output independently.
-   * [Constrained conditional models (CCM)](#L+I)[1] for training independent classifiers and using them jointly for global decision making in prediction time. (Learning+Inference (L+I)).
+   * [Constrained conditional models (CCM)](#L+I) for training independent classifiers and using them jointly for global decision making in prediction time. (Learning+Inference (L+I)).
    * [Global models](#IBT) for joint training and joint inference (Inference-Based-Training (IBT)).
    * [Pipeline models](#pipeline) for complex problems where the output of each model is used as the input of the next model (these models are different layers in a pipeline).
 
@@ -17,7 +17,8 @@ The above mentioned paradigms can be tested using this simple badge classifier e
 
 <a name="local">
 ##Local models
-These models are classic classifiers. They are defined with the `Learnable` construct. This construct requires specifying a single output variable, that is, a label which is itself a property in the data model, and the features which is also a
+These models are a set of single classifiers. Each classifier is defined with the `Learnable` construct and is trained and makes prediction independent from other classifiers.
+ The `Learnable` construct requires specifying a single output variable, that is, a label which is itself a property in the data model, and the features which is also a
  comma separated list of properties.
 
  ```scala
@@ -57,7 +58,7 @@ For the inference based models the basic definitions are exactly similar to the 
 just needs to define the `Learnables` and `ConstrainedClassifiers`. However, to train the ConstrainedClassifiers jointly, instead of
 training local classifiers independently, there are a couple of joint training functions that can be called.
 These functions receive the list of constrained classifiers as input and train their parameters jointly. In contrast to
-L+I models here the local classifiers can be defined as `SparsePerceptrons` or `SparseNetworks` only. This is because the
+L+I models here the local classifiers can be defined as `SparsePerceptron`s or `SparseNetworkLearner`s only. This is because the
 joint training should have its own strategy for the wight updates of the involved variables (those variables come down to be the outputs of the local classifiers here).
 For the two cases the programmer can use
 
