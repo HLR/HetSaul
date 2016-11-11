@@ -13,7 +13,7 @@ import edu.illinois.cs.cogcomp.saulexamples.Badge.BadgeClassifiers.{ BadgeOpposi
 
 /** Created by Parisa on 11/1/16.
   */
-object BadgeConstraintClassifiers {
+object BadgeConstrainedClassifiers {
 
   val binaryConstraint = ConstrainedClassifier.constraint[String] {
     x: String =>

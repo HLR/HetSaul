@@ -9,9 +9,9 @@ package edu.illinois.cs.cogcomp.saulexamples.Badge
 /** Created by Parisa on 9/13/16.
   */
 
-import edu.illinois.cs.cogcomp.saul.classifier.{ JointTrainSparsePerceptron, JointTrainSparseNetwork }
+import edu.illinois.cs.cogcomp.saul.classifier.{ JointTrainSparseNetwork, JointTrainSparsePerceptron }
 import edu.illinois.cs.cogcomp.saulexamples.Badge.BadgeClassifiers._
-import edu.illinois.cs.cogcomp.saulexamples.Badge.BadgeConstraintClassifiers.{ badgeConstrainedClassifier, badgeConstrainedClassifierMulti, oppositBadgeConstrainedClassifier, oppositBadgeConstrainedClassifierMulti }
+import edu.illinois.cs.cogcomp.saulexamples.Badge.BadgeConstrainedClassifiers.{ badgeConstrainedClassifier, badgeConstrainedClassifierMulti, oppositBadgeConstrainedClassifier, oppositBadgeConstrainedClassifierMulti }
 import edu.illinois.cs.cogcomp.saulexamples.Badge.BadgeDataModel._
 
 import scala.collection.JavaConversions._
