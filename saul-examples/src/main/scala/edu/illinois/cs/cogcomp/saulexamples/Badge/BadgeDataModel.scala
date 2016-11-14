@@ -45,5 +45,5 @@ object BadgeDataModel extends DataModel {
       }
   }
 
-  val BadgePrediction = property(badge)("true", "false") { x: String => BadgeClassifier(x)  }
+  val BadgePrediction = property(badge)("true", "false") { x: String => BadgeClassifier(x) }
 }
