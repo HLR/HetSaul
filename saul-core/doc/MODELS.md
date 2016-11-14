@@ -57,7 +57,7 @@ They can be SVMs, decision trees or any other learning models available in Saul,
 For the inference based models the basic definitions are exactly similar to the L+I models. In other words, the programmer
 just needs to define the `Learnables` and `ConstrainedClassifiers`. However, to train the ConstrainedClassifiers jointly, instead of
 training local classifiers independently, there are a couple of joint training functions that can be called.
-These functions receive the list of constrained classifiers as input and train their parameters jointly. In contrast to
+These functions receive the list of ConstrainedClassifiers as input and train their parameters jointly. In contrast to
 L+I models here the local classifiers can be defined as `SparsePerceptron`s or `SparseNetworkLearner`s only. This is because the
 joint training should have its own strategy for the wight updates of the involved variables (those variables come down to be the outputs of the local classifiers here).
 For the two cases the programmer can use
@@ -69,7 +69,9 @@ For the two cases the programmer can use
 
 For example,
 
- ```scala JointTrainSparseNetwork.train(badge, cls, 5, init = true, lossAugmented = true)```
+ ```scala
+  JointTrainSparseNetwork.train(badge, cls, 5, init = true, lossAugmented = true)
+ ```
 
 The list of parameters are the following:
 
@@ -95,10 +97,12 @@ it updates the weights of the model according to the errors made in the predicti
 This approach minimizes a convex upper bound of the loss function and has been used in structured SVMs and Structured Perceptrons.
  However, considering an arbitrary loss in the objective will make complexities in the optimization, therefore in the implemented version, here, we assume the loss is decomposed similar to
 feature function. That is, the loss is a hamming loss defined per classifier. The loss of the whole structured output is computed by the weighted sum of
- the loss of its components.
+ the loss of its components. For exmaple if there are two variables `c1` and `c2` in the output with corresponding predictions `cp1` and `cp2` then  the loss will be
+ `[hamming(c1,cp1)/2+hamming(c2,cp2)/2]`. The weight of each component's loss is `1/numberOfOutputVariables` by default.
+
  In Saul, the programmer can indicate if he/she needs to consider this global hamming loss in the objective or not. And this can be done by passing
  the above mentioned `param5` as true in the `JointTrainingSparseNetwork` algorithm.
- An example of this usage can be seen [here](saul-examples/src/main/scala/edu/illinois/cs/cogcomp/saulexamples/Badge/BagesApp.scala) at line #64.
+ An example of this usage can be seen [here](saul-examples/src/main/scala/edu/illinois/cs/cogcomp/saulexamples/Badge/BagesApp.scala#L64).
 
 <a name="pipeline">
 ##Pipelines
@@ -109,8 +113,26 @@ pipeline classifiers,
 ```scala
    def feature = using(/*list of properties including the prediction of other classifiers.*/)
 ```
-.
-See [here](saul-examples/src/main/scala/edu/illinois/cs/cogcomp/saulexamples/Badge/BadgeClassifiers.scala), at line #43, for an example.
+Here is a more complete example which passes the output of the `ClassifierLayer1` to the input of the `ClassifierLayer2`:
+
+   ```scala
+
+    object ClassifierLayer1 extends Learnable (node) {
+     def label = labelProperty1
+     def feature = using(property2, property3,...)
+     }
+
+    object ClassifierLayer2 extends Learnable (node) {
+     def label = labelProperty2
+     def feature = using(classifier1Labels, ,...) // using the prediction of the classifier in the previous layer
+     }
+
+    // defined in data-model object
+    val classifier1Labels = new Property(node){  x: Type => ClassifierLayer1(x)  }
+
+    ```
+
+See [here](saul-examples/src/main/scala/edu/illinois/cs/cogcomp/saulexamples/Badge/BadgeClassifiers.scala#L43), for a working example.
 
 
 
