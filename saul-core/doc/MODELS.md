@@ -49,8 +49,8 @@ object ConstrainedClassifierName extends ConstrainedClassifier[local_node_type,g
  ```
 When we use the above `ConstrainedClassifierName` to call test or make predictions, the `LocalClassifier` is used
 but the predictions are made in way that `constraintExpression` is hold. There is no limitation for the type of local classifiers.
-They can be SVMs, decision trees or any other learning models available in Saul, [here](https://github.com/IllinoisCogComp/lbjava/blob/master/lbjava/doc/ALGORITHMS.md)
-                                                                                  and [here](https://github.com/IllinoisCogComp/saul/blob/master/saul-core/src/main/java/edu/illinois/cs/cogcomp/saul/learn/SaulWekaWrapper.md).
+They can be SVMs, decision trees or any other learning models available in Saul, [here](lbjava/blob/master/lbjava/doc/ALGORITHMS.md)
+                                                                                  and [here](saul-core/src/main/java/edu/illinois/cs/cogcomp/saul/learn/SaulWekaWrapper.md).
 
 <a name="IBT">
 ##Inference-based Learning
