@@ -148,7 +148,7 @@ object RunningApps extends App with Logging {
         argumentTypeLearner.modelDir = modelDir + expName
         val outputFile = modelDir + srlPredictionsFile
         logger.info("Global training... ")
-        JointTrainSparseNetwork(sentences, argTypeConstraintClassifier :: Nil, 100, init = true)
+        JointTrainSparseNetwork(sentences, argTypeConstraintClassifier :: Nil, 30, init = true)
         argumentTypeLearner.save()
         argTypeConstraintClassifier.test(relations.getTestingInstances, outputFile, 200, exclude = "candidate")
 
@@ -156,7 +156,7 @@ object RunningApps extends App with Logging {
         argumentTypeLearner.modelDir = modelDir + expName
         val outputFile = modelDir + srlPredictionsFile
         logger.info("Global training using loss augmented inference... ")
-        JointTrainSparseNetwork(sentences, argTypeConstraintClassifier :: Nil, 100, init = true, lossAugmented = true)
+        JointTrainSparseNetwork(sentences, argTypeConstraintClassifier :: Nil, 30, init = true, lossAugmented = true)
         argumentTypeLearner.save()
         argTypeConstraintClassifier.test(relations.getTestingInstances, outputFile, 200, exclude = "candidate")
     }
