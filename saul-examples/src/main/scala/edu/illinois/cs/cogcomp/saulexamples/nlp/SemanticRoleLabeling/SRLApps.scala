@@ -30,7 +30,7 @@ object SRLApps extends Logging {
   val modelDir = properties.getString(MODELS_DIR) +
     File.separator + properties.getString(SRLConfigurator.SRL_MODEL_DIR) + File.separator
   val srlPredictionsFile = properties.getString(SRLConfigurator.SRL_OUTPUT_FILE)
-  val runningMode = properties.getBoolean(SRLConfigurator.RUN_MODE)
+  val testingMode = properties.getBoolean(SRLConfigurator.RUN_MODE)
   val trainingMode = properties.getString(SRLConfigurator.TRAINING_MODE)
 
   // Training parameters
@@ -65,7 +65,7 @@ object SRLApps extends Logging {
   logger.info("population starts.")
 
   // Here, the data is loaded into the graph
-  val srlDataModelObject = PopulateSRLDataModel(testOnly = runningMode, useGoldPredicate, useGoldBoundaries)
+  val srlDataModelObject = PopulateSRLDataModel(testOnly = testingMode, useGoldPredicate, useGoldBoundaries)
 
   import srlDataModelObject._
 
@@ -80,7 +80,7 @@ object RunningApps extends App with Logging {
   import SRLApps._
   import SRLApps.srlDataModelObject._
   // TRAINING
-  if (!runningMode) {
+  if (!testingMode) {
     expName match {
 
       case "aTr" =>
@@ -148,14 +148,23 @@ object RunningApps extends App with Logging {
         argumentTypeLearner.modelDir = modelDir + expName
         val outputFile = modelDir + srlPredictionsFile
         logger.info("Global training... ")
-        JointTrainSparseNetwork(sentences, argTypeConstraintClassifier :: Nil, 100, true)
+        JointTrainSparseNetwork(sentences, argTypeConstraintClassifier :: Nil, 100, init = true)
+        argumentTypeLearner.save()
+        argTypeConstraintClassifier.test(relations.getTestingInstances, outputFile, 200, exclude = "candidate")
+
+      case "lTr" =>
+        argumentTypeLearner.modelDir = modelDir + expName
+        val outputFile = modelDir + srlPredictionsFile
+        logger.info("Global training using loss augmented inference... ")
+        JointTrainSparseNetwork(sentences, argTypeConstraintClassifier :: Nil, 100, init = true, lossAugmented = true)
         argumentTypeLearner.save()
         argTypeConstraintClassifier.test(relations.getTestingInstances, outputFile, 200, exclude = "candidate")
     }
+
   }
 
   // TESTING
-  if (runningMode) {
+  if (testingMode) {
     (testWithPipeline, testWithConstraints) match {
 
       case (true, true) =>
