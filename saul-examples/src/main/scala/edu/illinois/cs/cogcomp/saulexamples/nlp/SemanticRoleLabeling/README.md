@@ -5,13 +5,13 @@ This task is to annotate natural language sentences with semantic roles.
 To run the main app with default properties:
 
 ```
-sbt "project saulExamples" "run-main edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlApp"
+sbt "project saulExamples" "run-main edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.RunningApps"
 ```
 
-To use a custom configuration file (containing the property keys of `ExamplesConfigurator`):
+To use a custom configuration file (containing the property keys of `ExamplesConfigurator`), also extending memory to 4G:
  
 ```
- sbt "project saulExamples" "run-main edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlApp config/saul-srl.properties"
+ sbt -mem 4000 "project saulExamples" "run-main edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.RunningApps config/saul-srl.properties"
 ```
 
 ## Example
@@ -586,11 +586,3 @@ In the following lines `Pred.` stands for "Predicate" and  `Cand.` stands for "C
 
    - [ ] **[aTsJ]** Test the **cTs** of the second phase for joint models.
 
-The defaul configuration when running the sprlApp will run only the test for pretrained cTr model while it uses srl global constraints during prediction.
-You can run it from command line by:
-
-```scala
-
-sbt -mem 4000 "project saulExamples" "run-main edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLApps"
-
-```
