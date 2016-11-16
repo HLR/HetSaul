@@ -28,7 +28,7 @@ public class SRLConfigurator extends Configurator {
     public static final Property USE_CURATOR = new Property("useCurator", Configurator.FALSE);
 
     // The running mode of the program. Can be "true" for only testing, or  "false" for training
-    public static final Property RUN_MODE = new Property("runMode", Configurator.TRUE);
+    public static final Property RUN_MODE = new Property("runMode", Configurator.FALSE);
 
     // The training mode for the examples. Can be "pipeline", "joint", or "other"
     public static final Property TRAINING_MODE = new Property("trainingMode", "joint");
