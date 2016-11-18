@@ -87,7 +87,7 @@ object PopulateSRLDataModel extends Logging {
     }
 
     val trainingFromSection = 2
-    val trainingToSection = 2
+    val trainingToSection = 21
     var gr: SRLMultiGraphDataModel = null
     if (!testOnly) {
       logger.info(s"Reading training data from sections $trainingFromSection to $trainingToSection")

@@ -58,6 +58,7 @@ object SRLApps extends Logging {
       else ""
     else if (trainingMode.equals("pipeline")) "pTr"
     else if (trainingMode.equals("joint")) "jTr"
+    else if (trainingMode.equals("jointLoss")) "lTr"
     else ""
   }
 
