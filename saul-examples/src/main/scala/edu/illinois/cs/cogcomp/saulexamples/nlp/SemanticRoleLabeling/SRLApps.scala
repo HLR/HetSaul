@@ -72,8 +72,7 @@ object SRLApps extends Logging {
 
   import SRLscalaConfigurator._
 
-  val modelDir = (MODELS_DIR) +
-    File.separator + SRL_MODEL_DIR + File.separator
+  val modelDir = MODELS_DIR + File.separator + SRL_MODEL_DIR + File.separator
 
   val expName: String = {
     if (TRAINING_MODE.equals("other"))
