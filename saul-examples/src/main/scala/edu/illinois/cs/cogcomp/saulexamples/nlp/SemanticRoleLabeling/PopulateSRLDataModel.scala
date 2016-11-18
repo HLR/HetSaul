@@ -119,9 +119,9 @@ object PopulateSRLDataModel extends Logging {
         if (graphs.sentences().size % 1000 == 0) logger.info("loaded graphs in memory:" + graphs.sentences().size)
       }
     }
-    val testSection = SRLscalaConfigurator.TEST_SECTION
-    val testReader = new SRLDataReader(TREEBANK_HOME, PROPBANK_HOME, testSection, testSection)
-    logger.info(s"Reading test data from section $testSection")
+
+    val testReader = new SRLDataReader(TREEBANK_HOME, PROPBANK_HOME, TEST_SECTION, TEST_SECTION)
+    logger.info(s"Reading test data from section $TEST_SECTION")
     testReader.readData()
 
     logger.info(s"Annotating ${testReader.textAnnotations.size} test sentences")
