@@ -19,10 +19,10 @@ import edu.illinois.cs.cogcomp.nlp.common.PipelineConfigurator._
 import edu.illinois.cs.cogcomp.nlp.utilities.ParseUtils
 import edu.illinois.cs.cogcomp.saul.util.Logging
 import edu.illinois.cs.cogcomp.saulexamples.data.{ SRLDataReader, SRLFrameManager }
-import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLSensors._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.CommonSensors._
+import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLSensors._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.TextAnnotationFactory
-
+import SRLscalaConfigurator._
 import scala.collection.JavaConversions._
 
 /** Created by Parisa on 1/17/16.
@@ -85,9 +85,8 @@ object PopulateSRLDataModel extends Logging {
       logger.debug(s"Number of $readerType data predicates: $numPredicates")
       logger.debug(s"Number of $readerType data arguments: $numArguments")
     }
-
-    val trainingFromSection = 2
-    val trainingToSection = 21
+    val trainingFromSection = TRAIN_SECTION_S
+    val trainingToSection = TRAIN_SECTION_E
     var gr: SRLMultiGraphDataModel = null
     if (!testOnly) {
       logger.info(s"Reading training data from sections $trainingFromSection to $trainingToSection")
@@ -124,7 +123,7 @@ object PopulateSRLDataModel extends Logging {
         if (graphs.sentences().size % 1000 == 0) logger.info("loaded graphs in memory:" + graphs.sentences().size)
       }
     }
-    val testSection = rm.getInt(SRLConfigurator.TEST_SECTION)
+    val testSection = SRLscalaConfigurator.TEST_SECTION
     val testReader = new SRLDataReader(
       rm.getString(SRLConfigurator.TREEBANK_HOME.key),
       rm.getString(SRLConfigurator.PROPBANK_HOME.key),
