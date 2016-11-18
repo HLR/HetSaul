@@ -103,7 +103,7 @@ abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val onClassifi
         var inference = InferenceManager.get(name, head)
         if (inference == null) {
           inference = infer(head)
-         // logger.warn(s"Inference ${name} has not been cached; running inference . . . ")
+          // logger.warn(s"Inference ${name} has not been cached; running inference . . . ")
           InferenceManager.put(name, inference)
         }
         inference.valueOf(cls, t)
