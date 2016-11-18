@@ -22,7 +22,7 @@ import edu.illinois.cs.cogcomp.saulexamples.data.{ SRLDataReader, SRLFrameManage
 import edu.illinois.cs.cogcomp.saulexamples.nlp.CommonSensors._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLSensors._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.TextAnnotationFactory
-import SRLscalaConfigurator._
+import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLscalaConfigurator._
 import scala.collection.JavaConversions._
 
 /** Created by Parisa on 1/17/16.
@@ -34,7 +34,7 @@ object PopulateSRLDataModel extends Logging {
     useGoldArgBoundaries: Boolean = false,
     rm: ResourceManager = new SRLConfigurator().getDefaultConfig
   ): SRLMultiGraphDataModel = {
-    val frameManager: SRLFrameManager = new SRLFrameManager(rm.getString(SRLConfigurator.PROPBANK_HOME.key))
+    val frameManager: SRLFrameManager = new SRLFrameManager(PROPBANK_HOME)
     val useCurator = rm.getBoolean(SRLConfigurator.USE_CURATOR)
     val parseViewName = rm.getString(SRLConfigurator.SRL_PARSE_VIEW)
     val graphs = new SRLMultiGraphDataModel(parseViewName, frameManager)
@@ -85,16 +85,12 @@ object PopulateSRLDataModel extends Logging {
       logger.debug(s"Number of $readerType data predicates: $numPredicates")
       logger.debug(s"Number of $readerType data arguments: $numArguments")
     }
-    val trainingFromSection = TRAIN_SECTION_S
-    val trainingToSection = TRAIN_SECTION_E
+
     var gr: SRLMultiGraphDataModel = null
     if (!testOnly) {
-      logger.info(s"Reading training data from sections $trainingFromSection to $trainingToSection")
-      val trainReader = new SRLDataReader(
-        rm.getString(SRLConfigurator.TREEBANK_HOME.key),
-        rm.getString(SRLConfigurator.PROPBANK_HOME.key),
-        trainingFromSection, trainingToSection
-      )
+      logger.info(s"Reading training data from sections $TRAIN_SECTION_S to $TRAIN_SECTION_E")
+      val trainReader = new SRLDataReader(TREEBANK_HOME, PROPBANK_HOME,
+        TRAIN_SECTION_S, TRAIN_SECTION_E)
       trainReader.readData()
       logger.info(s"Annotating ${trainReader.textAnnotations.size} training sentences")
       val filteredTa = addViewAndFilter(trainReader.textAnnotations.toList)
@@ -124,11 +120,7 @@ object PopulateSRLDataModel extends Logging {
       }
     }
     val testSection = SRLscalaConfigurator.TEST_SECTION
-    val testReader = new SRLDataReader(
-      rm.getString(SRLConfigurator.TREEBANK_HOME.key),
-      rm.getString(SRLConfigurator.PROPBANK_HOME.key),
-      testSection, testSection
-    )
+    val testReader = new SRLDataReader(TREEBANK_HOME, PROPBANK_HOME, testSection, testSection)
     logger.info(s"Reading test data from section $testSection")
     testReader.readData()
 
