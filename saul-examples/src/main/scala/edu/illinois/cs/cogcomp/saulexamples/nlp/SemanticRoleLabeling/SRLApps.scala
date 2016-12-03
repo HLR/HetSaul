@@ -27,7 +27,7 @@ object SRLscalaConfigurator {
   val USE_CURATOR = false
 
   // The running mode of the program. Can be "true" for only testing, or  "false" for training
-  val RUN_MODE: Boolean = false
+  val TEST_MODE: Boolean = true
 
   // The training mode for the examples. Can be "pipeline", "joint", "jointLoss" or "other"
   val TRAINING_MODE = "other"
@@ -55,7 +55,7 @@ object SRLscalaConfigurator {
   // Should we use the pipeline during testing
   val SRL_TEST_PIPELINE = false
   // Should we use constraints during testing
-  val SRL_TEST_CONSTRAINTS = false
+  val SRL_TEST_CONSTRAINTS = true
 
   /*Training parameters*/
 
@@ -93,7 +93,7 @@ object SRLApps extends Logging {
   logger.info("population starts.")
 
   // Here, the data is loaded into the graph
-  val srlDataModelObject = PopulateSRLDataModel(testOnly = RUN_MODE, SRL_GOLD_PREDICATES, SRL_GOLD_ARG_BOUNDARIES)
+  val srlDataModelObject = PopulateSRLDataModel(testOnly = TEST_MODE, SRL_GOLD_PREDICATES, SRL_GOLD_ARG_BOUNDARIES)
 
   import srlDataModelObject._
 
@@ -109,7 +109,7 @@ object RunningApps extends App with Logging {
   import SRLApps.srlDataModelObject._
   import SRLscalaConfigurator._
   // TRAINING
-  if (!RUN_MODE) {
+  if (!TEST_MODE) {
     expName match {
 
       case "aTr" =>
@@ -193,7 +193,7 @@ object RunningApps extends App with Logging {
   }
 
   // TESTING
-  if (RUN_MODE) {
+  if (TEST_MODE) {
     (SRL_TEST_PIPELINE, SRL_TEST_CONSTRAINTS) match {
 
       case (true, true) =>
