@@ -27,10 +27,10 @@ public class SRLConfigurator extends Configurator {
     public static final Property USE_CURATOR = new Property("useCurator", Configurator.FALSE);
 
     // The running mode of the program. Can be "true" for only testing, or  "false" for training
-    public static final Property RUN_MODE = new Property("runMode", Configurator.FALSE);
+    public static final Property RUN_MODE = new Property("runMode", Configurator.TRUE);
 
     // The training mode for the examples. Can be "pipeline", "joint", "jointLoss" or "other"
-    public static final Property TRAINING_MODE = new Property("trainingMode", "jointLoss");
+    public static final Property TRAINING_MODE = new Property("trainingMode", "joint");
 
     /*********** SRL PROPERTIES ***********/
     // The (sub)directory to store and retrieve the trained SRL models (to be used with MODELS_DIR)

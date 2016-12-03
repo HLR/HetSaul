@@ -694,7 +694,6 @@ In the following lines `Pred.` stands for "Predicate" and  `Cand.` stands for "C
  Total time: 214836 s, completed Nov 20, 2016 9:15:22 AM
 
 
-
    - [ ] **[aTrJ]** Train **dTr, eTr, fTr** jointly
       * Add constraints gradually and train various models considering subsets of constraints
    - [ ] **[aTr]**
@@ -703,3 +702,7 @@ In the following lines `Pred.` stands for "Predicate" and  `Cand.` stands for "C
 
    - [ ] **[aTsJ]** Test the **cTs** of the second phase for joint models.
 
+The training results of independent models are after 100 iterations of training, however, since joinnTraining is computationally much more
+complex, we stopped the training after 30 iterations.
+The overall results were similar to running independent models after 30 iterations, no improvment observed.
+However, there was a per class variation in results and the results for some of the lables improved.

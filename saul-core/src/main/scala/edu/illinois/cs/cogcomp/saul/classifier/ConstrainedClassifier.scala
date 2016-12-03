@@ -69,13 +69,13 @@ abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val onClassifi
       val l = pathToHead.get.forward.neighborsOf(x).toSet.toList
 
       if (l.isEmpty) {
-        //logger.error("Warning: Failed to find head")
+        logger.error("Warning: Failed to find head")
         None
       } else if (l.size != 1) {
-        //logger.warn("Find too many heads")
+        logger.warn("Find too many heads")
         Some(l.head)
       } else {
-        //logger.info(s"Found head ${l.head} for child $x")
+        logger.info(s"Found head ${l.head} for child $x")
         Some(l.head)
       }
     }
@@ -88,7 +88,7 @@ abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val onClassifi
       val l = pathToHead.get.backward.neighborsOf(head)
 
       if (l.isEmpty) {
-        //logger.error("Failed to find part")
+        logger.error("Failed to find part")
         Seq.empty[T]
       } else {
         l.filter(filter(_, head)).toSeq
@@ -103,7 +103,7 @@ abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val onClassifi
         var inference = InferenceManager.get(name, head)
         if (inference == null) {
           inference = infer(head)
-          // logger.warn(s"Inference ${name} has not been cached; running inference . . . ")
+          logger.warn(s"Inference ${name} has not been cached; running inference . . . ")
           InferenceManager.put(name, inference)
         }
         inference.valueOf(cls, t)
@@ -141,7 +141,7 @@ abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val onClassifi
       .orElse({
         onClassifier match {
           case clf: Learnable[T] => Some(clf.node)
-          case _ => None //logger.error("pathToHead is not provided and the onClassifier is not a Learnable!"); None
+          case _ => logger.error("pathToHead is not provided and the onClassifier is not a Learnable!"); None
         }
       })
       .map(node => node.getTestingInstances)
