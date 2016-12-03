@@ -16,10 +16,10 @@ import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLConstrai
 
 object SRLscalaConfigurator {
 
-  val TREEBANK_HOME = "../data/treebank"
-  val PROPBANK_HOME = "../data/propbank"
+  val TREEBANK_HOME = "../saul-examples/src/test/resources/SRLToy/treebank"
+  val PROPBANK_HOME = "../saul-examples/src/test/resources/SRLToy/propbank"
 
-  val TEST_SECTION = 23
+  val TEST_SECTION = 0
   val TRAIN_SECTION_S = 2
   val TRAIN_SECTION_E = 21
 
@@ -30,7 +30,7 @@ object SRLscalaConfigurator {
   val TEST_MODE: Boolean = true
 
   // The training mode for the examples. Can be "pipeline", "joint", "jointLoss" or "other"
-  val TRAINING_MODE = "other"
+  val TRAINING_MODE = "joint"
 
   /*********** SRL PROPERTIES ***********/
   // The (sub)directory to store and retrieve the trained SRL models (to be used with MODELS_DIR)
@@ -55,7 +55,7 @@ object SRLscalaConfigurator {
   // Should we use the pipeline during testing
   val SRL_TEST_PIPELINE = false
   // Should we use constraints during testing
-  val SRL_TEST_CONSTRAINTS = true
+  val SRL_TEST_CONSTRAINTS = false
 
   /*Training parameters*/
 
