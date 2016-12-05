@@ -10,11 +10,10 @@ import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
 import edu.illinois.cs.cogcomp.edison.features.factory.WordNetFeatureExtractor
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
 import edu.illinois.cs.cogcomp.saulexamples.nlp.CommonSensors._
-import edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling.Triplet.{ SpRelation, SpRoleTypes }
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling.SpRLSensors._
+import edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling.Triplet.{ SpRelation, SpRoleTypes }
 
 import scala.collection.JavaConverters._
-import scala.collection.immutable.HashSet
 import scala.collection.mutable.ListBuffer
 
 /** Created by taher on 8/10/16.
@@ -60,13 +59,13 @@ object SpRLDataModel extends DataModel {
   val BF6 = property(relations) {
     x: SpRelation =>
       {
-        val t = x.getTrajector.getFirstConstituent.getStartSpan
+        val trStart = x.getTrajector.getFirstConstituent.getStartSpan
         val spStart = x.getSpatialIndicator.getFirstConstituent.getStartSpan
         val spEnd = x.getSpatialIndicator.getLastConstituent.getStartSpan
-        if (t < spStart)
-          getDependencyPath(x.getTextAnnotation, t, spStart)
+        if (trStart < spStart)
+          getDependencyPath(x.getTextAnnotation, trStart, spStart)
         else
-          getDependencyPath(x.getTextAnnotation, t, spEnd)
+          getDependencyPath(x.getTextAnnotation, trStart, spEnd)
       }
   }
 

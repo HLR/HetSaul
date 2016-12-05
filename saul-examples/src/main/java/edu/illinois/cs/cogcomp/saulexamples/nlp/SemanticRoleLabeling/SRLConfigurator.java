@@ -21,7 +21,6 @@ public class SRLConfigurator extends Configurator {
 
     public static final Property TREEBANK_HOME = new Property("treebankHome", "../saul-examples/src/test/resources/SRLToy/treebank");
     public static final Property PROPBANK_HOME = new Property("propbankHome","../saul-examples/src/test/resources/SRLToy/propbank");
-
     public static final Property TEST_SECTION = new Property("testSection","00");
 
 	public static final Property MODELS_DIR = new Property("modelsDir", "../models");
@@ -30,7 +29,7 @@ public class SRLConfigurator extends Configurator {
     // The running mode of the program. Can be "true" for only testing, or  "false" for training
     public static final Property RUN_MODE = new Property("runMode", Configurator.TRUE);
 
-    // The training mode for the examples. Can be "pipeline", "joint", or "other"
+    // The training mode for the examples. Can be "pipeline", "joint", "jointLoss" or "other"
     public static final Property TRAINING_MODE = new Property("trainingMode", "joint");
 
     /*********** SRL PROPERTIES ***********/

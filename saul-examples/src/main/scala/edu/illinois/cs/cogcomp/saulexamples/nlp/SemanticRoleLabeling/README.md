@@ -5,13 +5,13 @@ This task is to annotate natural language sentences with semantic roles.
 To run the main app with default properties:
 
 ```
-sbt "project saulExamples" "run-main edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlApp"
+sbt "project saulExamples" "run-main edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.RunningApps"
 ```
 
-To use a custom configuration file (containing the property keys of `ExamplesConfigurator`):
+To use a custom configuration file (containing the property keys of `ExamplesConfigurator`), also extending memory to 4G:
  
 ```
- sbt "project saulExamples" "run-main edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.srlApp config/saul-srl.properties"
+ sbt -mem 4000 "project saulExamples" "run-main edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.RunningApps config/saul-srl.properties"
 ```
 
 ## Example
@@ -29,6 +29,7 @@ Similar to other applications in Saul, here also we have a datamodel in file `SR
 classifier definitions in file `SRLClassifires`, a bunch of constraints to be used by global models during either training 
 or test in file `SRLConstraints`, a bunch of constrained classifiers in file `SRLConstrainedClassifiers` and the running 
 configurations that are all placed in one file called `SRLApp`.
+
 For using the reader and populating data there is a program in file `PopulateSRLDataModel`.
 In contrast to other Saul applications this data model has been defined as a class instead of as an object. The reason 
 is the efficiency of the population of the data model, we skip the details of this implementation choice.
@@ -40,7 +41,7 @@ the properties which use the FrameNet frames can receive it as a parameter.
 We refer the reader to see an example of defining such parametrized properties along with `Learnable` classes and 
 contrast it with the `Learnable` objects in `DrugResponse` example of `KnowEng` data model.
    
-There are various machine learning configurations to solve this including pipelines, learning only models (LO), 
+There are various machine learning configurations to solve SRL including pipelines, learning only models (LO),
 learning plus inference models (L+I) and Joint Learning models (IBT).
 The test units and SRLApp are runnable on a sample toy dataset located in `resources/SRLToy` folder. 
 Accessing the full dataset needs proper licenses. If you have access to the PropBank data, you could 
@@ -61,13 +62,12 @@ In the following lines `Pred.` stands for "Predicate" and  `Cand.` stands for "C
 
 | Predicate   |      Argument        |  Model                   | Name |
 | -----------| -------------------- | ------------------------ | ---- |
-| Gold Pred.  |  Gold Boundaries     | Argument Type Classifier | aTr   |
+| Gold Pred.  |  Gold Boundaries     | Argument Type Classifier | aTr,jTr,lTr   |
 | Gold Pred.  |  XuPalmer Candidates | Argument identifier      | bTr   |
 | Gold Pred.  |  XuPalmer Candidates | Argument Type Classifier | cTr   |
 | Predicted Cand. |    NA                | Predicate Classifier     | dTr   |
 | Predicted Cand. |  XuPalmer Candidates | Argument identifier      | eTr   |
 | Predicted Cand.  |  XuPalmer Candidates | Argument Type Classifier | fTr   |
-| Gold Pred.  |  Gold Boundries      | Argument Type Classifier | jTr   |
 | Gold Pred.  | Argument Identifier  | Argument Type Classifier | pTr   |
 
 
@@ -577,6 +577,122 @@ In the following lines `Pred.` stands for "Predicate" and  `Cand.` stands for "C
       * Add constraints gradually and test.
 
 #### Third phase: training joint models
+   - [x] **[lTr]** Train aTr jointly using hamming loss; test using constraints
+
+
+    Average evaluation time: 0.04143100828729282 seconds 
+ 
+      Label   Precision Recall   F1   LCount PCount 
+     ---------------------------------------------- 
+     A0          96.585 91.699 94.079   3578   3397 
+     A1          90.352 93.517 91.907   4967   5141 
+     A2          78.791 64.711 71.060   1108    910 
+     A3          61.176 60.465 60.819    172    170 
+     A4          28.525 85.294 42.752    102    305 
+     A5          57.143 80.000 66.667      5      7 
+     AA           0.000  0.000  0.000      0      2 
+     AM-ADV      75.987 45.652 57.037    506    304 
+     AM-CAU      73.333 43.421 54.545     76     45 
+     AM-DIR      42.308 51.765 46.561     85    104 
+     AM-DIS      75.833 85.313 80.294    320    360 
+     AM-EXT      50.000 50.000 50.000     32     32 
+     AM-LOC      59.244 38.525 46.689    366    238 
+     AM-MNR      34.126 70.115 45.908    348    715 
+     AM-MOD      97.513 99.637 98.564    551    563 
+     AM-NEG      97.854 99.130 98.488    230    233 
+     AM-PNC      57.333 37.391 45.263    115     75 
+     AM-PRD       0.000  0.000  0.000      5     11 
+     AM-REC       0.000  0.000  0.000      2      0 
+     AM-TMP      75.690 76.097 75.893   1117   1123 
+     C-A0        83.333 27.778 41.667     18      6 
+     C-A1        68.465 72.052 70.213    229    241 
+     C-A2        14.286 40.000 21.053      5     14 
+     C-A3         0.000  0.000  0.000      3     11 
+     C-A4         0.000  0.000  0.000      0      7 
+     C-A5         0.000  0.000  0.000      0      1 
+     C-AM-ADV     0.000  0.000  0.000      0      1 
+     C-AM-DIR     0.000  0.000  0.000      0      3 
+     C-AM-EXT     0.000  0.000  0.000      0      1 
+     C-AM-LOC     0.000  0.000  0.000      0      1 
+     C-AM-MNR     0.000  0.000  0.000      0      7 
+     C-AM-NEG     0.000  0.000  0.000      0      3 
+     C-AM-PNC     0.000  0.000  0.000      0      1 
+     C-V          0.000  0.000  0.000    141     31 
+     R-A0        85.388 88.208 86.775    212    219 
+     R-A1        68.919 77.863 73.118    131    148 
+     R-A2        62.500 38.462 47.619     13      8 
+     R-A3         0.000  0.000  0.000      1      0 
+     R-A4         0.000  0.000  0.000      1      7 
+     R-AM-ADV     0.000  0.000  0.000      2      1 
+     R-AM-CAU     0.000  0.000  0.000      1      3 
+     R-AM-EXT     0.000  0.000  0.000      1      3 
+     R-AM-LOC    69.231 56.250 62.069     16     13 
+     R-AM-MNR     0.000  0.000  0.000      2      5 
+     R-AM-PNC     0.000  0.000  0.000      0      3 
+     ---------------------------------------------- 
+     R-AM-TMP    16.667  5.556  8.333     18      6 
+     ---------------------------------------------- 
+     Overall     82.644 82.644 82.644  14479  14479 
+     Accuracy    82.644   -      -      -     14479 
+
+     Total time: 244961 s, completed Dec 2, 2016 11:08:22 AM
+
+    - [x] **[jTr]** Train aTr jointly without considering the loss explicitly; test using constraints
+
+  Label   Precision Recall   F1   LCount PCount
+ ----------------------------------------------
+ A0          96.425 93.488 94.934   3578   3469
+ A1          91.531 94.000 92.749   4967   5101
+ A2          67.846 76.173 71.769   1108   1244
+ A3          78.652 40.698 53.640    172     89
+ A4          83.951 66.667 74.317    102     81
+ A5          57.143 80.000 66.667      5      7
+ AA           0.000  0.000  0.000      0      2
+ AM-ADV      68.623 60.079 64.067    506    443
+ AM-CAU      80.952 44.737 57.627     76     42
+ AM-DIR      43.220 60.000 50.246     85    118
+ AM-DIS      81.250 81.250 81.250    320    320
+ AM-EXT      33.333 68.750 44.898     32     66
+ AM-LOC      83.969 30.055 44.266    366    131
+ AM-MNR      51.940 50.000 50.952    348    335
+ AM-MOD      97.340 99.637 98.475    551    564
+ AM-NEG      96.624 99.565 98.073    230    237
+ AM-PNC      22.118 81.739 34.815    115    425
+ AM-PRD      16.667 20.000 18.182      5      6
+ AM-REC       0.000  0.000  0.000      2      6
+ AM-TMP      84.706 70.904 77.193   1117    935
+ C-A0        21.154 61.111 31.429     18     52
+ C-A1        60.067 78.166 67.932    229    298
+ C-A2         0.000  0.000  0.000      5     11
+ C-A3         0.000  0.000  0.000      3      4
+ C-A4         0.000  0.000  0.000      0      3
+ C-A5         0.000  0.000  0.000      0      1
+ C-AM-DIR     0.000  0.000  0.000      0      3
+ C-AM-EXT     0.000  0.000  0.000      0      3
+ C-AM-LOC     0.000  0.000  0.000      0      1
+ C-AM-MNR     0.000  0.000  0.000      0      2
+ C-AM-NEG     0.000  0.000  0.000      0      8
+ C-AM-PNC     0.000  0.000  0.000      0      6
+ C-AM-TMP     0.000  0.000  0.000      0      1
+ C-V          0.000  0.000  0.000    141     31
+ R-A0        82.427 92.925 87.361    212    239
+ R-A1        79.612 62.595 70.085    131    103
+ R-A2        21.875 53.846 31.111     13     32
+ R-A3         0.000  0.000  0.000      1      0
+ R-A4         0.000  0.000  0.000      1      1
+ R-AM-ADV     0.000  0.000  0.000      2      1
+ R-AM-CAU     0.000  0.000  0.000      1      2
+ R-AM-EXT     0.000  0.000  0.000      1      7
+ R-AM-LOC    78.571 68.750 73.333     16     14
+ R-AM-MNR     0.000  0.000  0.000      2      1
+ R-AM-PNC     0.000  0.000  0.000      0      6
+ ----------------------------------------------
+ R-AM-TMP    28.571 44.444 34.783     18     28
+ ----------------------------------------------
+ Overall     83.673 83.673 83.673  14479  14479
+ Accuracy    83.673   -      -      -     14479
+ Total time: 214836 s, completed Nov 20, 2016 9:15:22 AM
+
 
    - [ ] **[aTrJ]** Train **dTr, eTr, fTr** jointly
       * Add constraints gradually and train various models considering subsets of constraints
@@ -586,11 +702,7 @@ In the following lines `Pred.` stands for "Predicate" and  `Cand.` stands for "C
 
    - [ ] **[aTsJ]** Test the **cTs** of the second phase for joint models.
 
-The defaul configuration when running the sprlApp will run only the test for pretrained cTr model while it uses srl global constraints during prediction.
-You can run it from command line by:
-
-```scala
-
-sbt -mem 4000 "project saulExamples" "run-main edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLApps"
-
-```
+The training results of independent models are after 100 iterations of training, however, since joinnTraining is computationally much more
+complex, we stopped the training after 30 iterations.
+The overall results were similar to running independent models after 30 iterations, no improvment observed.
+However, there was a per class variation in results and the results for some of the lables improved.

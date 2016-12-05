@@ -18,7 +18,10 @@ object InitSparseNetwork {
     //this means we are not reading any model into the SparseNetworks
     // but we forget all the models and go over the data to build the right
     // size for the lexicon and the right number of the ltu s
+
     cClassifier.onClassifier.classifier.forget()
+    assert(cClassifier.onClassifier.classifier.getClass.getName.contains("SparseNetworkLearner"), "The classifier should be of type SparseNetworkLearner!")
+
     val iLearner = cClassifier.onClassifier.classifier.asInstanceOf[SparseNetworkLearner]
     allHeads.foreach {
       head =>
@@ -33,7 +36,7 @@ object InitSparseNetwork {
               if (label >= N || iLearner.getNetwork.get(label) == null) {
                 val isConjunctiveLabels = iLearner.isUsingConjunctiveLabels | iLearner.getLabelLexicon.lookupKey(label).isConjunctive
                 iLearner.setConjunctiveLabels(isConjunctiveLabels)
-                val ltu: LinearThresholdUnit = iLearner.getBaseLTU
+                val ltu: LinearThresholdUnit = iLearner.getBaseLTU.clone().asInstanceOf[LinearThresholdUnit]
                 ltu.initialize(iLearner.getNumExamples, iLearner.getNumFeatures)
                 iLearner.getNetwork.set(label, ltu)
               }
