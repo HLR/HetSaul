@@ -47,11 +47,11 @@ object QuestionTypeClassificationSensors {
       pipeline.addView(ta, ViewNames.POS)
       pipeline.addView(ta, ViewNames.SHALLOW_PARSE)
       pipeline.addView(ta, ViewNames.NER_CONLL)
-      QuestionTypeInstance(question, Some(split(0)), Some(splitLabel(0)), Some(splitLabel(1)), Some(ta))
+      QuestionTypeInstance(question, Some(splitLabel(0)), Some(split(0)), Some(ta))
     }
   }
 
-  def getListOfFiles(dir: String):List[File] = {
+  def getListOfFiles(dir: String): List[File] = {
     val d = new File(dir)
     if (d.exists && d.isDirectory) {
       d.listFiles.filter(_.isFile).toList
@@ -61,7 +61,7 @@ object QuestionTypeClassificationSensors {
   }
 
   lazy val wordGroupLists = {
-    val files = getListOfFiles(dataFolder + "public/lists")
-    files.map{ f => f.getName -> Source.fromFile(f).getLines().toSet.map{_.toLowerCase.trim} }
+    val files: List[File] = getListOfFiles(dataFolder + "public/lists")
+    files.map { f: File => f.getName -> Source.fromFile(f).getLines().toSet.map { line: String => line.toLowerCase.trim } }
   }
 }

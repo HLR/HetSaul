@@ -22,8 +22,10 @@ case class DiscreteCollectionProperty[T <: AnyRef](name: String, sensor: T => Li
       values.zipWithIndex.foreach {
         case (value, idx) =>
           featureVector.addFeature(
-            new DiscreteArrayStringFeature(this.containingPackage, this.name, "", value,
-              (-1).toShort, 0.toShort, idx, 0)
+            new DiscreteArrayStringFeature(
+              this.containingPackage,
+              this.name, "", value, (-1).toShort, 0.toShort, idx, 0
+            )
           )
       }
       // TODO: Daniel commented this line. Make sure this does not introduce a bug

@@ -10,7 +10,7 @@ We define a two-layered taxonomy, which represents a natural semantic classifica
 for typical answers. The hierarchy contains 6 coarse classes: 
 (`ABBREVIATION`, `DESCRIPTION`, `ENTITY`, `HUMAN`, `LOCATION` and `NUMERIC VALUE`) and
 50 fine classes.
-
+    
 ![](saul-examples/src/main/resources/QuestionTypeClassification/categories.png)
 
 More details can be found in [this](http://cogcomp.cs.illinois.edu/page/publication_view/130) paper. 
@@ -19,9 +19,15 @@ downloaded from [here](http://cogcomp.cs.illinois.edu/page/resource_view/49).
 
 ## Performance 
 
-## Using it programmatically 
+
+## Runnint it 
+
+First you have to get the data, which is available at [here](https://cogcomp.cs.illinois.edu/page/publication_view/130), 
+and put it under the `data/QuestionTypeClassification/` folder. 
+  
 
 
+## References 
 
 To get more details on the original idea and the data, here is the paper: 
 
