@@ -106,6 +106,7 @@ feature function. That is, the loss is a hamming loss defined per classifier. Th
 
 <a name="pipeline">
 ##Pipelines
+
 Building pipelines is naturally granted in Saul. The programmer can simply define properties that are the predictions of
 the classifiers and use those outputs as the input of other classifiers by mentioning them in the list of the properties in the below construct when defining the
 pipeline classifiers,
@@ -113,24 +114,25 @@ pipeline classifiers,
 ```scala
    def feature = using(/*list of properties including the prediction of other classifiers.*/)
 ```
+
 Here is a more complete example which passes the output of the `ClassifierLayer1` to the input of the `ClassifierLayer2`:
 
    ```scala
-
-    object ClassifierLayer1 extends Learnable (node) {
-     def label = labelProperty1
-     def feature = using(property2, property3,...)
+     object ClassifierLayer1 extends Learnable (node) {
+       def label = labelProperty1
+       def feature = using(property2, property3,...)
      }
-
-    object ClassifierLayer2 extends Learnable (node) {
-     def label = labelProperty2
-     def feature = using(classifier1Labels, ,...) // using the prediction of the classifier in the previous layer
+     object ClassifierLayer2 extends Learnable (node) {
+       def label = labelProperty2
+       def feature = using(classifier1Labels, ,...) // using the prediction of the classifier in the previous layer
      }
-
-    // defined in data-model object
-    val classifier1Labels = new Property(node){  x: Type => ClassifierLayer1(x)  }
-
     ```
+
+     This will be defined in data-model object:
+
+   ```scala
+    val classifier1Labels = new Property(node){  x: Type => ClassifierLayer1(x)  }
+   ```
 
 See [here](saul-examples/src/main/scala/edu/illinois/cs/cogcomp/saulexamples/Badge/BadgeClassifiers.scala#L43), for a working example.
 
