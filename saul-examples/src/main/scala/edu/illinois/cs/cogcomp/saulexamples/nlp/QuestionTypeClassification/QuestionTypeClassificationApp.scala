@@ -16,17 +16,62 @@ object QuestionTypeClassificationApp {
     verify()
   }
 
-  def bothLabelClassifierWithBOW(): Unit = {
-    val classifier = new CoarseFineTypeClassifier(QuestionTypeClassificationDataModel.surfaceWords)
-    
+  def populateInstances() = {
+    QuestionTypeClassificationDataModel.question.populate(QuestionTypeClassificationSensors.trainInstances)
+    QuestionTypeClassificationDataModel.question.populate(QuestionTypeClassificationSensors.testInstances, train = false)
+  }
+
+  def evaluate(classifier: TypeClassifier) = {
+    populateInstances()
+    classifier.learn(20)
+    classifier.test()
+  }
+
+  val propertList = List(QuestionTypeClassificationDataModel.surfaceWords,
+    QuestionTypeClassificationDataModel.pos,
+    QuestionTypeClassificationDataModel.lemma,
+    QuestionTypeClassificationDataModel.chunks,
+    QuestionTypeClassificationDataModel.headChunks,
+    QuestionTypeClassificationDataModel.ner,
+    QuestionTypeClassificationDataModel.containsFoodterm,
+    QuestionTypeClassificationDataModel.containsMountain,
+    QuestionTypeClassificationDataModel.containsProfession,
+    QuestionTypeClassificationDataModel.numberNormalizer,
+    QuestionTypeClassificationDataModel.wordnetSynsetsFirstSense,
+    QuestionTypeClassificationDataModel.wordnetLexicographerFileNamesFirstSense,
+    QuestionTypeClassificationDataModel.wordnetHypernymFirstSenseLexicographerFileNames,
+    QuestionTypeClassificationDataModel.wordnetHypernymsFirstSense,
+    QuestionTypeClassificationDataModel.wordnetMemberHolonymsFirstSense,
+    QuestionTypeClassificationDataModel.wordnetPartHolonymsFirstSenseLexicographerFileNames,
+    QuestionTypeClassificationDataModel.wordnetPartHolonymsFirstSense,
+    QuestionTypeClassificationDataModel.wordnetPointersFirstSense,
+    QuestionTypeClassificationDataModel.wordnetSubstanceHolonymsFirstSense,
+    QuestionTypeClassificationDataModel.wordnetSynonymsFirstSense,
+    QuestionTypeClassificationDataModel.wordnetVerbFramesFirstSenses,
+    QuestionTypeClassificationDataModel.wordGroups
+  )
+
+  def bothLabelClassifier(): Unit = {
+    val classifier = new CoarseFineTypeClassifier(propertList)
+    evaluate(classifier)
+  }
+
+  def coarseClassifier(): Unit = {
+    val classifier = new CoarseTypeClassifier(propertList)
+    evaluate(classifier)
+  }
+
+  def fineClassifier(): Unit = {
+    val classifier = new FineTypeClassifier(propertList)
+    evaluate(classifier)
   }
 
   def main(args: Array[String]): Unit = {
     val parser = new ArgumentParser(args)
     parser.experimentType() match {
-      case 1 =>
-      case 2 =>
-      case 3 =>
+      case 1 => bothLabelClassifier()
+      case 2 => coarseClassifier()
+      case 3 => fineClassifier()
     }
   }
 }

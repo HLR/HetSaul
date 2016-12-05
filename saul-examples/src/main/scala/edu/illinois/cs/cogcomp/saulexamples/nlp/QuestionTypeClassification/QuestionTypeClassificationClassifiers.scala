@@ -13,22 +13,23 @@ import edu.illinois.cs.cogcomp.saulexamples.nlp.QuestionTypeClassification.Quest
 
 object QuestionTypeClassificationClassifiers {
 
-  class CoarseFineTypeClassifier(properties: Property[QuestionTypeInstance]) extends Learnable[QuestionTypeInstance](question) {
+  abstract class TypeClassifier(properties: List[Property[QuestionTypeInstance]]) extends Learnable[QuestionTypeInstance](question) { }
+
+  class CoarseFineTypeClassifier(properties: List[Property[QuestionTypeInstance]]) extends TypeClassifier(properties) {
     def label = QuestionTypeClassificationDataModel.bothLabel
-    override def feature = using(surfaceWords)
+    override def feature = using(properties)
     override lazy val classifier = new SparseNetworkLearner
   }
 
-  class CoarseTypeClassifier(properties: Property[QuestionTypeInstance]) extends Learnable[QuestionTypeInstance](question) {
+  class CoarseTypeClassifier(properties: List[Property[QuestionTypeInstance]]) extends TypeClassifier(properties) {
     def label = QuestionTypeClassificationDataModel.coarseLabel
-    override def feature = using(surfaceWords)
+    override def feature = using(properties)
     override lazy val classifier = new SparseNetworkLearner
   }
 
-  class FineTypeClassifier(properties: Property[QuestionTypeInstance]) extends Learnable[QuestionTypeInstance](question) {
+  class FineTypeClassifier(properties: List[Property[QuestionTypeInstance]]) extends TypeClassifier(properties) {
     def label = QuestionTypeClassificationDataModel.fineLabel
-    override def feature = using(surfaceWords)
+    override def feature = using(properties)
     override lazy val classifier = new SparseNetworkLearner
   }
-
 }

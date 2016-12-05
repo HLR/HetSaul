@@ -9,34 +9,59 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp.QuestionTypeClassification
 import java.io.File
 import java.util.Properties
 
+import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
 import edu.illinois.cs.cogcomp.nlp.common.PipelineConfigurator._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.TextAnnotationFactory
 
 import scala.io.Source
 
 object QuestionTypeClassificationSensors {
-  val dataFolder = "data/QuestionTypeClassification/"
+  val dataFolder = "../data/QuestionTypeClassification/"
   lazy val professons = Source.fromFile(new File(dataFolder + "prof.txt")).getLines().toSet
   lazy val mountainKeywords = Source.fromFile(new File(dataFolder + "mount.txt")).getLines().toSet
   lazy val foodKeywords = Source.fromFile(new File(dataFolder + "food.txt")).getLines().toSet
 
-  val settings = new Properties()
-  TextAnnotationFactory.disableSettings(settings, USE_SRL_NOM, USE_NER_ONTONOTES)
-  val pipeline = TextAnnotationFactory.createPipelineAnnotatorService(settings)
-
-  lazy val (trainInstances, testInstances) = {
-    val allLines = Source.fromFile(new File(dataFolder + "train_1000.label.txt")).getLines().toList ++
-      Source.fromFile(new File(dataFolder + "train_2000.label.txt")).getLines().toList ++
-      Source.fromFile(new File(dataFolder + "train_3000.label.txt")).getLines().toList ++
-      Source.fromFile(new File(dataFolder + "train_4000.label.txt")).getLines().toList ++
-      Source.fromFile(new File(dataFolder + "train_5500.label.txt")).getLines().toList
-    val allInstances = allLines.map { line =>
-      val splitted = line.split("\t")
-      val splittedLabel = splitted(0).split(":")
-      QuestionTypeInstance(splitted(1), Some(splitted(0)), Some(splittedLabel(0)), Some(splittedLabel(1)), None)
-    }
-
-    allInstances.splitAt((allInstances.size * 0.7).toInt)
+  lazy val pipeline = {
+    val settings = new Properties()
+    TextAnnotationFactory.disableSettings(settings, USE_SRL_NOM)
+    TextAnnotationFactory.createPipelineAnnotatorService(settings)
   }
 
+  lazy val trainInstances =
+    getInstances("train_1000.label.txt") ++
+      getInstances("train_2000.label.txt") ++
+      getInstances("train_3000.label.txt") ++
+      getInstances("train_4000.label.txt") ++
+      getInstances("train_5500.label.txt")
+
+  lazy val testInstances = getInstances("TREC_10.label.txt")
+
+  def getInstances(fileName: String): List[QuestionTypeInstance] = {
+    val allLines = Source.fromFile(new File(dataFolder + fileName), "ISO-8859-1").getLines().toList
+    allLines.map { line =>
+      val split = line.split(" ")
+      val splitLabel = split(0).split(":")
+      val question = line.drop(split(0).length).trim
+      val ta = pipeline.createBasicTextAnnotation("", "", question)
+      pipeline.addView(ta, ViewNames.LEMMA)
+      pipeline.addView(ta, ViewNames.POS)
+      pipeline.addView(ta, ViewNames.SHALLOW_PARSE)
+      pipeline.addView(ta, ViewNames.NER_CONLL)
+      QuestionTypeInstance(question, Some(split(0)), Some(splitLabel(0)), Some(splitLabel(1)), Some(ta))
+    }
+  }
+
+  def getListOfFiles(dir: String):List[File] = {
+    val d = new File(dir)
+    if (d.exists && d.isDirectory) {
+      d.listFiles.filter(_.isFile).toList
+    } else {
+      List[File]()
+    }
+  }
+
+  lazy val wordGroupLists = {
+    val files = getListOfFiles(dataFolder + "public/lists")
+    files.map{ f => f.getName -> Source.fromFile(f).getLines().toSet.map{_.toLowerCase.trim} }
+  }
 }
