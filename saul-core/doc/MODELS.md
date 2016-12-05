@@ -126,15 +126,15 @@ Here is a more complete example which passes the output of the `ClassifierLayer1
        def label = labelProperty2
        def feature = using(classifier1Labels, ,...) // using the prediction of the classifier in the previous layer
      }
-    ```
+   ```
 
-     This will be defined in data-model object:
+This will be defined in data-model object:
 
    ```scala
     val classifier1Labels = new Property(node){  x: Type => ClassifierLayer1(x)  }
    ```
 
-See [here](saul-examples/src/main/scala/edu/illinois/cs/cogcomp/saulexamples/Badge/BadgeClassifiers.scala#L43), for a working example.
+See [here](saul-examples/src/main/scala/edu/illinois/cs/cogcomp/saulexamples/Badge/BadgeClassifiers.scala#L43) for a working example.
 
 
 
