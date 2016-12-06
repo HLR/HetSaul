@@ -11,7 +11,7 @@ for typical answers. The hierarchy contains 6 coarse classes:
 (`ABBREVIATION`, `DESCRIPTION`, `ENTITY`, `HUMAN`, `LOCATION` and `NUMERIC VALUE`) and
 50 fine classes.
     
-![](.../.../.../.../.../.../.../.../saul-examples/src/main/resources/QuestionTypeClassification/categories.png)
+![](../../../../../../../../saul-examples/src/main/resources/QuestionTypeClassification/categories.png)
 
 
 More details can be found in [this](http://cogcomp.cs.illinois.edu/page/publication_view/130) paper. 
