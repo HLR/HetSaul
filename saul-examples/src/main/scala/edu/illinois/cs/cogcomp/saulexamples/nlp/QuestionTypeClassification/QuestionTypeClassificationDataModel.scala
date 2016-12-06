@@ -55,7 +55,7 @@ object QuestionTypeClassificationDataModel extends DataModel {
     val chunks = x.textAnnotationOpt.get.getView(ViewNames.SHALLOW_PARSE).getConstituents.asScala.map(c => (c.getLabel, c.getSurfaceForm))
     val firstNoun = chunks.collectFirst { case (label, surface) if !questionTerms.contains(surface.toLowerCase.trim) && label.contains("NP") => surface }.getOrElse("")
     val firstVerb = chunks.collectFirst { case (label, surface) if !questionTerms.contains(surface.toLowerCase.trim) && label.contains("VP") => surface }.getOrElse("")
-    List("##chunkHeadNoun:" + firstNoun, "##chunkHeadVerb:" + firstVerb, "##chunkHeadNounVerb:" +  firstNoun +  firstVerb)
+    List("##chunkHeadNoun:" + firstNoun, "##chunkHeadVerb:" + firstVerb, "##chunkHeadNounVerb:" + firstNoun + firstVerb)
   }
 
   val ner = property(question) { x: QuestionTypeInstance =>
@@ -87,61 +87,61 @@ object QuestionTypeClassificationDataModel extends DataModel {
 
   val wordnetSynsetsFirstSense = property(question) { x: QuestionTypeInstance =>
     val cons = x.textAnnotationOpt.get.getView(ViewNames.TOKENS).getConstituents.asScala
-    cons.flatMap { WordFeatureExtractorFactory.getWordNetFeatureExtractor(WordNetFeatureExtractor.WordNetFeatureClass.synsetsFirstSense).getFeatures(_).asScala.map{_.toString} }.toSet.toList
+    cons.flatMap { WordFeatureExtractorFactory.getWordNetFeatureExtractor(WordNetFeatureExtractor.WordNetFeatureClass.synsetsFirstSense).getFeatures(_).asScala.map { _.toString } }.toSet.toList
   }
 
-//  val wordnetLexicographerFileNamesFirstSense = property(question) { x: QuestionTypeInstance =>
-//    val cons = x.textAnnotationOpt.get.getView(ViewNames.TOKENS).getConstituents.asScala
-//    cons.map { WordFeatureExtractorFactory.getWordNetFeatureExtractor(WordNetFeatureExtractor.WordNetFeatureClass.lexicographerFileNamesFirstSense).getFeatures(_).asScala.mkString }.toSet.toList
-//  }
-//
-//  val wordnetHypernymFirstSenseLexicographerFileNames = property(question) { x: QuestionTypeInstance =>
-//    val cons = x.textAnnotationOpt.get.getView(ViewNames.TOKENS).getConstituents.asScala
-//    cons.map { WordFeatureExtractorFactory.getWordNetFeatureExtractor(WordNetFeatureExtractor.WordNetFeatureClass.hypernymFirstSenseLexicographerFileNames).getFeatures(_).asScala.mkString }.toSet.toList
-//  }
-//
-//  val wordnetHypernymsFirstSense = property(question) { x: QuestionTypeInstance =>
-//    val cons = x.textAnnotationOpt.get.getView(ViewNames.TOKENS).getConstituents.asScala
-//    cons.map { WordFeatureExtractorFactory.getWordNetFeatureExtractor(WordNetFeatureExtractor.WordNetFeatureClass.hypernymsFirstSense).getFeatures(_).asScala.mkString }.toSet.toList
-//  }
-//
-//  val wordnetMemberHolonymsFirstSense = property(question) { x: QuestionTypeInstance =>
-//    val cons = x.textAnnotationOpt.get.getView(ViewNames.TOKENS).getConstituents.asScala
-//    cons.map { WordFeatureExtractorFactory.getWordNetFeatureExtractor(WordNetFeatureExtractor.WordNetFeatureClass.memberHolonymsFirstSense).getFeatures(_).asScala.mkString }.toSet.toList
-//  }
-//
-//  val wordnetPartHolonymsFirstSenseLexicographerFileNames = property(question) { x: QuestionTypeInstance =>
-//    val cons = x.textAnnotationOpt.get.getView(ViewNames.TOKENS).getConstituents.asScala
-//    cons.map { WordFeatureExtractorFactory.getWordNetFeatureExtractor(WordNetFeatureExtractor.WordNetFeatureClass.partHolonymsFirstSenseLexicographerFileNames).getFeatures(_).asScala.mkString }.toSet.toList
-//  }
-//
-//  val wordnetPartHolonymsFirstSense = property(question) { x: QuestionTypeInstance =>
-//    val cons = x.textAnnotationOpt.get.getView(ViewNames.TOKENS).getConstituents.asScala
-//    cons.map { WordFeatureExtractorFactory.getWordNetFeatureExtractor(WordNetFeatureExtractor.WordNetFeatureClass.partHolonymsFirstSense).getFeatures(_).asScala.mkString }.toSet.toList
-//  }
-//
-//  val wordnetPointersFirstSense = property(question) { x: QuestionTypeInstance =>
-//    val cons = x.textAnnotationOpt.get.getView(ViewNames.TOKENS).getConstituents.asScala
-//    cons.map { WordFeatureExtractorFactory.getWordNetFeatureExtractor(WordNetFeatureExtractor.WordNetFeatureClass.pointersFirstSense).getFeatures(_).asScala.mkString }.toSet.toList
-//  }
-//
-//  val wordnetSubstanceHolonymsFirstSense = property(question) { x: QuestionTypeInstance =>
-//    val cons = x.textAnnotationOpt.get.getView(ViewNames.TOKENS).getConstituents.asScala
-//    cons.map { WordFeatureExtractorFactory.getWordNetFeatureExtractor(WordNetFeatureExtractor.WordNetFeatureClass.substanceHolonymsFirstSense).getFeatures(_).asScala.mkString }.toSet.toList
-//  }
-//
-//  val wordnetSynonymsFirstSense = property(question) { x: QuestionTypeInstance =>
-//    val cons = x.textAnnotationOpt.get.getView(ViewNames.TOKENS).getConstituents.asScala
-//    cons.map { WordFeatureExtractorFactory.getWordNetFeatureExtractor(WordNetFeatureExtractor.WordNetFeatureClass.synonymsFirstSense).getFeatures(_).asScala.mkString }.toSet.toList
-//  }
-//
-//  val wordnetVerbFramesFirstSenses = property(question) { x: QuestionTypeInstance =>
-//    val cons = x.textAnnotationOpt.get.getView(ViewNames.TOKENS).getConstituents.asScala
-//    cons.map { WordFeatureExtractorFactory.getWordNetFeatureExtractor(WordNetFeatureExtractor.WordNetFeatureClass.verbFramesFirstSense).getFeatures(_).asScala.mkString }.toSet.toList
-//  }
-//
-//  val wordGroups = property(question) { x: QuestionTypeInstance =>
-//    val cons = x.textAnnotationOpt.get.getView(ViewNames.TOKENS).getConstituents.asScala.map { _.getSurfaceForm.toLowerCase.trim }.toSet
-//    QuestionTypeClassificationSensors.wordGroupLists.collect { case (label, set) if set.intersect(cons).nonEmpty => label }
-//  }
+  val wordnetSynsetsAllSenses = property(question) { x: QuestionTypeInstance =>
+    val cons = x.textAnnotationOpt.get.getView(ViewNames.TOKENS).getConstituents.asScala
+    cons.flatMap { WordFeatureExtractorFactory.getWordNetFeatureExtractor(WordNetFeatureExtractor.WordNetFeatureClass.synsetsAllSenses).getFeatures(_).asScala.map { _.toString } }.toSet.toList
+  }
+
+  val wordnetLexicographerFileNamesFirstSense = property(question) { x: QuestionTypeInstance =>
+    val cons = x.textAnnotationOpt.get.getView(ViewNames.TOKENS).getConstituents.asScala
+    cons.flatMap { WordFeatureExtractorFactory.getWordNetFeatureExtractor(WordNetFeatureExtractor.WordNetFeatureClass.lexicographerFileNamesFirstSense).getFeatures(_).asScala.map { _.toString } }.toSet.toList
+  }
+
+  val wordnetLexicographerFileNamesAllSenses = property(question) { x: QuestionTypeInstance =>
+    val cons = x.textAnnotationOpt.get.getView(ViewNames.TOKENS).getConstituents.asScala
+    cons.flatMap { WordFeatureExtractorFactory.getWordNetFeatureExtractor(WordNetFeatureExtractor.WordNetFeatureClass.lexicographerFileNamesFirstSense).getFeatures(_).asScala.map { _.toString } }.toSet.toList
+  }
+
+  val wordnetHypernymFirstSenseLexicographerFileNames = property(question) { x: QuestionTypeInstance =>
+    val cons = x.textAnnotationOpt.get.getView(ViewNames.TOKENS).getConstituents.asScala
+    cons.flatMap { WordFeatureExtractorFactory.getWordNetFeatureExtractor(WordNetFeatureExtractor.WordNetFeatureClass.hypernymFirstSenseLexicographerFileNames).getFeatures(_).asScala.map { _.toString } }.toSet.toList
+  }
+
+  val wordnetHypernymAllSensesLexicographerFileNames = property(question) { x: QuestionTypeInstance =>
+    val cons = x.textAnnotationOpt.get.getView(ViewNames.TOKENS).getConstituents.asScala
+    cons.flatMap { WordFeatureExtractorFactory.getWordNetFeatureExtractor(WordNetFeatureExtractor.WordNetFeatureClass.hypernymAllSensesLexicographerFileNames).getFeatures(_).asScala.map { _.toString } }.toSet.toList
+  }
+
+  val wordnetHypernymsFirstSense = property(question) { x: QuestionTypeInstance =>
+    val cons = x.textAnnotationOpt.get.getView(ViewNames.TOKENS).getConstituents.asScala
+    cons.flatMap { WordFeatureExtractorFactory.getWordNetFeatureExtractor(WordNetFeatureExtractor.WordNetFeatureClass.hypernymsFirstSense).getFeatures(_).asScala.map { _.toString } }.toSet.toList
+  }
+
+  val wordnetHypernymsAllSenses = property(question) { x: QuestionTypeInstance =>
+    val cons = x.textAnnotationOpt.get.getView(ViewNames.TOKENS).getConstituents.asScala
+    cons.flatMap { WordFeatureExtractorFactory.getWordNetFeatureExtractor(WordNetFeatureExtractor.WordNetFeatureClass.hypernymsAllSenses).getFeatures(_).asScala.map { _.toString } }.toSet.toList
+  }
+
+  val wordnetPointersFirstSense = property(question) { x: QuestionTypeInstance =>
+    val cons = x.textAnnotationOpt.get.getView(ViewNames.TOKENS).getConstituents.asScala
+    cons.flatMap { WordFeatureExtractorFactory.getWordNetFeatureExtractor(WordNetFeatureExtractor.WordNetFeatureClass.pointersFirstSense).getFeatures(_).asScala.map { _.toString } }.toSet.toList
+  }
+
+  val wordnetSynonymsFirstSense = property(question) { x: QuestionTypeInstance =>
+    val cons = x.textAnnotationOpt.get.getView(ViewNames.TOKENS).getConstituents.asScala
+    cons.flatMap { WordFeatureExtractorFactory.getWordNetFeatureExtractor(WordNetFeatureExtractor.WordNetFeatureClass.synonymsFirstSense).getFeatures(_).asScala.map { _.toString } }.toSet.toList
+  }
+
+  val wordnetSynonymsAllSenses = property(question) { x: QuestionTypeInstance =>
+    val cons = x.textAnnotationOpt.get.getView(ViewNames.TOKENS).getConstituents.asScala
+    cons.flatMap { WordFeatureExtractorFactory.getWordNetFeatureExtractor(WordNetFeatureExtractor.WordNetFeatureClass.synonymsAllSenses).getFeatures(_).asScala.map { _.toString } }.toSet.toList
+  }
+
+  val wordGroups = property(question) { x: QuestionTypeInstance =>
+    val cons = x.textAnnotationOpt.get.getView(ViewNames.TOKENS).getConstituents.asScala.map { _.getSurfaceForm.toLowerCase.trim }.toSet
+    QuestionTypeClassificationSensors.wordGroupLists.collect { case (label, set) if set.intersect(cons).nonEmpty => label }
+  }
 }

@@ -6,7 +6,7 @@
   */
 package edu.illinois.cs.cogcomp.saulexamples.nlp.QuestionTypeClassification
 
-import edu.illinois.cs.cogcomp.lbjava.learn.SparseNetworkLearner
+import edu.illinois.cs.cogcomp.lbjava.learn.{ SparseAveragedPerceptron, SparseNetworkLearner, SparseWinnow }
 import edu.illinois.cs.cogcomp.saul.classifier.Learnable
 import edu.illinois.cs.cogcomp.saul.datamodel.property.Property
 import edu.illinois.cs.cogcomp.saulexamples.nlp.QuestionTypeClassification.QuestionTypeClassificationDataModel._
@@ -18,12 +18,22 @@ object QuestionTypeClassificationClassifiers {
   class CoarseTypeClassifier(properties: List[Property[QuestionTypeInstance]]) extends TypeClassifier(properties) {
     def label = QuestionTypeClassificationDataModel.coarseLabel
     override def feature = using(properties)
-    override lazy val classifier = new SparseNetworkLearner
+    override lazy val classifier = new SparseNetworkLearner {
+      val p = new SparseAveragedPerceptron.Parameters()
+      p.learningRate = .1
+      p.thickness = 2
+      baseLTU = new SparseAveragedPerceptron(p)
+    }
   }
 
   class FineTypeClassifier(properties: List[Property[QuestionTypeInstance]]) extends TypeClassifier(properties) {
     def label = QuestionTypeClassificationDataModel.fineLabel
     override def feature = using(properties)
-    override lazy val classifier = new SparseNetworkLearner
+    override lazy val classifier = new SparseNetworkLearner {
+      val p = new SparseAveragedPerceptron.Parameters()
+      p.learningRate = .1
+      p.thickness = 2
+      baseLTU = new SparseAveragedPerceptron(p)
+    }
   }
 }

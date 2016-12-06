@@ -28,29 +28,29 @@ object QuestionTypeClassificationApp {
   }
 
   val propertyList = List(
-    //    QuestionTypeClassificationDataModel.surfaceWords ,
-    //        QuestionTypeClassificationDataModel.lemma
-//    QuestionTypeClassificationDataModel.pos //,
-//      QuestionTypeClassificationDataModel.chunks//,
-//      QuestionTypeClassificationDataModel.headChunks //,
-//      QuestionTypeClassificationDataModel.ner//,
-//      QuestionTypeClassificationDataModel.containsFoodterm,
-//      QuestionTypeClassificationDataModel.containsMountain,
-//      QuestionTypeClassificationDataModel.containsProfession
-  //    QuestionTypeClassificationDataModel.numberNormalizer,
-      QuestionTypeClassificationDataModel.wordnetSynsetsFirstSense//,
-  //    QuestionTypeClassificationDataModel.wordnetLexicographerFileNamesFirstSense,
-  //    QuestionTypeClassificationDataModel.wordnetHypernymFirstSenseLexicographerFileNames,
-  //    QuestionTypeClassificationDataModel.wordnetHypernymsFirstSense,
-  //    QuestionTypeClassificationDataModel.wordnetMemberHolonymsFirstSense,
-  //    QuestionTypeClassificationDataModel.wordnetPartHolonymsFirstSenseLexicographerFileNames,
-  //    QuestionTypeClassificationDataModel.wordnetPartHolonymsFirstSense,
-  //    QuestionTypeClassificationDataModel.wordnetPointersFirstSense,
-  //    QuestionTypeClassificationDataModel.wordnetSubstanceHolonymsFirstSense,
-  //    QuestionTypeClassificationDataModel.wordnetSynonymsFirstSense,
-  //    QuestionTypeClassificationDataModel.wordnetVerbFramesFirstSenses,
-  //    QuestionTypeClassificationDataModel.wordGroups
-  //
+    QuestionTypeClassificationDataModel.surfaceWords,
+    QuestionTypeClassificationDataModel.lemma,
+    QuestionTypeClassificationDataModel.pos,
+    QuestionTypeClassificationDataModel.chunks,
+    QuestionTypeClassificationDataModel.headChunks,
+    QuestionTypeClassificationDataModel.ner,
+    QuestionTypeClassificationDataModel.containsFoodterm,
+    QuestionTypeClassificationDataModel.containsMountain,
+    QuestionTypeClassificationDataModel.containsProfession,
+    QuestionTypeClassificationDataModel.numberNormalizer,
+    QuestionTypeClassificationDataModel.wordnetSynsetsFirstSense,
+    QuestionTypeClassificationDataModel.wordnetSynsetsAllSenses,
+    QuestionTypeClassificationDataModel.wordnetLexicographerFileNamesFirstSense,
+    QuestionTypeClassificationDataModel.wordnetLexicographerFileNamesAllSenses,
+    QuestionTypeClassificationDataModel.wordnetHypernymFirstSenseLexicographerFileNames,
+    QuestionTypeClassificationDataModel.wordnetHypernymAllSensesLexicographerFileNames,
+    QuestionTypeClassificationDataModel.wordnetHypernymsFirstSense,
+    QuestionTypeClassificationDataModel.wordnetHypernymsAllSenses,
+    QuestionTypeClassificationDataModel.wordnetPointersFirstSense,
+    QuestionTypeClassificationDataModel.wordnetSynonymsFirstSense,
+    QuestionTypeClassificationDataModel.wordnetSynonymsAllSenses,
+    QuestionTypeClassificationDataModel.wordnetSynonymsAllSenses,
+    QuestionTypeClassificationDataModel.wordGroups
   )
 
   def coarseClassifier(): Unit = {
@@ -69,6 +69,8 @@ object QuestionTypeClassificationApp {
       case 1 => coarseClassifier()
       case 2 => fineClassifier()
       case 3 =>
+        println("QuestionTypeClassificationSensors.wordGroupLists" + QuestionTypeClassificationSensors.wordGroupLists.size)
+        println("QuestionTypeClassificationSensors.wordGroupLists" + QuestionTypeClassificationSensors.wordGroupLists.slice(0, 3))
     }
   }
 }

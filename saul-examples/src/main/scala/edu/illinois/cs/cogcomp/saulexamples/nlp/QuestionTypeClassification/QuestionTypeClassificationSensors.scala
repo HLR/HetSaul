@@ -27,14 +27,20 @@ object QuestionTypeClassificationSensors {
     TextAnnotationFactory.createPipelineAnnotatorService(settings)
   }
 
-  lazy val trainInstances =
-    getInstances("train_1000.label.txt") ++
-      getInstances("train_2000.label.txt") ++
-      getInstances("train_3000.label.txt") ++
-      getInstances("train_4000.label.txt") ++
-      getInstances("train_5500.label.txt")
-
-  lazy val testInstances = getInstances("TREC_10.label.txt")
+  val useTRECAsTest = false
+  lazy val (trainInstances, testInstances) = {
+    if (useTRECAsTest) {
+      val train = getInstances("train_1000.label.txt") ++ getInstances("train_2000.label.txt") ++
+        getInstances("train_3000.label.txt") ++ getInstances("train_4000.label.txt") ++ getInstances("train_5500.label.txt")
+      val test = getInstances("TREC_10.label.txt")
+      (train, test)
+    } else {
+      val train = getInstances("train_1000.label.txt") ++ getInstances("train_2000.label.txt") ++
+        getInstances("train_3000.label.txt") ++ getInstances("train_4000.label.txt")
+      val test = getInstances("train_5500.label.txt")
+      (train, test)
+    }
+  }
 
   def getInstances(fileName: String): List[QuestionTypeInstance] = {
     val allLines = Source.fromFile(new File(dataFolder + fileName), "ISO-8859-1").getLines().toList
@@ -61,7 +67,8 @@ object QuestionTypeClassificationSensors {
   }
 
   lazy val wordGroupLists = {
-    val files: List[File] = getListOfFiles(dataFolder + "public/lists")
+    val files = getListOfFiles(dataFolder + "publish/lists")
+    assert(files.nonEmpty, "list of files not found")
     files.map { f: File => f.getName -> Source.fromFile(f).getLines().toSet.map { line: String => line.toLowerCase.trim } }
   }
 }
