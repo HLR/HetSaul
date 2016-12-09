@@ -75,6 +75,7 @@ object myApp extends Logging {
 
     //dResponseClassifier.testContinuos(patient_drug_data)
     //DrugResponseRegressor.learn(1)
+
     //DrugResponseRegressor.testContinuos(patientDrug.getTrainingInstances)
     logger.info("finished!")
   }

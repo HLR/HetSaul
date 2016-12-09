@@ -8,56 +8,84 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling
 
 import java.io.File
 
-import edu.illinois.cs.cogcomp.core.utilities.configuration.ResourceManager
+import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
 import edu.illinois.cs.cogcomp.saul.classifier.{ ClassifierUtils, JointTrainSparseNetwork }
 import edu.illinois.cs.cogcomp.saul.util.Logging
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLClassifiers._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SemanticRoleLabeling.SRLConstrainedClassifiers.argTypeConstraintClassifier
 
+object SRLscalaConfigurator {
+
+  val TREEBANK_HOME = "../saul-examples/src/test/resources/SRLToy/treebank"
+  val PROPBANK_HOME = "../saul-examples/src/test/resources/SRLToy/propbank"
+
+  val TEST_SECTION = 0
+  val TRAIN_SECTION_S = 2
+  val TRAIN_SECTION_E = 21
+
+  val MODELS_DIR = "../models"
+  val USE_CURATOR = false
+
+  // The running mode of the program. Can be "true" for only testing, or  "false" for training
+  val TEST_MODE: Boolean = true
+
+  // The training mode for the examples. Can be "pipeline", "joint", "jointLoss" or "other"
+  val TRAINING_MODE = "joint"
+
+  /*********** SRL PROPERTIES ***********/
+  // The (sub)directory to store and retrieve the trained SRL models (to be used with MODELS_DIR)
+  val SRL_MODEL_DIR = "srl"
+  val SRL_JAR_MODEL_PATH = "models"
+
+  // This is used to determine the parse view in SRL experiments (can be ViewNames.GOLD or ViewNames.STANFORD)
+  // For replicating the published experiments this needs to be GOLD
+  val SRL_PARSE_VIEW = ViewNames.PARSE_GOLD
+
+  // A file to store the predictions of the SRL classifier (for argument types only)
+  val SRL_OUTPUT_FILE = "srl-predictions.txt"
+
+  // Whether to use gold predicates (if FALSE, predicateClassifier will be used instead)
+  val SRL_GOLD_PREDICATES = true
+
+  // Whether to use gold argument boundaries (if FALSE, argumentXuIdentifierGivenApredicate will be used instead)
+  val SRL_GOLD_ARG_BOUNDARIES = true
+
+  /*Testing parameters*/
+
+  // Should we use the pipeline during testing
+  val SRL_TEST_PIPELINE = false
+  // Should we use constraints during testing
+  val SRL_TEST_CONSTRAINTS = false
+
+  /*Training parameters*/
+
+  // Should we train a predicate classifier given predicate candidates
+  val SRL_TRAIN_PREDICATES = false
+  // Should we train an argument identifier given the XuPalmer argument candidates
+  val SRL_TRAIN_ARG_IDENTIFIERS = false
+  // Should we train an argument type classifier
+  val SRL_TRAIN_ARG_TYPE = true
+
+}
+
 object SRLApps extends Logging {
-  import SRLConfigurator._
 
-  val properties: ResourceManager = {
-    // Load the default properties if the user hasn't entered a file as an argument
-    //if (args.length == 0) {
-    logger.info("Loading default configuration parameters")
-    new SRLConfigurator().getDefaultConfig
-    //} else {
-    // logger.info("Loading parameters from {}", args(0))
-    //new SRLConfigurator().getConfig(new ResourceManager(args(0)))
-    // }
-  }
-  val modelDir = properties.getString(MODELS_DIR) +
-    File.separator + properties.getString(SRLConfigurator.SRL_MODEL_DIR) + File.separator
-  val srlPredictionsFile = properties.getString(SRLConfigurator.SRL_OUTPUT_FILE)
-  val runningMode = properties.getBoolean(SRLConfigurator.RUN_MODE)
-  val trainingMode = properties.getString(SRLConfigurator.TRAINING_MODE)
+  import SRLscalaConfigurator._
 
-  // Training parameters
-  val trainPredicates = properties.getBoolean(SRLConfigurator.SRL_TRAIN_PREDICATES)
-  val trainArgIdentifier = properties.getBoolean(SRLConfigurator.SRL_TRAIN_ARG_IDENTIFIERS)
-  val trainArgType = properties.getBoolean(SRLConfigurator.SRL_TRAIN_ARG_TYPE)
-
-  // Testing parameters
-  val testWithConstraints = properties.getBoolean(SRLConfigurator.SRL_TEST_CONSTRAINTS)
-  val testWithPipeline = properties.getBoolean(SRLConfigurator.SRL_TEST_PIPELINE)
-
-  val useGoldPredicate = properties.getBoolean(SRLConfigurator.SRL_GOLD_PREDICATES)
-  val useGoldBoundaries = properties.getBoolean(SRLConfigurator.SRL_GOLD_ARG_BOUNDARIES)
-
-  val modelJars = properties.getString(SRLConfigurator.SRL_JAR_MODEL_PATH)
+  val modelDir = MODELS_DIR + File.separator + SRL_MODEL_DIR + File.separator
 
   val expName: String = {
-    if (trainingMode.equals("other"))
-      if (trainArgType && useGoldBoundaries && useGoldPredicate && trainingMode.equals("other")) "aTr"
-      else if (trainArgIdentifier && useGoldPredicate && useGoldPredicate) "bTr"
-      else if (trainArgType && useGoldPredicate && !useGoldBoundaries) "cTr"
-      else if (trainPredicates && useGoldPredicate) "dTr"
-      else if (trainArgIdentifier && !useGoldPredicate) "eTr"
-      else if (trainArgType && !useGoldPredicate) "fTr"
+    if (TRAINING_MODE.equals("other"))
+      if (SRL_TRAIN_ARG_TYPE && SRL_GOLD_ARG_BOUNDARIES && SRL_GOLD_PREDICATES && TRAINING_MODE.equals("other")) "aTr"
+      else if (SRL_TRAIN_ARG_IDENTIFIERS && SRL_GOLD_PREDICATES && SRL_GOLD_PREDICATES) "bTr"
+      else if (SRL_TRAIN_ARG_TYPE && SRL_GOLD_PREDICATES && !SRL_GOLD_ARG_BOUNDARIES) "cTr"
+      else if (SRL_TRAIN_PREDICATES && SRL_GOLD_PREDICATES) "dTr"
+      else if (SRL_TRAIN_ARG_IDENTIFIERS && !SRL_GOLD_PREDICATES) "eTr"
+      else if (SRL_TRAIN_ARG_TYPE && !SRL_GOLD_PREDICATES) "fTr"
       else ""
-    else if (trainingMode.equals("pipeline")) "pTr"
-    else if (trainingMode.equals("joint")) "jTr"
+    else if (TRAINING_MODE.equals("pipeline")) "pTr"
+    else if (TRAINING_MODE.equals("joint")) "jTr"
+    else if (TRAINING_MODE.equals("jointLoss")) "lTr"
     else ""
   }
 
@@ -65,7 +93,7 @@ object SRLApps extends Logging {
   logger.info("population starts.")
 
   // Here, the data is loaded into the graph
-  val srlDataModelObject = PopulateSRLDataModel(testOnly = runningMode, useGoldPredicate, useGoldBoundaries)
+  val srlDataModelObject = PopulateSRLDataModel(testOnly = TEST_MODE, SRL_GOLD_PREDICATES, SRL_GOLD_ARG_BOUNDARIES)
 
   import srlDataModelObject._
 
@@ -79,13 +107,14 @@ object SRLApps extends Logging {
 object RunningApps extends App with Logging {
   import SRLApps._
   import SRLApps.srlDataModelObject._
+  import SRLscalaConfigurator._
   // TRAINING
-  if (!runningMode) {
+  if (!TEST_MODE) {
     expName match {
 
       case "aTr" =>
         argumentTypeLearner.modelDir = modelDir + expName
-        argumentTypeLearner.learn(100, relations.getTrainingInstances)
+        argumentTypeLearner.learn(30, relations.getTrainingInstances)
         argumentTypeLearner.test()
         argumentTypeLearner.save()
 
@@ -146,17 +175,26 @@ object RunningApps extends App with Logging {
 
       case "jTr" =>
         argumentTypeLearner.modelDir = modelDir + expName
-        val outputFile = modelDir + srlPredictionsFile
+        val outputFile = modelDir + SRL_OUTPUT_FILE
         logger.info("Global training... ")
-        JointTrainSparseNetwork(sentences, argTypeConstraintClassifier :: Nil, 100, true)
+        JointTrainSparseNetwork(sentences, argTypeConstraintClassifier :: Nil, 30, init = true)
+        argumentTypeLearner.save()
+        argTypeConstraintClassifier.test(relations.getTestingInstances, outputFile, 200, exclude = "candidate")
+
+      case "lTr" =>
+        argumentTypeLearner.modelDir = modelDir + expName
+        val outputFile = modelDir + SRL_OUTPUT_FILE
+        logger.info("Global training using loss augmented inference... ")
+        JointTrainSparseNetwork(sentences, argTypeConstraintClassifier :: Nil, 30, init = true, lossAugmented = true)
         argumentTypeLearner.save()
         argTypeConstraintClassifier.test(relations.getTestingInstances, outputFile, 200, exclude = "candidate")
     }
+
   }
 
   // TESTING
-  if (runningMode) {
-    (testWithPipeline, testWithConstraints) match {
+  if (TEST_MODE) {
+    (SRL_TEST_PIPELINE, SRL_TEST_CONSTRAINTS) match {
 
       case (true, true) =>
         ClassifierUtils.LoadClassifier(SRLConfigurator.SRL_JAR_MODEL_PATH.value + "/models_bTr/", argumentXuIdentifierGivenApredicate)

@@ -31,7 +31,6 @@ Visit each link for its content
  5. [Data modeling and feature extraction](saul-core/doc/DATAMODELING.md)
  6. [Learners and constraints](saul-core/doc/SAULLANGUAGE.md)
  7. [Model configurations](saul-core/doc/MODELS.md)
- 8. [Saul library](saul-core/doc/LBJLIBRARY.md)
 
 The api docs are included [here](http://cogcomp.cs.illinois.edu/software/doc/saul/). 
 

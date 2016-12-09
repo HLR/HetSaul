@@ -35,8 +35,8 @@ OrgClassifier.test()
 
 ### Availale algorithms 
 Here is a list of available algorithms in Saul:
- - [LBJava learning algorithms](https://github.com/IllinoisCogComp/lbjava/blob/master/lbjava/doc/ALGORITHMS.md) 
- - [Weka learning algorithms](https://github.com/IllinoisCogComp/saul/blob/master/saul-core/src/main/java/edu/illinois/cs/cogcomp/saul/learn/SaulWekaWrapper.md)
+ - [LBJava learning algorithms](https://github.com/IllinoisCogComp/lbjava/blob/master/lbjava/doc/ALGORITHMS.md)
+ - [Weka learning algorithms](saul-core/src/main/java/edu/illinois/cs/cogcomp/saul/learn/SaulWekaWrapper.md)
 
 
 ### Saving and loading classifiers
