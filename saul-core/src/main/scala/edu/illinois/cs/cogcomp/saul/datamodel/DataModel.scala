@@ -245,14 +245,8 @@ trait DataModel extends Logging {
     def apply(f: T => List[String])(implicit tag: ClassTag[T], d1: DummyImplicit, d2: DummyImplicit, d3: DummyImplicit,
       d4: DummyImplicit, d5: DummyImplicit, d6: DummyImplicit): DiscreteCollectionProperty[T] = {
       def cachedF = if (cache) { x: T => getOrUpdate(x, f).asInstanceOf[List[String]] } else f
-      val a = if (ordered) {
-        new DiscreteCollectionProperty[T](name, cachedF, ordered = false) with NodeProperty[T] {
-          override def node: Node[T] = papply.node
-        }
-      } else {
-        new DiscreteCollectionProperty[T](name, cachedF, ordered = true) with NodeProperty[T] {
-          override def node: Node[T] = papply.node
-        }
+      val a = new DiscreteCollectionProperty[T](name, cachedF, !ordered) with NodeProperty[T] {
+        override def node: Node[T] = papply.node
       }
       papply.node.properties += a
       properties += a

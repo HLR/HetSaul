@@ -34,6 +34,10 @@ Part-of-Speech Tagging is the identification of words as nouns, verbs, adjective
 7. [Twitter Sentiment Analysis] (src/main/scala/edu/illinois/cs/cogcomp/saulexamples/nlp/TwitterSentimentAnalysis/README.md):
 This example trains models for classifying twitter posts as positive, negative or neutral. It also includes a twitter client for real time processing of the tweets.
 
+8. [Question Type Classification] (src/main/scala/edu/illinois/cs/cogcomp/saulexamples/nlp/QuestionTypeClassification/README.md):
+This example contains a classifications to categorize questions into different semantic classes based on the possible semantic types of the answers. 
+
+
 * Note: Examples are under active development. 
 
 ## Prerequisites for this examples package 
