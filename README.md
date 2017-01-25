@@ -1,4 +1,7 @@
-# Saul: Declarative Learning  Based Programming [![Build Status](https://semaphoreci.com/api/v1/cogcomp/saul/branches/master/badge.svg)](https://semaphoreci.com/cogcomp/saul)
+# Saul: Declarative Learning  Based Programming
+
+[![Build Status](https://semaphoreci.com/api/v1/cogcomp/saul/branches/master/badge.svg)](https://semaphoreci.com/cogcomp/saul)
+[![Build status](https://ci.appveyor.com/api/projects/status/yyd0ythenns5jg72/branch/master?svg=true)](https://ci.appveyor.com/project/bhargavm/saul/branch/master)
 
 Saul is a modeling language implemented as a domain specific language (DSL) in Scala.
 The main goal of Saul is to facilitate designing machine learning models with arbitrary configurations for the application programmer, including:
