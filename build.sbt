@@ -73,7 +73,8 @@ lazy val commonSettings = Seq(
   headers := Map(
     "scala" -> (HeaderPattern.cStyleBlockComment, headerMsg),
     "java" -> (HeaderPattern.cStyleBlockComment, headerMsg)
-  )
+  ),
+  excludeDependencies += "org.slf4j" % "slf4j-log4j12"
 ) ++ publishSettings
 
 lazy val root = (project in file("."))
