@@ -102,10 +102,12 @@ class Node[T <: AnyRef](val keyFunc: T => Any = (x: T) => x, val tag: ClassTag[T
     * @param populateEdge If populating edges from the current Node.
     * @param populateJoinNodes Boolean indication if join nodes needs to be populated.
     */
-  def addInstance(instance: T,
-                  train: Boolean = true,
-                  populateEdge: Boolean = true,
-                  populateJoinNodes: Boolean = true): Unit = {
+  def addInstance(
+    instance: T,
+    train: Boolean = true,
+    populateEdge: Boolean = true,
+    populateJoinNodes: Boolean = true
+  ): Unit = {
     val nodeInstance = toNT(instance)
 
     if (containsNT(nodeInstance)) {
@@ -136,8 +138,7 @@ class Node[T <: AnyRef](val keyFunc: T => Any = (x: T) => x, val tag: ClassTag[T
     }
   }
 
-  /**
-    * Populate current node instances using instances from a different node on the same type.
+  /** Populate current node instances using instances from a different node on the same type.
     * Usage Node: Expected usage is to copy nodes from one DataModel to another.
     *
     * @param n Node to populate instances from.
@@ -148,10 +149,12 @@ class Node[T <: AnyRef](val keyFunc: T => Any = (x: T) => x, val tag: ClassTag[T
   }
 
   /** Operator for adding a sequence of T into my table. */
-  def populate(ts: Iterable[T],
-               train: Boolean = true,
-               populateEdge: Boolean = true,
-               populateJoinNodes: Boolean = true) : Unit = {
+  def populate(
+    ts: Iterable[T],
+    train: Boolean = true,
+    populateEdge: Boolean = true,
+    populateJoinNodes: Boolean = true
+  ): Unit = {
     ts.foreach(addInstance(_, train, populateEdge, populateJoinNodes))
   }
 
