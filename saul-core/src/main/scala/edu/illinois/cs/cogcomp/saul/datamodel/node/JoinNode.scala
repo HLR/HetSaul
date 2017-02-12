@@ -34,12 +34,12 @@ class JoinNode[A <: AnyRef, B <: AnyRef](val na: Node[A], val nb: Node[B], match
     }
   }
 
-  override def addInstance(t: (A, B), train: Boolean, populateEdge: Boolean = true): Unit = {
+  override def addInstance(t: (A, B), train: Boolean, populateEdge: Boolean = true, populateJoinNodes: Boolean = true): Unit = {
     assert(matcher(t._1, t._2))
     if (!contains(t)) {
-      super.addInstance(t, train, populateEdge)
-      na.addInstance(t._1, train, populateEdge)
-      nb.addInstance(t._2, train, populateEdge)
+      super.addInstance(t, train, populateEdge, populateJoinNodes)
+      na.addInstance(t._1, train, populateEdge, populateJoinNodes)
+      nb.addInstance(t._2, train, populateEdge, populateJoinNodes)
     }
   }
 }

@@ -132,7 +132,10 @@ trait DataModel extends Logging {
   def join[A <: AnyRef, B <: AnyRef](a: Node[A], b: Node[B])(matcher: (A, B) => Boolean)(implicit tag: ClassTag[(A, B)]): Node[(A, B)] = {
     val n = new JoinNode(a, b, matcher, tag)
     a.joinNodes += n
-    b.joinNodes += n
+
+    if (b != a) {
+      b.joinNodes += n
+    }
     nodes += n
     n
   }
