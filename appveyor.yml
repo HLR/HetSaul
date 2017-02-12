@@ -16,7 +16,8 @@ build_script:
   - sbt formatCheckStrict test:formatCheckStrict it:formatCheckStrict compile
   - sbt "project saulWebapp" compile
 test_script:
-  - sbt test
+  - sbt "test-only -- -l edu.illinois.cs.cogcomp.saulexamples.HighMemoryTest"
 cache:
-  - C:\Users\appveyor\.m2
-  - C:\Users\appveyor\.ivy2
+  - C:\ProgramData\chocolatey\bin -> appveyor.yml
+  - C:\ProgramData\chocolatey\lib -> appveyor.yml
+  - '%USERPROFILE%\.ivy2\cache -> build.sbt'
