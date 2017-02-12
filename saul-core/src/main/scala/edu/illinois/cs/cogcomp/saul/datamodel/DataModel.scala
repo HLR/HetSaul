@@ -133,6 +133,7 @@ trait DataModel extends Logging {
     val n = new JoinNode(a, b, matcher, tag)
     a.joinNodes += n
 
+    // If nodes `a` and `b` are the same Node type, do not double-count join nodes.
     if (b != a) {
       b.joinNodes += n
     }
