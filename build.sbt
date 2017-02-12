@@ -106,7 +106,8 @@ lazy val saulExamples = (project in file("saul-examples")).
       "org.json" % "json" % "20140107",
       "com.twitter" % "hbc-core" % "2.2.0",
       "org.rogach" %% "scallop" % "2.0.5"
-    )
+    ),
+    excludeDependencies += ccgGroupId % "illinois-srl-models"
   ).dependsOn(saulCore)
   .aggregate(saulCore)
   .enablePlugins(AutomateHeaderPlugin)
