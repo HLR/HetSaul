@@ -6,12 +6,13 @@
   */
 package edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling
 
+import edu.illinois.cs.cogcomp.saulexamples.HighMemoryTest
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling.Triplet.{ SpRelation, SpRelationLabels }
-import org.scalatest.{ FlatSpec, Matchers }
+import org.scalatest.{ BeforeAndAfter, FlatSpec, Matchers }
 
 /** Created by taher on 8/14/16.
   */
-class SpRLDataModelReaderTests extends FlatSpec with Matchers {
+class SpRLDataModelReaderTests extends FlatSpec with BeforeAndAfter with Matchers {
   val path = getResourcePath("SpRL/2012/")
 
   private def getResourcePath(relativePath: String): String =
@@ -19,9 +20,18 @@ class SpRLDataModelReaderTests extends FlatSpec with Matchers {
 
   import SpRLDataModel._
 
-  PopulateSpRLDataModel(path, true, "2012", "Relation", null)
+  // Trigger population of data model only use by wrapping it behind a lazy val
+  private lazy val populateDataModelTrigger: Boolean = {
+    PopulateSpRLDataModel(path, true, "2012", "Relation", null)
 
-  "SpRL Data Model Reader" should "Reads data correctly." in {
+    true
+  }
+
+  before {
+    populateDataModelTrigger
+  }
+
+  "SpRL Data Model Reader" should "Reads data correctly." taggedAs (HighMemoryTest) in {
 
     val sentenceList = sentences().collect {
       case s if !s.getSentence.getSentenceConstituent.getTextAnnotation.getId.startsWith("example.xml") =>
@@ -45,7 +55,7 @@ class SpRLDataModelReaderTests extends FlatSpec with Matchers {
       x.getLabel == Triplet.SpRelationLabels.GOLD) should be(2)
   }
 
-  "SpRL Data Model Features" should "be correct for examples of the paper." in {
+  "SpRL Data Model Features" should "be correct for examples of the paper." taggedAs (HighMemoryTest) in {
     val examples = sentences().collect {
       case s if s.getSentence.getSentenceConstituent.getTextAnnotation.getId.startsWith("example.xml") =>
         s.getSentence
