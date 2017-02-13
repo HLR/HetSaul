@@ -133,6 +133,7 @@ class Node[T <: AnyRef](val keyFunc: T => Any = (x: T) => x, val tag: ClassTag[T
       }
 
       if (populateJoinNodes) {
+        // TODO: Populating join nodes takes significant amount of time on large graphs. Investigate.
         joinNodes.foreach(_.addFromChild(this, instance, train, populateEdge))
       }
     }

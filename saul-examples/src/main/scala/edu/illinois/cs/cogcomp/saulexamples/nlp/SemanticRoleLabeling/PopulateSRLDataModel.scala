@@ -93,7 +93,7 @@ object PopulateSRLDataModel extends Logging {
         TRAIN_SECTION_S, TRAIN_SECTION_E)
       trainReader.readData()
       logger.info(s"Annotating ${trainReader.textAnnotations.size} training sentences")
-      val filteredTa = addViewAndFilter(trainReader.textAnnotations.toList)
+      val filteredTa = addViewAndFilter(trainReader.textAnnotations)
       printNumbers(trainReader, "training")
       logger.info("Populating SRLDataModel with training data.")
 
