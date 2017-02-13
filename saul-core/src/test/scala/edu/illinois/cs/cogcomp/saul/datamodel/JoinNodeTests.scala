@@ -6,8 +6,7 @@
   */
 package edu.illinois.cs.cogcomp.saul.datamodel
 
-import org.scalatest.{BeforeAndAfter, FlatSpec, Matchers}
-
+import org.scalatest.{ BeforeAndAfter, FlatSpec, Matchers }
 
 class JoinNodeTests extends FlatSpec with Matchers with BeforeAndAfter {
 
@@ -21,12 +20,13 @@ class JoinNodeTests extends FlatSpec with Matchers with BeforeAndAfter {
     val joinNames = join(names, names)((_: String, _: String) => true) // all-pairs
     val joinNamesFirstCharMatch = join(names, names)((a: String, b: String) => a.charAt(0) == b.charAt(0))
 
-    val joinNodeWithChar = join(names, characters)((_: String, _:Character) => true) // all-pairs
+    val joinNodeWithChar = join(names, characters)((_: String, _: Character) => true) // all-pairs
     val joinNodeWithCharFirstCharMatch = join(names, characters)((a: String, b: Character) => a.charAt(0) == b)
 
     // Probably an unreal use-case.
     val complexJoinNode = join(joinNodeWithCharFirstCharMatch, characters)(
-      { case ((_: String, _: Character), _: Character) => true }) // all-pairs
+      { case ((_: String, _: Character), _: Character) => true }
+    ) // all-pairs
   }
 
   before {
@@ -42,17 +42,17 @@ class JoinNodeTests extends FlatSpec with Matchers with BeforeAndAfter {
     val numNames = data.size
     val numChars = data.flatMap(_.toList.map(_.toUpper)).distinct.size
 
-    names.getAllInstances.size should be (numNames)
-    characters.getAllInstances.size should be (numChars)
+    names.getAllInstances.size should be(numNames)
+    characters.getAllInstances.size should be(numChars)
 
-    joinNames.getAllInstances.size should be (10) // 4_choose_2 + 4
+    joinNames.getAllInstances.size should be(10) // 4_choose_2 + 4
 
-    joinNamesFirstCharMatch.getAllInstances.size should be (5) // A=2_choose_2 + 2; B=1; M=1
+    joinNamesFirstCharMatch.getAllInstances.size should be(5) // A=2_choose_2 + 2; B=1; M=1
 
-    joinNodeWithChar.getAllInstances.size should be (numNames * numChars) // all-pairs
+    joinNodeWithChar.getAllInstances.size should be(numNames * numChars) // all-pairs
 
-    joinNodeWithCharFirstCharMatch.getAllInstances.size should be (numNames) // one for each name.
+    joinNodeWithCharFirstCharMatch.getAllInstances.size should be(numNames) // one for each name.
 
-    complexJoinNode.getAllInstances.size should be (numNames * numChars)
+    complexJoinNode.getAllInstances.size should be(numNames * numChars)
   }
 }
