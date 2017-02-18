@@ -22,7 +22,6 @@ class LBJavaSerializationTest extends FlatSpec with Matchers {
 
     SpamDataModel.email.populate(trainData)
     SpamDataModel.email.populate(testData, train = false)
-    SpamClassifier.forget()
     SpamClassifier.learn(10)
 
     val predictionsBeforeSerialization = testData.map(SpamClassifier(_))
@@ -30,7 +29,6 @@ class LBJavaSerializationTest extends FlatSpec with Matchers {
     SpamClassifier.save()
     DeserializedSpamClassifier.load(SpamClassifier.lcFilePath, SpamClassifier.lexFilePath)
     val predictionsAfterSerialization = testData.map(DeserializedSpamClassifier(_))
-    // predictionsAfterSerialization.indices.foreach(it => println(s"For $it - ${predictionsBeforeSerialization(it)} // after ${predictionsAfterSerialization(it)}"))
     predictionsAfterSerialization.indices.forall(it => predictionsBeforeSerialization(it) == predictionsAfterSerialization(it)) should be(true)
   }
 }
