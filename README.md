@@ -19,7 +19,7 @@ The project contains three modules. See the readme files for each module:
 
 - [Saul core](#Tutorial)
 - [Saul examples](saul-examples/README.md)
-- [Saul webapp] (saul-webapp/README.md)
+- [Saul webapp](saul-webapp/README.md)
 
 The project's [official chat group is at Slack](https://cogcomp.slack.com/messages/saul/)
 
@@ -28,8 +28,8 @@ The project's [official chat group is at Slack](https://cogcomp.slack.com/messag
 Visit each link for its content
 <a name="Tutorial"></a>
  1. [Introduction](saul-core/doc/INTRO.md)
- 2. [Installation] (saul-core/doc/INSTALLATION.md)
- 3. [Programmers workflow] (saul-core/doc/WORKFLOW.md)
+ 2. [Installation](saul-core/doc/INSTALLATION.md)
+ 3. [Programmers workflow](saul-core/doc/WORKFLOW.md)
  4. [Conceptual structure of a Saul program](saul-core/doc/CONCEPTUALSTRUCTURE.md)
  5. [Data modeling and feature extraction](saul-core/doc/DATAMODELING.md)
  6. [Learners and constraints](saul-core/doc/SAULLANGUAGE.md)
