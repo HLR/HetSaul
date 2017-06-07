@@ -51,7 +51,7 @@ object JointTrainSparseNetwork {
 
             cls.foreach {
               currentClassifier: ConstrainedClassifier[_, HEAD] =>
-                assert(currentClassifier.onClassifier.classifier.getClass.getName.contains("SparseNetworkLearner"), "The classifier should be of type SparseNetworkLearner!")
+                assert(currentClassifier.onClassifier.classifier.isInstanceOf[SparseNetworkLearner], "The classifier should be of type SparseNetworkLearner!")
                 val oracle = currentClassifier.onClassifier.getLabeler
                 val baseClassifier = currentClassifier.onClassifier.classifier.asInstanceOf[SparseNetworkLearner]
                 currentClassifier.getCandidates(h) foreach {
