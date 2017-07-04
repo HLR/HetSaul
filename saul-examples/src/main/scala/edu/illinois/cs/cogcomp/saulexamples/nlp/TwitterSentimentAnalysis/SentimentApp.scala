@@ -16,8 +16,8 @@ import scala.collection.JavaConversions._
   */
 object SentimentApp extends App {
 
-  val TrainReader = new TweetReader("../data/twitter/train50k.csv.gz")
-  val TestReader = new TweetReader("../data/twitter/test.csv.gz")
+  val TrainReader = new TweetReader("./data/twitter/train50k.csv.gz")
+  val TestReader = new TweetReader("./data/twitter/test.csv.gz")
 
   tweet.populate(TrainReader.tweets.toList)
   tweet.populate(TestReader.tweets.toList, train = false)
