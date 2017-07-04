@@ -57,6 +57,15 @@ First, run `sbt`.
 - Inside each project you can `compile` it, or `run` it. 
 - To fix the formatting problems, run `format`
 
+### Compiling Saul on Windows
+
+To run Saul on Windows installations, make sure that the Java Development Kit (JDK) and the Simple Build Tool ([sbt](http://www.scala-sbt.org/1.0/docs/Installing-sbt-on-Windows.html])) are installed and available on the PATH.
+
+Also you will have to set the environment variable
+
+```cmd
+set JAVA_TOOL_OPTIONS=-Dfile.encoding=UTF8
+```
 
 ## Installing Solvers for Inference 
 Saul uses the the solvers included in [illinois-inference](https://gitlab-beta.engr.illinois.edu/cogcomp/inference/) 

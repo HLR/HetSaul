@@ -54,7 +54,7 @@ object PopulateSRLDataModel extends Logging {
       case ViewNames.PARSE_GOLD => new ClauseViewGenerator(parseViewName, "CLAUSES_GOLD")
       case ViewNames.PARSE_STANFORD => ClauseViewGenerator.STANFORD
     }
-    def addViewAndFilter(taAll: List[TextAnnotation]): List[TextAnnotation] = {
+    def addViewAndFilter(taAll: Iterable[TextAnnotation]): Iterable[TextAnnotation] = {
       taAll.map { ta =>
         try {
           annotatorService.addView(ta, ViewNames.LEMMA)
@@ -93,14 +93,13 @@ object PopulateSRLDataModel extends Logging {
         TRAIN_SECTION_S, TRAIN_SECTION_E)
       trainReader.readData()
       logger.info(s"Annotating ${trainReader.textAnnotations.size} training sentences")
-      val filteredTa = addViewAndFilter(trainReader.textAnnotations.toList)
+      val filteredTa = addViewAndFilter(trainReader.textAnnotations)
       printNumbers(trainReader, "training")
       logger.info("Populating SRLDataModel with training data.")
 
       filteredTa.foreach { a =>
         gr = new SRLMultiGraphDataModel(parseViewName, frameManager)
         if (!useGoldPredicate) {
-          gr.sentencesToTokens.addSensor(textAnnotationToTokens _)
           gr.sentences.populate(Seq(a))
           val predicateTrainCandidates = gr.tokens.getTrainingInstances.
             collect { case x: Constituent if gr.posTag(x).startsWith("VB") => x.cloneForNewView(ViewNames.SRL_VERB) }
@@ -111,7 +110,6 @@ object PopulateSRLDataModel extends Logging {
         logger.debug("gold relations for this train:" + gr.relations().size)
         if (!useGoldArgBoundaries) {
           val XuPalmerCandidateArgsTraining = gr.predicates.getTrainingInstances.flatMap(x => xuPalmerCandidate(x, (gr.sentences(x.getTextAnnotation) ~> gr.sentencesToStringTree).head))
-          gr.sentencesToRelations.addSensor(textAnnotationToRelationMatch _)
           gr.relations.populate(XuPalmerCandidateArgsTraining)
         }
         logger.debug("all relations for this test:" + gr.relations().size)
@@ -125,7 +123,7 @@ object PopulateSRLDataModel extends Logging {
     testReader.readData()
 
     logger.info(s"Annotating ${testReader.textAnnotations.size} test sentences")
-    val filteredTest = addViewAndFilter(testReader.textAnnotations.toList)
+    val filteredTest = addViewAndFilter(testReader.textAnnotations)
 
     printNumbers(testReader, "test")
 
@@ -133,7 +131,6 @@ object PopulateSRLDataModel extends Logging {
     filteredTest.foreach { a =>
       gr = new SRLMultiGraphDataModel(parseViewName, frameManager)
       if (!useGoldPredicate) {
-        gr.sentencesToTokens.addSensor(textAnnotationToTokens _)
         gr.sentences.populate(Seq(a), train = false)
         val predicateTestCandidates = gr.tokens.getTestingInstances.
           collect { case x: Constituent if gr.posTag(x).startsWith("VB") => x.cloneForNewView(ViewNames.SRL_VERB) }
@@ -144,7 +141,6 @@ object PopulateSRLDataModel extends Logging {
       logger.debug("gold relations for this test:" + gr.relations().size)
       if (!useGoldArgBoundaries) {
         val XuPalmerCandidateArgsTesting = gr.predicates.getTestingInstances.flatMap(x => xuPalmerCandidate(x, (gr.sentences(x.getTextAnnotation) ~> gr.sentencesToStringTree).head))
-        gr.sentencesToRelations.addSensor(textAnnotationToRelationMatch _)
         gr.relations.populate(XuPalmerCandidateArgsTesting, train = false)
       }
       logger.debug("all relations for this test:" + gr.relations().size)

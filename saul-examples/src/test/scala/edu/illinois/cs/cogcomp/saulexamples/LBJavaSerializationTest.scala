@@ -7,6 +7,7 @@
 package edu.illinois.cs.cogcomp.saulexamples
 
 import edu.illinois.cs.cogcomp.saulexamples.nlp.EdisonFeatures.toyDataGenerator
+import edu.illinois.cs.cogcomp.saulexamples.nlp.EmailSpam.SpamClassifiers._
 import edu.illinois.cs.cogcomp.saulexamples.nlp.EmailSpam.SpamDataModel
 
 import org.scalatest.{ Matchers, FlatSpec }
@@ -16,18 +17,18 @@ class LBJavaSerializationTest extends FlatSpec with Matchers {
   /** making sure that serialization is working the way it is supposed to be */
   "LBJava serialization " should " work " in {
 
-    /*
     val trainData = toyDataGenerator.generateToyDocuments(100)
     val testData = toyDataGenerator.generateToyDocuments(100).toList
 
-    spamDataModel.docs populate trainData
-    spamClassifier.learn(10)
-    val predictionsBeforeSerialization = testData.map(spamClassifier(_))
+    SpamDataModel.email.populate(trainData)
+    SpamDataModel.email.populate(testData, train = false)
+    SpamClassifier.learn(10)
 
-    spamClassifier.save()
-    deserializedSpamClassifier.load(spamClassifier.lcFilePath, spamClassifier.lexFilePath)
-    val predictionsAfterSerialization = testData.map(deserializedSpamClassifier(_))
+    val predictionsBeforeSerialization = testData.map(SpamClassifier(_))
+
+    SpamClassifier.save()
+    DeserializedSpamClassifier.load(SpamClassifier.lcFilePath, SpamClassifier.lexFilePath)
+    val predictionsAfterSerialization = testData.map(DeserializedSpamClassifier(_))
     predictionsAfterSerialization.indices.forall(it => predictionsBeforeSerialization(it) == predictionsAfterSerialization(it)) should be(true)
-*/
   }
 }
