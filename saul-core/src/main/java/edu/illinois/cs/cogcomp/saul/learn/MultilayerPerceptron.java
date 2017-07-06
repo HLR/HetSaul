@@ -1,5 +1,6 @@
 package edu.illinois.cs.cogcomp.saul.learn;
 
+import edu.illinois.cs.cogcomp.core.datastructures.vectors.ExceptionlessInputStream;
 import edu.illinois.cs.cogcomp.core.datastructures.vectors.ExceptionlessOutputStream;
 import edu.illinois.cs.cogcomp.lbjava.classify.*;
 import edu.illinois.cs.cogcomp.lbjava.learn.Learner;
@@ -20,18 +21,27 @@ import java.util.Random;
  */
 
 final public class MultilayerPerceptron extends Learner{
+    /**
+     * Activation function codes. When calling the {@link MultilayerPerceptron} constructor to specify activation functions, use these values to specify
+     * the activation functions.
+     */
     private static final int SIGMOID = 1;
     private static final int TANH = 2;
     private static final int RELU = 3;
     private static final int LEAKY_RELU = 4;
     private static final int SOFTPLUS = 5;
 
-    //Default learning parameters
+    /**
+     * Default neural network learning parameters.
+     */
     private static double default_learning_rate = 0.1d;
     private static double default_momentum = 0.1d;
     private static double default_lambda = 0.00001d;
 
-    //Default network parameters. For sparse feature vectors, the network will automatically resize itself.
+    /**
+     * Default parameters for network initialization. For classification tasks, each node of the output layer corresponds
+     * to a class. The default setting below is for binary classification.
+     */
     private static int default_num_inputs = 128;
     private static int[] default_hidden_layers =  new int[]{};
     private static int[] default_activation_function = {SIGMOID};
@@ -73,14 +83,91 @@ final public class MultilayerPerceptron extends Learner{
             Arrays.fill(errors,0.0d);
             this.activation_function = activation_function;
         }
+
+        public void write(ExceptionlessOutputStream out){
+            out.writeInt(weights.length);
+            out.writeInt(weights[0].length);
+            for (int i = 0; i < weights.length; i++) {
+                for (int j = 0; j < weights[i].length; j++){
+                    out.writeDouble(weights[i][j]);
+                    out.writeDouble(gradients[i][j]);
+                    out.writeDouble(prev_gradients[i][j]);
+                }
+            }
+            out.writeInt(pre_activation.length);
+            for (int i = 0; i < pre_activation.length; i++) {
+                out.writeDouble(pre_activation[i]);
+                out.writeDouble(post_activation[i]);
+                out.writeDouble(errors[i]);
+            }
+            out.writeInt(activation_function);
+        }
+
+        public void write(PrintStream out){
+            out.println(weights.length);
+            out.println(weights[0].length);
+            for (int i = 0; i < weights.length; i++) {
+                for (int j = 0; j < weights[i].length; j++){
+                    out.println(weights[i][j]);
+                    out.println(gradients[i][j]);
+                    out.println(prev_gradients[i][j]);
+                }
+            }
+            out.println(pre_activation.length);
+            for (int i = 0; i < pre_activation.length; i++) {
+                out.println(pre_activation[i]);
+                out.println(post_activation[i]);
+                out.println(errors[i]);
+            }
+            out.println(activation_function);
+        }
+
+        public void read(ExceptionlessInputStream in){
+            int num_rows = in.readInt();
+            int num_elements = in.readInt();
+            weights = new double[num_rows][num_elements];
+            gradients = new double[num_rows][num_elements];
+            prev_gradients = new double[num_rows][num_elements];
+            for (int i = 0; i < num_rows; i++){
+                for (int j = 0; j < num_elements; j++){
+                    weights[i][j] = in.readDouble();
+                    gradients[i][j] = in.readDouble();
+                    prev_gradients[i][j] = in.readDouble();
+                }
+            }
+            num_elements = in.readInt();
+            pre_activation = new double[num_elements];
+            post_activation = new double[num_elements];
+            errors = new double[num_elements];
+            for (int i = 0; i < num_elements; i++){
+                pre_activation[i] = in.readDouble();
+                post_activation[i] = in.readDouble();
+                errors[i] = in.readDouble();
+            }
+            activation_function = in.readInt();
+        }
     }
 
-    //Construct a perceptron with the default parameters defined above.
+
+    /**
+     * Construct a perceptron with the default parameters defined above.
+     */
     public MultilayerPerceptron(){
         this(default_num_inputs,default_num_outputs,default_hidden_layers,default_activation_function);
     }
 
-    //Construct a perceptron with user specified parameters.
+    /**
+     * Construct a perceptron with user specified parameters.
+     * @param num_inputs Number of dimensions for (input) feature vector
+     * @param num_outputs Number of nodes at output layer. For classification tasks, use one output node for each
+     * possible class label.
+     * @param hidden_layers Specify hidden layers. For example, {5,6,5} describes a neural network with three
+     * fully connected hidden layers having sizes of 5,6,5 respectively.
+     * @param activation_function Specify the activation functions for the layers, based on the codes for each function.
+     * Number of entries in this array must be equal to 1 plus the number of hidden layers. The last entry corresponds
+     * to activation of the output layer, which should always be sigmoid. For example, a network
+     * with one hidden layer with a tanh at hidden layer and sigmoid at output layer can be specified with {2,1}.
+     */
     public MultilayerPerceptron(int num_inputs, int num_outputs, int[] hidden_layers, int [] activation_function){
         super("");
         int[] layer_size = new int[hidden_layers.length+2];
@@ -124,12 +211,13 @@ final public class MultilayerPerceptron extends Learner{
     }
 
     /**
-     * Trains the neural network on a sparse input vector, using default learning parameters. Use for binary
-     * classification only.
+     * Trains the neural network on a sparse input vector, using default learning parameters.
+     *
+     * @TODO Only works for binary classification now.
      *
      * @param exampleFeatures The example's array of feature indices.
      * @param exampleValues The example's array of feature values.
-     * @param exampleLabels The example's label(s).
+     * @param exampleLabels The example's label(s). Should be {0} or {1}.
      * @param labelValues The labels' values.
      */
     public void learn(int[] exampleFeatures, double[] exampleValues, int[] exampleLabels, double[] labelValues){
@@ -313,20 +401,27 @@ final public class MultilayerPerceptron extends Learner{
                 "positive", (short)0, (short)0);
     }
 
-    //compute activation given an input feature vector
+    /**
+     * Returns the output layer given an input test feature vector. Use for testing.
+     *
+     * @param input The real input feature vector being tested.
+     * @return The output layer, after the activation function has been applied.
+     */
     public double[] infer(double[] input){
         compute_activation(input);
         return layers[layers.length-1].post_activation;
     }
 
-    //compute activation given a sparse input feature vector
+    /**
+     * Returns the output layer given a sparse input test feature vector. Use for testing.
+     *
+     * @param exampleFeatures The example's array of feature indices.
+     * @param exampleValues The example's array of feature values.
+     * @return The output layer, after the activation function has been applied.
+     */
     public double[] infer (int[] exampleFeatures, double[] exampleValues){
         compute_activation(exampleFeatures,exampleValues);
-        double[] result = new double[layers[layers.length-1].errors.length];
-        for (int i = 0; i < result.length; i++){
-            result[i] = layers[layers.length-1].post_activation[i];
-        }
-        return result;
+        return layers[layers.length-1].post_activation;
     }
 
     //apply the activation function, given the argument and the type of activation function to be used
@@ -423,21 +518,61 @@ final public class MultilayerPerceptron extends Learner{
     }
 
     public ScoreSet scores(Object example){
-        return null;
+        Object[] exampleArray = getExampleArray(example, false);
+        return scores((int[]) exampleArray[0], (double[]) exampleArray[1]);
     }
 
+    /**
+     * Returns the ScoreSet specifying confidence for each output class label.
+     *
+     * @param exampleFeatures The example's array of feature indices.
+     * @param exampleValues The example's array of feature values.
+     * @return ScoreSet object consisting of each output label and the corresponding score.
+     */
     public ScoreSet scores(int[] exampleFeatures, double[] exampleValues) {
-        return null;
+        ScoreSet result = new ScoreSet();
+        double[] out = infer(exampleFeatures,exampleValues);
+        for (int i = 0; i < out.length; i++) {
+            result.put(labelLexicon.lookupKey(i).getStringValue(),out[i]);
+        }
+        return result;
     }
 
+    //serializing
     public void write(ExceptionlessOutputStream out) {
+        super.write(out);
+        out.writeInt(layers.length);
+        for (int i = 0; i < layers.length; i++) {
+            layers[i].write(out);
+        }
         out.close();
     }
 
     public void write(PrintStream out) {
+        out.println(layers.length);
+        for (int i = 0; i < layers.length; i++) {
+            layers[i].write(out);
+        }
+        out.println("End of MultilayerPerceptron");
         out.close();
     }
 
+    //deserializing
+    public void read(ExceptionlessInputStream in) {
+        super.read(in);
+        int num_layers = in.readInt();
+        for (int i = 0; i < num_layers; i++) {
+            layers[i].read(in);
+        }
+    }
+
+    /**
+     * Returns the ScoreSet specifying confidence for each output class label.
+     *
+     * @param exampleFeatures The example's array of feature indices.
+     * @param exampleValues The example's array of feature values.
+     * @return ScoreSet object consisting of each output label and the corresponding score.
+     */
     public FeatureVector classify(int[] exampleFeatures, double[] exampleValues) {
         double result = infer(exampleFeatures,exampleValues)[0];
         return new FeatureVector(new RealPrimitiveStringFeature(containingPackage, name,"",result));
@@ -445,7 +580,7 @@ final public class MultilayerPerceptron extends Learner{
 
     public String discreteValue(int[] exampleFeatures, double[] exampleValues){
         /*if (((++iterations2)%100) == 0) {
-            System.out.println("learning: " + iterations2);
+            System.out.println("testing: " + iterations2);
         }*/
         return featureValue(exampleFeatures,exampleValues).getStringValue();
     }
