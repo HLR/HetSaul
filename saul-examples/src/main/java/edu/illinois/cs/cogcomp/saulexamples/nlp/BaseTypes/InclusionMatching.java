@@ -4,12 +4,15 @@
   * Developed by: The Cognitive Computations Group, University of Illinois at Urbana-Champaign
   * http://cogcomp.cs.illinois.edu/
   */
-package edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling.Triplet;
+package edu.illinois.cs.cogcomp.saulexamples.nlp.BaseTypes;
 
 /**
- * Created by Taher on 2016-09-10.
+ * Created by Taher on 2016-12-28.
  */
-public enum SpRelationLabels {
-    GOLD,
-    CANDIDATE,
+public class InclusionMatching implements ISpanElementMatching {
+
+    @Override
+    public boolean matches(ISpanElement xmlElement, ISpanElement element) {
+        return xmlElement.contains(element);
+    }
 }

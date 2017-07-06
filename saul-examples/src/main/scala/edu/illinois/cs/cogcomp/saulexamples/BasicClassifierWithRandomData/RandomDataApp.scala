@@ -18,5 +18,5 @@ object RandomDataApp extends App {
   RandomDataModel.deriveInstances()
   RandomDataModel.write(graphCacheFile)
   BinaryClassifier.learn(30)
-  BinaryClassifier.test(examples)
+  BinaryClassifier.testContinuous(examples)
 }

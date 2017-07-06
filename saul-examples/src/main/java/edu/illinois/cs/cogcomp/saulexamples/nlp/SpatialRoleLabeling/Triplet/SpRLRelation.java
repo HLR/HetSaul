@@ -9,6 +9,8 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling.Triplet;
 import edu.illinois.cs.cogcomp.core.datastructures.IntPair;
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.Sentence;
 import edu.illinois.cs.cogcomp.core.datastructures.textannotation.TextAnnotation;
+import edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling.Eval.RelationEval;
+import edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling.SpRLSentence;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,25 +18,33 @@ import java.util.List;
 /**
  * Created by taher on 8/10/16.
  */
-public class SpRelation {
+public class SpRLRelation {
     private final SpRole trajector;
     private final SpRole spatialIndicator;
     private final SpRole landmark;
-    private final SpRelationLabels label;
+    private final SpRLLabels relationLabel;
+    private final SpRLLabels spLabel;
+    private final SpRLLabels trLabel;
+    private final SpRLLabels lmLabel;
     private final Sentence sentence;
     private final List<SpRole> orderedArgs;
     private final String relationId;
+    private final IntPair sentenceOffset;
 
 
-    public SpRelation(Sentence sentence, IntPair trajectorSpan, IntPair spatialIndicatorSpan,
-                      IntPair landmarkSpan, SpRelationLabels label, String relationId) {
+    public SpRLRelation(SpRLSentence sentence, IntPair trajectorSpan, IntPair spatialIndicatorSpan,
+                        IntPair landmarkSpan, SpRLLabels relationLabel, SpRLLabels spLabel, SpRLLabels trLabel, SpRLLabels lmLabel, String relationId) {
 
-        this.trajector = new SpRole(trajectorSpan, SpRoleTypes.TRAJECTOR, sentence);
-        this.spatialIndicator = new SpRole(spatialIndicatorSpan, SpRoleTypes.INDICATOR, sentence);
+        this.trajector = new SpRole(trajectorSpan, SpRoleTypes.TRAJECTOR, sentence.getSentence());
+        this.spatialIndicator = new SpRole(spatialIndicatorSpan, SpRoleTypes.INDICATOR, sentence.getSentence());
         this.landmark = landmarkSpan == null ? null :
-                new SpRole(landmarkSpan, SpRoleTypes.LANDMARK, sentence);
-        this.label = label;
-        this.sentence = sentence;
+                new SpRole(landmarkSpan, SpRoleTypes.LANDMARK, sentence.getSentence());
+        this.relationLabel = relationLabel;
+        this.spLabel = spLabel;
+        this.trLabel = trLabel;
+        this.lmLabel = lmLabel;
+        this.sentence = sentence.getSentence();
+        this.sentenceOffset = sentence.getOffset();
 
         orderedArgs = new ArrayList<SpRole>();
         getOrderedArgs().add(this.getTrajector());
@@ -47,12 +57,20 @@ public class SpRelation {
         getOrderedArgs().sort(null);
     }
 
-    public boolean landmarkIsDefined() {
-        return getLandmark() != null;
+    public RelationEval getRelationEval(){
+        int offset = sentenceOffset.getFirst();
+        int lmStart = landmarkIsDefined()? getLandmark().getFirstConstituent().getStartCharOffset() + offset: -1;
+        int lmEnd = landmarkIsDefined()? getLandmark().getFirstConstituent().getEndCharOffset() + offset: -1;
+        int trStart = getTrajector().getFirstConstituent().getStartCharOffset() + offset;
+        int trEnd = getTrajector().getFirstConstituent().getEndCharOffset() + offset;
+        int spStart = getSpatialIndicator().getFirstConstituent().getStartCharOffset() + offset;
+        int spEnd = getSpatialIndicator().getFirstConstituent().getEndCharOffset() + offset;
+
+        return new RelationEval(trStart, trEnd, spStart, spEnd, lmStart, lmEnd);
     }
 
-    public SpRelationLabels getLabel() {
-        return label;
+    public boolean landmarkIsDefined() {
+        return getLandmark() != null;
     }
 
     public Sentence getSentence() {
@@ -117,11 +135,30 @@ public class SpRelation {
         List<String> texts = new ArrayList<>();
         for (SpRole a : orderedArgs)
             texts.add(a.getText() + "[" + a.getSpRoleType().toString() + "]");
-        return String.join(" ", texts) + ": " + getLabel();
+        return String.join(" ", texts) + ": " + getRelationLabel();
     }
 
     public String getRelationId() {
         return relationId;
     }
 
+    public SpRLLabels getRelationLabel() {
+        return relationLabel;
+    }
+
+    public SpRLLabels getSpLabel() {
+        return spLabel;
+    }
+
+    public SpRLLabels getTrLabel() {
+        return trLabel;
+    }
+
+    public SpRLLabels getLmLabel() {
+        return lmLabel;
+    }
+
+    public IntPair getSentenceOffset() {
+        return sentenceOffset;
+    }
 }

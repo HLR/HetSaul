@@ -12,6 +12,7 @@ import edu.illinois.cs.cogcomp.saul.datamodel.edge.Edge
 import edu.illinois.cs.cogcomp.saul.datamodel.property.Property
 import edu.illinois.cs.cogcomp.saul.datamodel.property.features.discrete.DiscreteProperty
 import edu.illinois.cs.cogcomp.saul.util.Logging
+import edu.illinois.cs.cogcomp.saul.util.ProgressBar
 
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -57,6 +58,8 @@ class Node[T <: AnyRef](val keyFunc: T => Any = (x: T) => x, val tag: ClassTag[T
   val properties = new ArrayBuffer[NodeProperty[T]]
 
   private val collection = MutableSet[NT]()
+
+  val progressBar = new ProgressBar(0);
 
   def getAllInstances: Iterable[T] = this.collection.toSeq.map(_.apply)
 
@@ -137,6 +140,9 @@ class Node[T <: AnyRef](val keyFunc: T => Any = (x: T) => x, val tag: ClassTag[T
         joinNodes.foreach(_.addFromChild(this, instance, train, populateEdge))
       }
     }
+
+    // Update Progress Bar
+    progressBar += 1
   }
 
   /** Populate current node instances using instances from a different node on the same type.
@@ -156,7 +162,11 @@ class Node[T <: AnyRef](val keyFunc: T => Any = (x: T) => x, val tag: ClassTag[T
     populateEdge: Boolean = true,
     populateJoinNodes: Boolean = true
   ): Unit = {
+    progressBar.progress()
+    progressBar.init()
+    progressBar.total = ts.size;
     ts.foreach(addInstance(_, train, populateEdge, populateJoinNodes))
+    progressBar.finish()
   }
 
   /** Relational operators */

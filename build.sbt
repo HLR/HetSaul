@@ -6,13 +6,14 @@ scalaVersion in ThisBuild := "2.11.7"
 val cogcompNLPVersion = "3.0.71"
 val cogcompPipelineVersion = "0.1.25"
 val ccgGroupId = "edu.illinois.cs.cogcomp"
-val headerMsg =  """/** This software is released under the University of Illinois/Research and Academic Use License. See
-                        |  * the LICENSE file in the root folder for details. Copyright (c) 2016
-                        |  *
-                        |  * Developed by: The Cognitive Computations Group, University of Illinois at Urbana-Champaign
-                        |  * http://cogcomp.cs.illinois.edu/
-                        |  */
-                        |""".stripMargin
+val headerMsg =
+  """/** This software is released under the University of Illinois/Research and Academic Use License. See
+    |  * the LICENSE file in the root folder for details. Copyright (c) 2016
+    |  *
+    |  * Developed by: The Cognitive Computations Group, University of Illinois at Urbana-Champaign
+    |  * http://cogcomp.cs.illinois.edu/
+    |  */
+    |""".stripMargin
 
 
 lazy val saulUser = System.getenv("SAUL_USER")
@@ -20,7 +21,9 @@ lazy val user = if (saulUser == null) System.getProperty("user.name") else saulU
 lazy val keyFile = new java.io.File(Path.userHome.absolutePath + "/.ssh/id_rsa")
 
 lazy val scalaDoc = taskKey[Unit]("Execute the shell script for releasing our Scala doc")
-scalaDoc := { "bash scaladoc.sh" ! }
+scalaDoc := {
+  "bash scaladoc.sh" !
+}
 
 lazy val docSettings = Seq(
   autoAPIMappings := true,
@@ -34,13 +37,13 @@ lazy val releaseSettings = Seq(
     checkSnapshotDependencies,
     inquireVersions,
     setReleaseVersion,
-    commitReleaseVersion,                   // performs the initial git checks
+    commitReleaseVersion, // performs the initial git checks
     //tagRelease,
-    publishArtifacts,                       // checks whether `publishTo` is properly set up
-    releaseStepTask(scalaDoc),              //release the scalaDocs
+    publishArtifacts, // checks whether `publishTo` is properly set up
+    releaseStepTask(scalaDoc), //release the scalaDocs
     setNextVersion,
     commitNextVersion,
-    pushChanges                             // checks that an upstream branch is properly configured
+    pushChanges // checks that an upstream branch is properly configured
   )
 )
 
@@ -48,7 +51,7 @@ lazy val publishSettings = Seq(
   publishTo := Some(
     Resolver.ssh(
       "CogcompSoftwareRepo", "bilbo.cs.illinois.edu",
-      "/mounts/bilbo/disks/0/www/cogcomp/html/m2repo/") as (user, keyFile)
+      "/mounts/bilbo/disks/0/www/cogcomp/html/m2repo/") as(user, keyFile)
   )
 )
 
@@ -87,7 +90,11 @@ lazy val saulCore = (project in file("saul-core")).
   settings(commonSettings: _*).
   settings(docSettings: _*).
   settings(
-    name := "saul"
+    name := "saul",
+    libraryDependencies ++= Seq(
+      "com.github.nscala-time" %% "nscala-time" % "2.16.0",
+      "org.scala-lang" % "jline" % "2.10.4"
+    )
   ).enablePlugins(AutomateHeaderPlugin)
 
 lazy val saulExamples = (project in file("saul-examples")).
@@ -105,7 +112,12 @@ lazy val saulExamples = (project in file("saul-examples")).
       ccgGroupId % "saul-srl-models" % "1.3",
       "org.json" % "json" % "20140107",
       "com.twitter" % "hbc-core" % "2.2.0",
-      "org.rogach" %% "scallop" % "2.0.5"
+      "org.rogach" %% "scallop" % "2.0.5",
+      "org.tallison" % "jmatio" % "1.2",
+      "org.deeplearning4j" % "deeplearning4j-core" % "0.7.2",
+      "org.deeplearning4j" % "deeplearning4j-scaleout-api" % "1.0",
+      "org.deeplearning4j" % "deeplearning4j-nlp" % "0.7.2",
+      "org.nd4j" % "nd4j-native-platform" % "0.7.2"
     )
   ).dependsOn(saulCore)
   .aggregate(saulCore)

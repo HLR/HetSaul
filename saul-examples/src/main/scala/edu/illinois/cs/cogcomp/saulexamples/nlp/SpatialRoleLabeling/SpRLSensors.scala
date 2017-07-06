@@ -12,7 +12,7 @@ import edu.illinois.cs.cogcomp.edison.features.helpers.PathFeatureHelper
 import edu.illinois.cs.cogcomp.nlp.utilities.CollinsHeadFinder
 import edu.illinois.cs.cogcomp.saul.util.Logging
 import edu.illinois.cs.cogcomp.saulexamples.nlp.CommonSensors
-import edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling.Triplet.{ SpRelation, SpRelationLabels }
+import edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling.Triplet.{ SpRLLabels, SpRLRelation }
 
 import scala.collection.JavaConverters._
 import scala.collection.immutable.HashSet
@@ -24,9 +24,9 @@ import scala.util.matching.Regex
 object SpRLSensors extends Logging {
   val dependencyView = ViewNames.DEPENDENCY_STANFORD
 
-  def sentencesToRelations(sentence: SpRLSentence): List[SpRelation] = {
+  def sentencesToRelations(sentence: SpRLSentence): List[SpRLRelation] = {
 
-    val relations = ListBuffer[SpRelation]()
+    val relations = ListBuffer[SpRLRelation]()
     val constituents = sentence.getSentence.getView(ViewNames.TOKENS).asScala.toList
     val args = constituents.filter(x => isArgCandidate(x))
     val indicators: ListBuffer[Constituent] = getIndicatorCandidates(sentence.getSentence, Dictionaries.spLexicon)
@@ -34,26 +34,37 @@ object SpRLSensors extends Logging {
     for (i <- indicators) {
 
       val rels = getIndicatorRelations(sentence.getRelations.asScala.toList, i, sentence.getOffset)
+      val spLabel = rels.nonEmpty match {
+        case true => SpRLLabels.GOLD
+        case false => SpRLLabels.CANDIDATE
+      }
       for (tr <- args) {
 
-        var label = SpRelationLabels.CANDIDATE
         val g = rels.find(r => isGoldTrajector(r, tr, sentence.getOffset) && r.getLandmark == null)
-        if (g.isDefined) {
-          label = Triplet.SpRelationLabels.GOLD
-          relations += new SpRelation(sentence.getSentence, tr.getSpan, i.getSpan, null, label, g.get.getId)
-        } else {
-          relations += new SpRelation(sentence.getSentence, tr.getSpan, i.getSpan, null, label, "")
+        val trLabel = rels.exists(r => isGoldTrajector(r, tr, sentence.getOffset)) match {
+          case true => SpRLLabels.GOLD
+          case false => SpRLLabels.CANDIDATE
+        }
+        val lmLabel = SpRLLabels.CANDIDATE
+        g match {
+          case Some(x) =>
+            relations += new SpRLRelation(sentence, tr.getSpan, i.getSpan, null, SpRLLabels.GOLD, spLabel, trLabel, lmLabel, x.getId)
+          case None =>
+            relations += new SpRLRelation(sentence, tr.getSpan, i.getSpan, null, SpRLLabels.CANDIDATE, spLabel, trLabel, lmLabel, "")
         }
 
         for (lm <- args) {
           if (lm.getSpan != tr.getSpan) {
             val g = rels.find(r => isGoldTrajector(r, tr, sentence.getOffset) && isGoldLandmark(r, lm, sentence.getOffset))
-            if (g.isDefined) {
-              label = Triplet.SpRelationLabels.GOLD
-              relations += new SpRelation(sentence.getSentence, tr.getSpan, i.getSpan, lm.getSpan, label, g.get.getId)
-            } else {
-              label = Triplet.SpRelationLabels.CANDIDATE
-              relations += new SpRelation(sentence.getSentence, tr.getSpan, i.getSpan, lm.getSpan, label, "")
+            val lmLabel = rels.exists(r => isGoldLandmark(r, lm, sentence.getOffset)) match {
+              case true => SpRLLabels.GOLD
+              case false => SpRLLabels.CANDIDATE
+            }
+            g match {
+              case Some(x) =>
+                relations += new SpRLRelation(sentence, tr.getSpan, i.getSpan, lm.getSpan, SpRLLabels.GOLD, spLabel, trLabel, lmLabel, x.getId)
+              case None =>
+                relations += new SpRLRelation(sentence, tr.getSpan, i.getSpan, lm.getSpan, SpRLLabels.CANDIDATE, spLabel, trLabel, lmLabel, "")
             }
           }
         }
@@ -138,7 +149,7 @@ object SpRLSensors extends Logging {
     indicators
   }
 
-  private def getIndicatorRelations(goldRelations: List[SpRLRelation], sp: Constituent, offset: IntPair): List[SpRLRelation] = {
+  private def getIndicatorRelations(goldRelations: List[SpRLRelationContainer], sp: Constituent, offset: IntPair): List[SpRLRelationContainer] = {
     goldRelations.filter(x =>
       x.getSpatialIndicator.getStart.intValue() == sp.getStartCharOffset + offset.getFirst &&
         x.getSpatialIndicator.getText.trim.equalsIgnoreCase(sp.toString))
@@ -150,11 +161,11 @@ object SpRLSensors extends Logging {
       CommonSensors.getPosTag(x).startsWith("PRP")
   }
 
-  private def isGoldTrajector(r: SpRLRelation, tr: Constituent, offset: IntPair): Boolean = {
+  private def isGoldTrajector(r: SpRLRelationContainer, tr: Constituent, offset: IntPair): Boolean = {
     tr != null && tr == getHeadword(r.getTrajector, tr.getTextAnnotation, offset)
   }
 
-  private def isGoldLandmark(r: SpRLRelation, lm: Constituent, offset: IntPair): Boolean = {
+  private def isGoldLandmark(r: SpRLRelationContainer, lm: Constituent, offset: IntPair): Boolean = {
     r.getLandmark != null && lm == getHeadword(r.getLandmark, lm.getTextAnnotation, offset)
   }
 
@@ -199,4 +210,21 @@ object SpRLSensors extends Logging {
     startTokenId
   }
 
+  def getHeadword(c: Constituent): Constituent = {
+
+    val ta = c.getTextAnnotation
+    val phrases = ta.getView(ViewNames.SHALLOW_PARSE).getConstituentsCovering(c).asScala
+
+    if (phrases.nonEmpty) {
+      val phrase = phrases.head
+      val tree: TreeView = ta.getView(ViewNames.PARSE_STANFORD).asInstanceOf[TreeView]
+      val parsePhrase = tree.getParsePhrase(phrase)
+      val headId = CollinsHeadFinder.getInstance.getHeadWordPosition(parsePhrase)
+      val head = ta.getView(ViewNames.TOKENS).asInstanceOf[TokenLabelView].getConstituentAtToken(headId)
+      head
+    } else {
+      logger.warn("cannot find phrase for '" + c.toString + "'")
+      c
+    }
+  }
 }

@@ -43,7 +43,7 @@ class ModelsTest extends FlatSpec with Matchers {
     //    val scores = argTypeConstraintClassifier.test(exclude = "candidate")
     //    scores.foreach {
     //      case (label, score) => {
-    //        label match {
+    //        label matches {
     //          case "A0" => (score._1 >= 0.9) should be(true)
     //          case "A1" => (score._1 >= 0.9) should be(true)
     //          case "A2" => (score._1 >= 0.6) should be(true)

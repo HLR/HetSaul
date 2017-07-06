@@ -26,7 +26,7 @@ object SpRLDataModelReader extends Logging {
   def read(path: String, version: String): List[SpRLSentence] = {
 
     val settings = new Properties()
-    TextAnnotationFactory.disableSettings(settings, USE_SRL_NOM, USE_NER_ONTONOTES)
+    TextAnnotationFactory.disableSettings(settings, USE_SRL_NOM, USE_NER_ONTONOTES, USE_SRL_VERB, USE_NER_CONLL)
     val as = TextAnnotationFactory.createPipelineAnnotatorService(settings)
     val reader = new SpRLDataReader(path, classOf[SpRL2013Document])
     reader.readData()
@@ -74,16 +74,16 @@ object SpRLDataModelReader extends Logging {
     }
   }
 
-  private def getRelations(doc: SpRL2013Document, offset: IntPair): List[SpRLRelation] = {
+  private def getRelations(doc: SpRL2013Document, offset: IntPair): List[SpRLRelationContainer] = {
 
-    val relations = ListBuffer[SpRLRelation]()
+    val relations = ListBuffer[SpRLRelationContainer]()
     val goldRelations = doc.getTAGS.getRELATION.asScala
       .filter(x => !tagIsNullOrOutOfSentence(doc.getSpatialIndicatorMap.get(x.getSpatialIndicatorId), offset)).toList
     for (r <- goldRelations) {
       val tr = setNullIfEmpty(doc.getTrajectorHashMap.get(r.getTrajectorId))
       val lm = setNullIfEmpty(doc.getLandmarkHashMap.get(r.getLandmarkId))
       val sp = setNullIfEmpty(doc.getSpatialIndicatorMap.get(r.getSpatialIndicatorId))
-      relations += new SpRLRelation(r.getId, sp, tr, lm)
+      relations += new SpRLRelationContainer(r.getId, sp, tr, lm)
     }
     relations.toList
   }

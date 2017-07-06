@@ -10,10 +10,11 @@ import edu.illinois.cs.cogcomp.core.datastructures.ViewNames
 import edu.illinois.cs.cogcomp.edison.features.factory.WordNetFeatureExtractor
 import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
 import edu.illinois.cs.cogcomp.saulexamples.nlp.CommonSensors._
+import edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling.Triplet.{ SpRLLabels, SpRLRelation, SpRoleTypes }
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling.SpRLSensors._
-import edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling.Triplet.{ SpRelation, SpRoleTypes }
 
 import scala.collection.JavaConverters._
+import scala.collection.immutable.HashSet
 import scala.collection.mutable.ListBuffer
 
 /** Created by taher on 8/10/16.
@@ -24,7 +25,7 @@ object SpRLDataModel extends DataModel {
 
   // data model
   val sentences = node[SpRLSentence]
-  val relations = node[SpRelation]
+  val relations = node[SpRLRelation]
   val sentencesToRelations = edge(sentences, relations)
 
   // sensors
@@ -32,45 +33,57 @@ object SpRLDataModel extends DataModel {
 
   // classifier labels
   val relationLabel = property(relations) {
-    x: SpRelation => x.getLabel.toString
+    x: SpRLRelation => x.getRelationLabel.toString
+  }
+
+  val spatialIndicatorLabel = property(relations) {
+    x: SpRLRelation => x.getSpLabel.toString
+  }
+
+  val trajectorLabel = property(relations) {
+    x: SpRLRelation => x.getTrLabel.toString
+  }
+
+  val landmarkLabel = property(relations) {
+    x: SpRLRelation => x.getLmLabel.toString
   }
 
   // Basic Features
-  val BF1 = property(relations) {
-    x: SpRelation => x.getTrajector.getText
+  val TrajectorText = property(relations) {
+    x: SpRLRelation => x.getTrajector.getText
   }
 
-  val BF2 = property(relations) {
-    x: SpRelation => if (x.landmarkIsDefined) x.getLandmark.getText else undefined
+  val LandmarkText = property(relations) {
+    x: SpRLRelation => if (x.landmarkIsDefined) x.getLandmark.getText else undefined
   }
 
-  val BF3 = property(relations) {
-    x: SpRelation => x.getSpatialIndicator.getText
+  val SpText = property(relations) {
+    x: SpRLRelation => x.getSpatialIndicator.getText
   }
 
-  val BF4 = property(relations) {
-    x: SpRelation => getLemma(x.getTrajector.getFirstConstituent)
+  val TrLemma = property(relations) {
+    x: SpRLRelation => getLemma(x.getTrajector.getFirstConstituent)
   }
 
-  val BF5 = property(relations) {
-    x: SpRelation => if (x.landmarkIsDefined()) getLemma(x.getLandmark.getFirstConstituent) else undefined
+  val LmLemma = property(relations) {
+    x: SpRLRelation => if (x.landmarkIsDefined()) getLemma(x.getLandmark.getFirstConstituent) else undefined
   }
 
   val BF6 = property(relations) {
-    x: SpRelation =>
+    x: SpRLRelation =>
       {
-        val trStart = x.getTrajector.getFirstConstituent.getStartSpan
+        val t = x.getTrajector.getFirstConstituent.getStartSpan
         val spStart = x.getSpatialIndicator.getFirstConstituent.getStartSpan
         val spEnd = x.getSpatialIndicator.getLastConstituent.getStartSpan
-        if (trStart < spStart)
-          getDependencyPath(x.getTextAnnotation, trStart, spStart)
+        if (t < spStart)
+          getDependencyPath(x.getTextAnnotation, t, spStart)
         else
-          getDependencyPath(x.getTextAnnotation, trStart, spEnd)
+          getDependencyPath(x.getTextAnnotation, t, spEnd)
       }
   }
 
   val BF7 = property(relations) {
-    x: SpRelation =>
+    x: SpRLRelation =>
       if (!x.landmarkIsDefined()) undefined
       else {
 
@@ -87,17 +100,17 @@ object SpRLDataModel extends DataModel {
 
   //Supervised2 features
   val JF2_1 = property(relations) {
-    x: SpRelation => BF1(x) + "::" + BF3(x) + "::" + BF2(x)
+    x: SpRLRelation => TrajectorText(x) + "::" + SpText(x) + "::" + LandmarkText(x)
   }
 
   val JF2_2 = property(relations) {
-    x: SpRelation =>
+    x: SpRLRelation =>
       if (x.landmarkIsDefined()) Dictionaries.spLexicon.exists(s => s.contains(x.getLandmark.getText))
       else false
   }
 
   val JF2_3 = property(relations) {
-    x: SpRelation =>
+    x: SpRLRelation =>
       {
         val tokens = x.getTextAnnotation.getView(ViewNames.TOKENS)
           .getConstituentsCoveringSpan(x.getFirstArg.getSpan.getSecond, x.getLastArg.getSpan.getFirst)
@@ -107,23 +120,23 @@ object SpRLDataModel extends DataModel {
   }
 
   val JF2_4 = property(relations) {
-    x: SpRelation => BF3(x) + "::" + BF7(x)
+    x: SpRLRelation => SpText(x) + "::" + BF7(x)
   }
 
   val JF2_5 = property(relations) {
-    x: SpRelation => BF1(x)
+    x: SpRLRelation => TrajectorText(x)
   }
 
   val JF2_6 = property(relations) {
-    x: SpRelation => BF7(x)
+    x: SpRLRelation => BF7(x)
   }
 
   val JF2_7 = property(relations) {
-    x: SpRelation => BF6(x) + "::" + BF3(x)
+    x: SpRLRelation => BF6(x) + "::" + SpText(x)
   }
 
   val JF2_8 = property(relations) {
-    x: SpRelation =>
+    x: SpRLRelation =>
       if (x.landmarkIsDefined()) {
         val fex = new WordNetFeatureExtractor
         fex.addFeatureType(WordNetFeatureExtractor.WordNetFeatureClass.hypernymsAllSenses)
@@ -133,7 +146,7 @@ object SpRLDataModel extends DataModel {
   }
 
   val JF2_9 = property(relations) {
-    x: SpRelation =>
+    x: SpRLRelation =>
 
       val fex = new WordNetFeatureExtractor
       fex.addFeatureType(WordNetFeatureExtractor.WordNetFeatureClass.hypernymsAllSenses)
@@ -141,7 +154,7 @@ object SpRLDataModel extends DataModel {
   }
 
   val JF2_10 = property(relations) {
-    x: SpRelation =>
+    x: SpRLRelation =>
       {
         val tokens = x.getTextAnnotation.getView(ViewNames.TOKENS)
           .getConstituentsCoveringSpan(x.getFirstArg.getSpan.getFirst, x.getLastArg.getSpan.getSecond)
@@ -165,7 +178,7 @@ object SpRLDataModel extends DataModel {
   }
 
   val JF2_11 = property(relations) {
-    x: SpRelation =>
+    x: SpRLRelation =>
       val t = x.getTrajector.getFirstConstituent
       val i = x.getSpatialIndicator
 
@@ -180,36 +193,36 @@ object SpRLDataModel extends DataModel {
   }
 
   val JF2_12 = property(relations) {
-    x: SpRelation =>
-      val view = x.getTextAnnotation.getView(ViewNames.SRL_VERB)
-      view match {
-        case null =>
-          "TRAJECTOR=;INDICATOR=;LANDMARK="
-        case _ =>
-          val tr = view.getLabelsCovering(x.getTrajector.getFirstConstituent).asScala.mkString
-          val lm =
-            if (x.landmarkIsDefined())
-              view.getLabelsCovering(x.getLandmark.getFirstConstituent).asScala.mkString
-            else undefined
-          val sp = view.getLabelsCovering(x.getSpatialIndicator.getFirstConstituent).asScala.mkString
-
-          "TRAJECTOR=" + tr + ";INDICATOR=" + sp + ";LANDMARK=" + lm
-      }
+    x: SpRLRelation => ""
+    //      val view = x.getTextAnnotation.getView(ViewNames.SRL_VERB)
+    //      view matches {
+    //        case null =>
+    //          "TRAJECTOR=;INDICATOR=;LANDMARK="
+    //        case _ =>
+    //          val tr = view.getLabelsCovering(x.getTrajector.getFirstConstituent).asScala.mkString
+    //          val lm =
+    //            if (x.landmarkIsDefined())
+    //              view.getLabelsCovering(x.getLandmark.getFirstConstituent).asScala.mkString
+    //            else undefined
+    //          val sp = view.getLabelsCovering(x.getSpatialIndicator.getFirstConstituent).asScala.mkString
+    //
+    //          "TRAJECTOR=" + tr + ";INDICATOR=" + sp + ";LANDMARK=" + lm
+    //      }
   }
 
   val JF2_13 = property(relations) {
-    x: SpRelation =>
+    x: SpRLRelation =>
       !x.landmarkIsDefined() &&
         !x.getSentence.getView(ViewNames.TOKENS).getConstituents.asScala
           .exists(c => !x.isInArgs(c.getSpan) && getPosTag(c).startsWith("NN"))
   }
 
   val JF2_14 = property(relations) {
-    x: SpRelation => BF4(x) + "::" + BF3(x) + "::" + BF5(x)
+    x: SpRLRelation => TrLemma(x) + "::" + SpText(x) + "::" + LmLemma(x)
   }
 
   val JF2_15 = property(relations) {
-    x: SpRelation =>
+    x: SpRLRelation =>
       val t = x.getTrajector.getFirstConstituent
       val i = x.getSpatialIndicator
 
@@ -225,7 +238,7 @@ object SpRLDataModel extends DataModel {
   }
 
   val BH1 = property(relations) {
-    x: SpRelation => x.getRelationType
+    x: SpRLRelation => x.getRelationType
   }
 
 }

@@ -28,8 +28,8 @@ public class SpRLConfigurator extends Configurator {
     // The (sub)directory to store and retrieve the trained SpRL models (to be used with MODELS_DIR)
     public static final Property SpRL_MODEL_DIR = new Property("sprlModelDir", "sprl");
 
-    // can take (Relation)
-    public static final Property MODEL_NAME = new Property("modelName", "Relation");
+    // can take (Triplet)
+    public static final Property MODEL_NAME = new Property("modelName", "Triplet");
 
     @Override
     public ResourceManager getDefaultConfig() {

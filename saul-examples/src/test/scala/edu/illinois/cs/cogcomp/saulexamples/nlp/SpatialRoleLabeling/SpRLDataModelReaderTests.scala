@@ -6,13 +6,12 @@
   */
 package edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling
 
-import edu.illinois.cs.cogcomp.saulexamples.HighMemoryTest
-import edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling.Triplet.{ SpRelation, SpRelationLabels }
-import org.scalatest.{ BeforeAndAfter, FlatSpec, Matchers }
+import edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling.Triplet.{ SpRLRelation, SpRLLabels }
+import org.scalatest.{ FlatSpec, Matchers }
 
 /** Created by taher on 8/14/16.
   */
-class SpRLDataModelReaderTests extends FlatSpec with BeforeAndAfter with Matchers {
+class SpRLDataModelReaderTests extends FlatSpec with Matchers {
   val path = getResourcePath("SpRL/2012/")
 
   private def getResourcePath(relativePath: String): String =
@@ -20,18 +19,9 @@ class SpRLDataModelReaderTests extends FlatSpec with BeforeAndAfter with Matcher
 
   import SpRLDataModel._
 
-  // Trigger population of data model only use by wrapping it behind a lazy val
-  private lazy val populateDataModelTrigger: Boolean = {
-    PopulateSpRLDataModel(path, true, "2012", "Relation", null)
+  PopulateSpRLDataModel(path, true, "2012", "Relation", null)
 
-    true
-  }
-
-  before {
-    populateDataModelTrigger
-  }
-
-  "SpRL Data Model Reader" should "Reads data correctly." taggedAs (HighMemoryTest) in {
+  "SpRL Data Model Reader" should "Reads data correctly." in {
 
     val sentenceList = sentences().collect {
       case s if !s.getSentence.getSentenceConstituent.getTextAnnotation.getId.startsWith("example.xml") =>
@@ -43,19 +33,19 @@ class SpRLDataModelReaderTests extends FlatSpec with BeforeAndAfter with Matcher
     sentenceList.size should be(5)
 
     relationList.count(x => x.getSentence == sentenceList(0) &&
-      x.getLabel == SpRelationLabels.GOLD) should be(1)
+      x.getRelationLabel == SpRLLabels.GOLD) should be(1)
 
     relationList.count(x => x.getSentence == sentenceList(1) &&
-      x.getLabel == Triplet.SpRelationLabels.GOLD) should be(2)
+      x.getRelationLabel == Triplet.SpRLLabels.GOLD) should be(2)
 
     relationList.count(x => x.getSentence == sentenceList(2) &&
-      x.getLabel == Triplet.SpRelationLabels.GOLD) should be(1)
+      x.getRelationLabel == Triplet.SpRLLabels.GOLD) should be(1)
 
     relationList.count(x => x.getSentence == sentenceList(3) &&
-      x.getLabel == Triplet.SpRelationLabels.GOLD) should be(2)
+      x.getRelationLabel == Triplet.SpRLLabels.GOLD) should be(2)
   }
 
-  "SpRL Data Model Features" should "be correct for examples of the paper." taggedAs (HighMemoryTest) in {
+  "SpRL Data Model Features" should "be correct for examples of the paper." in {
     val examples = sentences().collect {
       case s if s.getSentence.getSentenceConstituent.getTextAnnotation.getId.startsWith("example.xml") =>
         s.getSentence
@@ -63,23 +53,23 @@ class SpRLDataModelReaderTests extends FlatSpec with BeforeAndAfter with Matcher
 
     val e1 = examples(0)
     val rels1 = relations().filter(_.getSentence == e1).toList
-    val golds1 = rels1.filter(_.getLabel == Triplet.SpRelationLabels.GOLD).toList
+    val golds1 = rels1.filter(_.getRelationLabel == Triplet.SpRLLabels.GOLD).toList
     val rel11 = golds1.head
 
     val e2 = examples(1)
     val rels2 = relations().filter(_.getSentence == e2).toList
-    val golds2 = rels2.filter(_.getLabel == Triplet.SpRelationLabels.GOLD).toList
+    val golds2 = rels2.filter(_.getRelationLabel == Triplet.SpRLLabels.GOLD).toList
     val rel21 = golds2.filter(_.getTrajector.getText == "bushes").head
     val rel22 = golds2.filter(_.getTrajector.getText == "trees").head
 
     val e3 = examples(2)
     val rels3 = relations().filter(_.getSentence == e3).toList
-    val golds3 = rels3.filter(_.getLabel == Triplet.SpRelationLabels.GOLD).toList
+    val golds3 = rels3.filter(_.getRelationLabel == Triplet.SpRLLabels.GOLD).toList
     val rel31 = golds3.head
 
     val e4 = examples(3)
     val rels4 = relations().filter(_.getSentence == e4).toList
-    val golds4 = rels4.filter(_.getLabel == Triplet.SpRelationLabels.GOLD).toList
+    val golds4 = rels4.filter(_.getRelationLabel == Triplet.SpRLLabels.GOLD).toList
     val rel41 = golds4.head
 
     golds1.size should be(1)
@@ -87,31 +77,31 @@ class SpRLDataModelReaderTests extends FlatSpec with BeforeAndAfter with Matcher
     golds3.size should be(1)
     golds4.size should be(1)
 
-    BF1(rel11) should be("cars")
-    BF1(rel21) should be("bushes")
-    BF1(rel22) should be("trees")
-    BF1(rel31) should be("football")
-    BF1(rel41) should be("trees")
+    TrajectorText(rel11) should be("cars")
+    TrajectorText(rel21) should be("bushes")
+    TrajectorText(rel22) should be("trees")
+    TrajectorText(rel31) should be("football")
+    TrajectorText(rel41) should be("trees")
 
-    BF2(rel11) should be("house")
-    BF2(rel21) should be("hill")
-    BF2(rel22) should be("hill")
-    BF2(rel31) should be("column")
-    BF2(rel41) should be(undefined)
+    LandmarkText(rel11) should be("house")
+    LandmarkText(rel21) should be("hill")
+    LandmarkText(rel22) should be("hill")
+    LandmarkText(rel31) should be("column")
+    LandmarkText(rel41) should be(undefined)
 
-    BF3(rel11) should be("in_front_of")
-    BF3(rel21) should be("on")
-    BF3(rel22) should be("on")
-    BF3(rel31) should be("on_top")
-    BF3(rel41) should be("on_the_right")
+    SpText(rel11) should be("in_front_of")
+    SpText(rel21) should be("on")
+    SpText(rel22) should be("on")
+    SpText(rel31) should be("on_top")
+    SpText(rel41) should be("on_the_right")
 
-    BF4(rel11) should be("car")
-    BF4(rel21) should be("bush")
-    BF4(rel22) should be("tree")
+    TrLemma(rel11) should be("car")
+    TrLemma(rel21) should be("bush")
+    TrLemma(rel22) should be("tree")
 
-    BF5(rel11) should be("house")
-    BF5(rel21) should be("hill")
-    BF5(rel22) should be("hill")
+    LmLemma(rel11) should be("house")
+    LmLemma(rel21) should be("hill")
+    LmLemma(rel22) should be("hill")
 
     BF6(rel11) should be("↑NSUBJ↓PREP")
     BF6(rel21) should be("↓PREP")
@@ -192,5 +182,4 @@ class SpRLDataModelReaderTests extends FlatSpec with BeforeAndAfter with Matcher
     BH1(rel31) should be("LANDMARK_TRAJECTOR_INDICATOR")
     BH1(rel41) should be("TRAJECTOR_INDICATOR")
   }
-
 }

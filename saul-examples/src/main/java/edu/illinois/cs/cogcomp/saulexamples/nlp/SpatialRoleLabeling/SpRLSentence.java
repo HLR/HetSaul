@@ -17,8 +17,8 @@ import java.util.List;
 public class SpRLSentence {
     private final IntPair offset;
     private final Sentence sentence;
-    private final List<SpRLRelation> relations;
-    public SpRLSentence(IntPair offset, Sentence sentence, List<SpRLRelation> relations) {
+    private final List<SpRLRelationContainer> relations;
+    public SpRLSentence(IntPair offset, Sentence sentence, List<SpRLRelationContainer> relations) {
         this.offset = offset;
         this.sentence = sentence;
         this.relations = relations;
@@ -28,7 +28,7 @@ public class SpRLSentence {
         return sentence;
     }
 
-    public List<SpRLRelation> getRelations() {
+    public List<SpRLRelationContainer> getRelations() {
         return relations;
     }
 
