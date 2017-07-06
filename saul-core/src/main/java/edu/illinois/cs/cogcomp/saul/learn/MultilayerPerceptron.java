@@ -213,8 +213,6 @@ final public class MultilayerPerceptron extends Learner{
     /**
      * Trains the neural network on a sparse input vector, using default learning parameters.
      *
-     * @TODO Only works for binary classification now.
-     *
      * @param exampleFeatures The example's array of feature indices.
      * @param exampleValues The example's array of feature values.
      * @param exampleLabels The example's label(s). Should be {0} or {1}.
@@ -225,12 +223,9 @@ final public class MultilayerPerceptron extends Learner{
             System.out.println("learning: " + iterations);
         }
         assert exampleLabels.length == 1 : "Example must have a single label.";
-        double[] output;
-        if (exampleLabels[0] == 0){
-            output = new double[]{1.0d,0.0d};
-        }else{
-            output = new double[]{0.0d,1.0d};
-        }
+        double[] output = new double[layers[layers.length-1].errors.length];
+        Arrays.fill(output,0.0d);
+        output[exampleLabels[0]] = 1.0d;
         int maximum_index = -1;
         for (int i = 0; i < exampleFeatures.length; i++){
             if  (exampleFeatures[i] > maximum_index){
