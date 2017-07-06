@@ -100,8 +100,14 @@ class Node[T <: AnyRef](val keyFunc: T => Any = (x: T) => x, val tag: ClassTag[T
     * @param instance Node instance.
     * @param train If the instance is a training instance.
     * @param populateEdge If populating edges from the current Node.
+    * @param populateJoinNodes Boolean indication if join nodes needs to be populated.
     */
-  def addInstance(instance: T, train: Boolean = true, populateEdge: Boolean = true): Unit = {
+  def addInstance(
+    instance: T,
+    train: Boolean = true,
+    populateEdge: Boolean = true,
+    populateJoinNodes: Boolean = true
+  ): Unit = {
     val nodeInstance = toNT(instance)
 
     if (containsNT(nodeInstance)) {
@@ -126,19 +132,31 @@ class Node[T <: AnyRef](val keyFunc: T => Any = (x: T) => x, val tag: ClassTag[T
         incoming.foreach(_.populateUsingTo(instance, train))
       }
 
-      // TODO: Populating join nodes takes significant amount of time on large graphs. Investigate.
-      joinNodes.foreach(_.addFromChild(this, instance, train, populateEdge))
+      if (populateJoinNodes) {
+        // TODO: Populating join nodes takes significant amount of time on large graphs. Investigate.
+        joinNodes.foreach(_.addFromChild(this, instance, train, populateEdge))
+      }
     }
   }
 
-  def populateFrom(n: Node[_]): Unit = {
-    populate(n.getTrainingInstances.map(_.asInstanceOf[T]), train = true, populateEdge = false)
-    populate(n.getTestingInstances.map(_.asInstanceOf[T]), train = false, populateEdge = false)
+  /** Populate current node instances using instances from a different node on the same type.
+    * Usage Node: Expected usage is to copy nodes from one DataModel to another.
+    *
+    * @param n Node to populate instances from.
+    */
+  def populateFrom(n: Node[_])(implicit tag: ClassTag[instanceType]): Unit = {
+    populate(n.getTrainingInstances.map(_.asInstanceOf[instanceType]), train = true, populateEdge = false, populateJoinNodes = false)
+    populate(n.getTestingInstances.map(_.asInstanceOf[instanceType]), train = false, populateEdge = false, populateJoinNodes = false)
   }
 
   /** Operator for adding a sequence of T into my table. */
-  def populate(ts: Iterable[T], train: Boolean = true, populateEdge: Boolean = true) = {
-    ts.foreach(addInstance(_, train, populateEdge))
+  def populate(
+    ts: Iterable[T],
+    train: Boolean = true,
+    populateEdge: Boolean = true,
+    populateJoinNodes: Boolean = true
+  ): Unit = {
+    ts.foreach(addInstance(_, train, populateEdge, populateJoinNodes))
   }
 
   /** Relational operators */

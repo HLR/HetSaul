@@ -14,8 +14,8 @@ import scala.collection.JavaConversions._
 
 object SpamApp extends Logging {
 
-  val trainData = new DocumentReader("data/EmailSpam/train").docs.toList
-  val testData = new DocumentReader("data/EmailSpam/test").docs.toList
+  val trainData = new DocumentReader("../data/EmailSpam/train").docs.toList
+  val testData = new DocumentReader("../data/EmailSpam/test").docs.toList
 
   object SpamExperimentType extends Enumeration {
     val TrainAndTest, CacheGraph, TestUsingGraphCache, TestSerialization = Value

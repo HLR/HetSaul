@@ -11,10 +11,9 @@
 <configuration>
     <!-- Appender to a file named based on the application name. -->
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>logs/${logback.appname}.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!-- daily rollover -->
-            <fileNamePattern>logs/${logback.appname}.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <fileNamePattern>../logs/saul.%d{yyyy-MM-dd}.log</fileNamePattern>
 
             <!-- keep 30 days' worth of history -->
             <maxHistory>30</maxHistory>
