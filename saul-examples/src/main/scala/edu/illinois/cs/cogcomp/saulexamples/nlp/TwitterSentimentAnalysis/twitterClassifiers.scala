@@ -18,7 +18,7 @@ object twitterClassifiers {
   object sentimentClassifier extends Learnable[Tweet](tweet) {
     def label = Label
     override def feature = using(WordFeatures, BigramFeatures)
-    //override lazy val classifier = new SparseNetworkLearner(
+    //override lazy val classifier = new SparseNetworkLearner();
     override lazy val classifier = new MultilayerPerceptron();
   }
 

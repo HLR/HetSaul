@@ -30,13 +30,14 @@ final public class MultilayerPerceptron extends Learner{
     private static final int RELU = 3;
     private static final int LEAKY_RELU = 4;
     private static final int SOFTPLUS = 5;
+    private static final int IDENTITY = 6;
 
     /**
      * Default neural network learning parameters.
      */
-    private static double default_learning_rate = 0.1d;
-    private static double default_momentum = 0.1d;
-    private static double default_lambda = 0.00001d;
+    private static double default_learning_rate = 0.01d;
+    private static double default_momentum = 0.01d;
+    private static double default_lambda = 0.0d;
 
     /**
      * Default parameters for network initialization. For classification tasks, each node of the output layer corresponds
@@ -67,20 +68,11 @@ final public class MultilayerPerceptron extends Learner{
         // Initializes a layer of the neural network. Weights are all initialized to 0.
         private Layer(int num_inputs, int num_outputs, int activation_function){
             weights = new double[num_inputs+1][num_outputs];
-            for (double[] row : weights)
-                Arrays.fill(row,0.0d);
             gradients = new double[num_inputs+1][num_outputs];
-            for (double[] row : gradients)
-                Arrays.fill(row,0.0d);
             prev_gradients = new double[num_inputs+1][num_outputs];
-            for (double[] row : prev_gradients)
-                Arrays.fill(row,0.0d);
             pre_activation = new double[num_outputs];
-            Arrays.fill(pre_activation,0.0d);
             post_activation = new double[num_outputs];
-            Arrays.fill(post_activation,0.0d);
             errors = new double[num_outputs];
-            Arrays.fill(errors,0.0d);
             this.activation_function = activation_function;
         }
 
@@ -90,16 +82,9 @@ final public class MultilayerPerceptron extends Learner{
             for (int i = 0; i < weights.length; i++) {
                 for (int j = 0; j < weights[i].length; j++){
                     out.writeDouble(weights[i][j]);
-                    out.writeDouble(gradients[i][j]);
-                    out.writeDouble(prev_gradients[i][j]);
                 }
             }
             out.writeInt(pre_activation.length);
-            for (int i = 0; i < pre_activation.length; i++) {
-                out.writeDouble(pre_activation[i]);
-                out.writeDouble(post_activation[i]);
-                out.writeDouble(errors[i]);
-            }
             out.writeInt(activation_function);
         }
 
@@ -109,16 +94,9 @@ final public class MultilayerPerceptron extends Learner{
             for (int i = 0; i < weights.length; i++) {
                 for (int j = 0; j < weights[i].length; j++){
                     out.println(weights[i][j]);
-                    out.println(gradients[i][j]);
-                    out.println(prev_gradients[i][j]);
                 }
             }
             out.println(pre_activation.length);
-            for (int i = 0; i < pre_activation.length; i++) {
-                out.println(pre_activation[i]);
-                out.println(post_activation[i]);
-                out.println(errors[i]);
-            }
             out.println(activation_function);
         }
 
@@ -131,19 +109,12 @@ final public class MultilayerPerceptron extends Learner{
             for (int i = 0; i < num_rows; i++){
                 for (int j = 0; j < num_elements; j++){
                     weights[i][j] = in.readDouble();
-                    gradients[i][j] = in.readDouble();
-                    prev_gradients[i][j] = in.readDouble();
                 }
             }
             num_elements = in.readInt();
             pre_activation = new double[num_elements];
             post_activation = new double[num_elements];
             errors = new double[num_elements];
-            for (int i = 0; i < num_elements; i++){
-                pre_activation[i] = in.readDouble();
-                post_activation[i] = in.readDouble();
-                errors[i] = in.readDouble();
-            }
             activation_function = in.readInt();
         }
     }
@@ -212,20 +183,29 @@ final public class MultilayerPerceptron extends Learner{
 
     /**
      * Trains the neural network on a sparse input vector, using default learning parameters.
-     *
+     * @TODO Currenty there is no robust way to determine whether the user is intending to do classification or regression.
+     * If there is a single output label, classification is performed. Otherwise regression is performed.
      * @param exampleFeatures The example's array of feature indices.
      * @param exampleValues The example's array of feature values.
-     * @param exampleLabels The example's label(s). Should be {0} or {1}.
+     * @param exampleLabels The example's label(s). For classification tasks, this array should have a single element
+     * equal to 0,1,2,...n-1 where n is the number of possible classes.
      * @param labelValues The labels' values.
      */
     public void learn(int[] exampleFeatures, double[] exampleValues, int[] exampleLabels, double[] labelValues){
         if (((++iterations)%10000) == 0) {
             System.out.println("learning: " + iterations);
         }
-        assert exampleLabels.length == 1 : "Example must have a single label.";
-        double[] output = new double[layers[layers.length-1].errors.length];
-        Arrays.fill(output,0.0d);
-        output[exampleLabels[0]] = 1.0d;
+        double[] output;
+        if (exampleLabels.length == 1) {  //CLASSIFICATION
+            output = new double[layers[layers.length - 1].errors.length];
+            output[exampleLabels[0]] = 1.0d;
+        }else{  //REGRESSION
+            if (exampleLabels.length != layers[layers.length - 1].errors.length){
+                resize_outputs(exampleLabels.length);
+            }
+            layers[layers.length-1].activation_function = IDENTITY;
+            output = labelValues;
+        }
         int maximum_index = -1;
         for (int i = 0; i < exampleFeatures.length; i++){
             if  (exampleFeatures[i] > maximum_index){
@@ -326,11 +306,16 @@ final public class MultilayerPerceptron extends Learner{
                 layers[i - 1].errors[j] *= apply_activation_derivative(layers[i - 1].pre_activation[j], layers[i - 1].activation_function);
             }
         }
+        for (int i = 0; i < layers[0].weights.length; i++){
+            for (int j = 0; j < layers[0].weights[i].length; j++) {
+                layers[0].gradients[i][j] = 0;
+            }
+        }
         for (int i = 0; i < layers[0].errors.length; i++){ //for each output node
             layers[0].gradients[0][i] = -layers[0].errors[i];
             for (int j = 0; j < exampleFeatures.length; j++){
                 if (exampleFeatures[j] < layers[0].weights.length-1)
-                    layers[0].gradients[exampleFeatures[j]+1][i] = layers[0].errors[i]*(layers[0].post_activation[i]);
+                    layers[0].gradients[exampleFeatures[j]+1][i] = layers[0].errors[i]*(exampleValues[j]);
             }
         }
     }
@@ -348,7 +333,7 @@ final public class MultilayerPerceptron extends Learner{
     }
 
     //resize the first layer to accommodate more input features
-    public void resize_inputs(int target) {
+    private void resize_inputs(int target) {
         if (layers[0].weights.length >= target + 2 ) {
             return;
         }
@@ -377,24 +362,12 @@ final public class MultilayerPerceptron extends Learner{
         return;
     }
 
-    //for binary classification, computes the output feature label ("positive" or "negative") given a sparse input vector
-    public Feature featureValue(int[] f, double[] v) {
-        compute_activation(f,v);
-        int best_index = -1;
-        double best_value = -1;
-        for (int i = 0; i < layers[layers.length-1].errors.length; i++){
-            if (layers[layers.length-1].post_activation[i] > best_value){
-                best_value = layers[layers.length-1].post_activation[i];
-                best_index = i;
-            }
-        }
-        if (best_index == 0){ //for binary classifiers used in Twitter sentiment analysis
-            return new DiscretePrimitiveStringFeature(containingPackage, name, "",
-                    "negative", (short)0, (short)0);
-        }
-        return new DiscretePrimitiveStringFeature(containingPackage, name, "",
-                "positive", (short)0, (short)0);
+    //resize the output layer to accommodate a given number of output nodes
+    private void resize_outputs(int target){
+        int x = layers.length-1;
+        layers[x] = new Layer(layers[x].weights.length-1,layers[x].errors.length,layers[x].activation_function);
     }
+
 
     /**
      * Returns the output layer given an input test feature vector. Use for testing.
@@ -432,6 +405,8 @@ final public class MultilayerPerceptron extends Learner{
                 return leaky_relu(x);
             case SOFTPLUS:
                 return softplus(x);
+            case IDENTITY:
+                return x;
             default:
                 System.out.println("Invalid activation function");
                 return 0;
@@ -451,6 +426,8 @@ final public class MultilayerPerceptron extends Learner{
                 return leaky_relu_derivative(x);
             case SOFTPLUS:
                 return softplus_derivative(x);
+            case IDENTITY:
+                return 1;
             default:
                 System.out.println("Invalid activation function");
                 return 0;
@@ -512,6 +489,73 @@ final public class MultilayerPerceptron extends Learner{
         return sigmoid(x);
     }
 
+    //serializing
+    public void write(ExceptionlessOutputStream out) {
+        super.write(out);
+        out.writeInt(layers.length);
+        for (int i = 0; i < layers.length; i++) {
+            layers[i].write(out);
+        }
+    }
+
+    public void write(PrintStream out) {
+        out.println(layers.length);
+        for (int i = 0; i < layers.length; i++) {
+            layers[i].write(out);
+        }
+        out.println("End of MultilayerPerceptron");
+    }
+
+    //deserializing
+    public void read(ExceptionlessInputStream in) {
+        super.read(in);
+        int num_layers = in.readInt();
+        for (int i = 0; i < num_layers; i++) {
+            layers[i].read(in);
+        }
+    }
+
+    /**
+     * Returns the FeatureVector specifying the predicted label given an input.
+     *
+     * @param exampleFeatures The example's array of feature indices.
+     * @param exampleValues The example's array of feature values.
+     * @return FeatureVector object representing the output label given the input
+     */
+    public FeatureVector classify(int[] exampleFeatures, double[] exampleValues) {
+        return new FeatureVector(featureValue(exampleFeatures, exampleValues));
+    }
+
+    public String discreteValue(int[] exampleFeatures, double[] exampleValues){
+        return featureValue(exampleFeatures,exampleValues).getStringValue();
+    }
+
+    /**
+     * Simply computes the dot product of the weight vector and the example
+     *
+     * @param exampleFeatures The example's array of feature indices.
+     * @param exampleValues The example's array of feature values.
+     * @return The computed activation of the first output neuron.
+     **/
+    public double realValue(int[] exampleFeatures, double[] exampleValues) {
+        return infer(exampleFeatures,exampleValues)[0];
+    }
+
+    //for binary classification, computes the output feature label given a sparse input vector
+    public Feature featureValue(int[] f, double[] v) {
+        compute_activation(f,v);
+        int best_index = -1;
+        double best_value = -1;
+        for (int i = 0; i < layers[layers.length-1].errors.length; i++){
+            if (layers[layers.length-1].post_activation[i] > best_value){
+                best_value = layers[layers.length-1].post_activation[i];
+                best_index = i;
+            }
+        }
+        best_index = Math.max(best_index,0);
+        return new DiscretePrimitiveStringFeature(containingPackage, name, "", labelLexicon.lookupKey(best_index).getStringValue() , (short)0, (short)0);
+    }
+
     public ScoreSet scores(Object example){
         Object[] exampleArray = getExampleArray(example, false);
         return scores((int[]) exampleArray[0], (double[]) exampleArray[1]);
@@ -533,51 +577,21 @@ final public class MultilayerPerceptron extends Learner{
         return result;
     }
 
-    //serializing
-    public void write(ExceptionlessOutputStream out) {
-        super.write(out);
-        out.writeInt(layers.length);
-        for (int i = 0; i < layers.length; i++) {
-            layers[i].write(out);
+    //diagnostic, use for testing purposes only
+    /*
+    public void diagnostic(){
+        double threshold = 0.2;
+        for (int i = 0; i < layers[0].weights.length - 1; i++){
+            if (layers[0].weights[i+1][0] > threshold){
+                System.out.println("Highest valence: " + lexicon.lookupKey(i).getStringValue() + " score: " + layers[0].weights[i+1][0]);
+            }else if (layers[0].weights[i+1][0] < -threshold){
+                System.out.println("Lowest valence: " + lexicon.lookupKey(i).getStringValue() + " score: " + layers[0].weights[i+1][0]);
+            }
+            if (layers[0].weights[i+1][1] > threshold){
+                System.out.println("Highest arousal: " + lexicon.lookupKey(i).getStringValue() + " score: " + layers[0].weights[i+1][1]);
+            }else if (layers[0].weights[i+1][1] < -threshold){
+                System.out.println("Lowest arousal: " + lexicon.lookupKey(i).getStringValue() + " score: " + layers[0].weights[i+1][1]);
+            }
         }
-        out.close();
-    }
-
-    public void write(PrintStream out) {
-        out.println(layers.length);
-        for (int i = 0; i < layers.length; i++) {
-            layers[i].write(out);
-        }
-        out.println("End of MultilayerPerceptron");
-        out.close();
-    }
-
-    //deserializing
-    public void read(ExceptionlessInputStream in) {
-        super.read(in);
-        int num_layers = in.readInt();
-        for (int i = 0; i < num_layers; i++) {
-            layers[i].read(in);
-        }
-    }
-
-    /**
-     * Returns the ScoreSet specifying confidence for each output class label.
-     *
-     * @param exampleFeatures The example's array of feature indices.
-     * @param exampleValues The example's array of feature values.
-     * @return ScoreSet object consisting of each output label and the corresponding score.
-     */
-    public FeatureVector classify(int[] exampleFeatures, double[] exampleValues) {
-        double result = infer(exampleFeatures,exampleValues)[0];
-        return new FeatureVector(new RealPrimitiveStringFeature(containingPackage, name,"",result));
-    }
-
-    public String discreteValue(int[] exampleFeatures, double[] exampleValues){
-        /*if (((++iterations2)%100) == 0) {
-            System.out.println("testing: " + iterations2);
-        }*/
-        return featureValue(exampleFeatures,exampleValues).getStringValue();
-    }
-
+    }*/
 }
