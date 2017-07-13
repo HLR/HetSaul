@@ -4,10 +4,9 @@ import edu.illinois.cs.cogcomp.saul.datamodel.DataModel
 import edu.illinois.cs.cogcomp.saulexamples.circumplex.datastructures.Circumplex_Post
 import scala.collection.JavaConversions._
 
-/**
-  * Created by Abiyaz on 7/7/2017.
+/** Created by Abiyaz on 7/7/2017.
   */
-object circumplexDataModel extends DataModel{
+object circumplexDataModel extends DataModel {
   val circumplex_post = node[Circumplex_Post]
 
   val WordFeatures = property(circumplex_post) {
@@ -33,6 +32,6 @@ object circumplexDataModel extends DataModel{
   }*/
 
   var Label = property(circumplex_post) {
-    x: Circumplex_Post => x.getValence  :: x.getArousal :: Nil;
+    x: Circumplex_Post => x.getValence :: x.getArousal :: Nil;
   }
 }

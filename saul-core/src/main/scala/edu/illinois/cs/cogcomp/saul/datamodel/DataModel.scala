@@ -211,7 +211,7 @@ trait DataModel extends Logging {
 
     /** Discrete sensor feature with range, same as real% and real[] in lbjava */
     def apply(f: T => List[Double])(implicit tag: ClassTag[T], d1: DummyImplicit, d2: DummyImplicit,
-                                    d3: DummyImplicit): RealCollectionProperty[T] = {
+      d3: DummyImplicit): RealCollectionProperty[T] = {
       def cachedF = if (cache) { x: T => getOrUpdate(x, f).asInstanceOf[List[Double]] } else f
       val a = new RealCollectionProperty[T](name, cachedF, ordered) with NodeProperty[T] {
         override def node: Node[T] = papply.node
@@ -223,7 +223,7 @@ trait DataModel extends Logging {
 
     /** Discrete sensor feature with range, same as real name in lbjava */
     def apply(f: T => Double)(implicit tag: ClassTag[T], d1: DummyImplicit, d2: DummyImplicit, d3: DummyImplicit,
-                              d4: DummyImplicit): RealProperty[T] = {
+      d4: DummyImplicit): RealProperty[T] = {
       def cachedF = if (cache) { x: T => getOrUpdate(x, f).asInstanceOf[Double] } else f
       val a = new RealProperty[T](name, cachedF) with NodeProperty[T] {
         override def node: Node[T] = papply.node
@@ -235,7 +235,7 @@ trait DataModel extends Logging {
 
     /** Discrete feature without range, same as discrete SpamLabel in lbjava */
     def apply(f: T => String)(implicit tag: ClassTag[T], d1: DummyImplicit, d2: DummyImplicit, d3: DummyImplicit,
-                              d4: DummyImplicit, d5: DummyImplicit): DiscreteProperty[T] = {
+      d4: DummyImplicit, d5: DummyImplicit): DiscreteProperty[T] = {
       def cachedF = if (cache) { x: T => getOrUpdate(x, f).asInstanceOf[String] } else f
       val a = new DiscreteProperty[T](name, cachedF, None) with NodeProperty[T] {
         override def node: Node[T] = papply.node
@@ -247,7 +247,7 @@ trait DataModel extends Logging {
 
     /** Discrete array feature with range, same as discrete[] and discrete% in lbjava */
     def apply(f: T => List[String])(implicit tag: ClassTag[T], d1: DummyImplicit, d2: DummyImplicit, d3: DummyImplicit,
-                                    d4: DummyImplicit, d5: DummyImplicit, d6: DummyImplicit): DiscreteCollectionProperty[T] = {
+      d4: DummyImplicit, d5: DummyImplicit, d6: DummyImplicit): DiscreteCollectionProperty[T] = {
       def cachedF = if (cache) { x: T => getOrUpdate(x, f).asInstanceOf[List[String]] } else f
       val a = new DiscreteCollectionProperty[T](name, cachedF, !ordered) with NodeProperty[T] {
         override def node: Node[T] = papply.node
@@ -259,8 +259,8 @@ trait DataModel extends Logging {
 
     /** Discrete feature with range, same as discrete{"spam", "ham"} SpamLabel in lbjava */
     def apply(range: String*)(f: T => String)(implicit tag: ClassTag[T], d1: DummyImplicit, d2: DummyImplicit, d3: DummyImplicit,
-                                              d4: DummyImplicit, d5: DummyImplicit, d6: DummyImplicit,
-                                              d7: DummyImplicit): DiscreteProperty[T] = {
+      d4: DummyImplicit, d5: DummyImplicit, d6: DummyImplicit,
+      d7: DummyImplicit): DiscreteProperty[T] = {
       def cachedF = if (cache) { x: T => getOrUpdate(x, f).asInstanceOf[String] } else f
       val r = range.toList
       val a = new DiscreteProperty[T](name, cachedF, Some(r)) with NodeProperty[T] {
