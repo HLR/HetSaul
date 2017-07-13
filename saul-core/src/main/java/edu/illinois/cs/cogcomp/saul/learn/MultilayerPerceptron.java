@@ -35,9 +35,9 @@ final public class MultilayerPerceptron extends Learner{
     /**
      * Default neural network learning parameters.
      */
-    private static double default_learning_rate = 0.01d;
-    private static double default_momentum = 0.01d;
-    private static double default_lambda = 0.0d;
+    private static double default_learning_rate = 0.1d;
+    private static double default_momentum = 0.1d;
+    private static double default_lambda = 0.00001d;
 
     /**
      * Default parameters for network initialization. For classification tasks, each node of the output layer corresponds

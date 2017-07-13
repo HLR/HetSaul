@@ -10,7 +10,6 @@ import edu.illinois.cs.cogcomp.lbjava.classify.Classifier;
 import edu.illinois.cs.cogcomp.lbjava.classify.TestDiscrete;
 import edu.illinois.cs.cogcomp.lbjava.learn.Learner;
 import edu.illinois.cs.cogcomp.lbjava.parse.Parser;
-import edu.illinois.cs.cogcomp.saul.learn.MultilayerPerceptron;
 import org.apache.commons.math3.stat.correlation.SpearmansCorrelation;
 
 import java.util.Arrays;
@@ -59,6 +58,7 @@ public class TestReal {
         SpearmansCorrelation e = new SpearmansCorrelation();
         double sp = e.correlation(predictions, actuals);
         System.out.println("Spearman correlation:" + sp);
+
     }
 
     public static double getPearsonCorrelation(double[] scores1, double[] scores2) {
