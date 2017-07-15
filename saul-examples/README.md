@@ -31,10 +31,10 @@ In Spatial Role Labeling, we try to find spatial relations and label spatial rol
 6. [Part-of-Speech Tagging](src/main/scala/edu/illinois/cs/cogcomp/saulexamples/nlp/POSTagger/README.md): 
 Part-of-Speech Tagging is the identification of words as nouns, verbs, adjectives, adverbs, etc.
 
-7. [Twitter Sentiment Analysis] (src/main/scala/edu/illinois/cs/cogcomp/saulexamples/nlp/TwitterSentimentAnalysis/README.md):
+7. [Twitter Sentiment Analysis](src/main/scala/edu/illinois/cs/cogcomp/saulexamples/nlp/TwitterSentimentAnalysis/README.md):
 This example trains models for classifying twitter posts as positive, negative or neutral. It also includes a twitter client for real time processing of the tweets.
 
-8. [Question Type Classification] (src/main/scala/edu/illinois/cs/cogcomp/saulexamples/nlp/QuestionTypeClassification/README.md):
+8. [Question Type Classification](src/main/scala/edu/illinois/cs/cogcomp/saulexamples/nlp/QuestionTypeClassification/README.md):
 This example contains a classifications to categorize questions into different semantic classes based on the possible semantic types of the answers. 
 
 
