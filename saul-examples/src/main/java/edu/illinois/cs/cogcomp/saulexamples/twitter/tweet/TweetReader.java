@@ -32,7 +32,7 @@ public class TweetReader {
                 tweets.add(new Tweet(line.split(",")));
         }
     }
-
+}
 //    @Override
 //    public Object next() {
 //        if (currentTweet >= tweets.size())
@@ -47,4 +47,4 @@ public class TweetReader {
 //
 //    @Override
 //    public void close() {}
-}
+
