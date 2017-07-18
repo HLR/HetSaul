@@ -4,14 +4,15 @@
   * Developed by: The Cognitive Computations Group, University of Illinois at Urbana-Champaign
   * http://cogcomp.cs.illinois.edu/
   */
-package edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling;
+package edu.illinois.cs.cogcomp.saulexamples.nlp.BaseTypes;
 
 /**
- * Created by taher on 7/30/16.
+ * Created by Taher on 2016-12-28.
  */
-public interface SpRLAnnotation {
-    Integer getStart();
-    Integer getEnd();
-    String getText();
-    String getId();
+public class PartOfMatching implements SpanBasedElementMatching {
+
+    @Override
+    public boolean matches(SpanBasedElement e1, SpanBasedElement e2) {
+        return e1.isPartOf(e2);
+    }
 }

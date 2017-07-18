@@ -16,7 +16,6 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling.SpRL2013;
 
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling.SpRLAnnotation;
 
-import java.math.BigInteger;
 import javax.xml.bind.annotation.*;
 
 
@@ -28,9 +27,9 @@ public class TRAJECTOR implements SpRLAnnotation {
     @XmlAttribute(name = "id", required = true)
     protected String id;
     @XmlAttribute(name = "start", required = true)
-    protected BigInteger start;
+    protected Integer start;
     @XmlAttribute(name = "end", required = true)
-    protected BigInteger end;
+    protected Integer end;
     @XmlAttribute(name = "text", required = true)
     protected String text;
 
@@ -58,9 +57,9 @@ public class TRAJECTOR implements SpRLAnnotation {
      * Gets the value of the start property.
      *
      * @return possible object is
-     * {@link BigInteger }
+     * {@link Integer }
      */
-    public BigInteger getStart() {
+    public Integer getStart() {
         return start;
     }
 
@@ -68,9 +67,9 @@ public class TRAJECTOR implements SpRLAnnotation {
      * Sets the value of the start property.
      *
      * @param value allowed object is
-     *              {@link BigInteger }
+     *              {@link Integer }
      */
-    public void setStart(BigInteger value) {
+    public void setStart(Integer value) {
         this.start = value;
     }
 
@@ -78,9 +77,9 @@ public class TRAJECTOR implements SpRLAnnotation {
      * Gets the value of the end property.
      *
      * @return possible object is
-     * {@link BigInteger }
+     * {@link Integer }
      */
-    public BigInteger getEnd() {
+    public Integer getEnd() {
         return end;
     }
 
@@ -88,9 +87,9 @@ public class TRAJECTOR implements SpRLAnnotation {
      * Sets the value of the end property.
      *
      * @param value allowed object is
-     *              {@link BigInteger }
+     *              {@link Integer }
      */
-    public void setEnd(BigInteger value) {
+    public void setEnd(Integer value) {
         this.end = value;
     }
 
