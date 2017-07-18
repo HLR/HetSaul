@@ -24,35 +24,53 @@ public class SpRLDataReader<T extends SpRLXmlDocument> {
     private final Class<T> jaxbClass;
     public List<T> documents;
     public final String corpusPath;
+    public final String extension;
 
-    public SpRLDataReader(String corpusPath, Class<T>  jaxbClass) {
+    public SpRLDataReader(String corpusPath, Class<T> jaxbClass) {
+        this(corpusPath, jaxbClass, ".xml");
+    }
+
+    public SpRLDataReader(String corpusPath, Class<T> jaxbClass, String extension) {
         this.corpusPath = corpusPath;
         documents = new ArrayList<>();
         this.jaxbClass = jaxbClass;
+        this.extension = extension;
     }
 
     public void readData() throws ParserConfigurationException, IOException, SAXException, JAXBException {
         File dir = new File(corpusPath);
-        if(!dir.exists())
-            throw new IOException("Cannot find '" + dir.getAbsolutePath() + "' path.");
-        Collection<File> files = getAllFiles(dir);
-        documents = new ArrayList<>();
-        for(File f : files) {
-            T doc = XmlModel.load(jaxbClass,f);
-            doc.setFilename(f.getName());
+        if (dir.isFile() && dir.getName().toLowerCase().endsWith(extension)) {
+
+            documents = new ArrayList<>();
+            T doc = XmlModel.load(jaxbClass, dir);
+            doc.setFilename(dir.getName());
             documents.add(doc);
+
+        } else {
+
+            if (!dir.exists())
+                throw new IOException("Cannot find '" + dir.getAbsolutePath() + "' path.");
+
+            Collection<File> files = getAllFiles(dir);
+            documents = new ArrayList<>();
+            for (File f : files) {
+                T doc = XmlModel.load(jaxbClass, f);
+                doc.setFilename(f.getName());
+                documents.add(doc);
+            }
         }
     }
 
-    private static Collection<File> getAllFiles(File dir) {
+    private Collection<File> getAllFiles(File dir) {
         Set<File> files = new HashSet<>();
         for (File file : dir.listFiles()) {
             if (file.isFile()) {
-                if(file.getName().toLowerCase().endsWith(".xml"))
+                if (file.getName().toLowerCase().endsWith(extension))
                     files.add(file);
-            }
-            else files.addAll(getAllFiles(file));
+            } else files.addAll(getAllFiles(file));
         }
-        return files;
+        List<File> sortedFiles = new ArrayList<>(files);
+        sortedFiles.sort((f1, f2) -> f1.getPath().compareToIgnoreCase(f2.getPath()));
+        return sortedFiles;
     }
 }

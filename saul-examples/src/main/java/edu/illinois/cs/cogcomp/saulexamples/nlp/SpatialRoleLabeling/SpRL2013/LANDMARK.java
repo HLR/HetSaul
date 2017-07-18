@@ -17,7 +17,6 @@ package edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling.SpRL2013;
 import edu.illinois.cs.cogcomp.saulexamples.nlp.SpatialRoleLabeling.SpRLAnnotation;
 
 import javax.xml.bind.annotation.*;
-import java.math.BigInteger;
 
 
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -28,9 +27,9 @@ public class LANDMARK implements SpRLAnnotation {
     @XmlAttribute(name = "id", required = true)
     protected String id;
     @XmlAttribute(name = "start", required = true)
-    protected BigInteger start;
+    protected Integer start;
     @XmlAttribute(name = "end", required = true)
-    protected BigInteger end;
+    protected Integer end;
     @XmlAttribute(name = "text", required = true)
     protected String text;
 
@@ -63,10 +62,10 @@ public class LANDMARK implements SpRLAnnotation {
      * 
      * @return
      *     possible object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public BigInteger getStart() {
+    public Integer getStart() {
         return start;
     }
 
@@ -75,10 +74,10 @@ public class LANDMARK implements SpRLAnnotation {
      * 
      * @param value
      *     allowed object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public void setStart(BigInteger value) {
+    public void setStart(Integer value) {
         this.start = value;
     }
 
@@ -87,10 +86,10 @@ public class LANDMARK implements SpRLAnnotation {
      * 
      * @return
      *     possible object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public BigInteger getEnd() {
+    public Integer getEnd() {
         return end;
     }
 
@@ -99,10 +98,10 @@ public class LANDMARK implements SpRLAnnotation {
      * 
      * @param value
      *     allowed object is
-     *     {@link BigInteger }
+     *     {@link Integer }
      *     
      */
-    public void setEnd(BigInteger value) {
+    public void setEnd(Integer value) {
         this.end = value;
     }
 
