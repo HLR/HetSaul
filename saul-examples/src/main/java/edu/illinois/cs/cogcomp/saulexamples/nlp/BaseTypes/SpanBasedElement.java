@@ -15,6 +15,7 @@ public interface SpanBasedElement {
     void setEnd(int end);
     int getEnd();
     String getText();
+    void setText(String text);
     boolean matches(SpanBasedElement e);
     boolean contains(SpanBasedElement e);
     boolean isPartOf(SpanBasedElement e);
