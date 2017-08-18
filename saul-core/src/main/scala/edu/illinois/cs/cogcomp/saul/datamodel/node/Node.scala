@@ -6,17 +6,18 @@
   */
 package edu.illinois.cs.cogcomp.saul.datamodel.node
 
-import edu.illinois.cs.cogcomp.core.datastructures.vectors.{ ExceptionlessInputStream, ExceptionlessOutputStream }
+import edu.illinois.cs.cogcomp.core.datastructures.vectors.{ExceptionlessInputStream, ExceptionlessOutputStream}
 import edu.illinois.cs.cogcomp.lbjava.classify.FeatureVector
 import edu.illinois.cs.cogcomp.saul.datamodel.edge.Edge
 import edu.illinois.cs.cogcomp.saul.datamodel.property.Property
 import edu.illinois.cs.cogcomp.saul.datamodel.property.features.discrete.DiscreteProperty
 import edu.illinois.cs.cogcomp.saul.util.Logging
-
 import java.util.concurrent.atomic.AtomicInteger
 
+import me.tongfei.progressbar.ProgressBar
+
 import scala.collection.mutable
-import scala.collection.mutable.{ ArrayBuffer, ListBuffer, HashMap => MutableHashMap, LinkedHashSet => MutableSet, Map => MutableMap }
+import scala.collection.mutable.{ArrayBuffer, ListBuffer, HashMap => MutableHashMap, LinkedHashSet => MutableSet, Map => MutableMap}
 import scala.reflect.ClassTag
 
 trait NodeProperty[T <: AnyRef] extends Property[T] {
@@ -156,7 +157,13 @@ class Node[T <: AnyRef](val keyFunc: T => Any = (x: T) => x, val tag: ClassTag[T
     populateEdge: Boolean = true,
     populateJoinNodes: Boolean = true
   ): Unit = {
-    ts.foreach(addInstance(_, train, populateEdge, populateJoinNodes))
+    val pb = new ProgressBar("Population", ts.size)
+    pb.start()
+    ts.foreach(i => {
+      addInstance(i, train, populateEdge, populateJoinNodes)
+      pb.step()
+    })
+    pb.stop()
   }
 
   /** Relational operators */
