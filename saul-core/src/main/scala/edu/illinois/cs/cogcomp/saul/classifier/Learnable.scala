@@ -232,9 +232,6 @@ abstract class Learnable[T <: AnyRef](val node: Node[T], val parameters: Paramet
     val pb = new ProgressBar("Training", iteration)
     pb.start()
     (iteration to 1 by -1).foreach(remainingIteration => {
-      if (remainingIteration % 10 == 0)
-        logger.info(s"Training: $remainingIteration iterations remain.")
-
       node.clearPropertyCache()
       data.foreach(classifier.learn)
       pb.step()
