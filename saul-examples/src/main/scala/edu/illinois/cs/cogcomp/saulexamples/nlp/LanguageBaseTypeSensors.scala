@@ -102,16 +102,20 @@ object LanguageBaseTypeSensors extends Logging {
   def getHeadword(p: Phrase): Token = {
     var ta = getTextAnnotation(p)
     val (startId: Int, endId: Int) = getTextAnnotationSpan(p)
-    var phrase = new Constituent("temp", "", ta, startId, endId + 1)
-    var headId: Int = getHeadwordId(ta, phrase)
+    val phrase = new Constituent("temp", "", ta, startId, endId + 1)
+    val headId: Int = getHeadwordId(ta, phrase)
     if (headId < startId || headId > endId) {
       //when out of phrase, create a text annotation using just the phrase text
       ta = TextAnnotationFactory.createTextAnnotation(as, "", "", p.getText)
-      phrase = new Constituent("temp", "", ta, 0, ta.getTokens.length)
-      headId = getHeadwordId(ta, phrase)
+      val newPhrase = new Constituent("temp", "", ta, 0, ta.getTokens.length)
+      val newHeadId = getHeadwordId(ta, newPhrase)
+      val head = ta.getView(ViewNames.TOKENS).asInstanceOf[TokenLabelView].getConstituentAtToken(newHeadId)
+      new Token(p, p.getId + head.getSpan, head.getStartCharOffset + p.getStart, head.getEndCharOffset + p.getStart, head.toString)
     }
-    val head = ta.getView(ViewNames.TOKENS).asInstanceOf[TokenLabelView].getConstituentAtToken(headId)
-    new Token(p, p.getId + head.getSpan, head.getStartCharOffset, head.getEndCharOffset, head.toString)
+    else{
+      val head = ta.getView(ViewNames.TOKENS).asInstanceOf[TokenLabelView].getConstituentAtToken(headId)
+      new Token(p, p.getId + head.getSpan, head.getStartCharOffset, head.getEndCharOffset, head.toString)
+    }
   }
 
   def getTokens(text: String): List[Token] = {
