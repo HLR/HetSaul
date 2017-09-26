@@ -111,8 +111,7 @@ object LanguageBaseTypeSensors extends Logging {
       val newHeadId = getHeadwordId(ta, newPhrase)
       val head = ta.getView(ViewNames.TOKENS).asInstanceOf[TokenLabelView].getConstituentAtToken(newHeadId)
       new Token(p, p.getId + head.getSpan, head.getStartCharOffset + p.getStart, head.getEndCharOffset + p.getStart, head.toString)
-    }
-    else{
+    } else {
       val head = ta.getView(ViewNames.TOKENS).asInstanceOf[TokenLabelView].getConstituentAtToken(headId)
       new Token(p, p.getId + head.getSpan, head.getStartCharOffset, head.getEndCharOffset, head.toString)
     }
