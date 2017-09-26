@@ -75,7 +75,7 @@ abstract class ConstrainedClassifier[T <: AnyRef, HEAD <: AnyRef](val onClassifi
         logger.warn("Find too many heads")
         Some(l.head)
       } else {
-        logger.info(s"Found head ${l.head} for child $x")
+        //logger.info(s"Found head ${l.head} for child $x")
         Some(l.head)
       }
     }

@@ -324,7 +324,7 @@ class Node[T <: AnyRef](val keyFunc: T => Any = (x: T) => x, val tag: ClassTag[T
 
   def clearPropertyCache(): Unit = {
     if (propertyCacheList.nonEmpty) {
-      logger.info("clean property cache: cleaning " + propertyCacheList.size + " maps")
+      //logger.info("clean property cache: cleaning " + propertyCacheList.size + " maps")
       propertyCacheList.foreach(_.clear)
     }
   }

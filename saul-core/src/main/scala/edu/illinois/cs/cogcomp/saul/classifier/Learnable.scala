@@ -31,15 +31,17 @@ import scala.reflect.ClassTag
 /** Represents an instance of a learnable model. Each [[Learnable]] instance is associated with a node instance in the
   * data model graph.
   *
-  * @param node [[Node]] instance associated with the learnable model.
+  * @param node       [[Node]] instance associated with the learnable model.
   * @param parameters Parameters for the Learner used
-  * @param tag ClassTag of the type of data stored in [[node]]
+  * @param tag        ClassTag of the type of data stored in [[node]]
   * @tparam T Type of the data stored in [[node]]
   */
 abstract class Learnable[T <: AnyRef](val node: Node[T], val parameters: Parameters = new Learner.Parameters)(implicit tag: ClassTag[T]) extends LBJLearnerEquivalent with Logging {
 
   /** Whether to use caching */
   val useCache = false
+
+  val clearCacheAfterEveryIter = false
 
   var isTraining = false
 
@@ -71,8 +73,11 @@ abstract class Learnable[T <: AnyRef](val node: Node[T], val parameters: Paramet
     */
   var modelSuffix = ""
   var modelDir = "models" + File.separator
+
   def lcFilePath = new URL(new URL("file:"), modelDir + getClassNameForClassifier + modelSuffix + ".lc")
+
   def lexFilePath = new URL(new URL("file:"), modelDir + getClassNameForClassifier + modelSuffix + ".lex")
+
   IOUtils.mkdir(modelDir)
   classifier.setModelLocation(lcFilePath)
   classifier.setLexiconLocation(lexFilePath)
@@ -159,7 +164,7 @@ abstract class Learnable[T <: AnyRef](val node: Node[T], val parameters: Paramet
   /** Loads the model and lexicon for the classifier. Looks up in the local file system
     * and the files are not found, looks up in the classpath JARs.
     *
-    * @param lcFile The path of the model file
+    * @param lcFile  The path of the model file
     * @param lexFile The path of the lexicon file
     */
   def load(lcFile: String, lexFile: String): Unit = {
@@ -232,7 +237,8 @@ abstract class Learnable[T <: AnyRef](val node: Node[T], val parameters: Paramet
     val pb = new ProgressBar("Training", iteration)
     pb.start()
     (iteration to 1 by -1).foreach(remainingIteration => {
-      node.clearPropertyCache()
+      if (clearCacheAfterEveryIter)
+        node.clearPropertyCache()
       data.foreach(classifier.learn)
       pb.step()
     })
@@ -283,10 +289,10 @@ abstract class Learnable[T <: AnyRef](val node: Node[T], val parameters: Paramet
 
   /** Test with given data, use internally
     *
-    * @param testData if the collection of data is not given it is derived from the data model based on its type
-    * @param prediction it is the property that we want to evaluate it if it is null then the prediction of the classifier is the default
+    * @param testData    if the collection of data is not given it is derived from the data model based on its type
+    * @param prediction  it is the property that we want to evaluate it if it is null then the prediction of the classifier is the default
     * @param groundTruth it is the property that we want to evaluate the prediction against it, if it is null then the gold label derived from the classifier is used
-    * @param exclude it is the label that we want to exclude fro evaluation, this is useful for evaluating the multi-class classifiers when we need to measure overall F1 instead of accuracy and we need to exclude the negative class
+    * @param exclude     it is the label that we want to exclude fro evaluation, this is useful for evaluating the multi-class classifiers when we need to measure overall F1 instead of accuracy and we need to exclude the negative class
     * @return List of [[Results]]
     */
   def test(testData: Iterable[T] = null, prediction: Property[T] = null, groundTruth: Property[T] = null,
@@ -359,7 +365,7 @@ abstract class Learnable[T <: AnyRef](val node: Node[T], val parameters: Paramet
     * if the data splitting policy is not 'Manual', the number of folds must be greater than 1. Otherwise it's value
     * doesn't really matter.
     *
-    * @param k number of folds
+    * @param k           number of folds
     * @param splitPolicy strategy to split the instances into k folds.
     */
   def crossValidation(k: Int, splitPolicy: SplitPolicy = SplitPolicy.random,
@@ -397,7 +403,7 @@ abstract class Learnable[T <: AnyRef](val node: Node[T], val parameters: Paramet
   /** A windows of properties
     *
     * @param before always negative (or 0)
-    * @param after always positive (or 0)
+    * @param after  always positive (or 0)
     */
   def windowWithin[U <: AnyRef](datamodel: DataModel, before: Int, after: Int, properties: List[Property[T]])(implicit uTag: ClassTag[U], tTag: ClassTag[T]) = {
     val fromTag = tTag
