@@ -113,7 +113,7 @@ This definition creates edges between the two `Node`s we defined previously.
 ## Instantiation of Data Model
 For each new domain of data we assume there are soem established base types that the graph nodes can be specifeid based on those. 
 Our goal is to establish a set of base types for some important domains having the NLP as a priority. 
- Our NLP base types have been described here in this [document](saul-examples/src/main/java/edu/illinois/cs/cogcomp/saulexamples/nlp/BaseTypes/BaseTyps.md).
+ Our NLP base types have been described here in this [document](src/main/java/edu/illinois/cs/cogcomp/saulexamples/nlp/BaseTypes/BaseTyps.md).
 
 ## Graph Queries
 TODO
