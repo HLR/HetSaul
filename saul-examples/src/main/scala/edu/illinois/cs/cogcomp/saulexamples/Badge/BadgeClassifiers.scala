@@ -6,7 +6,7 @@
   */
 package edu.illinois.cs.cogcomp.saulexamples.Badge
 
-import edu.illinois.cs.cogcomp.lbjava.learn.{ SparseNetworkLearner, SparsePerceptron }
+import edu.illinois.cs.cogcomp.lbjava.learn.{SparseNetworkLearner, SparsePerceptron, SupportVectorMachine}
 import edu.illinois.cs.cogcomp.saul.classifier.Learnable
 import edu.illinois.cs.cogcomp.saulexamples.Badge.BadgeDataModel._
 /** Created by Parisa on 9/13/16.
@@ -17,7 +17,7 @@ object BadgeClassifiers {
   /*a binary classifier that predicts the badge label*/
   object BadgeClassifier extends Learnable[String](badge) {
     def label = BadgeLabel
-    override lazy val classifier = new SparsePerceptron()
+    override lazy val classifier = new SupportVectorMachine()
     override def feature = using(BadgeFeature1)
   }
   /*a binary classifier that predicts a lable that is exactly the opposite of the badge label of the BadgeClassifier*/

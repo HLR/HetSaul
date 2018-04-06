@@ -17,8 +17,8 @@ import edu.illinois.cs.cogcomp.saulexamples.Badge.BadgeDataModel._
 import scala.collection.JavaConversions._
 object BadgesApp {
 
-  val allNamesTrain = new BadgeReader("data/badges/badges.train").badges
-  val allNamesTest = new BadgeReader("data/badges/badges.test").badges
+  val allNamesTrain = new BadgeReader("data/badges/badges-train.txt").badges
+  val allNamesTest = new BadgeReader("data/badges/badges-test.txt").badges
 
   badge.populate(allNamesTrain)
   badge.populate(allNamesTest, false)
@@ -73,8 +73,9 @@ object BadgesApp {
   /* This model trains the BadgeClassifier and then it takes the prediction of the BadgeClassifier as the only input
   feature and trains a pipeline function to predict the opposite label*/
   def Pipeline(): Unit = {
+    BadgeOppositClassifier.learn(5)
     BadgeClassifier.learn(5)
-    BadgeClassifier.test()
+    BadgeClassifier.classifier.scores(BadgeDataModel.badge.getAllInstances.head)
     BadgeOppositPipeline.learn(5)
     BadgeOppositPipeline.test()
   }
