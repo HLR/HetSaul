@@ -57,7 +57,7 @@ lazy val commonSettings = Seq(
   name := "saul-project",
   resolvers ++= Seq(
     Resolver.mavenLocal,
-    "CogcompSoftware" at "http://cogcomp.cs.illinois.edu/m2repo/"
+    "CogcompSoftware" at "http://cogcomp.org/m2repo/"
   ),
   javaOptions ++= List("-Xmx11g"),
   libraryDependencies ++= Seq(
@@ -90,6 +90,8 @@ lazy val saulCore = (project in file("saul-core")).
   settings(
     name := "saul"
   ).enablePlugins(AutomateHeaderPlugin)
+
+
 
 lazy val saulExamples = (project in file("saul-examples")).
   settings(commonSettings: _*).
@@ -135,3 +137,4 @@ lazy val saulWebapp = (project in file("saul-webapp")).
     routesGenerator := InjectedRoutesGenerator
   ).dependsOn(saulExamples).aggregate(saulExamples)
   .enablePlugins(AutomateHeaderPlugin)
+
